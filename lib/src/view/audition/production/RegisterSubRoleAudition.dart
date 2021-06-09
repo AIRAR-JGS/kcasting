@@ -1,3 +1,4 @@
+import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
@@ -6,11 +7,13 @@ import 'package:casting_call/src/util/StringUtils.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../KCastingAppData.dart';
 
+/*
+* 오디션 배역 추가 - 다수 배역
+* */
 class RegisterSubRoleAudition extends StatefulWidget {
   final int projectSeq;
 
@@ -21,15 +24,15 @@ class RegisterSubRoleAudition extends StatefulWidget {
 }
 
 class _RegisterSubRoleAudition extends State<RegisterSubRoleAudition>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, BaseUtilMixin {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   int _projectSeq;
 
   int _isPayLimit = 0;
 
-  String _startDate = '2021.03.29';
-  String _endDate = '2021.08.29';
+  String _startDate;
+  String _endDate;
 
   final _txtFieldCastingName = TextEditingController();
   final _txtFieldCastingIntroduce = TextEditingController();
@@ -44,54 +47,14 @@ class _RegisterSubRoleAudition extends State<RegisterSubRoleAudition>
 
     var now = new DateTime.now();
     var formatter = new DateFormat('yyyy-MM-dd');
-    String formattedDate = formatter.format(now);
 
-    _startDate = formattedDate;
-    _endDate = formattedDate;
+    _startDate = formatter.format(now);
+    _endDate = formatter.format(DateTime(now.year + 1, now.month, now.day));
   }
 
-  // DatePicker(회원가입 시 생년월일 선택하는 컴포넌트)
-  void _showDatePicker(int type) {
-    DatePicker.showDatePicker(context,
-        showTitleActions: true,
-        minTime: DateTime.now(),
-        maxTime: DateTime(2031, 1, 1),
-        theme: DatePickerTheme(
-            headerColor: CustomColors.colorWhite,
-            backgroundColor: CustomColors.colorWhite,
-            itemStyle: TextStyle(
-                color: CustomColors.colorFontGrey,
-                fontWeight: FontWeight.bold,
-                fontSize: 15),
-            doneStyle:
-                TextStyle(color: CustomColors.colorFontGrey, fontSize: 13),
-            cancelStyle:
-                TextStyle(color: CustomColors.colorFontGrey, fontSize: 13)),
-        onChanged: (date) {}, onConfirm: (date) {
-      setState(() {
-        var _yy = date.year.toString();
-        var _mm = date.month.toString().padLeft(2, '0');
-        var _dd = date.day.toString().padLeft(2, '0');
-
-        var _selectDate = _yy + '-' + _mm + '-' + _dd;
-
-        if (type == 0) {
-          _startDate = _selectDate;
-        } else {
-          _endDate = _selectDate;
-        }
-      });
-    }, currentTime: DateTime.now(), locale: LocaleType.ko);
-  }
-
-  void showSnackBar(context, String value) {
-    _scaffoldKey.currentState
-        .showSnackBar(new SnackBar(content: new Text(value)));
-  }
-
-  //========================================================================================================================
-  // 메인 위젯
-  //========================================================================================================================
+  /*
+  * 메인 위젯
+  * */
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -135,7 +98,25 @@ class _RegisterSubRoleAudition extends State<RegisterSubRoleAudition>
                                             Expanded(
                                                 child: GestureDetector(
                                               onTap: () {
-                                                _showDatePicker(0);
+                                                showDatePickerForDday(context,
+                                                    (date) {
+                                                  setState(() {
+                                                    var _birthY =
+                                                        date.year.toString();
+                                                    var _birthM = date.month
+                                                        .toString()
+                                                        .padLeft(2, '0');
+                                                    var _birthD = date.day
+                                                        .toString()
+                                                        .padLeft(2, '0');
+
+                                                    _startDate = _birthY +
+                                                        '-' +
+                                                        _birthM +
+                                                        '-' +
+                                                        _birthD;
+                                                  });
+                                                });
                                               },
                                               child: Container(
                                                   height: 48,
@@ -179,7 +160,25 @@ class _RegisterSubRoleAudition extends State<RegisterSubRoleAudition>
                                             Expanded(
                                                 child: GestureDetector(
                                               onTap: () {
-                                                _showDatePicker(1);
+                                                showDatePickerForDday(context,
+                                                    (date) {
+                                                  setState(() {
+                                                    var _birthY =
+                                                        date.year.toString();
+                                                    var _birthM = date.month
+                                                        .toString()
+                                                        .padLeft(2, '0');
+                                                    var _birthD = date.day
+                                                        .toString()
+                                                        .padLeft(2, '0');
+
+                                                    _endDate = _birthY +
+                                                        '-' +
+                                                        _birthM +
+                                                        '-' +
+                                                        _birthD;
+                                                  });
+                                                });
                                               },
                                               child: Container(
                                                   height: 48,
@@ -397,43 +396,38 @@ class _RegisterSubRoleAudition extends State<RegisterSubRoleAudition>
     );
   }
 
-  //========================================================================================================================
-  // 입력 데이터 유효성 검사
-  //========================================================================================================================
+  /*
+  * 입력 데이터 유효성 검사
+  * */
   bool checkValidate(BuildContext context) {
     if (StringUtils.isEmpty(_txtFieldCastingName.text)) {
-      Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text('배역 이름을 입력해 주세요.')));
+      showSnackBar(context, '배역 이름을 입력해 주세요.');
       return false;
     }
 
     if (StringUtils.isEmpty(_txtFieldCastingCnt.text)) {
-      Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text('배역 수를 입력해 주세요.')));
+      showSnackBar(context, '배역 수를 입력해 주세요.');
       return false;
     }
 
     if (StringUtils.isEmpty(_txtFieldCastingIntroduce.text)) {
-      Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text('캐릭터 소개글을 입력해 주세요.')));
+      showSnackBar(context, '캐릭터 소개글을 입력해 주세요.');
       return false;
     }
 
     if (_isPayLimit == 0) {
       if (StringUtils.isEmpty(_txtFieldCastingPay.text)) {
-        Scaffold.of(context)
-            .showSnackBar(SnackBar(content: Text('페이를 입력해 주세요.')));
+        showSnackBar(context, '페이를 입력해 주세요.');
         return false;
       }
     }
-    //
 
     return true;
   }
 
-  //========================================================================================================================
-  // 캐스팅 추가
-  //========================================================================================================================
+  /*
+  * 캐스팅 추가
+  * */
   void requestAddFilmographyApi(BuildContext context) {
     final dio = Dio();
 

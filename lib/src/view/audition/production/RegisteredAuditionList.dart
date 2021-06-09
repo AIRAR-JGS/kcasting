@@ -1,3 +1,4 @@
+import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/dialog/DialogRegisterAuditionRole.dart';
@@ -14,6 +15,9 @@ import 'RegisterMainRoleAudition.dart';
 import 'RegisterSubRoleAudition.dart';
 import 'RegisteredAuditionDetail.dart';
 
+/*
+* 제작사 오디션 목록
+* */
 class RegisteredAuditionList extends StatefulWidget {
   final int projectSeq;
   final String projectName;
@@ -26,7 +30,7 @@ class RegisteredAuditionList extends StatefulWidget {
 }
 
 class _RegisteredAuditionList extends State<RegisteredAuditionList>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, BaseUtilMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   int _projectSeq;
@@ -45,6 +49,7 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
   List<dynamic> _castingStateList = [];
 
   bool _isLoading = true;
+  int _isNotPayment = 0;
 
   @override
   void initState() {
@@ -53,7 +58,7 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
     _projectSeq = widget.projectSeq;
     _projectName = widget.projectName;
 
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(_handleTabSelection);
 
     //requestCastingStateList(context);
@@ -85,6 +90,9 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
             _apiKey = APIConstants.SEL_PCT_INGLIST;
             break;
           case 1:
+            _apiKey = APIConstants.SEL_PCT_CMPLIST;
+            break;
+          case 2:
             _apiKey = APIConstants.SEL_PCT_FINLIST;
             break;
         }
@@ -119,11 +127,6 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
     super.dispose();
   }
 
-  void showSnackBar(context, String value) {
-    _scaffoldKey.currentState
-        .showSnackBar(new SnackBar(content: new Text(value)));
-  }
-
   /*
   캐스팅 진행 현황 조회
   * */
@@ -133,6 +136,9 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
     // 캐스팅 진행 현황 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
     targetData[APIConstants.project_seq] = _projectSeq;
+    if (_apiKey == APIConstants.SEL_PCT_CMPLIST) {
+      targetData[APIConstants.isNotPayment] = _isNotPayment;
+    }
 
     Map<String, dynamic> paging = new Map();
     paging[APIConstants.offset] = _castingStateList.length;
@@ -187,14 +193,11 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
                       alignment: Alignment.center,
                       child: GestureDetector(
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      RegisteredAuditionDetail(
-                                          castingSeq:
-                                              _data[APIConstants.casting_seq])),
-                            );
+                            addView(
+                                context,
+                                RegisteredAuditionDetail(
+                                    castingSeq:
+                                        _data[APIConstants.casting_seq]));
                           },
                           child: Container(
                               alignment: Alignment.center,
@@ -222,15 +225,11 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
                                     Visibility(
                                         child: GestureDetector(
                                       onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  RegisteredAuditionDetail(
-                                                      castingSeq: _data[
-                                                          APIConstants
-                                                              .casting_seq])),
-                                        );
+                                        addView(
+                                            context,
+                                            RegisteredAuditionDetail(
+                                                castingSeq: _data[
+                                                    APIConstants.casting_seq]));
                                       },
                                       child: Container(
                                         margin: EdgeInsets.only(top: 10),
@@ -344,15 +343,12 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
                                             : true,
                                         child: GestureDetector(
                                           onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      RegisteredAuditionDetail(
-                                                          castingSeq: _data[
-                                                              APIConstants
-                                                                  .casting_seq])),
-                                            );
+                                            addView(
+                                                context,
+                                                RegisteredAuditionDetail(
+                                                    castingSeq: _data[
+                                                        APIConstants
+                                                            .casting_seq]));
                                           },
                                           child: Container(
                                             margin: EdgeInsets.only(top: 10),
@@ -486,15 +482,12 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
                                             : true,
                                         child: GestureDetector(
                                           onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      RegisteredAuditionDetail(
-                                                          castingSeq: _data[
-                                                              APIConstants
-                                                                  .casting_seq])),
-                                            );
+                                            addView(
+                                                context,
+                                                RegisteredAuditionDetail(
+                                                    castingSeq: _data[
+                                                        APIConstants
+                                                            .casting_seq]));
                                           },
                                           child: Container(
                                             margin: EdgeInsets.only(top: 10),
@@ -626,6 +619,100 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
         ]));
   }
 
+  Widget tabCastingContractedList() {
+    return Container(
+        alignment: Alignment.center,
+        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Wrap(children: [
+            ListView.separated(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: _castingStateList.length,
+                controller: _scrollController,
+                itemBuilder: (BuildContext context, int index) {
+                  Map<String, dynamic> _data = _castingStateList[index];
+
+                  return Container(
+                      margin: EdgeInsets.only(bottom: 15),
+                      alignment: Alignment.center,
+                      child: GestureDetector(
+                          onTap: () {
+                            addView(
+                                context,
+                                RegisteredAuditionDetail(
+                                    castingSeq:
+                                        _data[APIConstants.casting_seq]));
+                          },
+                          child: Container(
+                              alignment: Alignment.center,
+                              padding:
+                                  EdgeInsets.only(left: 15, right: 15, top: 15),
+                              child: Column(children: [
+                                Container(
+                                    margin: EdgeInsets.only(bottom: 5),
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                        StringUtils.checkedString(
+                                            _data[APIConstants.casting_name]),
+                                        style: CustomStyles.dark20TextStyle())),
+                                Container(
+                                    child: Row(children: [
+                                  Text(
+                                      '작성일 : ' +
+                                          StringUtils.checkedString(_data[
+                                              APIConstants
+                                                  .productionCasting_addDate]),
+                                      style: CustomStyles.dark10TextStyle())
+                                ])),
+                                GestureDetector(
+                                  onTap: () {},
+                                  child: Container(
+                                    margin: EdgeInsets.only(top: 10),
+                                    padding: EdgeInsets.only(
+                                        top: 10,
+                                        bottom: 10,
+                                        left: 10,
+                                        right: 10),
+                                    decoration: BoxDecoration(
+                                      borderRadius:
+                                          CustomStyles.circle7BorderRadius(),
+                                      border: Border.all(
+                                          width: 1,
+                                          color:
+                                              CustomColors.colorFontLightGrey),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          child: Text('캐스팅',
+                                              style: CustomStyles
+                                                  .dark10TextStyle()),
+                                        ),
+                                        Container(
+                                          child: Text(
+                                              StringUtils.checkedString(_data[
+                                                  APIConstants.casting_name]),
+                                              style: CustomStyles
+                                                  .dark20TextStyle()),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              ]))));
+                },
+                separatorBuilder: (context, index) {
+                  return Divider(
+                    height: 0.1,
+                    color: CustomColors.colorFontLightGrey,
+                  );
+                })
+          ])
+        ]));
+  }
+
   Widget tabCastingOffList() {
     return Container(
         alignment: Alignment.center,
@@ -644,14 +731,11 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
                       alignment: Alignment.center,
                       child: GestureDetector(
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      RegisteredAuditionDetail(
-                                          castingSeq:
-                                              _data[APIConstants.casting_seq])),
-                            );
+                            addView(
+                                context,
+                                RegisteredAuditionDetail(
+                                    castingSeq:
+                                        _data[APIConstants.casting_seq]));
                           },
                           child: Container(
                               alignment: Alignment.center,
@@ -765,23 +849,17 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
                               builder: (BuildContext context) =>
                                   DialogRegisterAuditionRole(
                                       onClickedAddCertainRole: () {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          RegisterMainRoleAudition(
-                                            projectSeq: _projectSeq,
-                                          )),
-                                );
+                                replaceView(
+                                    context,
+                                    RegisterMainRoleAudition(
+                                      projectSeq: _projectSeq,
+                                    ));
                               }, onClickedAddLargeRole: () {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          RegisterSubRoleAudition(
-                                            projectSeq: _projectSeq,
-                                          )),
-                                );
+                                replaceView(
+                                    context,
+                                    RegisterSubRoleAudition(
+                                      projectSeq: _projectSeq,
+                                    ));
                               }),
                             );
                           },
@@ -805,14 +883,14 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
                                         CustomStyles.normal14TextStyle(),
                                     tabs: [
                                       Tab(text: '진행중'),
-                                      //Tab(text: '계약완료'),
+                                      Tab(text: '계약완료'),
                                       Tab(text: '마감')
                                     ],
                                   ),
                                   flex: 1)
                             ],
                           )),
-                      /*Visibility(
+                      Visibility(
                           child: Container(
                             margin:
                                 EdgeInsets.only(left: 15, right: 15, top: 15),
@@ -823,11 +901,25 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
                                 SizedBox(
                                     width: 24,
                                     height: 24,
-                                    child: Radio(
-                                      value: 'all',
-                                      groupValue: 'weight',
-                                      onChanged: (String value) {
-                                        setState(() {});
+                                    child: Radio<int>(
+                                      value: _isNotPayment,
+                                      groupValue: 1,
+                                      toggleable: true,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          if (_isNotPayment == 0) {
+                                            _isNotPayment = 1;
+                                          } else {
+                                            _isNotPayment = 0;
+                                          }
+
+                                          _total = 0;
+                                          _castingStateList = [];
+                                          _apiKey =
+                                              APIConstants.SEL_PCT_CMPLIST;
+
+                                          requestCastingStateList(context);
+                                        });
                                       },
                                       materialTapTargetSize:
                                           MaterialTapTargetSize.shrinkWrap,
@@ -837,7 +929,7 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
                               ],
                             ),
                           ),
-                          visible: _tabIndex == 1 ? true : false),*/
+                          visible: _tabIndex == 1 ? true : false),
                       Container(
                         margin: EdgeInsets.only(top: 10),
                         child: Divider(
@@ -848,8 +940,8 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
                       Expanded(
                         flex: 0,
                         child: [
-                          //tabMyApplyStatus(),
                           tabCastingList(),
+                          tabCastingContractedList(),
                           tabCastingOffList()
                         ][_tabIndex],
                       ),

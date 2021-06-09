@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
@@ -12,25 +13,26 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+/*
+* 오디션 상세
+* */
 class RegisteredAuditionDetail extends StatefulWidget {
   final int castingSeq;
 
-  const RegisteredAuditionDetail({Key key, this.castingSeq})
-      : super(key: key);
+  const RegisteredAuditionDetail({Key key, this.castingSeq}) : super(key: key);
 
   @override
   _RegisteredAuditionDetail createState() => _RegisteredAuditionDetail();
 }
 
 class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, BaseUtilMixin {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
-  int _casting_seq;
+  int _castingSeq;
   String _apiKey = APIConstants.SAR_FAD_STATE;
 
   Map<String, dynamic> _firstAuditionInfo = new Map();
@@ -64,7 +66,7 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
   void initState() {
     super.initState();
 
-    _casting_seq = widget.castingSeq;
+    _castingSeq = widget.castingSeq;
 
     _tabController = TabController(length: 4, vsync: this);
     _tabController.addListener(_handleTabSelection);
@@ -145,11 +147,6 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
     super.dispose();
   }
 
-  void showSnackBar(context, String value) {
-    _scaffoldKey.currentState
-        .showSnackBar(new SnackBar(content: new Text(value)));
-  }
-
   // 갤러리에서 이미지 가져오기
   Future getImageFromGallery() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
@@ -173,34 +170,6 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
     }
   }
 
-  // DatePicker(회원가입 시 생년월일 선택하는 컴포넌트)
-  void _showDatePicker() {
-    DatePicker.showDatePicker(context,
-        showTitleActions: true,
-        minTime: DateTime.now(),
-        maxTime: DateTime(2031, 12, 31),
-        theme: DatePickerTheme(
-            headerColor: CustomColors.colorWhite,
-            backgroundColor: CustomColors.colorWhite,
-            itemStyle: TextStyle(
-                color: CustomColors.colorFontGrey,
-                fontWeight: FontWeight.bold,
-                fontSize: 15),
-            doneStyle:
-                TextStyle(color: CustomColors.colorFontGrey, fontSize: 13),
-            cancelStyle:
-                TextStyle(color: CustomColors.colorFontGrey, fontSize: 13)),
-        onChanged: (date) {}, onConfirm: (date) {
-      setState(() {
-        var _yy = date.year.toString();
-        var _mm = date.month.toString().padLeft(2, '0');
-        var _dd = date.day.toString().padLeft(2, '0');
-
-        _endDate = _yy + '-' + _mm + '-' + _dd;
-      });
-    }, currentTime: DateTime.now(), locale: LocaleType.ko);
-  }
-
   /*
   오디션 진행 현황 조회
   * */
@@ -209,7 +178,7 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
 
     // 1차 오디션 진행 현황 조회 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
-    targetData[APIConstants.casting_seq] = _casting_seq;
+    targetData[APIConstants.casting_seq] = _castingSeq;
 
     Map<String, dynamic> paging = new Map();
     paging[APIConstants.offset] = _firstAuditionApplyList.length;
@@ -655,7 +624,15 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
               child: Text('마감날짜', style: CustomStyles.darkBold14TextStyle())),
           GestureDetector(
             onTap: () {
-              _showDatePicker();
+              showDatePickerForDday(context, (date) {
+                setState(() {
+                  var _birthY = date.year.toString();
+                  var _birthM = date.month.toString().padLeft(2, '0');
+                  var _birthD = date.day.toString().padLeft(2, '0');
+
+                  _endDate = _birthY + '-' + _birthM + '-' + _birthD;
+                });
+              });
             },
             child: Container(
                 height: 48,
@@ -833,194 +810,177 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
     }
 
     return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          (_tabIndex == 0)
-              ? firstAuditionStatus()
-              : (_tabIndex == 1
-                  ? secondAuditionStatus()
-                  : (_tabIndex == 2 ? thirdAuditionStatus() : Container())),
-          Container(
-            margin: EdgeInsets.only(top: 15),
-            child: Divider(
-              color: CustomColors.colorFontGrey,
-              height: 1,
-              thickness: 0.5,
-            ),
-          ),
-          Wrap(
-            children: [
-              ListView.separated(
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                controller: _scrollController,
-                itemCount: _dataCnt,
-                itemBuilder: (BuildContext context, int index) {
-                  Map<String, dynamic> _data = new Map();
-
-                  switch (_tabIndex) {
-                    case 0:
-                      _data = _firstAuditionApplyList[index];
-                      break;
-                    case 1:
-                      _data = _secondAuditionApplyList[index];
-                      break;
-                    case 2:
-                      _data = _thirdAuditionApplyList[index];
-                      break;
-                    case 3:
-                      _data = _auditionResultList[index];
-                      break;
-                  }
-
-                  List<String> _imgUrlArr;
-                  if (_data[APIConstants.actor_imgs] != null) {
-                    _imgUrlArr =
-                        _data[APIConstants.actor_imgs].toString().split(',');
-                  } else {
-                    _imgUrlArr = [];
-                  }
-
-                  return Container(
-                      alignment: Alignment.center,
-                      padding: EdgeInsets.only(
-                          left: 16, right: 0, top: 10, bottom: 10),
-                      child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => AuditionApplyProfile(
-                                        applySeq: _data[
-                                            APIConstants.auditionApply_seq],
-                                        isProduction: true,
-                                      )),
-                            );
-                          },
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                  flex: 1,
-                                  child: Column(
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                5,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                5,
-                                            child: (_imgUrlArr.length > 0)
-                                                ? ClipRRect(
-                                                    borderRadius: CustomStyles
-                                                        .circle7BorderRadius(),
-                                                    child: Image.network(
-                                                      _imgUrlArr[0],
-                                                      fit: BoxFit.cover,
-                                                    ))
-                                                : ClipRRect(
-                                                    borderRadius: CustomStyles
-                                                        .circle7BorderRadius()),
-                                          ),
-                                          Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                5,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                5,
-                                            child: (_imgUrlArr.length > 1)
-                                                ? ClipRRect(
-                                                    borderRadius: CustomStyles
-                                                        .circle7BorderRadius(),
-                                                    child: Image.network(
-                                                        _imgUrlArr[1],
-                                                        fit: BoxFit.cover))
-                                                : ClipRRect(
-                                                    borderRadius: CustomStyles
-                                                        .circle7BorderRadius()),
-                                          ),
-                                          Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                5,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                5,
-                                            child: (_imgUrlArr.length > 2)
-                                                ? ClipRRect(
-                                                    borderRadius: CustomStyles
-                                                        .circle7BorderRadius(),
-                                                    child: Image.network(
-                                                        _imgUrlArr[2],
-                                                        fit: BoxFit.cover))
-                                                : ClipRRect(
-                                                    borderRadius: CustomStyles
-                                                        .circle7BorderRadius()),
-                                          ),
-                                          _tabIndex == 0
-                                              ? updateFirstAuditionApplyState(
-                                                  _data, index)
-                                              : (_tabIndex == 1
-                                                  ? updateSecondAuditionApplyState(
-                                                      _data, index)
-                                                  : (_tabIndex == 2
-                                                      ? updateThirdAuditionApplyState(
-                                                          _data, index)
-                                                      : Container(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width /
-                                                              5,
-                                                          alignment:
-                                                              Alignment.center,
-                                                          child: Text(
-                                                            "최종합격",
-                                                            style: CustomStyles
-                                                                .normal16TextStyle(),
-                                                          ))))
-                                        ],
-                                      ),
-                                      Container(
-                                          margin:
-                                              EdgeInsets.only(top: 10, left: 5),
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            StringUtils.checkedString(
-                                                _data[APIConstants.actor_name]),
-                                            style: CustomStyles
-                                                .normal16TextStyle(),
-                                          )),
-                                    ],
-                                  ))
-                            ],
-                          )));
-                },
-                separatorBuilder: (context, index) {
-                  return Divider(
-                    height: 0.1,
-                    color: CustomColors.colorFontLightGrey,
-                  );
-                },
-              )
-            ],
-          ),
-        ],
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      (_tabIndex == 0)
+          ? firstAuditionStatus()
+          : (_tabIndex == 1
+              ? secondAuditionStatus()
+              : (_tabIndex == 2 ? thirdAuditionStatus() : Container())),
+      Container(
+        margin: EdgeInsets.only(top: 15),
+        child: Divider(
+          color: CustomColors.colorFontGrey,
+          height: 1,
+          thickness: 0.5,
+        ),
       ),
-    );
+      Wrap(children: [
+        ListView.separated(
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            controller: _scrollController,
+            itemCount: _dataCnt,
+            itemBuilder: (BuildContext context, int index) {
+              Map<String, dynamic> _data = new Map();
+
+              switch (_tabIndex) {
+                case 0:
+                  _data = _firstAuditionApplyList[index];
+                  break;
+                case 1:
+                  _data = _secondAuditionApplyList[index];
+                  break;
+                case 2:
+                  _data = _thirdAuditionApplyList[index];
+                  break;
+                case 3:
+                  _data = _auditionResultList[index];
+                  break;
+              }
+
+              List<String> _imgUrlArr;
+              if (_data[APIConstants.actor_imgs] != null) {
+                _imgUrlArr =
+                    _data[APIConstants.actor_imgs].toString().split(',');
+              } else {
+                _imgUrlArr = [];
+              }
+
+              return Container(
+                  alignment: Alignment.center,
+                  padding:
+                      EdgeInsets.only(left: 16, right: 0, top: 10, bottom: 10),
+                  child: GestureDetector(
+                      onTap: () {
+                        addView(context, AuditionApplyProfile(
+                          applySeq:
+                          _data[APIConstants.auditionApply_seq],
+                          isProduction: true,
+                        ));
+                      },
+                      child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                                flex: 1,
+                                child: Column(children: [
+                                  Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              5,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              5,
+                                          child: (_imgUrlArr.length > 0)
+                                              ? ClipRRect(
+                                                  borderRadius: CustomStyles
+                                                      .circle7BorderRadius(),
+                                                  child: Image.network(
+                                                    _imgUrlArr[0],
+                                                    fit: BoxFit.cover,
+                                                  ))
+                                              : ClipRRect(
+                                                  borderRadius: CustomStyles
+                                                      .circle7BorderRadius()),
+                                        ),
+                                        Container(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              5,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              5,
+                                          child: (_imgUrlArr.length > 1)
+                                              ? ClipRRect(
+                                                  borderRadius: CustomStyles
+                                                      .circle7BorderRadius(),
+                                                  child: Image.network(
+                                                      _imgUrlArr[1],
+                                                      fit: BoxFit.cover))
+                                              : ClipRRect(
+                                                  borderRadius: CustomStyles
+                                                      .circle7BorderRadius()),
+                                        ),
+                                        Container(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              5,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              5,
+                                          child: (_imgUrlArr.length > 2)
+                                              ? ClipRRect(
+                                                  borderRadius: CustomStyles
+                                                      .circle7BorderRadius(),
+                                                  child: Image.network(
+                                                      _imgUrlArr[2],
+                                                      fit: BoxFit.cover))
+                                              : ClipRRect(
+                                                  borderRadius: CustomStyles
+                                                      .circle7BorderRadius()),
+                                        ),
+                                        _tabIndex == 0
+                                            ? updateFirstAuditionApplyState(
+                                                _data, index)
+                                            : (_tabIndex == 1
+                                                ? updateSecondAuditionApplyState(
+                                                    _data, index)
+                                                : (_tabIndex == 2
+                                                    ? updateThirdAuditionApplyState(
+                                                        _data, index)
+                                                    : Container(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width /
+                                                            5,
+                                                        alignment:
+                                                            Alignment.center,
+                                                        child: Text(
+                                                          "최종합격",
+                                                          style: CustomStyles
+                                                              .normal16TextStyle(),
+                                                        ))))
+                                      ]),
+                                  Container(
+                                      margin: EdgeInsets.only(top: 10, left: 5),
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        StringUtils.checkedString(
+                                            _data[APIConstants.actor_name]),
+                                        style: CustomStyles.normal16TextStyle(),
+                                      ))
+                                ]))
+                          ])));
+            },
+            separatorBuilder: (context, index) {
+              return Divider(
+                height: 0.1,
+                color: CustomColors.colorFontLightGrey,
+              );
+            })
+      ])
+    ]));
   }
 
   Widget tabAuditionApplyList() {
@@ -1048,66 +1008,66 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
     }
   }
 
-  //========================================================================================================================
-  // 메인 위젯
-  //========================================================================================================================
+  /*
+  * 메인 위젯
+  * */
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: CustomStyles.defaultTheme(),
-      child: Scaffold(
-          key: _scaffoldKey,
-          appBar: CustomStyles.defaultAppBar('지원현황', () {
-            Navigator.pop(context);
-          }),
-          body: Builder(
-            builder: (context) {
+        data: CustomStyles.defaultTheme(),
+        child: Scaffold(
+            key: _scaffoldKey,
+            appBar: CustomStyles.defaultAppBar('지원현황', () {
+              Navigator.pop(context);
+            }),
+            body: Builder(builder: (context) {
               return Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                     Expanded(
-                      flex: 1,
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                                margin: EdgeInsets.only(top: 30.0, bottom: 10),
-                                padding: EdgeInsets.only(
-                                    left: 16, right: 16, bottom: 15),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Expanded(
-                                      flex: 1,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                              child: Text(
-                                                  StringUtils.checkedString(
-                                                      _firstAuditionInfo[
-                                                          APIConstants
-                                                              .project_name]),
-                                                  style: CustomStyles
-                                                      .darkBold10TextStyle())),
-                                          Container(
-                                              margin: EdgeInsets.only(top: 5),
-                                              child: Text(
-                                                  StringUtils.checkedString(
-                                                      _firstAuditionInfo[
-                                                          APIConstants
-                                                              .casting_name]),
-                                                  style: CustomStyles
-                                                      .dark20TextStyle()))
-                                        ],
+                        flex: 1,
+                        child: SingleChildScrollView(
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                              Container(
+                                  margin:
+                                      EdgeInsets.only(top: 30.0, bottom: 10),
+                                  padding: EdgeInsets.only(
+                                      left: 16, right: 16, bottom: 15),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Expanded(
+                                        flex: 1,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                                child: Text(
+                                                    StringUtils.checkedString(
+                                                        _firstAuditionInfo[
+                                                            APIConstants
+                                                                .project_name]),
+                                                    style: CustomStyles
+                                                        .darkBold10TextStyle())),
+                                            Container(
+                                                margin: EdgeInsets.only(top: 5),
+                                                child: Text(
+                                                    StringUtils.checkedString(
+                                                        _firstAuditionInfo[
+                                                            APIConstants
+                                                                .casting_name]),
+                                                    style: CustomStyles
+                                                        .dark20TextStyle()))
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    /*Expanded(
+                                      /*Expanded(
                                       flex: 0,
                                       child: Column(
                                         crossAxisAlignment:
@@ -1125,37 +1085,33 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                                         ],
                                       ),
                                     )*/
-                                  ],
-                                )),
-                            Container(
-                              color: CustomColors.colorWhite,
-                              child: TabBar(
-                                controller: _tabController,
-                                indicatorPadding: EdgeInsets.zero,
-                                labelStyle: CustomStyles.bold14TextStyle(),
-                                unselectedLabelStyle:
-                                    CustomStyles.normal14TextStyle(),
-                                tabs: [
-                                  Tab(text: '1차 오디션'),
-                                  Tab(text: '2차 오디션'),
-                                  Tab(text: '3차 오디션'),
-                                  Tab(text: '최종합격'),
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              flex: 0,
-                              child: [
-                                tabAuditionApplyList(),
-                                tabAuditionApplyList(),
-                                tabAuditionApplyList(),
-                                tabAuditionApplyList()
-                              ][_tabIndex],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                                    ],
+                                  )),
+                              Container(
+                                  color: CustomColors.colorWhite,
+                                  child: TabBar(
+                                      controller: _tabController,
+                                      indicatorPadding: EdgeInsets.zero,
+                                      labelStyle:
+                                          CustomStyles.bold14TextStyle(),
+                                      unselectedLabelStyle:
+                                          CustomStyles.normal14TextStyle(),
+                                      tabs: [
+                                        Tab(text: '1차 오디션'),
+                                        Tab(text: '2차 오디션'),
+                                        Tab(text: '3차 오디션'),
+                                        Tab(text: '최종합격')
+                                      ])),
+                              Expanded(
+                                flex: 0,
+                                child: [
+                                  tabAuditionApplyList(),
+                                  tabAuditionApplyList(),
+                                  tabAuditionApplyList(),
+                                  tabAuditionApplyList()
+                                ][_tabIndex],
+                              )
+                            ]))),
                     Visibility(
                       child: Container(
                           width: MediaQuery.of(context).size.width,
@@ -1186,36 +1142,30 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                           ? true
                           : false,
                     )
-                  ],
-                ),
-              );
-            },
-          )),
-    );
+                  ]));
+            })));
   }
 
-  //========================================================================================================================
-  // 입력 데이터 유효성 검사
-  //========================================================================================================================
+  /*
+  * 입력 데이터 유효성 검사
+  * */
   bool checkValidate(BuildContext context) {
     if (_profileImgFile == null) {
-      Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text("대본이미지를 업로드해주세요.")));
+      showSnackBar(context, "대본이미지를 업로드해주세요.");
       return false;
     }
 
     if (StringUtils.isEmpty(_endDate)) {
-      Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text('마감날짜를 입력해 주세요.')));
+      showSnackBar(context, "마감날짜를 입력해 주세요.");
       return false;
     }
 
     return true;
   }
 
-  //========================================================================================================================
-  // 2차 오디션 오픈
-  //========================================================================================================================
+  /*
+  * 2차 오디션 오픈
+  * */
   void requestOpenSecondAudition(BuildContext context) {
     final dio = Dio();
 
@@ -1227,7 +1177,7 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
     fileData[APIConstants.base64string] = APIConstants.data_image + img64;
 
     Map<String, dynamic> targetData = new Map();
-    targetData[APIConstants.casting_seq] = _casting_seq;
+    targetData[APIConstants.casting_seq] = _castingSeq;
     targetData[APIConstants.secondAudition_startDate] =
         DateTileUtils.getToday();
     targetData[APIConstants.secondAudition_endDate] =
@@ -1307,15 +1257,15 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
     });
   }
 
-  //========================================================================================================================
-  // 3차 오디션 오픈
-  //========================================================================================================================
+  /*
+  * 3차 오디션 오픈
+  * */
   void requestOpenThirdAudition(BuildContext context) {
     final dio = Dio();
 
     // 3차 오디션 오픈 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
-    targetData[APIConstants.casting_seq] = _casting_seq;
+    targetData[APIConstants.casting_seq] = _castingSeq;
 
     Map<String, dynamic> params = new Map();
     params[APIConstants.key] = APIConstants.INS_TAD_INFO;
@@ -1391,9 +1341,9 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
     });
   }
 
-  //========================================================================================================================
-  // 오디션 대상자 단일 수정(합격, 불합격)
-  //========================================================================================================================
+  /*
+  * 오디션 대상자 단일 수정(합격, 불합격)
+  * */
   void requestUpdateAuditionResult(BuildContext context, int applyIdx,
       String key, int targetSeq, String resultType) {
     final dio = Dio();
@@ -1416,7 +1366,7 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
         if (value[APIConstants.resultVal]) {
           try {
             setState(() {
-              var _responseData = value[APIConstants.data];
+              //var _responseData = value[APIConstants.data];
 
               switch (key) {
                 case APIConstants.UPD_FAT_INFO:

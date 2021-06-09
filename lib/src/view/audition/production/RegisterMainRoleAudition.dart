@@ -1,3 +1,4 @@
+import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/model/CheckboxITemModel.dart';
@@ -8,11 +9,13 @@ import 'package:casting_call/src/util/StringUtils.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../KCastingAppData.dart';
 
+/*
+* 오디션 배역 추가 - 특정 배역
+* */
 class RegisterMainRoleAudition extends StatefulWidget {
   final int projectSeq;
 
@@ -23,7 +26,7 @@ class RegisterMainRoleAudition extends StatefulWidget {
 }
 
 class _RegisterMainRoleAudition extends State<RegisterMainRoleAudition>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, BaseUtilMixin {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   int _projectSeq;
@@ -34,8 +37,8 @@ class _RegisterMainRoleAudition extends State<RegisterMainRoleAudition>
   int _userGender = 0;
   int _major = 0;
 
-  String _startDate = '2021.03.29';
-  String _endDate = '2021.08.29';
+  String _startDate;
+  String _endDate;
   String _castingType = APIConstants.casting_type_1;
 
   final _txtFieldCastingName = TextEditingController();
@@ -71,10 +74,9 @@ class _RegisterMainRoleAudition extends State<RegisterMainRoleAudition>
 
     var now = new DateTime.now();
     var formatter = new DateFormat('yyyy-MM-dd');
-    String formattedDate = formatter.format(now);
 
-    _startDate = formattedDate;
-    _endDate = formattedDate;
+    _startDate = formatter.format(now);
+    _endDate = formatter.format(DateTime(now.year + 1, now.month, now.day));
 
     _languages.add(new CheckboxItemModel('영어', false));
     _languages.add(new CheckboxItemModel('중국어', false));
@@ -153,45 +155,6 @@ class _RegisterMainRoleAudition extends State<RegisterMainRoleAudition>
         _tabIndex = _tabController.index;
       });
     }
-  }
-
-  void showSnackBar(context, String value) {
-    _scaffoldKey.currentState
-        .showSnackBar(new SnackBar(content: new Text(value)));
-  }
-
-  // DatePicker(회원가입 시 생년월일 선택하는 컴포넌트)
-  void _showDatePicker(int type) {
-    DatePicker.showDatePicker(context,
-        showTitleActions: true,
-        minTime: DateTime.now(),
-        maxTime: DateTime(2031, 1, 1),
-        theme: DatePickerTheme(
-            headerColor: CustomColors.colorWhite,
-            backgroundColor: CustomColors.colorWhite,
-            itemStyle: TextStyle(
-                color: CustomColors.colorFontGrey,
-                fontWeight: FontWeight.bold,
-                fontSize: 15),
-            doneStyle:
-                TextStyle(color: CustomColors.colorFontGrey, fontSize: 13),
-            cancelStyle:
-                TextStyle(color: CustomColors.colorFontGrey, fontSize: 13)),
-        onChanged: (date) {}, onConfirm: (date) {
-      setState(() {
-        var _yy = date.year.toString();
-        var _mm = date.month.toString().padLeft(2, '0');
-        var _dd = date.day.toString().padLeft(2, '0');
-
-        var _selectDate = _yy + '-' + _mm + '-' + _dd;
-
-        if (type == 0) {
-          _startDate = _selectDate;
-        } else {
-          _endDate = _selectDate;
-        }
-      });
-    }, currentTime: DateTime.now(), locale: LocaleType.ko);
   }
 
   Widget tabSpecialityMusic() {
@@ -404,7 +367,25 @@ class _RegisterMainRoleAudition extends State<RegisterMainRoleAudition>
                                             Expanded(
                                                 child: GestureDetector(
                                               onTap: () {
-                                                _showDatePicker(0);
+                                                showDatePickerForDday(context,
+                                                    (date) {
+                                                  setState(() {
+                                                    var _birthY =
+                                                        date.year.toString();
+                                                    var _birthM = date.month
+                                                        .toString()
+                                                        .padLeft(2, '0');
+                                                    var _birthD = date.day
+                                                        .toString()
+                                                        .padLeft(2, '0');
+
+                                                    _startDate = _birthY +
+                                                        '-' +
+                                                        _birthM +
+                                                        '-' +
+                                                        _birthD;
+                                                  });
+                                                });
                                               },
                                               child: Container(
                                                   height: 48,
@@ -448,7 +429,25 @@ class _RegisterMainRoleAudition extends State<RegisterMainRoleAudition>
                                             Expanded(
                                                 child: GestureDetector(
                                               onTap: () {
-                                                _showDatePicker(1);
+                                                showDatePickerForDday(context,
+                                                    (date) {
+                                                  setState(() {
+                                                    var _birthY =
+                                                        date.year.toString();
+                                                    var _birthM = date.month
+                                                        .toString()
+                                                        .padLeft(2, '0');
+                                                    var _birthD = date.day
+                                                        .toString()
+                                                        .padLeft(2, '0');
+
+                                                    _endDate = _birthY +
+                                                        '-' +
+                                                        _birthM +
+                                                        '-' +
+                                                        _birthD;
+                                                  });
+                                                });
                                               },
                                               child: Container(
                                                   height: 48,
@@ -1508,38 +1507,33 @@ class _RegisterMainRoleAudition extends State<RegisterMainRoleAudition>
     );
   }
 
-  //========================================================================================================================
-  // 입력 데이터 유효성 검사
-  //========================================================================================================================
+  /*
+  * 입력 데이터 유효성 검사
+  * */
   bool checkValidate(BuildContext context) {
     if (StringUtils.isEmpty(_txtFieldCastingName.text)) {
-      Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text('배역 이름을 입력해 주세요.')));
+      showSnackBar(context, '이용약관에 동의해 주세요.');
       return false;
     }
 
     if (StringUtils.isEmpty(_txtFieldCastingCnt.text)) {
-      Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text('배역 수를 입력해 주세요.')));
+      showSnackBar(context, '배역 수를 입력해 주세요.');
       return false;
     }
 
     if (StringUtils.isEmpty(_txtFieldCastingIntroduce.text)) {
-      Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text('캐릭터 소개글을 입력해 주세요.')));
+      showSnackBar(context, '캐릭터 소개글을 입력해 주세요.');
       return false;
     }
 
     if (StringUtils.isEmpty(_txtFieldCastingUniqueness.text)) {
-      Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text('특이사항을 입력해 주세요.')));
+      showSnackBar(context, '특이사항을 입력해 주세요.');
       return false;
     }
 
     if (_isPayLimit == 0) {
       if (StringUtils.isEmpty(_txtFieldCastingPay.text)) {
-        Scaffold.of(context)
-            .showSnackBar(SnackBar(content: Text('페이를 입력해 주세요.')));
+        showSnackBar(context, '페이를 입력해 주세요.');
         return false;
       }
     }
@@ -1569,28 +1563,19 @@ class _RegisterMainRoleAudition extends State<RegisterMainRoleAudition>
     castingTargetDatas[APIConstants.casting_count] = _txtFieldCastingCnt.text;
     castingTargetDatas[APIConstants.sex_type] =
         (_userGender == 0) ? "남자" : ((_userGender == 1) ? "여자" : "무관");
-    if (_isAgeLimit == 1) {
-      /* castingTargetDatas[APIConstants.casting_min_age] = null;
-      castingTargetDatas[APIConstants.casting_max_age] = null;*/
-    } else {
+    if (_isAgeLimit != 1) {
       castingTargetDatas[APIConstants.casting_min_age] =
           _ageRangeValues.start.toInt();
       castingTargetDatas[APIConstants.casting_max_age] =
           _ageRangeValues.end.toInt();
     }
-    if (_isHeightLimit == 1) {
-      /*castingTargetDatas[APIConstants.casting_min_tall] = null;
-      castingTargetDatas[APIConstants.casting_max_tall] = null;*/
-    } else {
+    if (_isHeightLimit != 1) {
       castingTargetDatas[APIConstants.casting_min_tall] =
           _heightRangeValues.start.toInt();
       castingTargetDatas[APIConstants.casting_max_tall] =
           _heightRangeValues.end.toInt();
     }
-    if (_isWeightLimit == 1) {
-      /*castingTargetDatas[APIConstants.casting_min_weight] = null;
-      castingTargetDatas[APIConstants.casting_max_weight] = null;*/
-    } else {
+    if (_isWeightLimit != 1) {
       castingTargetDatas[APIConstants.casting_min_weight] =
           _weightRangeValues.start.toInt();
       castingTargetDatas[APIConstants.casting_max_weight] =
@@ -1602,9 +1587,7 @@ class _RegisterMainRoleAudition extends State<RegisterMainRoleAudition>
         _txtFieldCastingIntroduce.text;
     castingTargetDatas[APIConstants.casting_uniqueness] =
         _txtFieldCastingUniqueness.text;
-    if (_isPayLimit == 1) {
-      //castingTargetDatas[APIConstants.casting_pay] = null;
-    } else {
+    if (_isPayLimit != 1) {
       castingTargetDatas[APIConstants.casting_pay] = _txtFieldCastingPay.text;
     }
 

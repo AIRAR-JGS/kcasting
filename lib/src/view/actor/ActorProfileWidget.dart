@@ -120,30 +120,6 @@ class ActorProfileWidget {
               Expanded(
                   flex: 3,
                   child: Container(
-                      child:
-                          Text('등급', style: CustomStyles.normal14TextStyle()))),
-              Expanded(
-                  flex: 5,
-                  child: Container(
-                      child: Text(
-                          StringUtils.checkedString(
-                              actorProfile[APIConstants.actor_level]),
-                          style: CustomStyles.normal14TextStyle()))),
-              Expanded(
-                  flex: 2,
-                  child: Container(
-                      child: CustomStyles.underline14TextButtonStyle(
-                          '등급확인서', () {})))
-            ],
-          )),
-      Container(
-          padding: EdgeInsets.only(left: 15, right: 15),
-          margin: EdgeInsets.only(top: 10.0),
-          child: Row(
-            children: [
-              Expanded(
-                  flex: 3,
-                  child: Container(
                       child: Text('드라마페이',
                           style: CustomStyles.normal14TextStyle()))),
               Expanded(

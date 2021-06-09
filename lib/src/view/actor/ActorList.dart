@@ -60,7 +60,7 @@ class _ActorList extends State<ActorList> with BaseUtilMixin {
   ScrollController _scrollController;
 
   int _total = 0;
-  int _limit = 20;
+  int _limit = 6;
 
   List<dynamic> _actorList = [];
   bool _isLoading = true;
@@ -636,6 +636,7 @@ class _ActorList extends State<ActorList> with BaseUtilMixin {
                               EdgeInsets.only(left: 16, right: 16, bottom: 50),
                           physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
+                          controller: _scrollController,
                           crossAxisCount: 2,
                           crossAxisSpacing: 10,
                           mainAxisSpacing: 5,

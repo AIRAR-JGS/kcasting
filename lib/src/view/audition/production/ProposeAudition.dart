@@ -1,3 +1,4 @@
+import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/model/CastingItemModel.dart';
@@ -10,6 +11,9 @@ import 'package:flutter/material.dart';
 
 import '../../../../KCastingAppData.dart';
 
+/*
+* 오디션 제안하기
+* */
 class ProposeAudition extends StatefulWidget {
   final int actorSeq;
   final String actorName;
@@ -23,7 +27,7 @@ class ProposeAudition extends StatefulWidget {
   _ProposeAudition createState() => _ProposeAudition();
 }
 
-class _ProposeAudition extends State<ProposeAudition> {
+class _ProposeAudition extends State<ProposeAudition> with BaseUtilMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   int _actorSeq;
@@ -60,7 +64,7 @@ class _ProposeAudition extends State<ProposeAudition> {
     if (_total == 0 || _auditionList.length >= _total) return;
 
     if (_scrollController.offset >=
-        _scrollController.position.maxScrollExtent &&
+            _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
       setState(() {
         print("comes to bottom $_isLoading");
@@ -79,11 +83,6 @@ class _ProposeAudition extends State<ProposeAudition> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
-  }
-
-  void showSnackBar(context, String value) {
-    _scaffoldKey.currentState
-        .showSnackBar(new SnackBar(content: new Text(value)));
   }
 
   /*
@@ -148,301 +147,243 @@ class _ProposeAudition extends State<ProposeAudition> {
             body: Builder(builder: (context) {
               return Container(
                   child: Column(children: [
-                    Expanded(
-                      flex: 1,
-                      child: SingleChildScrollView(
+                Expanded(
+                    flex: 1,
+                    child: SingleChildScrollView(
                         child: Container(
-                          padding: EdgeInsets.only(top: 20, bottom: 30),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                margin: EdgeInsets.only(
-                                    top: 10, bottom: 10, left: 15, right: 15),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Expanded(
+                            padding: EdgeInsets.only(top: 20, bottom: 30),
+                            child: Column(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                        top: 10,
+                                        bottom: 10,
+                                        left: 15,
+                                        right: 15),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Expanded(
+                                          flex: 0,
+                                          child: Container(
+                                              margin: EdgeInsets.only(right: 5),
+                                              alignment: Alignment.topCenter,
+                                              child: _actorImgUrl != null
+                                                  ? ClipOval(
+                                                      child: Image.network(
+                                                          _actorImgUrl,
+                                                          fit: BoxFit.cover,
+                                                          width: 64.0,
+                                                          height: 64.0),
+                                                    )
+                                                  : Icon(
+                                                      Icons.account_circle,
+                                                      color: CustomColors
+                                                          .colorFontLightGrey,
+                                                      size: 64,
+                                                    )),
+                                        ),
+                                        Expanded(
+                                            flex: 1,
+                                            child: Text(
+                                              StringUtils.checkedString(
+                                                  _actorName),
+                                              style: CustomStyles
+                                                  .normal16TextStyle(),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ))
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                      margin: EdgeInsets.only(
+                                          top: 15, left: 15, right: 15),
+                                      alignment: Alignment.centerLeft,
+                                      child: Text('제안 내용',
+                                          style: CustomStyles
+                                              .normal14TextStyle())),
+                                  Container(
+                                      margin: EdgeInsets.only(
+                                          top: 10, left: 15, right: 15),
+                                      padding: EdgeInsets.all(15),
+                                      decoration: BoxDecoration(
+                                          borderRadius: CustomStyles
+                                              .circle7BorderRadius(),
+                                          border: Border.all(
+                                              width: 1,
+                                              color: CustomColors
+                                                  .colorFontLightGrey)),
+                                      child: TextField(
+                                        maxLines: 10,
+                                        controller: _txtFieldContent,
+                                        decoration: InputDecoration(
+                                            isDense: true,
+                                            contentPadding:
+                                                EdgeInsets.symmetric(
+                                                    vertical: 0, horizontal: 0),
+                                            hintText: "오디션 제안을 해보세요.",
+                                            hintStyle:
+                                                CustomStyles.light14TextStyle(),
+                                            border: InputBorder.none),
+                                      )),
+                                  Container(
+                                      margin: EdgeInsets.only(
+                                          top: 20,
+                                          bottom: 10,
+                                          left: 15,
+                                          right: 15),
+                                      alignment: Alignment.centerLeft,
+                                      child: Text('제안할 캐스팅',
+                                          style: CustomStyles
+                                              .normal14TextStyle())),
+                                  Container(
+                                    margin: EdgeInsets.only(top: 10),
+                                    child: Divider(
+                                      height: 0.1,
+                                      color: CustomColors.colorFontLightGrey,
+                                    ),
+                                  ),
+                                  Expanded(
                                       flex: 0,
                                       child: Container(
-                                          margin: EdgeInsets.only(right: 5),
-                                          alignment: Alignment.topCenter,
-                                          child: _actorImgUrl != null
-                                              ? ClipOval(
-                                            child: Image.network(_actorImgUrl,
-                                                fit: BoxFit.cover,
-                                                width: 64.0,
-                                                height: 64.0),
-                                          )
-                                              : Icon(
-                                            Icons.account_circle,
-                                            color: CustomColors
-                                                .colorFontLightGrey,
-                                            size: 64,
-                                          )),
-                                    ),
-                                    Expanded(
-                                        flex: 1,
-                                        child: Text(
-                                          StringUtils.checkedString(_actorName),
-                                          style: CustomStyles
-                                              .normal16TextStyle(),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ))
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                  margin:
-                                  EdgeInsets.only(top: 15, left: 15, right: 15),
-                                  alignment: Alignment.centerLeft,
-                                  child: Text('제안 내용',
-                                      style: CustomStyles.normal14TextStyle())),
-                              Container(
-                                  margin:
-                                  EdgeInsets.only(top: 10, left: 15, right: 15),
-                                  padding: EdgeInsets.all(15),
-                                  decoration: BoxDecoration(
-                                      borderRadius:
-                                      CustomStyles.circle7BorderRadius(),
-                                      border: Border.all(
-                                          width: 1,
-                                          color: CustomColors
-                                              .colorFontLightGrey)),
-                                  child: TextField(
-                                    maxLines: 10,
-                                    controller: _txtFieldContent,
-                                    decoration: InputDecoration(
-                                        isDense: true,
-                                        contentPadding: EdgeInsets.symmetric(
-                                            vertical: 0, horizontal: 0),
-                                        hintText: "오디션 제안을 해보세요.",
-                                        hintStyle: CustomStyles
-                                            .light14TextStyle(),
-                                        border: InputBorder.none),
-                                  )),
-                              Container(
-                                  margin: EdgeInsets.only(
-                                      top: 20, bottom: 10, left: 15, right: 15),
-                                  alignment: Alignment.centerLeft,
-                                  child: Text('제안할 캐스팅',
-                                      style: CustomStyles.normal14TextStyle())),
-                              Container(
-                                margin: EdgeInsets.only(top: 10),
-                                child: Divider(
-                                  height: 0.1,
-                                  color: CustomColors.colorFontLightGrey,
-                                ),
-                              ),
-                              Expanded(
-                                  flex: 0,
-                                  child: Container(
-                                      alignment: Alignment.center,
-                                      child: Column(
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                          children: [
-                                            Wrap(children: [
-                                              ListView.separated(
-                                                  physics:
-                                                  NeverScrollableScrollPhysics(),
-                                                  shrinkWrap: true,
-                                                  // Need to display a loading tile if more items are coming
-                                                  controller: _scrollController,
-                                                  itemCount: _selectableAuditionList
-                                                      .length,
-                                                  itemBuilder:
-                                                      (BuildContext context,
-                                                      int index) {
-                                                    return Container(
-                                                        margin: EdgeInsets.only(
-                                                            bottom: 10,
-                                                            left: 10,
-                                                            right: 10),
-                                                        alignment: Alignment
-                                                            .center,
-                                                        child: GestureDetector(
-                                                            onTap: () {
-                                                              /*Navigator.push(
+                                          alignment: Alignment.center,
+                                          child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Wrap(children: [
+                                                  ListView.separated(
+                                                      physics:
+                                                          NeverScrollableScrollPhysics(),
+                                                      shrinkWrap: true,
+                                                      // Need to display a loading tile if more items are coming
+                                                      controller:
+                                                          _scrollController,
+                                                      itemCount:
+                                                          _selectableAuditionList
+                                                              .length,
+                                                      itemBuilder:
+                                                          (BuildContext context,
+                                                              int index) {
+                                                        return Container(
+                                                            margin:
+                                                                EdgeInsets.only(
+                                                                    bottom: 10,
+                                                                    left: 10,
+                                                                    right: 10),
+                                                            alignment: Alignment
+                                                                .center,
+                                                            child: GestureDetector(
+                                                                onTap: () {
+                                                                  /*Navigator.push(
                                                     context,
                                                     MaterialPageRoute(
                                                         builder: (context) => MyApplyDetail()),
                                                   );*/
-                                                            },
-                                                            child: Container(
-                                                                alignment: Alignment
-                                                                    .center,
-                                                                padding:
-                                                                EdgeInsets.only(
-                                                                    left: 15,
-                                                                    right: 15,
-                                                                    top: 10),
-                                                                child: Row(
-                                                                    mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .start,
-                                                                    children: [
+                                                                },
+                                                                child: Container(
+                                                                    alignment: Alignment.center,
+                                                                    padding: EdgeInsets.only(left: 15, right: 15, top: 10),
+                                                                    child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
                                                                       Expanded(
-                                                                          flex: 5,
+                                                                          flex:
+                                                                              5,
                                                                           child: Column(
-                                                                              crossAxisAlignment:
-                                                                              CrossAxisAlignment
-                                                                                  .start,
+                                                                              crossAxisAlignment: CrossAxisAlignment.start,
                                                                               children: [
-                                                                                Container(
-                                                                                    margin: EdgeInsets
-                                                                                        .only(
-                                                                                        bottom: 5),
-                                                                                    child: Text(
-                                                                                        StringUtils
-                                                                                            .checkedString(
-                                                                                            _selectableAuditionList[index]
-                                                                                                .projectName),
-                                                                                        style: CustomStyles
-                                                                                            .dark10TextStyle())),
-                                                                                Container(
-                                                                                    margin: EdgeInsets
-                                                                                        .only(
-                                                                                        bottom: 5),
-                                                                                    child: Text(
-                                                                                        StringUtils
-                                                                                            .checkedString(
-                                                                                            _selectableAuditionList[index]
-                                                                                                .castingName),
-                                                                                        style: CustomStyles
-                                                                                            .dark20TextStyle()))
+                                                                                Container(margin: EdgeInsets.only(bottom: 5), child: Text(StringUtils.checkedString(_selectableAuditionList[index].projectName), style: CustomStyles.dark10TextStyle())),
+                                                                                Container(margin: EdgeInsets.only(bottom: 5), child: Text(StringUtils.checkedString(_selectableAuditionList[index].castingName), style: CustomStyles.dark20TextStyle()))
                                                                               ])),
                                                                       Expanded(
-                                                                          flex: 0,
+                                                                          flex:
+                                                                              0,
                                                                           child:
-                                                                          Visibility(
-                                                                            child: Column(
-                                                                                crossAxisAlignment:
-                                                                                CrossAxisAlignment
-                                                                                    .end,
-                                                                                children: [
-                                                                                  Container(
-                                                                                    child: Text(
-                                                                                      '이미 제안했던\n공고입니다.',
-                                                                                      style: CustomStyles
-                                                                                          .dark14TextStyle(),
-                                                                                      textAlign: TextAlign
-                                                                                          .center,
-                                                                                    ),
-                                                                                  )
-                                                                                ]),
-                                                                            visible: _selectableAuditionList[index]
-                                                                                .isAlreadyProposal ==
-                                                                                0
+                                                                              Visibility(
+                                                                            child:
+                                                                                Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+                                                                              Container(
+                                                                                child: Text(
+                                                                                  '이미 제안했던\n공고입니다.',
+                                                                                  style: CustomStyles.dark14TextStyle(),
+                                                                                  textAlign: TextAlign.center,
+                                                                                ),
+                                                                              )
+                                                                            ]),
+                                                                            visible: _selectableAuditionList[index].isAlreadyProposal == 0
                                                                                 ? false
                                                                                 : true,
                                                                           )),
                                                                       Expanded(
-                                                                          flex: 0,
+                                                                          flex:
+                                                                              0,
                                                                           child:
-                                                                          Visibility(
+                                                                              Visibility(
                                                                             child: Container(
-                                                                                margin: EdgeInsets
-                                                                                    .all(
-                                                                                    10),
-                                                                                alignment: Alignment
-                                                                                    .topRight,
+                                                                                margin: EdgeInsets.all(10),
+                                                                                alignment: Alignment.topRight,
                                                                                 child: InkWell(
                                                                                   onTap: () {
                                                                                     setState(() {
-                                                                                      if (_selectableAuditionList[index]
-                                                                                          .isSelected ==
-                                                                                          false) {
-                                                                                        for (int i = 0; i <
-                                                                                            _selectableAuditionList
-                                                                                                .length; i++) {
-                                                                                          if (i !=
-                                                                                              index) {
-                                                                                            _selectableAuditionList[i]
-                                                                                                .isSelected =
-                                                                                            false;
+                                                                                      if (_selectableAuditionList[index].isSelected == false) {
+                                                                                        for (int i = 0; i < _selectableAuditionList.length; i++) {
+                                                                                          if (i != index) {
+                                                                                            _selectableAuditionList[i].isSelected = false;
                                                                                           }
                                                                                         }
                                                                                       }
 
-                                                                                      _selectableAuditionList[index]
-                                                                                          .isSelected =
-                                                                                      !_selectableAuditionList[index]
-                                                                                          .isSelected;
+                                                                                      _selectableAuditionList[index].isSelected = !_selectableAuditionList[index].isSelected;
                                                                                     });
                                                                                   },
                                                                                   child: Container(
-                                                                                    decoration: BoxDecoration(
-                                                                                        shape: BoxShape
-                                                                                            .circle,
-                                                                                        color: (_selectableAuditionList[index]
-                                                                                            .isSelected
-                                                                                            ? CustomColors
-                                                                                            .colorAccent
-                                                                                            : CustomColors
-                                                                                            .colorFontLightGrey)),
+                                                                                    decoration: BoxDecoration(shape: BoxShape.circle, color: (_selectableAuditionList[index].isSelected ? CustomColors.colorAccent : CustomColors.colorFontLightGrey)),
                                                                                     child: Padding(
-                                                                                      padding: const EdgeInsets
-                                                                                          .all(
-                                                                                          5.0),
-                                                                                      child: _selectableAuditionList[index]
-                                                                                          .isSelected
+                                                                                      padding: const EdgeInsets.all(5.0),
+                                                                                      child: _selectableAuditionList[index].isSelected
                                                                                           ? Icon(
-                                                                                        Icons
-                                                                                            .check,
-                                                                                        size: 15.0,
-                                                                                        color: CustomColors
-                                                                                            .colorWhite,
-                                                                                      )
+                                                                                              Icons.check,
+                                                                                              size: 15.0,
+                                                                                              color: CustomColors.colorWhite,
+                                                                                            )
                                                                                           : Icon(
-                                                                                        Icons
-                                                                                            .check_box_outline_blank,
-                                                                                        size: 15.0,
-                                                                                        color: CustomColors
-                                                                                            .colorFontLightGrey,
-                                                                                      ),
+                                                                                              Icons.check_box_outline_blank,
+                                                                                              size: 15.0,
+                                                                                              color: CustomColors.colorFontLightGrey,
+                                                                                            ),
                                                                                     ),
                                                                                   ),
                                                                                 )),
-                                                                            visible: _selectableAuditionList[index]
-                                                                                .isAlreadyProposal ==
-                                                                                1
+                                                                            visible: _selectableAuditionList[index].isAlreadyProposal == 1
                                                                                 ? false
                                                                                 : true,
                                                                           )),
                                                                     ]))));
-                                                  },
-                                                  separatorBuilder:
-                                                      (context, index) {
-                                                    return Divider(
-                                                      height: 1,
-                                                      color: CustomColors
-                                                          .colorFontLightGrey,
-                                                    );
-                                                  })
-                                            ])
-                                          ]))),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    Container(
-                        width: MediaQuery
-                            .of(context)
-                            .size
-                            .width,
-                        height: 55,
-                        child: CustomStyles.blueBGSquareButtonStyle(
-                            '제안 보내기', () {
-                          if (checkValidate(context)) {
-                            requestAddFilmographyApi(context);
-                          }
-                        }))
-                  ]));
+                                                      },
+                                                      separatorBuilder:
+                                                          (context, index) {
+                                                        return Divider(
+                                                          height: 1,
+                                                          color: CustomColors
+                                                              .colorFontLightGrey,
+                                                        );
+                                                      })
+                                                ])
+                                              ])))
+                                ])))),
+                Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 55,
+                    child: CustomStyles.blueBGSquareButtonStyle('제안 보내기', () {
+                      if (checkValidate(context)) {
+                        requestAddFilmographyApi(context);
+                      }
+                    }))
+              ]));
             })));
   }
 
@@ -488,7 +429,7 @@ class _ProposeAudition extends State<ProposeAudition> {
     targetDatas[APIConstants.actor_seq] = _actorSeq;
     targetDatas[APIConstants.casting_seq] = castingSeq;
     targetDatas[APIConstants.production_seq] =
-    KCastingAppData().myInfo[APIConstants.seq];
+        KCastingAppData().myInfo[APIConstants.seq];
     targetDatas[APIConstants.audition_prps_contents] = _txtFieldContent.text;
     targetDatas[APIConstants.state_type] = "대기";
 
@@ -504,12 +445,8 @@ class _ProposeAudition extends State<ProposeAudition> {
       } else {
         if (value[APIConstants.resultVal]) {
           // 오디션 제안하기 성공
-          _scaffoldKey.currentState
-              .showSnackBar(new SnackBar(content: new Text('오디션 제안 완료!!')))
-              .closed
-              .then((value) =>
-              Navigator.pop(context)
-          );
+          showSnackBar(context, '오디션 제안 완료');
+          Navigator.pop(context);
         } else {
           // 오디션 제안하기 실패
           showSnackBar(context, APIConstants.error_msg_try_again);

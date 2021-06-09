@@ -1,3 +1,4 @@
+import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
@@ -11,13 +12,16 @@ import 'package:flutter/widgets.dart';
 import '../../../../KCastingAppData.dart';
 import 'ProposedAuditionDetail.dart';
 
+/*
+* 제안한 오디션
+* */
 class ProposedAuditionList extends StatefulWidget {
   @override
   _ProposedAuditionList createState() => _ProposedAuditionList();
 }
 
 class _ProposedAuditionList extends State<ProposedAuditionList>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, BaseUtilMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   TabController _tabController;
@@ -79,14 +83,9 @@ class _ProposedAuditionList extends State<ProposedAuditionList>
     super.dispose();
   }
 
-  void showSnackBar(context, String value) {
-    _scaffoldKey.currentState
-        .showSnackBar(new SnackBar(content: new Text(value)));
-  }
-
-  //========================================================================================================================
-  // 오디션 제안 목록 조회
-  //========================================================================================================================
+  /*
+  * 오디션 제안 목록 조회
+  * */
   void requestProjectListApi(BuildContext context) {
     final dio = Dio();
 
@@ -132,134 +131,130 @@ class _ProposedAuditionList extends State<ProposedAuditionList>
 
   Widget tabItem() {
     return Container(
-        child: Column(
-      children: [
-        Wrap(
-          children: [
-            ListView.separated(
-              physics: NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              // Need to display a loading tile if more items are coming
-              controller: _scrollController,
-              itemCount: _proposalList.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Container(
-                    alignment: Alignment.center,
-                    child: GestureDetector(
+        child: Column(children: [
+      Wrap(children: [
+        ListView.separated(
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            controller: _scrollController,
+            itemCount: _proposalList.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                  alignment: Alignment.center,
+                  child: GestureDetector(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ProposedAuditionDetail(
-                                    scoutData: _proposalList[index],
-                                  )),
-                        );
+                        addView(
+                            context,
+                            ProposedAuditionDetail(
+                                scoutData: _proposalList[index]));
                       },
                       child: Container(
                           alignment: Alignment.center,
                           padding: EdgeInsets.only(
                               left: 16, right: 16, top: 10, bottom: 10),
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                margin: EdgeInsets.only(top: 10, bottom: 15),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      flex: 0,
-                                      child: Container(
-                                          margin: EdgeInsets.only(right: 5),
-                                          alignment: Alignment.topCenter,
-                                          child: (_proposalList[index][
-                                                      APIConstants
-                                                          .main_img_url] !=
-                                                  null
-                                              ? ClipOval(
-                                                  child: Image.network(
-                                                      _proposalList[index][
-                                                          APIConstants
-                                                              .main_img_url],
-                                                      fit: BoxFit.cover,
-                                                      width: 30.0,
-                                                      height: 30.0),
-                                                )
-                                              : Icon(
-                                                  Icons.account_circle,
-                                                  color: CustomColors
-                                                      .colorFontLightGrey,
-                                                  size: 30,
-                                                ))),
-                                    ),
-                                    Expanded(
-                                        flex: 1,
-                                        child: Column(
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Expanded(
-                                                  flex: 1,
-                                                  child: Text(
-                                                    StringUtils.checkedString(
-                                                        _proposalList[index][
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                    margin:
+                                        EdgeInsets.only(top: 10, bottom: 15),
+                                    child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Expanded(
+                                            flex: 0,
+                                            child: Container(
+                                                margin:
+                                                    EdgeInsets.only(right: 5),
+                                                alignment: Alignment.topCenter,
+                                                child: (_proposalList[index][
                                                             APIConstants
-                                                                .actor_name]),
-                                                    style: CustomStyles
-                                                        .normal16TextStyle(),
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
+                                                                .main_img_url] !=
+                                                        null
+                                                    ? ClipOval(
+                                                        child: Image.network(
+                                                            _proposalList[index]
+                                                                [APIConstants
+                                                                    .main_img_url],
+                                                            fit: BoxFit.cover,
+                                                            width: 30.0,
+                                                            height: 30.0),
+                                                      )
+                                                    : Icon(
+                                                        Icons.account_circle,
+                                                        color: CustomColors
+                                                            .colorFontLightGrey,
+                                                        size: 30,
+                                                      ))),
+                                          ),
+                                          Expanded(
+                                              flex: 1,
+                                              child: Column(children: [
+                                                Row(
+                                                  children: [
+                                                    Expanded(
+                                                      flex: 1,
+                                                      child: Text(
+                                                        StringUtils.checkedString(
+                                                            _proposalList[index]
+                                                                [APIConstants
+                                                                    .actor_name]),
+                                                        style: CustomStyles
+                                                            .normal16TextStyle(),
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 0,
+                                                      child: Text(
+                                                        StringUtils.checkedString(
+                                                            _proposalList[index]
+                                                                [APIConstants
+                                                                    .audition_prps_state_type]),
+                                                        style: CustomStyles
+                                                            .normal16TextStyle(),
+                                                      ),
+                                                    )
+                                                  ],
                                                 ),
-                                                Expanded(
-                                                  flex: 0,
-                                                  child: Text(
-                                                    StringUtils.checkedString(
-                                                        _proposalList[index][
-                                                            APIConstants
-                                                                .audition_prps_state_type]),
-                                                    style: CustomStyles
-                                                        .normal16TextStyle(),
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                            Container(
-                                              margin: EdgeInsets.only(top: 10),
-                                              alignment: Alignment.centerLeft,
-                                              child: Text(
-                                                StringUtils.checkedString(
-                                                    _proposalList[index][
-                                                        APIConstants
-                                                            .audition_prps_contents]),
-                                                style: CustomStyles
-                                                    .normal14TextStyle(),
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            )
-                                          ],
-                                        ))
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                  padding: EdgeInsets.only(left: 10, right: 10),
-                                  margin: EdgeInsets.only(bottom: 10),
-                                  alignment: Alignment.centerLeft,
-                                  width: MediaQuery.of(context).size.width,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                      borderRadius:
-                                          CustomStyles.circle7BorderRadius(),
-                                      border: Border.all(
-                                          width: 0.5,
-                                          color: CustomColors.colorBgGrey)),
-                                  child: Row(
-                                    children: [
+                                                Container(
+                                                    margin: EdgeInsets.only(
+                                                        top: 10),
+                                                    alignment:
+                                                        Alignment.centerLeft,
+                                                    child: Text(
+                                                      StringUtils.checkedString(
+                                                          _proposalList[index][
+                                                              APIConstants
+                                                                  .audition_prps_contents]),
+                                                      style: CustomStyles
+                                                          .normal14TextStyle(),
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ))
+                                              ]))
+                                        ])),
+                                Container(
+                                    padding:
+                                        EdgeInsets.only(left: 10, right: 10),
+                                    margin: EdgeInsets.only(bottom: 10),
+                                    alignment: Alignment.centerLeft,
+                                    width: MediaQuery.of(context).size.width,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            CustomStyles.circle7BorderRadius(),
+                                        border: Border.all(
+                                            width: 0.5,
+                                            color: CustomColors.colorBgGrey)),
+                                    child: Row(children: [
                                       Expanded(
                                         child: Text(
                                             StringUtils.checkedString(
@@ -269,36 +264,28 @@ class _ProposedAuditionList extends State<ProposedAuditionList>
                                                 CustomStyles.dark12TextStyle()),
                                       ),
                                       Expanded(
-                                        flex: 0,
-                                        child: Text(
-                                            StringUtils.checkedString(
-                                                _proposalList[index][
-                                                    APIConstants.casting_name]),
-                                            style: CustomStyles
-                                                .normal14TextStyle()),
-                                      ),
-                                    ],
-                                  ))
-                            ],
-                          )),
-                    ));
-              },
-              separatorBuilder: (context, index) {
-                return Divider(
-                  height: 0.1,
-                  color: CustomColors.colorFontLightGrey,
-                );
-              },
-            )
-          ],
-        ),
-      ],
-    ));
+                                          flex: 0,
+                                          child: Text(
+                                              StringUtils.checkedString(
+                                                  _proposalList[index][
+                                                      APIConstants
+                                                          .casting_name]),
+                                              style: CustomStyles
+                                                  .normal14TextStyle()))
+                                    ]))
+                              ]))));
+            },
+            separatorBuilder: (context, index) {
+              return Divider(
+                  height: 0.1, color: CustomColors.colorFontLightGrey);
+            })
+      ])
+    ]));
   }
 
-  //========================================================================================================================
-  // 메인 위젯
-  //========================================================================================================================
+  /*
+  * 메인 위젯
+  * */
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -309,34 +296,27 @@ class _ProposedAuditionList extends State<ProposedAuditionList>
               Navigator.pop(context);
             }),
             body: Container(
-              child: SingleChildScrollView(
-                child: Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(top: 30.0, bottom: 30),
-                        padding: EdgeInsets.only(left: 16, right: 16),
-                        child: Text('제안한 오디션',
-                            style: CustomStyles.normal24TextStyle()),
-                      ),
-                      Expanded(
-                        flex: 0,
-                        child: tabItem(),
-                      ),
-                      Visibility(
-                          child: Container(
-                            alignment: Alignment.center,
-                            margin: EdgeInsets.only(top: 50),
-                            child: Text(
-                              '제안한 오디션이 없습니다.\n배우들에게 오디션 제안을 해보세요!',
+                child: SingleChildScrollView(
+                    child: Container(
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                  Container(
+                      margin: EdgeInsets.only(top: 30.0, bottom: 30),
+                      padding: EdgeInsets.only(left: 16, right: 16),
+                      child: Text('제안한 오디션',
+                          style: CustomStyles.normal24TextStyle())),
+                  Expanded(flex: 0, child: tabItem()),
+                  Visibility(
+                      child: Container(
+                          alignment: Alignment.center,
+                          margin: EdgeInsets.only(top: 50),
+                          child: Text('제안한 오디션이 없습니다.\n배우들에게 오디션 제안을 해보세요!',
                               style: CustomStyles.normal16TextStyle(),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          visible: _proposalList.length > 0 ? false : true),
+                              textAlign: TextAlign.center)),
+                      visible: _proposalList.length > 0 ? false : true),
 
-                      /*Container(
+                  /*Container(
                         width: MediaQuery.of(context).size.width * 0.7,
                         color: CustomColors.colorWhite,
                         child: TabBar(
@@ -370,10 +350,6 @@ class _ProposedAuditionList extends State<ProposedAuditionList>
                           tabItem()
                         ][_tabIndex],
                       ),*/
-                    ],
-                  ),
-                ),
-              ),
-            )));
+                ]))))));
   }
 }

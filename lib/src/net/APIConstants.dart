@@ -39,6 +39,7 @@ class APIConstants {
   static const String SEL_PCT_PAPOKLIST  = "SEL_PCT_PAPOKLIST";  // 오디션 제안 가능 목록 조회
   static const String SEL_PAP_LIST  = "SEL_PAP_LIST";  // 오디션 제안 목록 조회
   static const String SEL_PCT_INGLIST  = "SEL_PCT_INGLIST";  // 캐스팅 진행 현황 조회 : 진행중
+  static const String SEL_PCT_CMPLIST  = "SEL_PCT_CMPLIST";  // 캐스팅 진행 현황 조회 : 계약완료
   static const String SEL_PCT_FINLIST  = "SEL_PCT_FINLIST";  // 캐스팅 진행 현황 조회 : 마감
   static const String SAR_FAD_STATE  = "SAR_FAD_STATE";  // 1차 오디션 진행 현황 조회
   static const String SAR_SAD_STATE  = "SAR_SAD_STATE";  // 2차 오디션 진행 현황 조회
@@ -169,6 +170,7 @@ class APIConstants {
   static const String actorFilmography_seq = "actorFilmography_seq";
   static const String file_image = "file_image";
   static const String file_video = "file_video";
+  static const String isNotPayment  = "isNotPayment";
 
   static const String casting_seq = "casting_seq";
   static const String casting_type = "casting_type";

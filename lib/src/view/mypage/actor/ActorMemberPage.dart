@@ -1,3 +1,4 @@
+import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/KCastingAppData.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
@@ -9,17 +10,21 @@ import 'package:casting_call/src/view/audition/actor/AuditionApplyList.dart';
 import 'package:casting_call/src/view/audition/actor/OfferedAuditionList.dart';
 import 'package:casting_call/src/view/mypage/actor/ActorMemberInfo.dart';
 import 'package:casting_call/src/view/mypage/actor/ActorProfile.dart';
+import 'package:casting_call/src/view/mypage/actor/BookmarkedAuditionList.dart';
 import 'package:casting_call/src/view/user/common/Login.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/*
+* 배우 회원 마이페이지
+* */
 class ActorMemberPage extends StatefulWidget {
   @override
   _ActorMemberPage createState() => _ActorMemberPage();
 }
 
-class _ActorMemberPage extends State<ActorMemberPage> {
+class _ActorMemberPage extends State<ActorMemberPage> with BaseUtilMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   Map<String, dynamic> _stateData = new Map();
@@ -29,11 +34,6 @@ class _ActorMemberPage extends State<ActorMemberPage> {
     super.initState();
 
     requestGetActorState(context);
-  }
-
-  void showSnackBar(context, String value) {
-    _scaffoldKey.currentState
-        .showSnackBar(new SnackBar(content: new Text(value)));
   }
 
   /*
@@ -105,7 +105,8 @@ class _ActorMemberPage extends State<ActorMemberPage> {
                         ))),
           Container(
               margin: EdgeInsets.only(bottom: 15),
-              child: Text(KCastingAppData().myInfo[APIConstants.actor_name],
+              child: Text(StringUtils.checkedString(
+                  KCastingAppData().myInfo[APIConstants.actor_name]),
                   style: CustomStyles.normal32TextStyle())),
           Container(
             margin: EdgeInsets.only(bottom: 20),
@@ -187,7 +188,7 @@ class _ActorMemberPage extends State<ActorMemberPage> {
       '프로필 관리',
       '지원 현황',
       '받은 제안',
-      // '마이 스크랩',
+      '마이 스크랩',
       '개인정보 관리',
       '로그아웃',
       ''
@@ -199,9 +200,9 @@ class _ActorMemberPage extends State<ActorMemberPage> {
             style: CustomStyles.normal16TextStyle()));
   }
 
-  //========================================================================================================================
-  // 메인 위젯
-  //========================================================================================================================
+  /*
+  * 메인 위젯
+  * */
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -221,54 +222,35 @@ class _ActorMemberPage extends State<ActorMemberPage> {
                           // 프로필 관리
                           case 1:
                             // 프로필 관리 페이지 이동
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ActorProfile()),
-                            );
+                            addView(context, ActorProfile());
                             break;
 
                           // 지원현황
                           case 2:
                             // 지원현황 페이지 이동
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => AuditionApplyList()),
-                            );
+                            addView(context, AuditionApplyList());
                             break;
 
                           // 받은 제안
                           case 3:
                             // 받은 제안 페이지 이동
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => OfferedAuditionList()),
-                            );
+                            addView(context, OfferedAuditionList());
                             break;
 
                           // 마이스크랩
-                          /*case 4:
-                        // 마이스크랩 페이지 이동
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => MyScrap()),
-                        );
-                        break;*/
+                          case 4:
+                            // 마이스크랩 페이지 이동
+                            addView(context, BookmarkedAuditionList());
+                            break;
 
                           // 개인정보 관리
-                          case 4:
+                          case 5:
                             // 개인정보 관리 페이지 이동
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ActorMemberInfo()),
-                            );
+                            addView(context, ActorMemberInfo());
                             break;
 
                           // 로그아웃
-                          case 5:
+                          case 6:
                             showDialog(
                               context: context,
                               builder: (BuildContext context) =>
@@ -283,11 +265,7 @@ class _ActorMemberPage extends State<ActorMemberPage> {
                                   prefs.remove(APIConstants.pwd);
 
                                   // 로그인 페이지 이동
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => Login()),
-                                  );
+                                  replaceView(context, Login());
                                 },
                               ),
                             );

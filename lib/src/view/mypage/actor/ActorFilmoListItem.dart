@@ -1,10 +1,13 @@
+import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
 import 'package:flutter/material.dart';
 
-class ActorFilmoListItem extends StatelessWidget {
+/*
+* 배우 필모그래피 목록 아이템 위젯*/
+class ActorFilmoListItem extends StatelessWidget with BaseUtilMixin {
   final int idx;
   final Map<String, dynamic> data;
   final bool isEditMode;
@@ -17,12 +20,7 @@ class ActorFilmoListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-        onTap: () {
-          /*Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => CastingBoardDetail()),
-          );*/
-        },
+        onTap: () {},
         child: Container(
           alignment: Alignment.center,
           padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
@@ -71,10 +69,6 @@ class ActorFilmoListItem extends StatelessWidget {
                   ],
                 ),
               ),
-              /*Expanded(
-                  flex: 0,
-                  child:
-                      CustomStyles.underline14TextButtonStyle('출연확인서', () {})),*/
               Expanded(
                   flex: 0,
                   child: Visibility(

@@ -1,3 +1,4 @@
+import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,8 @@ class AuditionApplyComplete extends StatefulWidget {
   _AuditionApplyComplete createState() => _AuditionApplyComplete();
 }
 
-class _AuditionApplyComplete extends State<AuditionApplyComplete> {
+class _AuditionApplyComplete extends State<AuditionApplyComplete>
+    with BaseUtilMixin {
   @override
   void initState() {
     super.initState();
@@ -49,10 +51,7 @@ class _AuditionApplyComplete extends State<AuditionApplyComplete> {
                           width: MediaQuery.of(context).size.width * 0.4,
                           child: CustomStyles.greyBorderRound7ButtonStyle(
                               '지원현황', () {
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => AuditionApplyList()));
+                            replaceView(context, AuditionApplyList());
                           }))
                     ]))));
   }

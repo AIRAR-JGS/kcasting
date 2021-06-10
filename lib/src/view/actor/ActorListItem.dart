@@ -10,11 +10,28 @@ import 'package:flutter/material.dart';
 /*
 * 배우 목록 아이템 위젯
 * */
-class ActorListItem extends StatelessWidget with BaseUtilMixin {
+class ActorListItem extends StatefulWidget {
   final bool isMan;
   final Map<String, dynamic> data;
 
-  ActorListItem({Key key, this.isMan, this.data}) : super(key: key);
+  const ActorListItem({Key key, this.isMan, this.data}) : super(key: key);
+
+  @override
+  _ActorListItem createState() => _ActorListItem();
+}
+
+class _ActorListItem extends State<ActorListItem>
+    with BaseUtilMixin {
+  bool _isMan;
+  Map<String, dynamic> _data;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _isMan = widget.isMan;
+    _data = widget.data;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +43,9 @@ class ActorListItem extends StatelessWidget with BaseUtilMixin {
                   addView(
                       context,
                       ActorDetail(
-                          seq: data[APIConstants.seq],
+                          seq: _data[APIConstants.seq],
                           actorProfileSeq:
-                              data[APIConstants.actor_profile_seq]));
+                              _data[APIConstants.actor_profile_seq]));
                 },
                 child: Column(children: <Widget>[
                   Container(
@@ -36,11 +53,11 @@ class ActorListItem extends StatelessWidget with BaseUtilMixin {
                           BoxDecoration(color: CustomColors.colorBgGrey),
                       width: (MediaQuery.of(context).size.width / 2),
                       height: (MediaQuery.of(context).size.width / 2),
-                      child: data[APIConstants.main_img_url] != null
+                      child: _data[APIConstants.main_img_url] != null
                           ? ClipRRect(
                               borderRadius: CustomStyles.circle7BorderRadius(),
                               child: CachedNetworkImage(
-                                  imageUrl: data[APIConstants.main_img_url],
+                                  imageUrl: _data[APIConstants.main_img_url],
                                   fit: BoxFit.cover))
                           : null),
                   Container(
@@ -48,8 +65,9 @@ class ActorListItem extends StatelessWidget with BaseUtilMixin {
                       margin: EdgeInsets.only(top: 5),
                       child: Text(
                           StringUtils.checkedString(
-                              data[APIConstants.actor_name]),
+                              _data[APIConstants.actor_name]),
                           style: CustomStyles.dark20TextStyle()))
                 ]))));
   }
+
 }

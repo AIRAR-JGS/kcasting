@@ -7,6 +7,7 @@ import 'package:casting_call/src/view/main/FragmentHome.dart';
 import 'package:casting_call/src/view/main/HomeAppBar.dart';
 import 'package:casting_call/src/view/main/HomeDrawer.dart';
 import 'package:casting_call/src/view/mypage/actor/ActorMemberPage.dart';
+import 'package:casting_call/src/view/mypage/management/AgencyMemberPage.dart';
 import 'package:casting_call/src/view/mypage/production/ProductionMemberPage.dart';
 import 'package:casting_call/src/view/user/common/JoinComplete.dart';
 import 'package:flutter/material.dart';
@@ -68,7 +69,9 @@ class _Home extends State<Home> with BaseUtilMixin {
         return KCastingAppData().myInfo[APIConstants.member_type] ==
                 APIConstants.member_type_actor
             ? ActorMemberPage()
-            : ProductionMemberPage();
+            : KCastingAppData().myInfo[APIConstants.member_type] ==
+            APIConstants.member_type_product
+            ? ProductionMemberPage() : AgencyMemberPage();
     }
   }
 

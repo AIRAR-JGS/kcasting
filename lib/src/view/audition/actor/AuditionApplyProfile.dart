@@ -1,3 +1,4 @@
+import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
@@ -9,6 +10,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags/flutter_tags.dart';
 
+/*
+* 오디션 지원 시 제출한 프로필
+* */
 class AuditionApplyProfile extends StatefulWidget {
   final int applySeq;
   final bool isProduction;
@@ -21,7 +25,7 @@ class AuditionApplyProfile extends StatefulWidget {
 }
 
 class _AuditionApplyProfile extends State<AuditionApplyProfile>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, BaseUtilMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   int _applySeq;
@@ -60,11 +64,6 @@ class _AuditionApplyProfile extends State<AuditionApplyProfile>
         _tabIndex = _tabController.index;
       });
     }
-  }
-
-  void showSnackBar(context, String value) {
-    _scaffoldKey.currentState
-        .showSnackBar(new SnackBar(content: new Text(value)));
   }
 
   /*
@@ -170,9 +169,9 @@ class _AuditionApplyProfile extends State<AuditionApplyProfile>
     });
   }
 
-  //========================================================================================================================
-  // 메인 위젯
-  //========================================================================================================================
+  /*
+  * 메인 위젯
+  * */
   @override
   Widget build(BuildContext context) {
     return Theme(

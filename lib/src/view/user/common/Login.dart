@@ -273,7 +273,7 @@ class _Login extends State<Login> with BaseUtilMixin {
     targetData[APIConstants.actor_seq] =
         KCastingAppData().myInfo[APIConstants.seq];
     targetData[APIConstants.actor_profile_seq] =
-        KCastingAppData().myInfo[APIConstants.actorProfile_seq];
+        KCastingAppData().myInfo[APIConstants.actor_profile_seq];
 
     Map<String, dynamic> params = new Map();
     params[APIConstants.key] = APIConstants.SAR_APR_INFO;

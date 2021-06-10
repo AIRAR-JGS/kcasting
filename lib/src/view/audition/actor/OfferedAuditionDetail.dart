@@ -1,3 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/dialog/DialogAuditionAccept.dart';
@@ -10,6 +12,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+/*
+* 받은 제안 상세
+* */
 class OfferedAuditionDetail extends StatefulWidget {
   final Map<String, dynamic> scoutData;
 
@@ -19,7 +24,8 @@ class OfferedAuditionDetail extends StatefulWidget {
   _OfferedAuditionDetail createState() => _OfferedAuditionDetail();
 }
 
-class _OfferedAuditionDetail extends State<OfferedAuditionDetail> {
+class _OfferedAuditionDetail extends State<OfferedAuditionDetail>
+    with BaseUtilMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   Map<String, dynamic> _scoutData;
@@ -29,11 +35,6 @@ class _OfferedAuditionDetail extends State<OfferedAuditionDetail> {
     super.initState();
 
     _scoutData = widget.scoutData;
-  }
-
-  void showSnackBar(context, String value) {
-    _scaffoldKey.currentState
-        .showSnackBar(new SnackBar(content: new Text(value)));
   }
 
   /*
@@ -84,14 +85,15 @@ class _OfferedAuditionDetail extends State<OfferedAuditionDetail> {
     });
   }
 
-  //========================================================================================================================
-  // 메인 위젯
-  //========================================================================================================================
+  /*
+  * 메인 위젯
+  * */
   @override
   Widget build(BuildContext context) {
     return Theme(
         data: CustomStyles.defaultTheme(),
         child: Scaffold(
+            key: _scaffoldKey,
             appBar: CustomStyles.defaultAppBar('받은 제안', () {
               Navigator.pop(context);
             }),
@@ -116,14 +118,22 @@ class _OfferedAuditionDetail extends State<OfferedAuditionDetail> {
                               Expanded(
                                 flex: 0,
                                 child: Container(
-                                  margin: EdgeInsets.only(right: 5),
-                                  alignment: Alignment.topCenter,
-                                  child: Image.asset(
-                                      'assets/images/btn_mypage.png',
-                                      fit: BoxFit.contain,
-                                      width: 67,
-                                      color: CustomColors.colorBgGrey),
-                                ),
+                                    margin: EdgeInsets.only(right: 5),
+                                    alignment: Alignment.topCenter,
+                                    child: ClipOval(
+                                      child: CachedNetworkImage(
+                                        imageUrl: _scoutData[
+                                            APIConstants.production_img_url],
+                                        errorWidget: (context, url, error) =>
+                                            Image.asset(
+                                                'assets/images/btn_mypage.png',
+                                                fit: BoxFit.contain,
+                                                width: 67,
+                                                color:
+                                                    CustomColors.colorBgGrey),
+                                        height: 67,
+                                      ),
+                                    )),
                               ),
                               Expanded(
                                   flex: 1,

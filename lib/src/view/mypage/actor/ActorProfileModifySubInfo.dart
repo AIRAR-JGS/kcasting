@@ -1,3 +1,4 @@
+import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/KCastingAppData.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
@@ -11,6 +12,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags/flutter_tags.dart';
 
+/*
+* 배우 프로필 수정 - 2
+* */
 class ActorProfileModifySubInfo extends StatefulWidget {
   final Map<String, dynamic> targetData;
 
@@ -21,7 +25,7 @@ class ActorProfileModifySubInfo extends StatefulWidget {
 }
 
 class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, BaseUtilMixin {
   Map<String, dynamic> _targetData;
 
   TabController _tabController;
@@ -387,9 +391,9 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
     );
   }
 
-  //========================================================================================================================
-  // 메인 위젯
-  //========================================================================================================================
+  /*
+  * 메인 위젯
+  * */
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -681,11 +685,8 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
                               height: 55,
                               child: CustomStyles.greyBGSquareButtonStyle('이전',
                                   () {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ActorProfileModifyMainInfo()),
-                                );
+                                replaceView(
+                                    context, ActorProfileModifyMainInfo());
                               }))),
                       Expanded(
                           child: Container(
@@ -704,9 +705,9 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
     );
   }
 
-  //========================================================================================================================
-  // 제작사 회원정보 수정
-  //========================================================================================================================
+  /*
+  * 제작사 회원정보 수정
+  * */
   void requestUpdateApi(BuildContext context) {
     final dio = Dio();
 
@@ -724,8 +725,6 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
 
     if (languageTargetDatas.length > 0) {
       _targetData[APIConstants.languge_target] = languageTargetDatas;
-    } else {
-      //_targetData[APIConstants.languge_target] = null;
     }
 
     List<Map<String, dynamic>> dialectTargetDatas = [];
@@ -741,8 +740,6 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
 
     if (dialectTargetDatas.length > 0) {
       _targetData[APIConstants.dialect_target] = dialectTargetDatas;
-    } else {
-      //_targetData[APIConstants.dialect_target] = null;
     }
 
     List<Map<String, dynamic>> abilityTargetDatas = [];
@@ -789,8 +786,6 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
 
     if (abilityTargetDatas.length > 0) {
       _targetData[APIConstants.ability_target] = abilityTargetDatas;
-    } else {
-      //_targetData[APIConstants.ability_target] = null;
     }
 
     List<Map<String, dynamic>> lookKeyword = [];
@@ -806,8 +801,6 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
 
     if (lookKeyword.length > 0) {
       _targetData[APIConstants.lookKwd_target] = lookKeyword;
-    } else {
-     // _targetData[APIConstants.lookKwd_target] = null;
     }
 
     List<Map<String, dynamic>> castingKeyword = [];
@@ -823,8 +816,6 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
 
     if (castingKeyword.length > 0) {
       _targetData[APIConstants.castingKwd_target] = castingKeyword;
-    } else {
-      //_targetData[APIConstants.castingKwd_target] = null;
     }
 
     Map<String, dynamic> params = new Map();
@@ -848,13 +839,15 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
                   {
                     var _listData = _data[APIConstants.data] as List;
 
-                    if(_listData != null && _listData.length > 0) {
+                    if (_listData != null && _listData.length > 0) {
                       var firstData = _listData[0];
 
-                      if(firstData != null) {
-                        var profileListData = firstData[APIConstants.list] as List;
+                      if (firstData != null) {
+                        var profileListData =
+                            firstData[APIConstants.list] as List;
 
-                        if(profileListData != null && profileListData.length > 0) {
+                        if (profileListData != null &&
+                            profileListData.length > 0) {
                           KCastingAppData().myProfile = profileListData[0];
                         }
                       }
@@ -867,13 +860,14 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
                   {
                     var _listData = _data[APIConstants.data] as List;
 
-                    if(_listData != null && _listData.length > 0) {
+                    if (_listData != null && _listData.length > 0) {
                       var firstData = _listData[0];
 
-                      if(firstData != null) {
-                        var profileListData = firstData[APIConstants.list] as List;
+                      if (firstData != null) {
+                        var profileListData =
+                            firstData[APIConstants.list] as List;
 
-                        if(profileListData != null) {
+                        if (profileListData != null) {
                           KCastingAppData().myEducation = profileListData;
                         }
                       }
@@ -886,13 +880,14 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
                   {
                     var _listData = _data[APIConstants.data] as List;
 
-                    if(_listData != null && _listData.length > 0) {
+                    if (_listData != null && _listData.length > 0) {
                       var firstData = _listData[0];
 
-                      if(firstData != null) {
-                        var profileListData = firstData[APIConstants.list] as List;
+                      if (firstData != null) {
+                        var profileListData =
+                            firstData[APIConstants.list] as List;
 
-                        if(profileListData != null) {
+                        if (profileListData != null) {
                           KCastingAppData().myLanguage = profileListData;
                         }
                       }
@@ -905,13 +900,14 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
                   {
                     var _listData = _data[APIConstants.data] as List;
 
-                    if(_listData != null && _listData.length > 0) {
+                    if (_listData != null && _listData.length > 0) {
                       var firstData = _listData[0];
 
-                      if(firstData != null) {
-                        var profileListData = firstData[APIConstants.list] as List;
+                      if (firstData != null) {
+                        var profileListData =
+                            firstData[APIConstants.list] as List;
 
-                        if(profileListData != null) {
+                        if (profileListData != null) {
                           KCastingAppData().myDialect = profileListData;
                         }
                       }
@@ -924,13 +920,14 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
                   {
                     var _listData = _data[APIConstants.data] as List;
 
-                    if(_listData != null && _listData.length > 0) {
+                    if (_listData != null && _listData.length > 0) {
                       var firstData = _listData[0];
 
-                      if(firstData != null) {
-                        var profileListData = firstData[APIConstants.list] as List;
+                      if (firstData != null) {
+                        var profileListData =
+                            firstData[APIConstants.list] as List;
 
-                        if(profileListData != null) {
+                        if (profileListData != null) {
                           KCastingAppData().myAbility = profileListData;
                         }
                       }
@@ -943,13 +940,14 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
                   {
                     var _listData = _data[APIConstants.data] as List;
 
-                    if(_listData != null && _listData.length > 0) {
+                    if (_listData != null && _listData.length > 0) {
                       var firstData = _listData[0];
 
-                      if(firstData != null) {
-                        var profileListData = firstData[APIConstants.list] as List;
+                      if (firstData != null) {
+                        var profileListData =
+                            firstData[APIConstants.list] as List;
 
-                        if(profileListData != null) {
+                        if (profileListData != null) {
                           KCastingAppData().myLookKwd = profileListData;
                         }
                       }
@@ -962,13 +960,14 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
                   {
                     var _listData = _data[APIConstants.data] as List;
 
-                    if(_listData != null && _listData.length > 0) {
+                    if (_listData != null && _listData.length > 0) {
                       var firstData = _listData[0];
 
-                      if(firstData != null) {
-                        var profileListData = firstData[APIConstants.list] as List;
+                      if (firstData != null) {
+                        var profileListData =
+                            firstData[APIConstants.list] as List;
 
-                        if(profileListData != null) {
+                        if (profileListData != null) {
                           KCastingAppData().myCastingKwd = profileListData;
                         }
                       }
@@ -981,8 +980,6 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
 
           Navigator.pop(context);
         }
-      } else {
-
       }
     });
   }

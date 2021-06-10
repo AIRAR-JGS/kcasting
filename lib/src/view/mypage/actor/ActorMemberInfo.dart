@@ -1,25 +1,30 @@
+import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/KCastingAppData.dart';
 import 'package:casting_call/res/CustomStyles.dart';
+import 'package:casting_call/src/dialog/DialogMemberLeaveConfirm.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
 import 'package:casting_call/src/view/mypage/actor/ActorMemberInfoModify.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+/*
+* 배우 개인정보 관리
+* */
 class ActorMemberInfo extends StatefulWidget {
   @override
   _ActorMemberInfo createState() => _ActorMemberInfo();
 }
 
-class _ActorMemberInfo extends State<ActorMemberInfo> {
+class _ActorMemberInfo extends State<ActorMemberInfo> with BaseUtilMixin {
   @override
   void initState() {
     super.initState();
   }
 
-  //========================================================================================================================
-  // 메인 위젯
-  //========================================================================================================================
+  /*
+  * 메인 위젯
+  * */
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -192,13 +197,9 @@ class _ActorMemberInfo extends State<ActorMemberInfo> {
                           width: double.infinity,
                           child: CustomStyles.greyBorderRound7ButtonStyle('수정',
                               () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ActorMemberInfoModify()),
-                            );
+                            replaceView(context, ActorMemberInfoModify());
                           })),
-                      /*Container(
+                      Container(
                           height: 50,
                           margin: EdgeInsets.only(top: 10.0),
                           width: double.infinity,
@@ -206,18 +207,12 @@ class _ActorMemberInfo extends State<ActorMemberInfo> {
                               '회원탈퇴', () {
                             showDialog(
                               context: context,
-                              builder: (BuildContext context) => DialogLeave(
-                                onClickedAgree: () {
-                                  // 로그인 페이지 이동
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => UserLogin()),
-                                  );
-                                },
+                              builder: (BuildContext context) =>
+                                  DialogMemberLeaveConfirm(
+                                onClickedAgree: () {},
                               ),
                             );
-                          })),*/
+                          })),
                     ],
                   ),
                 ),

@@ -1,24 +1,28 @@
-import 'dart:math';
-
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/net/RestClientInterface.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:dio/dio.dart';
 
 import '../../../../../KCastingAppData.dart';
 import 'OfferedAuditionDetail.dart';
 
+/*
+* 받은 제안 목록
+* */
 class OfferedAuditionList extends StatefulWidget {
   @override
   _OfferedAuditionList createState() => _OfferedAuditionList();
 }
 
-class _OfferedAuditionList extends State<OfferedAuditionList> with SingleTickerProviderStateMixin {
+class _OfferedAuditionList extends State<OfferedAuditionList>
+    with SingleTickerProviderStateMixin, BaseUtilMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   TabController _tabController;
@@ -62,7 +66,7 @@ class _OfferedAuditionList extends State<OfferedAuditionList> with SingleTickerP
     if (_total == 0 || _scoutList.length >= _total) return;
 
     if (_scrollController.offset >=
-        _scrollController.position.maxScrollExtent &&
+            _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
       setState(() {
         print("comes to bottom $_isLoading");
@@ -75,11 +79,6 @@ class _OfferedAuditionList extends State<OfferedAuditionList> with SingleTickerP
         }
       });
     }
-  }
-
-  void showSnackBar(context, String value) {
-    _scaffoldKey.currentState
-        .showSnackBar(new SnackBar(content: new Text(value)));
   }
 
   @override
@@ -96,12 +95,13 @@ class _OfferedAuditionList extends State<OfferedAuditionList> with SingleTickerP
 
     // 배우 제안 받은 목록 조회 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
-    targetData[APIConstants.actor_seq] = KCastingAppData().myInfo[APIConstants.seq];
-    if(_tabIndex == 1) {
+    targetData[APIConstants.actor_seq] =
+        KCastingAppData().myInfo[APIConstants.seq];
+    if (_tabIndex == 1) {
       targetData[APIConstants.state_type] = "수락";
-    } else if(_tabIndex == 2) {
+    } else if (_tabIndex == 2) {
       targetData[APIConstants.state_type] = "거절";
-    } else if(_tabIndex == 3) {
+    } else if (_tabIndex == 3) {
       targetData[APIConstants.state_type] = "대기";
     }
 
@@ -130,7 +130,7 @@ class _OfferedAuditionList extends State<OfferedAuditionList> with SingleTickerP
 
               _isLoading = false;
             });
-          } catch(e) {
+          } catch (e) {
             showSnackBar(context, APIConstants.error_msg_try_again);
           }
         } else {
@@ -159,11 +159,10 @@ class _OfferedAuditionList extends State<OfferedAuditionList> with SingleTickerP
                     alignment: Alignment.center,
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => OfferedAuditionDetail(scoutData: _scoutList[index])),
-                        );
+                        addView(
+                            context,
+                            OfferedAuditionDetail(
+                                scoutData: _scoutList[index]));
                       },
                       child: Container(
                           alignment: Alignment.center,
@@ -182,14 +181,24 @@ class _OfferedAuditionList extends State<OfferedAuditionList> with SingleTickerP
                                     Expanded(
                                       flex: 0,
                                       child: Container(
-                                        margin: EdgeInsets.only(right: 5),
-                                        alignment: Alignment.topCenter,
-                                        child: Image.asset(
-                                            'assets/images/btn_mypage.png',
-                                            fit: BoxFit.contain,
-                                            width: 30,
-                                            color: CustomColors.colorBgGrey),
-                                      ),
+                                          margin: EdgeInsets.only(right: 5),
+                                          alignment: Alignment.topCenter,
+                                          child: ClipOval(
+                                            child: CachedNetworkImage(
+                                              imageUrl: _scoutList[index][
+                                                  APIConstants
+                                                      .production_img_url],
+                                              errorWidget: (context, url,
+                                                      error) =>
+                                                  Image.asset(
+                                                      'assets/images/btn_mypage.png',
+                                                      fit: BoxFit.contain,
+                                                      width: 30,
+                                                      color: CustomColors
+                                                          .colorBgGrey),
+                                              height: 30,
+                                            ),
+                                          )),
                                     ),
                                     Expanded(
                                         flex: 1,
@@ -200,7 +209,10 @@ class _OfferedAuditionList extends State<OfferedAuditionList> with SingleTickerP
                                                 Expanded(
                                                   flex: 1,
                                                   child: Text(
-                                                    StringUtils.checkedString(_scoutList[index][APIConstants.production_name]),
+                                                    StringUtils.checkedString(
+                                                        _scoutList[index][
+                                                            APIConstants
+                                                                .production_name]),
                                                     style: CustomStyles
                                                         .normal16TextStyle(),
                                                     maxLines: 1,
@@ -211,7 +223,10 @@ class _OfferedAuditionList extends State<OfferedAuditionList> with SingleTickerP
                                                 Expanded(
                                                   flex: 0,
                                                   child: Text(
-                                                    StringUtils.checkedString(_scoutList[index][APIConstants.state_type]),
+                                                    StringUtils.checkedString(
+                                                        _scoutList[index][
+                                                            APIConstants
+                                                                .state_type]),
                                                     style: CustomStyles
                                                         .normal16TextStyle(),
                                                   ),
@@ -222,7 +237,9 @@ class _OfferedAuditionList extends State<OfferedAuditionList> with SingleTickerP
                                               alignment: Alignment.centerLeft,
                                               margin: EdgeInsets.only(top: 10),
                                               child: Text(
-                                                StringUtils.checkedString(_scoutList[index][APIConstants.audition_prps_contents]),
+                                                StringUtils.checkedString(
+                                                    _scoutList[index][APIConstants
+                                                        .audition_prps_contents]),
                                                 style: CustomStyles
                                                     .normal14TextStyle(),
                                                 maxLines: 2,
@@ -249,13 +266,19 @@ class _OfferedAuditionList extends State<OfferedAuditionList> with SingleTickerP
                                   child: Row(
                                     children: [
                                       Expanded(
-                                        child: Text(StringUtils.checkedString(_scoutList[index][APIConstants.project_name]),
+                                        child: Text(
+                                            StringUtils.checkedString(
+                                                _scoutList[index][
+                                                    APIConstants.project_name]),
                                             style:
                                                 CustomStyles.dark12TextStyle()),
                                       ),
                                       Expanded(
                                         flex: 0,
-                                        child: Text(StringUtils.checkedString(_scoutList[index][APIConstants.casting_name]),
+                                        child: Text(
+                                            StringUtils.checkedString(
+                                                _scoutList[index][
+                                                    APIConstants.casting_name]),
                                             style: CustomStyles
                                                 .normal14TextStyle()),
                                       ),
@@ -278,14 +301,15 @@ class _OfferedAuditionList extends State<OfferedAuditionList> with SingleTickerP
     ));
   }
 
-  //========================================================================================================================
-  // 메인 위젯
-  //========================================================================================================================
+  /*
+  * 메인 위젯
+  * */
   @override
   Widget build(BuildContext context) {
     return Theme(
         data: CustomStyles.defaultTheme(),
         child: Scaffold(
+            key: _scaffoldKey,
             appBar: CustomStyles.defaultAppBar('받은 제안', () {
               Navigator.pop(context);
             }),

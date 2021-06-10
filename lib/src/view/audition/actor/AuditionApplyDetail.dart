@@ -37,6 +37,7 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
   final picker = ImagePicker();
 
   int _applySeq;
+  int _agreeTerms = 0;
 
   TabController _tabController;
   int _tabIndex = 0;
@@ -255,13 +256,10 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
       RestClient(dio).postRequestMainControl(params).then((value) async {
         if (value == null) {
           // 에러 - 데이터 널
-          Scaffold.of(context)
-              .showSnackBar(SnackBar(content: Text('다시 시도해 주세요.')));
+          showSnackBar(context, '다시 시도해 주세요.');
         } else {
           if (value[APIConstants.resultVal]) {
             // 배우 비디오 추가 성공
-            var _responseData = value[APIConstants.data];
-
             setState(() {
               _isUpload = false;
               _isSubmitVideo = true;
@@ -269,8 +267,7 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
             });
           } else {
             // 배우 비디오 추가 실패
-            Scaffold.of(context).showSnackBar(
-                SnackBar(content: Text(value[APIConstants.resultMsg])));
+            showSnackBar(context, value[APIConstants.resultMsg]);
           }
         }
       });
@@ -315,22 +312,14 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold)),
                       ),
-                      /*Container(
-                          child: Text(
-                              '1차 오디션 합격을 진심으로 축하드립니다.\n2차 오디션은 대본 오디션입니다.\n대본을 다운받아 영상 촬영 후 등록해 주세요.\n\n대본의 내용 유출 방지를 위해서 비밀서약 사인 후,\n대본을 확인할 수 있습니다.',
-                              style: CustomStyles.dark16TextStyle())), */
                       Container(
                           child: Text(
-                              '1차 오디션 합격을 진심으로 축하드립니다.\n2차 오디션은 대본 오디션입니다.\n대본을 다운받아 영상 촬영 후 등록해 주세요.',
+                              '1차 오디션 합격을 진심으로 축하드립니다.\n2차 오디션은 대본 오디션입니다.\n대본을 다운받아 영상 촬영 후 등록해 주세요.\n\n대본의 내용 유출 방지를 위해,\n비밀 유지 서약에 동의하신 후에, 대본을 확인할 수 있습니다.',
                               style: CustomStyles.dark16TextStyle())),
-                      /*Container(
+                      Container(
                           margin: EdgeInsets.only(top: 30),
                           child: Text('서약',
                               style: CustomStyles.darkBold16TextStyle())),
-                      Container(
-                          margin: EdgeInsets.only(top: 15),
-                          child: CustomStyles.underline14TextButtonStyle(
-                              '대본 비밀서약 보기', () {})),
                       Container(
                         margin: EdgeInsets.only(top: 10),
                         child: Row(
@@ -348,8 +337,10 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                                     onChanged: (_) {
                                       setState(() {
                                         if (_agreeTerms == 0) {
+                                          // 동의
                                           _agreeTerms = 1;
                                         } else {
+                                          // 비동의
                                           _agreeTerms = 0;
                                         }
                                       });
@@ -357,11 +348,11 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                                     materialTapTargetSize:
                                         MaterialTapTargetSize.shrinkWrap)),
                             Container(
-                                child: Text('서약에 대해 동의합니다.',
+                                child: Text('대본 비밀 유지 서약에 대해 동의합니다.',
                                     style: CustomStyles.dark14TextStyle()))
                           ],
                         ),
-                      ),*/
+                      ),
                       Container(
                           margin: EdgeInsets.only(top: 30),
                           child: Text('대본',
@@ -757,9 +748,9 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
           );
   }*/
 
-  //========================================================================================================================
-  // 메인 위젯
-  //========================================================================================================================
+  /*
+  * 메인 위젯
+  * */
   @override
   Widget build(BuildContext context) {
     return Theme(

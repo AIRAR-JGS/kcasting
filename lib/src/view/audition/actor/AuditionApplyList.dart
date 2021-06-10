@@ -1,3 +1,4 @@
+import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
@@ -10,13 +11,16 @@ import 'package:flutter/widgets.dart';
 import '../../../../KCastingAppData.dart';
 import 'AuditionApplyDetail.dart';
 
+/*
+* 지원 현황 목록
+* */
 class AuditionApplyList extends StatefulWidget {
   @override
   _AuditionApplyList createState() => _AuditionApplyList();
 }
 
 class _AuditionApplyList extends State<AuditionApplyList>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, BaseUtilMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   TabController _tabController;
@@ -94,11 +98,6 @@ class _AuditionApplyList extends State<AuditionApplyList>
     super.dispose();
   }
 
-  void showSnackBar(context, String value) {
-    _scaffoldKey.currentState
-        .showSnackBar(new SnackBar(content: new Text(value)));
-  }
-
   /*
   * 지원현황 조회
   * */
@@ -144,6 +143,36 @@ class _AuditionApplyList extends State<AuditionApplyList>
     });
   }
 
+  /*
+  * 지원 취소
+  * */
+  void requestCancelApplyAuditionApi(
+      BuildContext _context, int _auditionApplySeq) {
+    final dio = Dio();
+
+    // 지원현황 조회 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetData = new Map();
+    targetData[APIConstants.auditionApply_seq] = _auditionApplySeq;
+
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.DEL_AAA_INFO;
+    params[APIConstants.target] = targetData;
+
+    // 지원현황 조회 api 호출
+    RestClient(dio).postRequestMainControl(params).then((value) async {
+      if (value != null) {
+        if (value[APIConstants.resultVal]) {
+          // 지원현황 조회 성공
+          showSnackBar(context, "지원을 취소했습니다.");
+        } else {
+          showSnackBar(context, value[APIConstants.resultMsg]);
+        }
+      } else {
+        showSnackBar(context, '다시 시도해 주세요.');
+      }
+    });
+  }
+
   Widget tabMyApplyStatus() {
     return Container(
         alignment: Alignment.center,
@@ -161,13 +190,11 @@ class _AuditionApplyList extends State<AuditionApplyList>
                       alignment: Alignment.center,
                       child: GestureDetector(
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => AuditionApplyDetail(
-                                      applySeq: _auditionList[index]
-                                          [APIConstants.audition_apply_seq])),
-                            );
+                            addView(
+                                context,
+                                AuditionApplyDetail(
+                                    applySeq: _auditionList[index]
+                                        [APIConstants.audition_apply_seq]));
                           },
                           child: Container(
                               alignment: Alignment.center,
@@ -210,20 +237,24 @@ class _AuditionApplyList extends State<AuditionApplyList>
                                                                     .apply_date],
                                                         style: CustomStyles
                                                             .dark10TextStyle()),
-                                                    /*CustomStyles
+                                                    Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                right: 5)),
+                                                    CustomStyles
                                                         .underline10TextButtonStyle(
                                                             '지원취소', () {
-                                                      if (_tabIndex == 0) {
-                                                        // 지원취소 버튼 클릭
-                                                      } else if (_tabIndex ==
-                                                          2) {
-                                                        // 지원내역 삭제 버튼 클릭
-                                                      }
-                                                    })*/
+                                                      // 지원취소 버튼 클릭
+                                                      requestCancelApplyAuditionApi(
+                                                          context,
+                                                          _auditionList[index][
+                                                              APIConstants
+                                                                  .audition_apply_seq]);
+                                                    })
                                                   ])),
-                                                  visible: _tabIndex == 1
-                                                      ? false
-                                                      : true)
+                                                  visible: _tabIndex == 0
+                                                      ? true
+                                                      : false)
                                             ])),
                                     Expanded(
                                         flex: 0,
@@ -270,9 +301,9 @@ class _AuditionApplyList extends State<AuditionApplyList>
         ]));
   }
 
-  //========================================================================================================================
-  // 메인 위젯
-  //========================================================================================================================
+  /*
+  * 메인 위젯
+  * */
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -284,65 +315,60 @@ class _AuditionApplyList extends State<AuditionApplyList>
             }),
             body: Builder(builder: (BuildContext context) {
               return Container(
-                child: SingleChildScrollView(
-                  child: Container(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(top: 30.0, bottom: 10),
-                          padding: EdgeInsets.only(left: 16, right: 16),
-                          child: Text('지원 현황',
-                              style: CustomStyles.normal24TextStyle()),
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).size.width * 0.7,
-                          color: CustomColors.colorWhite,
-                          child: TabBar(
-                            controller: _tabController,
-                            indicatorSize: TabBarIndicatorSize.label,
-                            indicatorPadding: EdgeInsets.zero,
-                            labelStyle: CustomStyles.bold14TextStyle(),
-                            unselectedLabelStyle:
-                                CustomStyles.normal14TextStyle(),
-                            tabs: [
-                              Tab(text: '진행중'),
-                              Tab(text: '합격'),
-                              Tab(text: '불합격'),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 10),
-                          child: Divider(
-                            height: 0.1,
-                            color: CustomColors.colorFontLightGrey,
-                          ),
-                        ),
-                        Expanded(
-                          flex: 0,
-                          child: [
-                            tabMyApplyStatus(),
-                            tabMyApplyStatus(),
-                            tabMyApplyStatus()
-                          ][_tabIndex],
-                        ),
-                        Visibility(
-                            child: Container(
-                              alignment: Alignment.center,
-                              margin: EdgeInsets.only(top: 50),
-                              child: Text(
-                                '지원현황이 없습니다.',
-                                style: CustomStyles.normal16TextStyle(),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            visible: _auditionList.length > 0 ? false : true),
-                      ],
+                  child: SingleChildScrollView(
+                      child: Container(
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                    Container(
+                      margin: EdgeInsets.only(top: 30.0, bottom: 10),
+                      padding: EdgeInsets.only(left: 16, right: 16),
+                      child: Text('지원 현황',
+                          style: CustomStyles.normal24TextStyle()),
                     ),
-                  ),
-                ),
-              );
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.7,
+                      color: CustomColors.colorWhite,
+                      child: TabBar(
+                        controller: _tabController,
+                        indicatorSize: TabBarIndicatorSize.label,
+                        indicatorPadding: EdgeInsets.zero,
+                        labelStyle: CustomStyles.bold14TextStyle(),
+                        unselectedLabelStyle: CustomStyles.normal14TextStyle(),
+                        tabs: [
+                          Tab(text: '진행중'),
+                          Tab(text: '합격'),
+                          Tab(text: '불합격'),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: 10),
+                      child: Divider(
+                        height: 0.1,
+                        color: CustomColors.colorFontLightGrey,
+                      ),
+                    ),
+                    Expanded(
+                      flex: 0,
+                      child: [
+                        tabMyApplyStatus(),
+                        tabMyApplyStatus(),
+                        tabMyApplyStatus()
+                      ][_tabIndex],
+                    ),
+                    Visibility(
+                        child: Container(
+                          alignment: Alignment.center,
+                          margin: EdgeInsets.only(top: 50),
+                          child: Text(
+                            '지원현황이 없습니다.',
+                            style: CustomStyles.normal16TextStyle(),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        visible: _auditionList.length > 0 ? false : true)
+                  ]))));
             })));
   }
 }

@@ -20,6 +20,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
+/*
+*  배우 프로필
+* */
 class ActorProfile extends StatefulWidget {
   @override
   _ActorProfile createState() => _ActorProfile();
@@ -541,9 +544,9 @@ class _ActorProfile extends State<ActorProfile>
     }
   }
 
-  //========================================================================================================================
-  // 메인 위젯
-  //========================================================================================================================
+  /*
+  *  메인 위젯
+  * */
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -583,12 +586,8 @@ class _ActorProfile extends State<ActorProfile>
                                       child: CustomStyles
                                           .greyBorderRound7ButtonStyle('프로필 편집',
                                               () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ActorProfileModifyMainInfo()),
-                                        );
+                                        addView(context,
+                                            ActorProfileModifyMainInfo());
                                       })),
                                   Container(
                                     margin: EdgeInsets.only(top: 30),
@@ -627,12 +626,8 @@ class _ActorProfile extends State<ActorProfile>
                                                         child: CustomStyles
                                                             .darkBold14TextButtonStyle(
                                                                 '추가', () {
-                                                          Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) =>
-                                                                          ActorFilmoAdd()));
+                                                          addView(context,
+                                                              ActorFilmoAdd());
                                                         })),
                                                     Container(width: 20),
                                                     Expanded(

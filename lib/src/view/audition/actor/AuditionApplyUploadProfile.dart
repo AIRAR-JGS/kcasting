@@ -1,3 +1,4 @@
+import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/dialog/DialogAuditionApplyConfirm.dart';
@@ -14,6 +15,9 @@ import '../../../../KCastingAppData.dart';
 import 'AuditionApplyComplete.dart';
 import 'AuditionApplyUploadVideo.dart';
 
+/*
+* 오디션 지원하기 - 프로필 업로드
+* */
 class AuditionApplyUploadProfile extends StatefulWidget {
   final int castingSeq;
   final String projectName;
@@ -34,10 +38,11 @@ class AuditionApplyUploadProfile extends StatefulWidget {
   _AuditionApplyUploadProfile createState() => _AuditionApplyUploadProfile();
 }
 
-class _AuditionApplyUploadProfile extends State<AuditionApplyUploadProfile> {
+class _AuditionApplyUploadProfile extends State<AuditionApplyUploadProfile>
+    with BaseUtilMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  int _casting_seq;
+  int _castingSeq;
   String _projectName;
   String _castingName;
   List<dynamic> _applyImageData;
@@ -45,7 +50,7 @@ class _AuditionApplyUploadProfile extends State<AuditionApplyUploadProfile> {
 
   final GlobalKey<TagsState> _myKeywordTagStateKey = GlobalKey<TagsState>();
 
-  String _actorAgeStr = "";
+  //String _actorAgeStr = "";
   String _actorEducationStr = "";
   String _actorLanguageStr = "";
   String _actorAbilityStr = "";
@@ -59,7 +64,7 @@ class _AuditionApplyUploadProfile extends State<AuditionApplyUploadProfile> {
   void initState() {
     super.initState();
 
-    _casting_seq = widget.castingSeq;
+    _castingSeq = widget.castingSeq;
     _projectName = widget.projectName;
     _castingName = widget.castingName;
     _applyVideoData = widget.applyVideoData;
@@ -112,14 +117,9 @@ class _AuditionApplyUploadProfile extends State<AuditionApplyUploadProfile> {
     _filmorgraphyList.addAll(KCastingAppData().myFilmorgraphy);
   }
 
-  void showSnackBar(context, String value) {
-    _scaffoldKey.currentState
-        .showSnackBar(new SnackBar(content: new Text(value)));
-  }
-
-  //========================================================================================================================
-  // 메인 위젯
-  //========================================================================================================================
+  /*
+  * 메인 위젯
+  * */
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -207,36 +207,6 @@ class _AuditionApplyUploadProfile extends State<AuditionApplyUploadProfile> {
                               Container(
                                   padding: EdgeInsets.only(left: 15, right: 15),
                                   margin: EdgeInsets.only(top: 20.0),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                          flex: 3,
-                                          child: Container(
-                                              child: Text('등급',
-                                                  style: CustomStyles
-                                                      .normal14TextStyle()))),
-                                      Expanded(
-                                          flex: 7,
-                                          child: Container(
-                                              child: Text(
-                                                  StringUtils.checkedString(
-                                                      KCastingAppData()
-                                                              .myProfile[
-                                                          APIConstants
-                                                              .actor_level]),
-                                                  style: CustomStyles
-                                                      .normal14TextStyle()))),
-                                      /*Expanded(
-                                  flex: 2,
-                                  child: Container(
-                                      child: CustomStyles
-                                          .underline14TextButtonStyle(
-                                              '등급확인서', () {})))*/
-                                    ],
-                                  )),
-                              Container(
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  margin: EdgeInsets.only(top: 10.0),
                                   child: Row(
                                     children: [
                                       Expanded(
@@ -519,7 +489,6 @@ class _AuditionApplyUploadProfile extends State<AuditionApplyUploadProfile> {
                                         EdgeInsets.only(left: 10, right: 10),
                                     itemCount: _filmorgraphyList.length,
                                     itemBuilder: (context, index) {
-                                      final item = _filmorgraphyList[index];
                                       return Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
@@ -568,17 +537,13 @@ class _AuditionApplyUploadProfile extends State<AuditionApplyUploadProfile> {
                                     height: 55,
                                     child: CustomStyles.greyBGSquareButtonStyle(
                                         '이전단계', () {
-                                      Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                AuditionApplyUploadVideo(
-                                                    castingSeq: _casting_seq,
-                                                    projectName: _projectName,
-                                                    castingName: _castingName,
-                                                    applyImageData:
-                                                        _applyImageData)),
-                                      );
+                                      replaceView(
+                                          context,
+                                          AuditionApplyUploadVideo(
+                                              castingSeq: _castingSeq,
+                                              projectName: _projectName,
+                                              castingName: _castingName,
+                                              applyImageData: _applyImageData));
                                     }))),
                             Expanded(
                                 child: Container(
@@ -625,7 +590,7 @@ class _AuditionApplyUploadProfile extends State<AuditionApplyUploadProfile> {
       Map<String, dynamic> targetData = new Map();
       targetData[APIConstants.actor_seq] =
           KCastingAppData().myInfo[APIConstants.seq];
-      targetData[APIConstants.casting_seq] = _casting_seq;
+      targetData[APIConstants.casting_seq] = _castingSeq;
       targetData[APIConstants.file_image] = _applyImageData;
       targetData[APIConstants.file_video] = _applyVideoData;
 
@@ -642,16 +607,11 @@ class _AuditionApplyUploadProfile extends State<AuditionApplyUploadProfile> {
           if (value[APIConstants.resultVal]) {
             try {
               // 지원하기 성공
-              //var _responseData = value[APIConstants.data];
-
               setState(() {
                 _isUpload = false;
               });
 
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => AuditionApplyComplete()),
-              );
+              replaceView(context, AuditionApplyComplete());
             } catch (e) {
               showSnackBar(context, APIConstants.error_msg_try_again);
             }
@@ -663,8 +623,6 @@ class _AuditionApplyUploadProfile extends State<AuditionApplyUploadProfile> {
       });
     } catch (e) {
       showSnackBar(context, APIConstants.error_msg_try_again);
-    } finally {
-
-    }
+    } finally {}
   }
 }

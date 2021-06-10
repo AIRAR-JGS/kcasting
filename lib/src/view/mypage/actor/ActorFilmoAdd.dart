@@ -1,3 +1,4 @@
+import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
@@ -9,12 +10,15 @@ import 'package:flutter/material.dart';
 
 import '../../../../KCastingAppData.dart';
 
+/*
+* 배우 필모그래피 추가
+* */
 class ActorFilmoAdd extends StatefulWidget {
   @override
   _ActorFilmoAdd createState() => _ActorFilmoAdd();
 }
 
-class _ActorFilmoAdd extends State<ActorFilmoAdd> {
+class _ActorFilmoAdd extends State<ActorFilmoAdd> with BaseUtilMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   final _txtFieldProjectName = TextEditingController();
@@ -29,14 +33,9 @@ class _ActorFilmoAdd extends State<ActorFilmoAdd> {
     super.initState();
   }
 
-  void showSnackBar(context, String value) {
-    _scaffoldKey.currentState
-        .showSnackBar(new SnackBar(content: new Text(value)));
-  }
-
-  //========================================================================================================================
-  // 메인 위젯
-  //========================================================================================================================
+  /*
+  * 메인 위젯
+  * */
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -215,29 +214,7 @@ class _ActorFilmoAdd extends State<ActorFilmoAdd> {
                                     margin: EdgeInsets.only(top: 5),
                                     child:
                                         CustomStyles.greyBorderRound7TextField(
-                                            _txtFieldCastingName, '배역 이름 입력')),
-                                /*Container(
-                                  margin: EdgeInsets.only(top: 20, bottom: 10),
-                                  child: Divider(
-                                    height: 0.1,
-                                    color: CustomColors.colorFontLightGrey,
-                                  ),
-                                ),*/
-                                /*Container(
-                                    margin: EdgeInsets.only(top: 5),
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    alignment: Alignment.centerLeft,
-                                    child: Text('출연 확인서',
-                                        style: CustomStyles.bold14TextStyle())),
-                                Container(
-                                    height: 50,
-                                    margin: EdgeInsets.only(
-                                        left: 15, right: 15, top: 15),
-                                    width: double.infinity,
-                                    child: CustomStyles
-                                        .greyBorderRound7ButtonStyle(
-                                            '업로드', () {})),*/
+                                            _txtFieldCastingName, '배역 이름 입력'))
                               ])))),
               Container(
                   width: double.infinity,
@@ -273,9 +250,9 @@ class _ActorFilmoAdd extends State<ActorFilmoAdd> {
     );
   }
 
-  //========================================================================================================================
-  // 입력 데이터 유효성 검사
-  //========================================================================================================================
+  /*
+  * 입력 데이터 유효성 검사
+  * */
   bool checkValidate(BuildContext context) {
     if (StringUtils.isEmpty(_txtFieldProjectName.text)) {
       showSnackBar(context, '작품명을 입력해 주세요.');
@@ -295,9 +272,9 @@ class _ActorFilmoAdd extends State<ActorFilmoAdd> {
     return true;
   }
 
-  //========================================================================================================================
-  // 제작사 필모그래피 추가
-  //========================================================================================================================
+  /*
+  * 제작사 필모그래피 추가
+  * */
   void requestAddFilmographyApi(BuildContext context) {
     final dio = Dio();
 

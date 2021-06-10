@@ -4,6 +4,7 @@ import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/dialog/DialogMemberLogoutConfirm.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
+import 'package:casting_call/src/util/StringUtils.dart';
 import 'package:casting_call/src/view/actor/BookmarkedActorList.dart';
 import 'package:casting_call/src/view/audition/production/ProposedAuditionList.dart';
 import 'package:casting_call/src/view/mypage/production/ProductionMemberInfo.dart';
@@ -56,7 +57,7 @@ class _ProductionMemberPage extends State<ProductionMemberPage>
           Container(
               margin: EdgeInsets.only(bottom: 30),
               child: Text(
-                  KCastingAppData().myInfo[APIConstants.production_name],
+                  StringUtils.checkedString(KCastingAppData().myInfo[APIConstants.production_name]),
                   style: CustomStyles.normal32TextStyle())),
         ],
       ),
@@ -124,13 +125,13 @@ class _ProductionMemberPage extends State<ProductionMemberPage>
                         break;
 
                       // 개인정보 관리
-                      case 4:
+                      case 5:
                         // 개인정보 관리 페이지 이동
                         addView(context, ProductionMemberInfo());
                         break;
 
                       // 로그아웃
-                      case 5:
+                      case 6:
                         showDialog(
                           context: context,
                           builder: (BuildContext context) =>

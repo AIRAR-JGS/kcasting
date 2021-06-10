@@ -37,7 +37,6 @@ class KCastingAppData {
     myCastingKwd = [];
     myLookKwd = [];
     myFilmorgraphy = [];
-    myFilmorgraphy = [];
     myImage = [];
     myVideo = [];
   }

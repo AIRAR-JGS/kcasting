@@ -1,22 +1,25 @@
+import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/model/EducationListModel.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
 import 'package:casting_call/src/view/mypage/actor/ActorProfileModifySubInfo.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 import '../../../../KCastingAppData.dart';
 
+/*
+* 배우 프로필 수정 - 1
+* */
 class ActorProfileModifyMainInfo extends StatefulWidget {
   @override
   _ActorProfileModifyMainInfo createState() => _ActorProfileModifyMainInfo();
 }
 
-class _ActorProfileModifyMainInfo extends State<ActorProfileModifyMainInfo> {
+class _ActorProfileModifyMainInfo extends State<ActorProfileModifyMainInfo>
+    with BaseUtilMixin {
   final _txtFieldIntroduce = TextEditingController();
   final _txtFieldDramaPay = TextEditingController();
   final _txtFieldMoviePay = TextEditingController();
@@ -106,38 +109,6 @@ class _ActorProfileModifyMainInfo extends State<ActorProfileModifyMainInfo> {
 
       _educationWidgets.add(educationHistory(_uKey));
     }
-  }
-
-  // DatePicker(회원가입 시 생년월일 선택하는 컴포넌트)
-  void _showDatePicker() {
-    DatePicker.showDatePicker(context,
-        showTitleActions: true,
-        minTime: DateTime(1900, 1, 1),
-        maxTime: DateTime.now(),
-        theme: DatePickerTheme(
-            headerColor: CustomColors.colorWhite,
-            backgroundColor: CustomColors.colorWhite,
-            itemStyle: TextStyle(
-                color: CustomColors.colorFontGrey,
-                fontWeight: FontWeight.bold,
-                fontSize: 15),
-            doneStyle:
-                TextStyle(color: CustomColors.colorFontGrey, fontSize: 13),
-            cancelStyle:
-                TextStyle(color: CustomColors.colorFontGrey, fontSize: 13)),
-        onChanged: (date) {}, onConfirm: (date) {
-      setState(() {
-        _birthY = date.year.toString();
-        _birthM = date.month.toString().padLeft(2, '0');
-        _birthD = date.day.toString().padLeft(2, '0');
-
-        _birthDate = date.year.toString() +
-            '-' +
-            date.month.toString() +
-            '-' +
-            date.day.toString();
-      });
-    }, currentTime: DateTime.now(), locale: LocaleType.ko);
   }
 
   Widget educationHistory(var uniqueKey) {
@@ -268,9 +239,9 @@ class _ActorProfileModifyMainInfo extends State<ActorProfileModifyMainInfo> {
     );
   }
 
-  //========================================================================================================================
-  // 메인 위젯
-  //========================================================================================================================
+  /*
+  * 메인 위젯
+  * */
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -292,16 +263,6 @@ class _ActorProfileModifyMainInfo extends State<ActorProfileModifyMainInfo> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              /*Container(
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  alignment: Alignment.centerLeft,
-                                  child: Text('활동명',
-                                      style: CustomStyles.bold14TextStyle())),
-                              Container(
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  margin: EdgeInsets.only(top: 5),
-                                  child: CustomStyles.greyBorderRound7TextField(TextEditingController(),
-                                      '본명 입력')),*/
                               Container(
                                   padding: EdgeInsets.only(left: 15, right: 15),
                                   alignment: Alignment.centerLeft,
@@ -343,89 +304,6 @@ class _ActorProfileModifyMainInfo extends State<ActorProfileModifyMainInfo> {
                                   alignment: Alignment.centerLeft,
                                   child: Text('배우등급',
                                       style: CustomStyles.bold14TextStyle())),
-                              Container(
-                                  margin: EdgeInsets.only(top: 5),
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  width: double.infinity,
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: DropdownButtonFormField(
-                                          value: _actorLevel,
-                                          onChanged: (String newValue) {
-                                            setState(() {
-                                              _actorLevel = newValue;
-                                            });
-                                          },
-                                          items: <String>[
-                                            APIConstants.actor_level_1,
-                                            APIConstants.actor_level_2,
-                                            APIConstants.actor_level_3,
-                                            APIConstants.actor_level_4,
-                                            APIConstants.actor_level_5,
-                                            APIConstants.actor_level_6,
-                                            APIConstants.actor_level_7,
-                                            APIConstants.actor_level_8,
-                                            APIConstants.actor_level_9
-                                          ].map<DropdownMenuItem<String>>(
-                                              (String value) {
-                                            return DropdownMenuItem<String>(
-                                                value: value,
-                                                child: Text(value,
-                                                    style: CustomStyles
-                                                        .normal14TextStyle()));
-                                          }).toList(),
-                                          decoration: InputDecoration(
-                                              border: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: CustomColors
-                                                          .colorFontLightGrey,
-                                                      width: 1.0),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          7.0)),
-                                              contentPadding:
-                                                  EdgeInsets.symmetric(
-                                                      vertical: 5,
-                                                      horizontal: 10)),
-                                        ),
-                                      ),
-                                      /*Expanded(
-                                          child: Container(
-                                        height: 48,
-                                        margin: EdgeInsets.only(left: 10),
-                                        child: CustomStyles
-                                            .greyBorderRound7ButtonStyle(
-                                                '등급확인서 업로드', () {}),
-                                      ))*/
-                                    ],
-                                  )),
-                              /*Container(
-                                margin: EdgeInsets.only(
-                                    top: 15.0, left: 15, right: 15),
-                                padding: EdgeInsets.only(
-                                    left: 15, right: 15, top: 12, bottom: 12),
-                                decoration: BoxDecoration(
-                                  borderRadius:
-                                      CustomStyles.circle7BorderRadius(),
-                                  color: CustomColors.colorBgGrey,
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('라이언 등급확인서.pdf',
-                                        style: CustomStyles.dark16TextStyle()),
-                                    GestureDetector(
-                                      onTap: () {},
-                                      child: Image.asset(
-                                          'assets/images/btn_close.png',
-                                          width: 15),
-                                    )
-                                  ],
-                                ),
-                              ),*/
                               Container(
                                   margin: EdgeInsets.only(top: 15),
                                   padding: EdgeInsets.only(left: 15, right: 15),
@@ -495,7 +373,24 @@ class _ActorProfileModifyMainInfo extends State<ActorProfileModifyMainInfo> {
                                   margin: EdgeInsets.only(top: 5),
                                   child: GestureDetector(
                                     onTap: () {
-                                      _showDatePicker();
+                                      showDatePickerForBirthDay(context,
+                                          (date) {
+                                        setState(() {
+                                          _birthY = date.year.toString();
+                                          _birthM = date.month
+                                              .toString()
+                                              .padLeft(2, '0');
+                                          _birthD = date.day
+                                              .toString()
+                                              .padLeft(2, '0');
+
+                                          _birthDate = date.year.toString() +
+                                              '-' +
+                                              date.month.toString() +
+                                              '-' +
+                                              date.day.toString();
+                                        });
+                                      });
                                     },
                                     child: Row(
                                       children: [
@@ -775,17 +670,16 @@ class _ActorProfileModifyMainInfo extends State<ActorProfileModifyMainInfo> {
     );
   }
 
-  //========================================================================================================================
-  // 제작사 회원정보 수정
-  //========================================================================================================================
+  /*
+  * 제작사 회원정보 수정
+  * */
   void requestUpdateApi(BuildContext context) {
-    final dio = Dio();
-
     // 회원가입 api 호출 시 보낼 파라미터
     Map<String, dynamic> actorProfile = new Map();
 
     Map<String, dynamic> profileTargetData = new Map();
-    profileTargetData[APIConstants.actorProfile_seq] = KCastingAppData().myInfo[APIConstants.actorProfile_seq];
+    profileTargetData[APIConstants.actorProfile_seq] =
+        KCastingAppData().myInfo[APIConstants.actor_profile_seq];
     profileTargetData[APIConstants.actor_Introduce] = _txtFieldIntroduce.text;
     profileTargetData[APIConstants.actor_level] = _actorLevel;
     profileTargetData[APIConstants.actor_levelConfirmation_url] = null;
@@ -812,30 +706,10 @@ class _ActorProfileModifyMainInfo extends State<ActorProfileModifyMainInfo> {
       educationTarget.add(targetData);
     }
 
-    if(educationTarget.length > 0) {
+    if (educationTarget.length > 0) {
       actorProfile[APIConstants.education_target] = educationTarget;
-    } else {
-      //actorProfile[APIConstants.education_target] = null;
     }
 
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => ActorProfileModifySubInfo(targetData: actorProfile)),
-    );
-
-    // 회원정보 수정 api 호출
-    /*RestClient(dio).postRequestAddPrch(params).then((value) async {
-      if (value == null) {
-        // 에러 - 데이터 널
-        Scaffold.of(context)
-            .showSnackBar(SnackBar(content: Text('다시 시도해 주세요.')));
-      } else {
-        if(value.length > 0) {
-          // KCastingAppData().myInfo = _responseList[0];
-
-        }
-      }
-    });*/
+    replaceView(context, ActorProfileModifySubInfo(targetData: actorProfile));
   }
 }

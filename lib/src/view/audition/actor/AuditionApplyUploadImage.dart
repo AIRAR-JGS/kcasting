@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/KCastingAppData.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
@@ -15,6 +16,9 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'AuditionApplyUploadVideo.dart';
 
+/*
+* 오디션 지원하기 - 이미지 업로드
+* */
 class AuditionApplyUploadImage extends StatefulWidget {
   final int castingSeq;
   final String projectName;
@@ -28,7 +32,8 @@ class AuditionApplyUploadImage extends StatefulWidget {
   _AuditionApplyUploadImage createState() => _AuditionApplyUploadImage();
 }
 
-class _AuditionApplyUploadImage extends State<AuditionApplyUploadImage> {
+class _AuditionApplyUploadImage extends State<AuditionApplyUploadImage>
+    with BaseUtilMixin {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   int _casting_seq;
@@ -54,28 +59,6 @@ class _AuditionApplyUploadImage extends State<AuditionApplyUploadImage> {
     }
   }
 
-  void showSnackBar(context, String value) {
-    _scaffoldKey.currentState
-        .showSnackBar(new SnackBar(content: new Text(value)));
-  }
-
-  /*
-  * url to file
-  * */
-  /*Future<File> urlToFile(String imageUrl, String fileType) async {
-    Directory tempDir = await getTemporaryDirectory();
-    String tempPath = tempDir.path;
-
-    File file = new File('$tempPath' +
-        DateTime.now().millisecondsSinceEpoch.toString() +
-        fileType);
-
-    http.Response response = await http.get(imageUrl);
-    await file.writeAsBytes(response.bodyBytes);
-
-    return file;
-  }*/
-
   Future getImageFromGallery() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
@@ -99,9 +82,9 @@ class _AuditionApplyUploadImage extends State<AuditionApplyUploadImage> {
     }
   }
 
-  //========================================================================================================================
-  // 메인 위젯
-  //========================================================================================================================
+  /*
+  * 메인 위젯
+  * */
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -176,18 +159,25 @@ class _AuditionApplyUploadImage extends State<AuditionApplyUploadImage> {
                               Container(
                                 margin: EdgeInsets.only(top: 15, bottom: 20),
                                 padding: EdgeInsets.only(left: 15, right: 15),
-                                child: RaisedButton.icon(
+                                child: ElevatedButton.icon(
                                     icon: Icon(Icons.camera_alt,
                                         color: CustomColors.colorFontTitle),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            CustomStyles.circle7BorderRadius(),
-                                        side: BorderSide(
-                                          color: CustomColors.colorFontGrey,
-                                        )),
-                                    elevation: 0.0,
+                                    style: ElevatedButton.styleFrom(
+                                      primary: Colors.white,
+                                      padding: EdgeInsets.only(
+                                          left: 15,
+                                          right: 20,
+                                          top: 10,
+                                          bottom: 10),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: CustomStyles
+                                              .circle7BorderRadius(),
+                                          side: BorderSide(
+                                            color: CustomColors.colorFontGrey,
+                                          )),
+                                      elevation: 0.0,
+                                    ),
                                     onPressed: () async {
-                                      //
                                       var status = Platform.isAndroid
                                           ? await Permission.storage.request()
                                           : await Permission.photos.request();
@@ -218,13 +208,6 @@ class _AuditionApplyUploadImage extends State<AuditionApplyUploadImage> {
                                       }
                                       //
                                     },
-                                    padding: EdgeInsets.only(
-                                        left: 15,
-                                        right: 20,
-                                        top: 10,
-                                        bottom: 10),
-                                    color: Colors.white,
-                                    textColor: Colors.white,
                                     label: Text("업로드",
                                         style:
                                             CustomStyles.normal16TextStyle())),
@@ -350,14 +333,12 @@ class _AuditionApplyUploadImage extends State<AuditionApplyUploadImage> {
     }
 
     if (totalImgCnt < 1) {
-      Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text('이미지를 선택해 주세요.')));
+      showSnackBar(context, '이미지를 선택해 주세요.');
       return;
     }
 
     if (totalImgCnt > 4) {
-      Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text('이미지는 최대 4장까지만 업로드할 수 있습니다.')));
+      showSnackBar(context, '이미지는 최대 4장까지만 업로드할 수 있습니다.');
       return;
     }
 
@@ -366,6 +347,8 @@ class _AuditionApplyUploadImage extends State<AuditionApplyUploadImage> {
     for (int i = 0; i < _myPhotos.length; i++) {
       if (_myPhotos[i].isSelected) {
         if (_myPhotos[i].isFile) {
+          print("ddd");
+
           final bytes = _myPhotos[i].photoFile.readAsBytesSync();
           String img64 = base64Encode(bytes);
 
@@ -373,18 +356,18 @@ class _AuditionApplyUploadImage extends State<AuditionApplyUploadImage> {
           fileData[APIConstants.base64string] = APIConstants.data_image + img64;
 
           imageFiles.add(fileData);
-        } else {}
+        } else {
+          // url 이미지 업로드
+        }
       }
     }
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-          builder: (context) => AuditionApplyUploadVideo(
-              castingSeq: _casting_seq,
-              applyImageData: imageFiles,
-              projectName: _projectName,
-              castingName: _castingName)),
-    );
+    replaceView(
+        context,
+        AuditionApplyUploadVideo(
+            castingSeq: _casting_seq,
+            applyImageData: imageFiles,
+            projectName: _projectName,
+            castingName: _castingName));
   }
 }

@@ -65,7 +65,6 @@ class _AgencyActorList extends State<AgencyActorList>
 
   // 리스트뷰 스크롤 컨트롤러 이벤트 리스너
   _scrollListener() {
-    print("dd");
     print(_scrollController.offset);
     if (_total == 0 || _actorList.length >= _total) return;
 
@@ -84,7 +83,6 @@ class _AgencyActorList extends State<AgencyActorList>
 
   @override
   void dispose() {
-    print("ee");
     _scrollController.dispose();
     super.dispose();
   }
@@ -161,6 +159,7 @@ class _AgencyActorList extends State<AgencyActorList>
                               child: Column(children: [
                             Container(
                               padding: EdgeInsets.only(left: 10, right: 10),
+                              margin: EdgeInsets.only(bottom: 10),
                               decoration: BoxDecoration(
                                   border: Border(
                                 bottom:
@@ -184,34 +183,44 @@ class _AgencyActorList extends State<AgencyActorList>
                             ),
                             Container(
                                 alignment: Alignment.centerLeft,
-                                margin: EdgeInsets.only(left: 15, right: 15),
+                                margin: EdgeInsets.only(left: 20, right: 15),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    TextButton(
-                                        onPressed: () {},
-                                        child: Text("편집",
-                                            style: CustomStyles
-                                                .normal14TextStyle()),
-                                        style: TextButton.styleFrom(
-                                            padding: EdgeInsets.zero,
-                                            minimumSize: Size(10, 10),
-                                            alignment: Alignment.center)),
-                                    Container(
-                                        height: 15,
-                                        child: VerticalDivider(
-                                          width: 0.1,
-                                          color: CustomColors.colorFontGrey,
-                                        )),
-                                    TextButton(
-                                        onPressed: () {},
-                                        child: Text("배우추가",
-                                            style: CustomStyles
-                                                .normal14TextStyle()),
-                                        style: TextButton.styleFrom(
-                                            padding: EdgeInsets.zero,
-                                            minimumSize: Size(70, 10),
-                                            alignment: Alignment.center)),
+                                    Text((_actorList.length > 0
+                                            ? _actorList.length.toString()
+                                            : "0") +
+                                        "명"),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        TextButton(
+                                            onPressed: () {},
+                                            child: Text("편집",
+                                                style: CustomStyles
+                                                    .normal14TextStyle()),
+                                            style: TextButton.styleFrom(
+                                                padding: EdgeInsets.zero,
+                                                minimumSize: Size(10, 10),
+                                                alignment: Alignment.center)),
+                                        Container(
+                                            height: 15,
+                                            child: VerticalDivider(
+                                              width: 0.1,
+                                              color: CustomColors.colorFontGrey,
+                                            )),
+                                        TextButton(
+                                            onPressed: () {},
+                                            child: Text("배우추가",
+                                                style: CustomStyles
+                                                    .normal14TextStyle()),
+                                            style: TextButton.styleFrom(
+                                                padding: EdgeInsets.zero,
+                                                minimumSize: Size(70, 10),
+                                                alignment: Alignment.center)),
+                                      ],
+                                    )
                                   ],
                                 ))
                           ]))),

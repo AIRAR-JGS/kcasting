@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomColors.dart';
@@ -6,7 +5,6 @@ import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/net/RestClientInterface.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
-import 'package:casting_call/src/view/actor/ActorDetail.dart';
 import 'package:casting_call/src/view/actor/ActorListItem.dart';
 import 'package:casting_call/src/view/audition/common/AuditionListItem.dart';
 import 'package:dio/dio.dart';
@@ -19,6 +17,7 @@ import 'package:flutter_tags/flutter_tags.dart';
 * */
 class FragmentHome extends StatefulWidget {
   final VoidCallback onClickedOpenCastingBoard;
+
   //final VoidCallback onClickedOpenCastingActor;
   final Function(String) onClickedOpenCastingActor;
 
@@ -373,7 +372,7 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
                     mainAxisSpacing: 5,
                     childAspectRatio: (0.76),
                     children: List.generate(_actorList.length, (index) {
-                      return ActorListItem(isMan: true, data: _actorList[index]);
+                      return ActorListItem(data: _actorList[index]);
                     }))
               ]),
               visible: _actorList.length > 0 ? true : false),
@@ -384,7 +383,8 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
                   alignment: Alignment.center,
                   child:
                       CustomStyles.blueBorderRound21ButtonStyle('남배우 더보기', () {
-                    widget.onClickedOpenCastingActor(APIConstants.actor_sex_male);
+                    widget
+                        .onClickedOpenCastingActor(APIConstants.actor_sex_male);
                   })),
               visible: _actorList.length > 0 ? true : false),
 
@@ -430,7 +430,7 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
                     mainAxisSpacing: 5,
                     childAspectRatio: (0.76),
                     children: List.generate(_actressList.length, (index) {
-                      return ActorListItem(isMan: false, data: _actressList[index]);
+                      return ActorListItem(data: _actressList[index]);
                     }))
               ]),
               visible: _actressList.length > 0 ? true : false),
@@ -441,7 +441,8 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
                   alignment: Alignment.center,
                   child:
                       CustomStyles.greyBorderRound21ButtonStyle('여배우 더보기', () {
-                    widget.onClickedOpenCastingActor(APIConstants.actor_sex_female);
+                    widget.onClickedOpenCastingActor(
+                        APIConstants.actor_sex_female);
                   })),
               visible: _actressList.length > 0 ? true : false),
 

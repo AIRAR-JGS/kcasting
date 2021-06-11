@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
@@ -38,8 +39,15 @@ class ActorProfileWidget {
                         child: Text('대표 이미지를 등록해 주세요.',
                             style: CustomStyles.dark20TextStyle()),
                       )
-                    : Image.network(actorProfile[APIConstants.main_img_url],
-                        fit: BoxFit.cover)),
+                    : CachedNetworkImage(
+                        imageUrl: actorProfile[APIConstants.main_img_url],
+                        fit: BoxFit.cover,
+                        errorWidget: (context, url, error) => Container(
+                              alignment: Alignment.center,
+                              child: Text('대표 이미지를 등록해 주세요.',
+                                  style: CustomStyles.dark20TextStyle()),
+                            ))
+                ),
             Container(
                 color: CustomColors.colorFontTitle,
                 padding: EdgeInsets.all(5),

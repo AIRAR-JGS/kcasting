@@ -302,12 +302,6 @@ class _ActorProfileModifyMainInfo extends State<ActorProfileModifyMainInfo>
                                   margin: EdgeInsets.only(top: 15),
                                   padding: EdgeInsets.only(left: 15, right: 15),
                                   alignment: Alignment.centerLeft,
-                                  child: Text('배우등급',
-                                      style: CustomStyles.bold14TextStyle())),
-                              Container(
-                                  margin: EdgeInsets.only(top: 15),
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  alignment: Alignment.centerLeft,
                                   child: Text('드라마 페이',
                                       style: CustomStyles.bold14TextStyle())),
                               Container(

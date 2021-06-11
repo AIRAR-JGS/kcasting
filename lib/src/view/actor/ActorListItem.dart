@@ -11,25 +11,21 @@ import 'package:flutter/material.dart';
 * 배우 목록 아이템 위젯
 * */
 class ActorListItem extends StatefulWidget {
-  final bool isMan;
   final Map<String, dynamic> data;
 
-  const ActorListItem({Key key, this.isMan, this.data}) : super(key: key);
+  const ActorListItem({Key key, this.data}) : super(key: key);
 
   @override
   _ActorListItem createState() => _ActorListItem();
 }
 
-class _ActorListItem extends State<ActorListItem>
-    with BaseUtilMixin {
-  bool _isMan;
+class _ActorListItem extends State<ActorListItem> with BaseUtilMixin {
   Map<String, dynamic> _data;
 
   @override
   void initState() {
     super.initState();
 
-    _isMan = widget.isMan;
     _data = widget.data;
   }
 
@@ -69,5 +65,4 @@ class _ActorListItem extends State<ActorListItem>
                           style: CustomStyles.dark20TextStyle()))
                 ]))));
   }
-
 }

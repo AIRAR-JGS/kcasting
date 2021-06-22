@@ -89,7 +89,7 @@ class _ProductionMemberInfoModify extends State<ProductionMemberInfoModify>
                                 margin: EdgeInsets.only(top: 15.0),
                                 padding: EdgeInsets.only(left: 18, right: 18),
                                 child: Text(
-                                    KCastingAppData().myInfo[APIConstants.id],
+                                    StringUtils.checkedString(KCastingAppData().myInfo[APIConstants.id]),
                                     style: CustomStyles.normal16TextStyle())),
                             Container(
                                 margin: EdgeInsets.only(top: 20.0),

@@ -8,6 +8,7 @@ import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/net/RestClientInterface.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
 import 'package:casting_call/src/view/actor/ActorDetail.dart';
+import 'package:casting_call/src/view/mypage/management/AgencyActorProfile.dart';
 import 'package:casting_call/src/view/mypage/management/RegisterAgencyActorProfileMainInfo.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -240,10 +241,13 @@ class _AgencyActorList extends State<AgencyActorList>
                                                       context: context,
                                                       builder: (BuildContext
                                                               context) =>
-                                                          DialogAddActor(onClickedAgree: (name, gender) {
-                                                            addView(context, RegisterAgencyActorProfileMainInfo());
-
-                                                          }),
+                                                          DialogAddActor(
+                                                              onClickedAgree:
+                                                                  (name,
+                                                                      gender) {
+                                                        addView(context,
+                                                            RegisterAgencyActorProfileMainInfo());
+                                                      }),
                                                     );
                                                   },
                                                   child: Text("배우추가",
@@ -400,48 +404,45 @@ class _AgencyActorList extends State<AgencyActorList>
                                                     },
                                                     child: Column(
                                                         children: <Widget>[
-                                                          Stack(
-                                                            children: [
-                                                              Container(
-                                                                  decoration: BoxDecoration(
-                                                                      borderRadius:
-                                                                          CustomStyles
-                                                                              .circle7BorderRadius(),
-                                                                      color: CustomColors
-                                                                          .colorBgGrey,
-                                                                      border: Border.all(
-                                                                          width:
-                                                                              3,
-                                                                          color: (_data["isSelected"]
-                                                                              ? CustomColors
-                                                                                  .colorPrimary
-                                                                              : CustomColors
-                                                                                  .colorFontLightGrey))),
-                                                                  width: (MediaQuery.of(context)
-                                                                          .size
-                                                                          .width /
-                                                                      2),
-                                                                  height: (MediaQuery.of(context)
-                                                                          .size
-                                                                          .width /
-                                                                      2),
-                                                                  child: _data[APIConstants.main_img_url] !=
-                                                                          null
-                                                                      ? ClipRRect(
-                                                                          borderRadius:
-                                                                              CustomStyles.circle4BorderRadius(),
-                                                                          child: CachedNetworkImage(imageUrl: _data[APIConstants.main_img_url], fit: BoxFit.cover))
-                                                                      : null),
-                                                              Container(
-                                                                  margin:
-                                                                      EdgeInsets
-                                                                          .all(
-                                                                              10),
-                                                                  alignment:
-                                                                      Alignment
-                                                                          .topRight,
-                                                                  child:
-                                                                      InkWell(
+                                                          Stack(children: [
+                                                            Container(
+                                                                decoration: BoxDecoration(
+                                                                    borderRadius:
+                                                                        CustomStyles
+                                                                            .circle7BorderRadius(),
+                                                                    color: CustomColors
+                                                                        .colorBgGrey,
+                                                                    border: Border.all(
+                                                                        width:
+                                                                            3,
+                                                                        color: (_data["isSelected"]
+                                                                            ? CustomColors
+                                                                                .colorPrimary
+                                                                            : CustomColors
+                                                                                .colorFontLightGrey))),
+                                                                width: (MediaQuery.of(context)
+                                                                        .size
+                                                                        .width /
+                                                                    2),
+                                                                height: (MediaQuery.of(context)
+                                                                        .size
+                                                                        .width /
+                                                                    2),
+                                                                child: _data[APIConstants.main_img_url] != null
+                                                                    ? ClipRRect(
+                                                                        borderRadius:
+                                                                            CustomStyles.circle4BorderRadius(),
+                                                                        child: CachedNetworkImage(imageUrl: _data[APIConstants.main_img_url], fit: BoxFit.cover))
+                                                                    : null),
+                                                            Container(
+                                                                margin:
+                                                                    EdgeInsets
+                                                                        .all(
+                                                                            10),
+                                                                alignment:
+                                                                    Alignment
+                                                                        .topRight,
+                                                                child: InkWell(
                                                                     onTap: () {
                                                                       setState(
                                                                           () {
@@ -449,34 +450,22 @@ class _AgencyActorList extends State<AgencyActorList>
                                                                             !_data["isSelected"];
                                                                       });
                                                                     },
-                                                                    child:
-                                                                        Container(
-                                                                      decoration: BoxDecoration(
-                                                                          shape: BoxShape
-                                                                              .circle,
-                                                                          color: (_data["isSelected"]
-                                                                              ? CustomColors.colorPrimary
-                                                                              : CustomColors.colorFontLightGrey)),
-                                                                      child:
-                                                                          Padding(
-                                                                        padding:
-                                                                            const EdgeInsets.all(5.0),
-                                                                        child: _data["isSelected"]
-                                                                            ? Icon(
-                                                                                Icons.check,
-                                                                                size: 15.0,
-                                                                                color: CustomColors.colorWhite,
-                                                                              )
-                                                                            : Icon(
-                                                                                Icons.check_box_outline_blank,
-                                                                                size: 15.0,
-                                                                                color: CustomColors.colorFontLightGrey,
-                                                                              ),
-                                                                      ),
-                                                                    ),
-                                                                  ))
-                                                            ],
-                                                          ),
+                                                                    child: Container(
+                                                                        decoration: BoxDecoration(shape: BoxShape.circle, color: (_data["isSelected"] ? CustomColors.colorPrimary : CustomColors.colorFontLightGrey)),
+                                                                        child: Padding(
+                                                                            padding: const EdgeInsets.all(5.0),
+                                                                            child: _data["isSelected"]
+                                                                                ? Icon(
+                                                                                    Icons.check,
+                                                                                    size: 15.0,
+                                                                                    color: CustomColors.colorWhite,
+                                                                                  )
+                                                                                : Icon(
+                                                                                    Icons.check_box_outline_blank,
+                                                                                    size: 15.0,
+                                                                                    color: CustomColors.colorFontLightGrey,
+                                                                                  )))))
+                                                          ]),
                                                           Container(
                                                               alignment: Alignment
                                                                   .centerLeft,
@@ -498,7 +487,7 @@ class _AgencyActorList extends State<AgencyActorList>
                                                     onTap: () {
                                                       addView(
                                                           context,
-                                                          ActorDetail(
+                                                          AgencyActorProfile(
                                                               seq: _data[
                                                                   APIConstants
                                                                       .seq],

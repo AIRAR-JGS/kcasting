@@ -7,7 +7,7 @@ import 'package:casting_call/src/model/EducationListModel.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
 import 'package:casting_call/src/view/actor/ActorProfileWidget.dart';
-import 'package:casting_call/src/view/mypage/actor/ActorProfileModifySubInfo.dart';
+import 'package:casting_call/src/view/mypage/management/RegisterAgencyActorProfileSubInfo.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -298,8 +298,8 @@ class _RegisterAgencyActorProfileMainInfo
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                      ActorProfileWidget.mainImageWidget(
-                          context, true, null, () {
+                      ActorProfileWidget.mainImageWidget(context, true, null,
+                          () {
                         getImageFromGallery(0);
                       }),
                       Container(
@@ -728,6 +728,7 @@ class _RegisterAgencyActorProfileMainInfo
       actorProfile[APIConstants.education_target] = educationTarget;
     }
 
-    replaceView(context, ActorProfileModifySubInfo(targetData: actorProfile));
+    replaceView(
+        context, RegisterAgencyActorProfileSubInfo(targetData: actorProfile));
   }
 }

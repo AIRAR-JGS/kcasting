@@ -6,13 +6,11 @@ import 'package:casting_call/src/dialog/DialogMemberLogoutConfirm.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/net/RestClientInterface.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
-import 'package:casting_call/src/view/actor/BookmarkedActorList.dart';
 import 'package:casting_call/src/view/audition/production/ProposedAuditionList.dart';
 import 'package:casting_call/src/view/mypage/management/AgencyActorList.dart';
+import 'package:casting_call/src/view/mypage/management/AgencyMemberInfo.dart';
 import 'package:casting_call/src/view/mypage/management/AgencyProfile.dart';
-import 'package:casting_call/src/view/mypage/production/ProductionMemberInfo.dart';
-import 'package:casting_call/src/view/mypage/production/ProductionProfile.dart';
-import 'package:casting_call/src/view/project/ProjectList.dart';
+import 'package:casting_call/src/view/mypage/management/BookmarkedAgencyAuditionList.dart';
 import 'package:casting_call/src/view/user/common/Login.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -213,7 +211,7 @@ class _AgencyMemberPage extends State<AgencyMemberPage> with BaseUtilMixin {
       alignment: Alignment.center,
       child: ListView.separated(
         scrollDirection: Axis.vertical,
-        itemCount: 7,
+        itemCount: 8,
         itemBuilder: (context, index) {
           return (index == 0)
               ? _headerView()
@@ -248,13 +246,13 @@ class _AgencyMemberPage extends State<AgencyMemberPage> with BaseUtilMixin {
                       // 마이스크랩
                       case 5:
                         // 마이스크랩 페이지 이동
-                        addView(context, BookmarkedActorList());
+                        addView(context, BookmarkedAgencyAuditionList());
                         break;
 
                       // 개인정보 관리
                       case 6:
                         // 개인정보 관리 페이지 이동
-                        addView(context, ProductionMemberInfo());
+                        addView(context, AgencyMemberInfo());
                         break;
 
                       // 로그아웃

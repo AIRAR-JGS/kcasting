@@ -60,8 +60,8 @@ class _ProductionMemberInfo extends State<ProductionMemberInfo>
                                   flex: 7,
                                   child: Container(
                                       child: Text(
-                                          KCastingAppData()
-                                              .myInfo[APIConstants.id],
+                                          StringUtils.checkedString(KCastingAppData()
+                                              .myInfo[APIConstants.id]),
                                           style: CustomStyles
                                               .normal14TextStyle())))
                             ],
@@ -80,8 +80,8 @@ class _ProductionMemberInfo extends State<ProductionMemberInfo>
                                   flex: 7,
                                   child: Container(
                                       child: Text(
-                                          KCastingAppData().myInfo[
-                                              APIConstants.production_name],
+                                          StringUtils.checkedString(KCastingAppData().myInfo[
+                                          APIConstants.production_name]),
                                           style: CustomStyles
                                               .normal14TextStyle())))
                             ],
@@ -121,8 +121,8 @@ class _ProductionMemberInfo extends State<ProductionMemberInfo>
                                   flex: 7,
                                   child: Container(
                                       child: Text(
-                                          KCastingAppData().myInfo[
-                                              APIConstants.production_CEO_name],
+                                         StringUtils.checkedString( KCastingAppData().myInfo[
+                                         APIConstants.production_CEO_name]),
                                           style: CustomStyles
                                               .normal14TextStyle())))
                             ],

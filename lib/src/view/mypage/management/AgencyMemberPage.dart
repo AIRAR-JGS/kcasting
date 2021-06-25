@@ -6,6 +6,8 @@ import 'package:casting_call/src/dialog/DialogMemberLogoutConfirm.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/net/RestClientInterface.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
+import 'package:casting_call/src/view/audition/actor/AgencyActorAuditionApplyList.dart';
+import 'package:casting_call/src/view/audition/actor/AgencyActorOfferedAuditionList.dart';
 import 'package:casting_call/src/view/audition/production/ProposedAuditionList.dart';
 import 'package:casting_call/src/view/mypage/management/AgencyActorList.dart';
 import 'package:casting_call/src/view/mypage/management/AgencyMemberInfo.dart';
@@ -234,13 +236,13 @@ class _AgencyMemberPage extends State<AgencyMemberPage> with BaseUtilMixin {
                       // 지원 현황
                       case 3:
                         // 지원 현황 페이지 이동
-                        addView(context, ProposedAuditionList());
+                        addView(context, AgencyActorAuditionApplyList());
                         break;
 
                       // 받은 제안
                       case 4:
                         // 받은 제안 페이지 이동
-                        addView(context, ProposedAuditionList());
+                        addView(context, AgencyActorOfferedAuditionList());
                         break;
 
                       // 마이스크랩

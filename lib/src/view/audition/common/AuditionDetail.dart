@@ -5,6 +5,7 @@ import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/net/RestClientInterface.dart';
 import 'package:casting_call/src/util/DateTileUtils.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
+import 'package:casting_call/src/view/audition/actor/AgencyActorAuditionApply.dart';
 import 'package:casting_call/src/view/audition/actor/AuditionApplyUploadImage.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -881,17 +882,34 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
                                 height: 55,
                                 child: CustomStyles.blueBGSquareButtonStyle(
                                     '지원하기 D-56', () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              AuditionApplyUploadImage(
-                                                castingSeq: _castingSeq,
-                                                projectName: _castingBoardData[
-                                                    APIConstants.project_name],
-                                                castingName: _castingBoardData[
-                                                    APIConstants.casting_name],
-                                              )));
+                                      if( KCastingAppData().myInfo[APIConstants.member_type] == APIConstants.member_type_actor) {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    AuditionApplyUploadImage(
+                                                      castingSeq: _castingSeq,
+                                                      projectName: _castingBoardData[
+                                                      APIConstants.project_name],
+                                                      castingName: _castingBoardData[
+                                                      APIConstants.casting_name],
+                                                    )));
+
+                                      }
+                                      //else if(KCastingAppData().myInfo[APIConstants.member_type] == APIConstants.member_type_management) {
+                                      else {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    AgencyActorAuditionApply(
+                                                      castingSeq: _castingSeq,
+                                                      projectName: _castingBoardData[
+                                                      APIConstants.project_name],
+                                                      castingName: _castingBoardData[
+                                                      APIConstants.casting_name],
+                                                    )));
+                                      }
                                 }))),
                         Container(
                             height: 55,

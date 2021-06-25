@@ -60,7 +60,7 @@ class _ActorList extends State<ActorList> with BaseUtilMixin {
   ScrollController _scrollController;
 
   int _total = 0;
-  int _limit = 4;
+  int _limit = 20;
 
   List<dynamic> _actorList = [];
   bool _isLoading = true;
@@ -230,6 +230,8 @@ class _ActorList extends State<ActorList> with BaseUtilMixin {
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
             child: SingleChildScrollView(
+                key: ObjectKey(_actorList.length > 0 ? _actorList[0] : ""),
+                controller: _scrollController,
                 child: Column(children: [
               Expanded(
                   flex: 0,
@@ -636,7 +638,6 @@ class _ActorList extends State<ActorList> with BaseUtilMixin {
                               EdgeInsets.only(left: 16, right: 16, bottom: 50),
                           physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
-                          controller: _scrollController,
                           crossAxisCount: 2,
                           crossAxisSpacing: 10,
                           mainAxisSpacing: 5,

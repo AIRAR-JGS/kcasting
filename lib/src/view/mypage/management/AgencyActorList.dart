@@ -7,7 +7,6 @@ import 'package:casting_call/src/dialog/DialogDeleteActorConfirm.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/net/RestClientInterface.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
-import 'package:casting_call/src/view/actor/ActorDetail.dart';
 import 'package:casting_call/src/view/mypage/management/AgencyActorProfile.dart';
 import 'package:casting_call/src/view/mypage/management/RegisterAgencyActorProfileMainInfo.dart';
 import 'package:dio/dio.dart';
@@ -76,7 +75,6 @@ class _AgencyActorList extends State<AgencyActorList>
 
   // 리스트뷰 스크롤 컨트롤러 이벤트 리스너
   _scrollListener() {
-    print(_scrollController.offset);
     if (_total == 0 || _actorList.length >= _total) return;
 
     if (_scrollController.offset >=

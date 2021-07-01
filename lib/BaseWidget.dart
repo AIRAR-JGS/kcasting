@@ -88,7 +88,7 @@ mixin BaseUtilMixin {
   }
 
   /*
-  * 웹뷰 호출
+  * 웹뷰 호출i
   * */
   Future<void> launchInBrowser(String url) async {
     if (await canLaunch(url)) {

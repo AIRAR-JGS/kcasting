@@ -199,7 +199,7 @@ packages:
     source: hosted
     version: "0.13.1"
   http_parser:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: http_parser
       url: "https://pub.dartlang.org"
@@ -372,7 +372,7 @@ packages:
       name: retrofit
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.0"
+    version: "2.0.0"
   rxdart:
     dependency: transitive
     description:

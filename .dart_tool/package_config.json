@@ -321,9 +321,9 @@
     },
     {
       "name": "retrofit",
-      "rootUri": "file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/retrofit-1.0.0",
+      "rootUri": "file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/retrofit-2.0.0",
       "packageUri": "lib/",
-      "languageVersion": "2.2"
+      "languageVersion": "2.12"
     },
     {
       "name": "rxdart",
@@ -536,7 +536,7 @@
       "languageVersion": "2.7"
     }
   ],
-  "generated": "2021-05-07T02:47:54.281115Z",
+  "generated": "2021-07-05T07:12:25.832156Z",
   "generator": "pub",
   "generatorVersion": "2.13.0-211.6.beta"
 }

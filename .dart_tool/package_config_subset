@@ -203,9 +203,9 @@ process
 file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/process-4.2.1/
 file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/process-4.2.1/lib/
 retrofit
-2.2
-file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/retrofit-1.0.0/
-file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/retrofit-1.0.0/lib/
+2.12
+file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/retrofit-2.0.0/
+file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/retrofit-2.0.0/lib/
 rxdart
 2.12
 file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/rxdart-0.26.0/

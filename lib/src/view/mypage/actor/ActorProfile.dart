@@ -170,27 +170,26 @@ class _ActorProfile extends State<ActorProfile>
   /*
   * 배우프로필 이미지 수정
   * */
-  void requestUpdateActorProfile(BuildContext context, File profileFile) {
+  Future<void> requestUpdateActorProfile(
+      BuildContext context, File profileFile) async {
     final dio = Dio();
-
-    final bytes = File(profileFile.path).readAsBytesSync();
-    String img64 = base64Encode(bytes);
-
-    // 배우프로필 이미지 수정 api 호출 시 보낼 파라미터
-    Map<String, dynamic> fileData = new Map();
-    fileData[APIConstants.base64string] = APIConstants.data_image + img64;
 
     Map<String, dynamic> targetData = new Map();
     targetData[APIConstants.seq] =
         KCastingAppData().myInfo[APIConstants.actorProfile_seq];
-    targetData[APIConstants.file] = fileData;
+    //targetData[APIConstants.file] = fileData;
 
     Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.UPD_APR_MAINIMG;
+    params[APIConstants.key] = APIConstants.UPD_APR_MAINIMG_FORMDATA;
     params[APIConstants.target] = targetData;
 
+    var temp = profileFile.path.split('/');
+    String fileName = temp[temp.length - 1];
+    params[APIConstants.target_files] =
+        await MultipartFile.fromFile(profileFile.path, filename: fileName);
+
     // 배우프로필 이미지 수정 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
+    RestClient(dio).postRequestMainControlFormData(params).then((value) async {
       if (value == null) {
         // 에러 - 데이터 널
         showSnackBar(context, APIConstants.error_msg_server_not_response);

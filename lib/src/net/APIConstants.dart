@@ -6,6 +6,7 @@ class APIConstants {
   static const String BASE_URL = "https://k-casting.com/t1/index.php/Api/";
   //static const String BASE_URL = "https://k-casting.com/v1/index.php/Api/";
   static const String URL_MAIN_CONTROL = "mainControl";
+  static const String URL_MAIN_CONTROL_NEW = "newMainControl";
 
   static String getURL(String path) {
     return BASE_URL + path;
@@ -59,6 +60,7 @@ class APIConstants {
   static const String DEA_AFM_LIST  = "DEA_AFM_LIST";  // 배우 필모그래피 일괄 삭제
   static const String IPC_APR_INFO  = "IPC_APR_INFO";  // 배우 프로필 등록
   static const String UPD_APR_MAINIMG  = "UPD_APR_MAINIMG";  // 배우 프로필 이미지 수정
+  static const String UPD_APR_MAINIMG_FORMDATA  = "UPD_APR_MAINIMG_FormData";  // 배우 프로필 이미지 수정(FormData)
   static const String SAR_APR_INFO  = "SAR_APR_INFO";  // 배우 이미지 등록
   static const String INS_AIM_LIST  = "INS_AIM_LIST";  // 배우 이미지 등록
   static const String DEA_AIM_LIST  = "DEA_AIM_LIST";  // 배우 이미지 일괄 삭제
@@ -326,6 +328,7 @@ class APIConstants {
   static const String save_db_key = "save_db_key";
   static const String save_dir = "save_dir";
   static const String actor_profile = "actor_profile";
+  static const String target_files = "target_files";
   static const String base64string = "base64string";
   static const String base64string_thumb = "base64string_thumb";
   static const String data_image = "data:image/png;base64,";

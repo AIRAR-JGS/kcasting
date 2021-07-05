@@ -14,4 +14,10 @@ abstract class RestClient {
   @POST(APIConstants.URL_MAIN_CONTROL)
   Future<Map<String, dynamic>> postRequestMainControl(
       @Body() Map<String, dynamic> params);
+
+  // 데이터 추가(폼데이터)
+  @MultiPart()
+  @POST(APIConstants.URL_MAIN_CONTROL)
+  Future<Map<String, dynamic>> postRequestMainControlFormData(
+      @Part() Map<String, dynamic> params);
 }

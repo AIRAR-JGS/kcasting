@@ -35,10 +35,11 @@ dependencies:
   video_thumbnail: ^0.2.5+1
   image_picker: ^0.7.4
   url_launcher:
-  retrofit:
+  retrofit: ^2.0.0
   shared_preferences: ^2.0.5
   dio:
   http:
+  http_parser: ^4.0.0
   path_provider: ^2.0.1
   intl:
   pinch_zoom:

@@ -36,6 +36,7 @@ class _RestClient implements RestClient {
           options: Options(
               method: 'POST',
               headers: <String, dynamic>{
+                "Access-Control-Allow-Origin": "*",
                 'Content-Type': 'application/json; charset=utf-8'
               },
               extra: _extra),
@@ -49,6 +50,45 @@ class _RestClient implements RestClient {
 
         /*var _responseList = jsonDecode(_response.data) as List;
         _result = _responseList.length > 0 ? _responseList[0] : null;*/
+      } else {
+        _result = null;
+      }
+    } catch (e) {
+      print(e.toString());
+      _result = null;
+    }
+
+    return Future.value(_result);
+  }
+
+  @override
+  Future<Map<String, dynamic>> postRequestMainControlFormData(Map<String, dynamic> params) async {
+    print(params);
+
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = FormData.fromMap(params);
+
+    Map<String, dynamic> _result;
+
+    try {
+      final _response = await _dio.request<String>(
+          APIConstants.getURL(APIConstants.URL_MAIN_CONTROL_NEW),
+          queryParameters: queryParameters,
+          options: Options(
+              method: 'POST',
+              headers: <String, dynamic>{
+                "Access-Control-Allow-Origin": "*",
+                'Content-Type': 'application/json; charset=utf-8'
+              },
+              extra: _extra),
+          data: _data);
+
+      printWrapped(_response.data.toString());
+
+      if (_response.data != null) {
+        // api 호출 리턴값
+        _result = jsonDecode(_response.data);
       } else {
         _result = null;
       }

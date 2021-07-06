@@ -43,7 +43,7 @@ class _VideoView extends State<VideoView> {
     initFuture =
         _controller.initialize().then((value) => _controller.addListener(() {
               if (!_controller.value.isPlaying &&
-                  _controller.value.initialized &&
+                  _controller.value.isInitialized &&
                   (_controller.value.duration == _controller.value.position)) {
                 //checking the duration and position every time
                 //Video Completed//

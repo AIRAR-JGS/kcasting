@@ -140,26 +140,24 @@ class _ProductionProfile extends State<ProductionProfile>
   /*
   * 제작사 로고 이미지 수정
   * */
-  void requestUpdateProductionProfile(BuildContext context, File profileFile) {
+  Future<void> requestUpdateProductionProfile(BuildContext context, File profileFile) async {
     final dio = Dio();
 
-    final bytes = File(profileFile.path).readAsBytesSync();
-    String img64 = base64Encode(bytes);
-
     // 제작사 로고 이미지 수정 api 호출 시 보낼 파라미터
-    Map<String, dynamic> fileData = new Map();
-    fileData[APIConstants.base64string] = APIConstants.data_image + img64;
-
     Map<String, dynamic> targetDatas = new Map();
     targetDatas[APIConstants.seq] = KCastingAppData().myInfo[APIConstants.seq];
-    targetDatas[APIConstants.file] = fileData;
 
     Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.UDF_PRD_LOGO;
+    params[APIConstants.key] = APIConstants.UDF_PRD_LOGO_FORMDATA;
     params[APIConstants.target] = targetDatas;
 
+    var temp = profileFile.path.split('/');
+    String fileName = temp[temp.length - 1];
+    params[APIConstants.target_files] =
+        await MultipartFile.fromFile(profileFile.path, filename: fileName);
+
     // 제작사 로고 이미지 수정 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
+    RestClient(dio).postRequestMainControlFormData(params).then((value) async {
       if (value == null) {
         // 에러 - 데이터 널
         showSnackBar(context, APIConstants.error_msg_server_not_response);

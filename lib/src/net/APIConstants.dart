@@ -5,8 +5,9 @@ class APIConstants {
   //================================================================================
   static const String BASE_URL = "https://k-casting.com/t1/index.php/Api/";
   //static const String BASE_URL = "https://k-casting.com/v1/index.php/Api/";
-  static const String URL_MAIN_CONTROL = "mainControl";
-  static const String URL_MAIN_CONTROL_NEW = "newMainControl";
+
+  //static const String URL_MAIN_CONTROL = "mainControl";
+  static const String URL_MAIN_CONTROL = "newMainControl";
 
   static String getURL(String path) {
     return BASE_URL + path;
@@ -27,6 +28,7 @@ class APIConstants {
   static const String LGI_TOT_LOGIN = "LGI_TOT_LOGIN";  // 로그인
   static const String UPD_PRD_INFO = "UPD_PRD_INFO";  // 제작사 개인정보 수정
   static const String UDF_PRD_LOGO = "UDF_PRD_LOGO";  // 제작사 로고 이미지 수정
+  static const String UDF_PRD_LOGO_FORMDATA = "UDF_PRD_LOGO_FormData";  // 제작사 로고 이미지 수정
   static const String SEL_PRD_INFO = "SEL_PRD_INFO";  // 제작사 단일 조회
   static const String INS_PFM_INFO = "INS_PFM_INFO";  // 제작사 필모그래피 추가
   static const String DEA_PFM_LIST = "DEA_PFM_LIST";  // 제작사 필모그래피 삭제
@@ -51,6 +53,7 @@ class APIConstants {
   static const String UPD_FAT_INFO  = "UPD_FAT_INFO";  // 오디션 대상자 단일 수정(합격, 불합격) - 1차
   static const String UPD_SAT_INFO  = "UPD_SAT_INFO";  // 오디션 대상자 단일 수정(합격, 불합격) - 2차
   static const String UPD_TAT_INFO  = "UPD_TAT_INFO";  // 오디션 대상자 단일 수정(합격, 불합격) - 3차
+  static const String DEL_PRD_INFO  = "DEL_PRD_INFO";  // 제작사 회원 탈퇴
 
   static const String INS_ACT_JOIN  = "INS_ACT_JOIN";  // 배우 회원가입
   static const String SEL_ACT_INFO  = "SEL_ACT_INFO";  // 배우 단일 조회
@@ -63,8 +66,10 @@ class APIConstants {
   static const String UPD_APR_MAINIMG_FORMDATA  = "UPD_APR_MAINIMG_FormData";  // 배우 프로필 이미지 수정(FormData)
   static const String SAR_APR_INFO  = "SAR_APR_INFO";  // 배우 이미지 등록
   static const String INS_AIM_LIST  = "INS_AIM_LIST";  // 배우 이미지 등록
+  static const String INS_AIM_LIST_FORMDATA  = "INS_AIM_LIST_FormData";  // 배우 이미지 등록
   static const String DEA_AIM_LIST  = "DEA_AIM_LIST";  // 배우 이미지 일괄 삭제
   static const String INS_AVD_LIST  = "INS_AVD_LIST";  // 배우 비디오 등록
+  static const String INS_AVD_LIST_FORMDATA  = "INS_AVD_LIST_FormData";  // 배우 비디오 등록
   static const String DEA_AVD_LIST  = "DEA_AVD_LIST";  // 배우 비디오 일괄 삭제
   static const String INS_AAA_INFO  = "INS_AAA_INFO";  // 배우 오디션 지원
   static const String SEL_AAA_LIST  = "SEL_AAA_LIST";  // 배우 오디션 지원 현황 조회
@@ -77,6 +82,9 @@ class APIConstants {
   static const String SEL_MKM_LIST  = "SEL_MKM_LIST";  // 메인 : 남배우 외모 특징 목록 조회
   static const String SEL_MKW_LIST  = "SEL_MKW_LIST";  // 메인 : 여배우 외모 특징 목록 조회
   static const String SEL_ACT_STATE  = "SEL_ACT_STATE";  // 배우 상태 조회
+  static const String DEL_ACT_INFO  = "DEL_ACT_INFO";  // 배우 회원 탈퇴
+
+  static const String INS_MGM_JOIN  = "INS_MGM_JOIN";  // 매니지먼트 회원가입
 
   static const String server_error_already_exist = "already exists data";
   static const String server_error_not_joined = "This id not joind";
@@ -329,6 +337,8 @@ class APIConstants {
   static const String save_dir = "save_dir";
   static const String actor_profile = "actor_profile";
   static const String target_files = "target_files";
+  static const String target_files_array = "target_files[]";
+  static const String target_files_thumb_array = "target_files_thumb[]";
   static const String base64string = "base64string";
   static const String base64string_thumb = "base64string_thumb";
   static const String data_image = "data:image/png;base64,";
@@ -407,4 +417,10 @@ class APIConstants {
   // 소속사 회원 관련
   static const String table_management = "Management";
   static const String member_type_management = "M";
+  static const String management_name = "management_name";
+  static const String management_CEO_name = "management_CEO_name";
+  static const String management_bank_code = "management_bank_code";
+  static const String management_account_number = "management_account_number";
+  static const String management_homepage = "management_homepage";
+  static const String management_email = "management_email";
 }

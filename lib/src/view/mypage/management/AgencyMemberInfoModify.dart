@@ -32,14 +32,14 @@ class _AgencyMemberInfoModify extends State<AgencyMemberInfoModify>
     super.initState();
 
     _txtFieldHomepage.text = StringUtils.isEmpty(
-            KCastingAppData().myInfo[APIConstants.production_homepage])
+            KCastingAppData().myInfo[APIConstants.management_homepage])
         ? ''
-        : KCastingAppData().myInfo[APIConstants.production_homepage];
+        : KCastingAppData().myInfo[APIConstants.management_homepage];
 
     _txtFieldEmail.text = StringUtils.isEmpty(
-            KCastingAppData().myInfo[APIConstants.production_email])
+            KCastingAppData().myInfo[APIConstants.management_email])
         ? ''
-        : KCastingAppData().myInfo[APIConstants.production_email];
+        : KCastingAppData().myInfo[APIConstants.management_email];
   }
 
   /*
@@ -169,7 +169,7 @@ class _AgencyMemberInfoModify extends State<AgencyMemberInfoModify>
                                 child: CustomStyles
                                     .disabledGreyBorderRound7TextField(
                                         KCastingAppData().myInfo[
-                                            APIConstants.production_name])),
+                                            APIConstants.management_name])),
                             Container(
                                 margin: EdgeInsets.only(top: 15),
                                 padding: EdgeInsets.only(left: 18, right: 18),
@@ -194,7 +194,7 @@ class _AgencyMemberInfoModify extends State<AgencyMemberInfoModify>
                                 child: CustomStyles
                                     .disabledGreyBorderRound7TextField(
                                         KCastingAppData().myInfo[
-                                            APIConstants.production_CEO_name])),
+                                            APIConstants.management_CEO_name])),
                             /* Container(
                       margin: EdgeInsets.only(top: 30, bottom: 30),
                       child: Divider(

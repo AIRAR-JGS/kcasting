@@ -192,7 +192,7 @@ class _AgencyProfile extends State<AgencyProfile>
                           margin: EdgeInsets.only(bottom: 30),
                           child: Text(
                               StringUtils.checkedString(KCastingAppData()
-                                  .myInfo[APIConstants.production_name]),
+                                  .myInfo[APIConstants.management_name]),
                               style: CustomStyles.normal32TextStyle())),
                       Container(
                           width: MediaQuery.of(context).size.width,
@@ -208,10 +208,10 @@ class _AgencyProfile extends State<AgencyProfile>
                           margin: EdgeInsets.only(top: 10.0),
                           child: Text(
                               StringUtils.isEmpty(KCastingAppData()
-                                      .myInfo[APIConstants.production_homepage])
+                                      .myInfo[APIConstants.id])
                                   ? '-'
                                   : KCastingAppData()
-                                      .myInfo[APIConstants.production_homepage],
+                                      .myInfo[APIConstants.id],
                               style: CustomStyles.dark14TextStyle())),
                       Container(
                           width: MediaQuery.of(context).size.width,
@@ -227,10 +227,10 @@ class _AgencyProfile extends State<AgencyProfile>
                           margin: EdgeInsets.only(top: 10.0),
                           child: Text(
                               StringUtils.isEmpty(KCastingAppData()
-                                      .myInfo[APIConstants.production_email])
+                                      .myInfo[APIConstants.management_CEO_name])
                                   ? '-'
                                   : KCastingAppData()
-                                      .myInfo[APIConstants.production_email],
+                                      .myInfo[APIConstants.management_CEO_name],
                               style: CustomStyles.dark14TextStyle())),
                       Container(
                           width: MediaQuery.of(context).size.width,
@@ -246,10 +246,10 @@ class _AgencyProfile extends State<AgencyProfile>
                           margin: EdgeInsets.only(top: 10.0),
                           child: Text(
                               StringUtils.isEmpty(KCastingAppData()
-                                      .myInfo[APIConstants.production_email])
+                                      .myInfo[APIConstants.management_email])
                                   ? '-'
                                   : KCastingAppData()
-                                      .myInfo[APIConstants.production_email],
+                                      .myInfo[APIConstants.management_email],
                               style: CustomStyles.dark14TextStyle())),
                       Container(
                         margin: EdgeInsets.only(top: 30),

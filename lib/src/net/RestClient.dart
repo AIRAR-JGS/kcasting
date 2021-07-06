@@ -73,12 +73,11 @@ class _RestClient implements RestClient {
 
     try {
       final _response = await _dio.request<String>(
-          APIConstants.getURL(APIConstants.URL_MAIN_CONTROL_NEW),
+          APIConstants.getURL(APIConstants.URL_MAIN_CONTROL),
           queryParameters: queryParameters,
           options: Options(
               method: 'POST',
               headers: <String, dynamic>{
-                "Access-Control-Allow-Origin": "*",
                 'Content-Type': 'application/json; charset=utf-8'
               },
               extra: _extra),

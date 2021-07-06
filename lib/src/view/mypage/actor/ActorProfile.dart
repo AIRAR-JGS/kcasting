@@ -17,6 +17,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags/flutter_tags.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
@@ -176,7 +177,7 @@ class _ActorProfile extends State<ActorProfile>
 
     Map<String, dynamic> targetData = new Map();
     targetData[APIConstants.seq] =
-        KCastingAppData().myInfo[APIConstants.actorProfile_seq];
+        KCastingAppData().myInfo[APIConstants.actor_profile_seq];
     //targetData[APIConstants.file] = fileData;
 
     Map<String, dynamic> params = new Map();
@@ -268,30 +269,26 @@ class _ActorProfile extends State<ActorProfile>
   /*
   * 배우 이미지 추가
   * */
-  void requestAddActorImage(BuildContext context, File profileFile) {
+  Future<void> requestAddActorImage(BuildContext context, File profileFile) async {
     final dio = Dio();
-
-    final bytes = File(profileFile.path).readAsBytesSync();
-    String img64 = base64Encode(bytes);
 
     // 배우 이미지 추가 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
     targetData[APIConstants.actor_seq] =
         KCastingAppData().myInfo[APIConstants.seq];
 
-    Map<String, dynamic> fileData = new Map();
-    fileData[APIConstants.base64string] = APIConstants.data_image + img64;
-    List<Map<String, dynamic>> fileDatas = [];
-    fileDatas.add(fileData);
-
-    targetData[APIConstants.file] = fileDatas;
+    var files = [];
+    var temp = profileFile.path.split('/');
+    String fileName = temp[temp.length - 1];
+    files.add(await MultipartFile.fromFile(profileFile.path, filename: fileName));
 
     Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.INS_AIM_LIST;
+    params[APIConstants.key] = APIConstants.INS_AIM_LIST_FORMDATA;
     params[APIConstants.target] = targetData;
+    params[APIConstants.target_files_array] = files;
 
     // 배우 이미지 추가 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
+    RestClient(dio).postRequestMainControlFormData(params).then((value) async {
       if (value == null) {
         // 에러 - 데이터 널
         showSnackBar(context, APIConstants.error_msg_server_not_response);
@@ -370,8 +367,8 @@ class _ActorProfile extends State<ActorProfile>
   /*
   * 배우 비디오 추가
   * */
-  void requestAddActorVideo(
-      BuildContext context, File videoFile, Uint8List bytes) {
+  Future<void> requestAddActorVideo(
+      BuildContext context, File videoFile, String thumbFilePath) async {
     setState(() {
       _isUpload = true;
     });
@@ -379,34 +376,29 @@ class _ActorProfile extends State<ActorProfile>
     try {
       final dio = Dio();
 
-      final videoFileBytes = File(videoFile.path).readAsBytesSync();
-      String videoFile64 = base64Encode(videoFileBytes);
-
-      //final bytes = File(thumbnailFile.path).readAsBytesSync();
-      String thumbnailFile62 = base64Encode(bytes);
-
       // 배우 비디오 추가 api 호출 시 보낼 파라미터
       Map<String, dynamic> targetData = new Map();
       targetData[APIConstants.actor_seq] =
           KCastingAppData().myInfo[APIConstants.seq];
 
-      Map<String, dynamic> fileData = new Map();
-      fileData[APIConstants.base64string] =
-          APIConstants.data_file + videoFile64;
-      fileData[APIConstants.base64string_thumb] =
-          APIConstants.data_image + thumbnailFile62;
+      var files = [];
+      var temp = videoFile.path.split('/');
+      String fileName = temp[temp.length - 1];
+      files.add(await MultipartFile.fromFile(videoFile.path, filename: fileName));
 
-      List<Map<String, dynamic>> fileDatas = [];
-      fileDatas.add(fileData);
-
-      targetData[APIConstants.file] = fileDatas;
+      var thums = [];
+      var tempImg = thumbFilePath.split('/');
+      String thumbFileName = tempImg[tempImg.length - 1];
+      thums.add(await MultipartFile.fromFile(thumbFilePath, filename: thumbFileName));
 
       Map<String, dynamic> params = new Map();
-      params[APIConstants.key] = APIConstants.INS_AVD_LIST;
+      params[APIConstants.key] = APIConstants.INS_AVD_LIST_FORMDATA;
       params[APIConstants.target] = targetData;
+      params[APIConstants.target_files_array] = files;
+      params[APIConstants.target_files_thumb_array] = thums;
 
       // 배우 비디오 추가 api 호출
-      RestClient(dio).postRequestMainControl(params).then((value) async {
+      RestClient(dio).postRequestMainControlFormData(params).then((value) async {
         if (value == null) {
           // 에러 - 데이터 널
           showSnackBar(context, APIConstants.error_msg_server_not_response);
@@ -528,8 +520,17 @@ class _ActorProfile extends State<ActorProfile>
   }
 
   getVideoThumbnail(String filePath) async {
-    Uint8List bytes = await VideoThumbnail.thumbnailData(
-        video: filePath, imageFormat: ImageFormat.JPEG);
+    /*Uint8List bytes = await VideoThumbnail.thumbnailData(
+        video: filePath, imageFormat: ImageFormat.JPEG);*/
+
+    final fileName = await VideoThumbnail.thumbnailFile(
+      video: filePath,
+      thumbnailPath: (await getTemporaryDirectory()).path,
+      imageFormat: ImageFormat.JPEG
+    );
+
+    print("ddddddddddd");
+    print(fileName);
 
     var _videoFile = File(filePath);
     final size = _videoFile.readAsBytesSync().lengthInBytes;
@@ -539,7 +540,7 @@ class _ActorProfile extends State<ActorProfile>
     if (mb > 25) {
       showSnackBar(context, "25MB 미만의 파일만 업로드 가능합니다.");
     } else {
-      requestAddActorVideo(context, _videoFile, bytes);
+      requestAddActorVideo(context, _videoFile, fileName);
     }
   }
 

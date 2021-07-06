@@ -528,9 +528,9 @@ class _JoinAgency extends State<JoinAgency> with BaseUtilMixin {
                             width: double.infinity,
                             child: CustomStyles.lightGreyBGSquareButtonStyle(
                                 '회원가입', () {
-                              /*if (checkValidate(context)) {
+                              if (checkValidate(context)) {
                                 requestJoinApi(context);
-                              }*/
+                              }
 
                               replaceView(context, Home());
                             }))
@@ -615,22 +615,22 @@ class _JoinAgency extends State<JoinAgency> with BaseUtilMixin {
     Map<String, dynamic> targetDatas = new Map();
     targetDatas[APIConstants.id] = StringUtils.trimmedString(_txtFieldID.text);
     targetDatas[APIConstants.pwd] = StringUtils.trimmedString(_txtFieldPW.text);
-    targetDatas[APIConstants.member_type] = APIConstants.member_type_product;
-    targetDatas[APIConstants.production_name] = _txtFieldCompanyName.text;
+    targetDatas[APIConstants.member_type] = APIConstants.member_type_management;
+    targetDatas[APIConstants.management_name] = _txtFieldCompanyName.text;
     targetDatas[APIConstants.businessRegistration_number] = "";
-    targetDatas[APIConstants.production_CEO_name] =
+    targetDatas[APIConstants.management_CEO_name] =
         StringUtils.trimmedString(_txtFieldCeoName.text);
-    targetDatas[APIConstants.production_bank_code] = "";
-    targetDatas[APIConstants.production_account_number] = "";
-    targetDatas[APIConstants.production_homepage] =
+    targetDatas[APIConstants.management_bank_code] = "";
+    targetDatas[APIConstants.management_account_number] = "";
+    targetDatas[APIConstants.management_homepage] =
         StringUtils.trimmedString(_txtFieldHomepage.text);
-    targetDatas[APIConstants.production_email] =
+    targetDatas[APIConstants.management_email] =
         StringUtils.trimmedString(_txtFieldEmail.text);
     targetDatas[APIConstants.TOS_isAgree] = 1;
     targetDatas[APIConstants.PPA_isAgree] = 1;
 
     Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.INS_PRD_JOIN;
+    params[APIConstants.key] = APIConstants.INS_MGM_JOIN;
     params[APIConstants.target] = targetDatas;
 
     // 회원가입 api 호출

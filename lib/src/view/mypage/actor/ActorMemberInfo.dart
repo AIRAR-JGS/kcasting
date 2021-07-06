@@ -3,10 +3,14 @@ import 'package:casting_call/KCastingAppData.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/dialog/DialogMemberLeaveConfirm.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
+import 'package:casting_call/src/net/RestClientInterface.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
 import 'package:casting_call/src/view/mypage/actor/ActorMemberInfoModify.dart';
+import 'package:casting_call/src/view/user/common/Login.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /*
 * 배우 개인정보 관리
@@ -209,7 +213,11 @@ class _ActorMemberInfo extends State<ActorMemberInfo> with BaseUtilMixin {
                               context: context,
                               builder: (BuildContext context) =>
                                   DialogMemberLeaveConfirm(
-                                onClickedAgree: () {},
+                                onClickedAgree: () async {
+                                  requestActorDeleteInfoApi(context);
+
+
+                                },
                               ),
                             );
                           })),
@@ -218,5 +226,49 @@ class _ActorMemberInfo extends State<ActorMemberInfo> with BaseUtilMixin {
                 ),
               ),
             ]))));
+  }
+
+  /*
+  *배우 회원 탈퇴
+  * */
+  void requestActorDeleteInfoApi(BuildContext context) {
+    final dio = Dio();
+
+    // 배우 회원 탈퇴 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetDatas = new Map();
+    targetDatas[APIConstants.actor_seq] =
+    KCastingAppData().myInfo[APIConstants.seq];
+
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.DEL_ACT_INFO;
+    params[APIConstants.target] = targetDatas;
+
+    // 배우 회원 탈퇴 api 호출
+    RestClient(dio).postRequestMainControl(params).then((value) async {
+      if (value != null) {
+        if (value[APIConstants.resultVal]) {
+          try {
+            KCastingAppData().clearData();
+
+            final SharedPreferences prefs =
+            await SharedPreferences.getInstance();
+            prefs.remove(APIConstants.autoLogin);
+            prefs.remove(APIConstants.id);
+            prefs.remove(APIConstants.pwd);
+
+            // 로그인 페이지 이동
+            replaceView(context, Login());
+
+          } catch (e) {
+            showSnackBar(context, APIConstants.error_msg_try_again);
+          }
+        } else {
+          showSnackBar(context, value[APIConstants.resultMsg]);
+        }
+      } else {
+        // 에러 - 데이터 널 - 서버가 응답하지 않습니다. 다시 시도해 주세요
+        showSnackBar(context, APIConstants.error_msg_server_not_response);
+      }
+    });
   }
 }

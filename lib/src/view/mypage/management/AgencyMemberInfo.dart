@@ -82,7 +82,7 @@ class _AgencyMemberInfo extends State<AgencyMemberInfo>
                                   child: Container(
                                       child: Text(
                                           StringUtils.checkedString(KCastingAppData().myInfo[
-                                          APIConstants.production_name]),
+                                          APIConstants.management_name]),
                                           style: CustomStyles
                                               .normal14TextStyle())))
                             ],
@@ -115,7 +115,7 @@ class _AgencyMemberInfo extends State<AgencyMemberInfo>
                               Expanded(
                                   flex: 3,
                                   child: Container(
-                                      child: Text('담당자',
+                                      child: Text('대표자',
                                           style: CustomStyles
                                               .normal14TextStyle()))),
                               Expanded(
@@ -123,7 +123,7 @@ class _AgencyMemberInfo extends State<AgencyMemberInfo>
                                   child: Container(
                                       child: Text(
                                          StringUtils.checkedString( KCastingAppData().myInfo[
-                                         APIConstants.production_CEO_name]),
+                                         APIConstants.management_CEO_name]),
                                           style: CustomStyles
                                               .normal14TextStyle())))
                             ],
@@ -145,11 +145,11 @@ class _AgencyMemberInfo extends State<AgencyMemberInfo>
                                           StringUtils.isEmpty(
                                                   KCastingAppData().myInfo[
                                                       APIConstants
-                                                          .production_homepage])
+                                                          .management_homepage])
                                               ? '-'
                                               : KCastingAppData().myInfo[
                                                   APIConstants
-                                                      .production_homepage],
+                                                      .management_homepage],
                                           style: CustomStyles
                                               .normal14TextStyle())))
                             ],
@@ -171,11 +171,11 @@ class _AgencyMemberInfo extends State<AgencyMemberInfo>
                                           StringUtils.isEmpty(
                                                   KCastingAppData().myInfo[
                                                       APIConstants
-                                                          .production_email])
+                                                          .management_email])
                                               ? '-'
                                               : KCastingAppData().myInfo[
                                                   APIConstants
-                                                      .production_email],
+                                                      .management_email],
                                           style: CustomStyles
                                               .normal14TextStyle())))
                             ],

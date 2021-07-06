@@ -177,7 +177,7 @@ class _ActorProfile extends State<ActorProfile>
 
     Map<String, dynamic> targetData = new Map();
     targetData[APIConstants.seq] =
-        KCastingAppData().myInfo[APIConstants.actor_profile_seq];
+        KCastingAppData().myInfo[APIConstants.actorProfile_seq];
     //targetData[APIConstants.file] = fileData;
 
     Map<String, dynamic> params = new Map();

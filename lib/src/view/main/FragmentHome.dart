@@ -7,6 +7,7 @@ import 'package:casting_call/src/net/RestClientInterface.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
 import 'package:casting_call/src/view/actor/ActorListItem.dart';
 import 'package:casting_call/src/view/audition/common/AuditionListItem.dart';
+import 'package:casting_call/src/view/board/UsageGuide.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -484,8 +485,9 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
                     margin: EdgeInsets.only(
                         top: 25, left: 15, right: 15, bottom: 30),
                     alignment: Alignment.topLeft,
-                    child:
-                        CustomStyles.underline16TextButtonStyle('이용안내', () {}))
+                    child: CustomStyles.underline16TextButtonStyle('이용안내', () {
+                      addView(context, UsageGuide());
+                    }))
               ]))
         ]));
   }

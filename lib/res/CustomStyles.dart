@@ -539,6 +539,7 @@ class CustomStyles {
     return TextStyle(
         fontSize: 14,
         color: CustomColors.colorFontDarkGrey,
+        height: 1.5,
         fontWeight: FontWeight.normal);
   }
 

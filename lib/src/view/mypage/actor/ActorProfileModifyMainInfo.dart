@@ -28,8 +28,6 @@ class _ActorProfileModifyMainInfo extends State<ActorProfileModifyMainInfo>
 
   List<Map<UniqueKey, EducationListModel>> _educationList = [];
 
-  String _actorLevel = APIConstants.actor_level_1;
-
   String _birthY = '2000';
   String _birthM = '01';
   String _birthD = '01';
@@ -67,11 +65,6 @@ class _ActorProfileModifyMainInfo extends State<ActorProfileModifyMainInfo>
             KCastingAppData().myProfile[APIConstants.actor_weight])
         ? ''
         : KCastingAppData().myProfile[APIConstants.actor_weight].toString();
-
-    _actorLevel = StringUtils.isEmpty(
-            KCastingAppData().myProfile[APIConstants.actor_level])
-        ? APIConstants.actor_level_1
-        : KCastingAppData().myProfile[APIConstants.actor_level];
 
     _birthDate = StringUtils.isEmpty(
             KCastingAppData().myProfile[APIConstants.actor_birth])
@@ -673,9 +666,9 @@ class _ActorProfileModifyMainInfo extends State<ActorProfileModifyMainInfo>
 
     Map<String, dynamic> profileTargetData = new Map();
     profileTargetData[APIConstants.actorProfile_seq] =
-        KCastingAppData().myInfo[APIConstants.actor_profile_seq];
+        KCastingAppData().myInfo[APIConstants.actorProfile_seq];
     profileTargetData[APIConstants.actor_Introduce] = _txtFieldIntroduce.text;
-    profileTargetData[APIConstants.actor_level] = _actorLevel;
+    profileTargetData[APIConstants.actor_level] = "";
     profileTargetData[APIConstants.actor_levelConfirmation_url] = null;
     profileTargetData[APIConstants.actor_drama_pay] = _txtFieldDramaPay.text;
     profileTargetData[APIConstants.actor_movie_pay] = _txtFieldMoviePay.text;

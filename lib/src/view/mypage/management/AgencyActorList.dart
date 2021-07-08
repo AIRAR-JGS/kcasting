@@ -491,7 +491,7 @@ class _AgencyActorList extends State<AgencyActorList>
                                                                       .seq],
                                                               actorProfileSeq:
                                                                   _data[APIConstants
-                                                                      .actor_profile_seq]));
+                                                                      .actorProfile_seq]));
                                                     },
                                                     child: Column(
                                                         children: <Widget>[

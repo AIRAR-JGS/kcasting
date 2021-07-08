@@ -697,7 +697,7 @@ class _RegisterAgencyActorProfileMainInfo
 
     Map<String, dynamic> profileTargetData = new Map();
     profileTargetData[APIConstants.actorProfile_seq] =
-        KCastingAppData().myInfo[APIConstants.actor_profile_seq];
+        KCastingAppData().myInfo[APIConstants.actorProfile_seq];
     profileTargetData[APIConstants.actor_Introduce] = _txtFieldIntroduce.text;
     profileTargetData[APIConstants.actor_level] = _actorLevel;
     profileTargetData[APIConstants.actor_levelConfirmation_url] = null;

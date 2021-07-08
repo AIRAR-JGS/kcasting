@@ -41,7 +41,7 @@ class _ActorListItem extends State<ActorListItem> with BaseUtilMixin {
                       ActorDetail(
                           seq: _data[APIConstants.seq],
                           actorProfileSeq:
-                              _data[APIConstants.actor_profile_seq]));
+                              _data[APIConstants.actorProfile_seq]));
                 },
                 child: Column(children: <Widget>[
                   Container(

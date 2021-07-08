@@ -1,13 +1,19 @@
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomStyles.dart';
-import 'package:casting_call/src/view/user/common/FindPWAuth.dart';
-import 'package:casting_call/src/view/user/common/Login.dart';
+import 'package:casting_call/src/view/user/common/FindPW.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'Login.dart';
+
 /*
-* 비밀번호 재설정
+* 비밀번호 찾기 결과
 * */
 class FindPWResult extends StatefulWidget {
+  final String id;
+
+  const FindPWResult({Key key, this.id}) : super(key: key);
+
   @override
   _FindPWResult createState() => _FindPWResult();
 }
@@ -15,12 +21,13 @@ class FindPWResult extends StatefulWidget {
 class _FindPWResult extends State<FindPWResult> with BaseUtilMixin {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
-  final _txtFieldPW = TextEditingController();
-  final _txtFieldPWCheck = TextEditingController();
+  String _id = "";
 
   @override
   void initState() {
     super.initState();
+
+    _id = widget.id;
   }
 
   /*
@@ -30,74 +37,60 @@ class _FindPWResult extends State<FindPWResult> with BaseUtilMixin {
   Widget build(BuildContext context) {
     return WillPopScope(
         onWillPop: () {
-          replaceView(context, FindPWAuth());
+          replaceView(context, FindPW());
           return Future.value(false);
         },
         child: Theme(
             data: CustomStyles.defaultTheme(),
             child: Scaffold(
                 key: _scaffoldKey,
-                appBar: CustomStyles.defaultAppBar('비밀번호 재설정', () {
-                  replaceView(context, FindPWAuth());
+                appBar: CustomStyles.defaultAppBar('비밀번호 찾기', () {
+                  replaceView(context, FindPW());
                 }),
                 body: Container(
+                    padding: EdgeInsets.only(left: 30, right: 30),
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                      Expanded(
-                          flex: 1,
-                          child: Container(
-                              padding: EdgeInsets.only(left: 30, right: 30),
-                              child: Column(children: [
-                                Container(
-                                    margin: EdgeInsets.only(top: 30),
-                                    alignment: Alignment.center,
-                                    width: double.infinity,
-                                    child: Text('비밀번호 재설정',
-                                        textAlign: TextAlign.center,
-                                        style:
-                                            CustomStyles.normal24TextStyle())),
-                                Container(
-                                    margin: EdgeInsets.only(top: 30),
-                                    width: double.infinity,
-                                    child: Text('새로운 비밀번호를 입력해 주세요.',
-                                        textAlign: TextAlign.center,
-                                        style:
-                                            CustomStyles.normal14TextStyle())),
-                                Container(
-                                    margin: EdgeInsets.only(top: 30),
-                                    alignment: Alignment.centerLeft,
-                                    child: Text('비밀번호',
-                                        style:
-                                            CustomStyles.normal14TextStyle())),
-                                Container(
-                                    margin: EdgeInsets.only(top: 5),
-                                    child: CustomStyles
-                                        .greyBorderRound7PWDTextField(
-                                            _txtFieldPW,
-                                            '대문자, 소문자, 숫자 조합으로 가능합니다.')),
-                                Container(
-                                    margin: EdgeInsets.only(top: 15),
-                                    alignment: Alignment.centerLeft,
-                                    child: Text('비밀번호 확인',
-                                        style:
-                                            CustomStyles.normal14TextStyle())),
-                                Container(
-                                    margin: EdgeInsets.only(top: 5),
-                                    child: CustomStyles
-                                        .greyBorderRound7PWDTextField(
-                                            _txtFieldPWCheck,
-                                            '비밀번호를 한번 더 입력해 주세요.'))
-                              ]))),
-                      Container(
-                          height: 50,
-                          width: double.infinity,
-                          color: Colors.grey,
-                          child: CustomStyles.lightGreyBGSquareButtonStyle('확인',
-                              () {
-                            replaceView(context, Login());
-                          }))
-                    ])))));
+                          Container(
+                              margin: EdgeInsets.only(top: 30),
+                              alignment: Alignment.center,
+                              width: double.infinity,
+                              child: Text('비밀번호 찾기',
+                                  textAlign: TextAlign.center,
+                                  style: CustomStyles.normal24TextStyle())),
+                          Container(
+                              margin: EdgeInsets.only(top: 30),
+                              width: double.infinity,
+                              child: Text(
+                                  '아래의 이메일 주소로 임시 비밀번호를 발송하였습니다.\n임시 비밀번호로 로그인 하신 뒤 보안을 위해 비밀번호 변경을 해주세요.',
+                                  textAlign: TextAlign.start,
+                                  style: CustomStyles.normal14TextStyle())),
+                          Container(
+                              margin: EdgeInsets.only(top: 20),
+                              alignment: Alignment.center,
+                              width: double.infinity,
+                              child: Text(_id,
+                                  textAlign: TextAlign.center,
+                                  style: CustomStyles.normal16TextStyle())),
+                          Container(
+                              margin: EdgeInsets.only(top: 40),
+                              child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                        flex: 1,
+                                        child: Container(
+                                            margin: EdgeInsets.only(right: 10),
+                                            height: 50,
+                                            child: CustomStyles
+                                                .greyBorderRound7ButtonStyle(
+                                                    '로그인', () {
+                                              replaceView(context, Login());
+                                            })))
+                                  ]))
+                        ])))));
   }
 }

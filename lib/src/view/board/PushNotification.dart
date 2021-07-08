@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:casting_call/res/Constants.dart';
+import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +10,7 @@ class PushNotification extends StatefulWidget {
   _PushNotification createState() => _PushNotification();
 }
 
-class _PushNotification extends State<PushNotification> {
+class _PushNotification extends State<PushNotification> with BaseUtilMixin {
   // 알림 리스트 관련 변수
   final _count = 12;
   final _itemsPerPage = 10;
@@ -60,9 +60,9 @@ class _PushNotification extends State<PushNotification> {
     });
   }
 
-  //========================================================================================================================
-  // 메인 위젯
-  //========================================================================================================================
+  /*
+  * 메인 위젯
+  * */
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -114,7 +114,7 @@ class _PushNotification extends State<PushNotification> {
                                         Container(
                                             child: Text('2021.03.17 14:00',
                                                 style: CustomStyles
-                                                    .normal14TextStyle())),
+                                                    .normal14TextStyle()))
                                       ]))));
                     },
                     separatorBuilder: (context, index) {

@@ -4,7 +4,7 @@ import 'package:casting_call/src/view/user/common/FindPW.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'FindPWResult.dart';
+import 'ModifyPW.dart';
 
 /*
 * 비밀번호 찾기 휴대폰 인증
@@ -121,7 +121,7 @@ class _FindPWAuth extends State<FindPWAuth> with BaseUtilMixin {
                           width: double.infinity,
                           child: CustomStyles.lightGreyBGSquareButtonStyle('다음',
                               () {
-                            replaceView(context, FindPWResult());
+                            replaceView(context, ModifyPW());
                           }))
                     ])))));
   }

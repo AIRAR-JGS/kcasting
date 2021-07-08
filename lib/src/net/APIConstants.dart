@@ -24,8 +24,11 @@ class APIConstants {
 
   static const String SEL_CCD_LIST  = "SEL_CCD_LIST";  // 공통 코드 조회
 
-  static const String INS_PRD_JOIN = "INS_PRD_JOIN";  // 제작사 회원가입
   static const String LGI_TOT_LOGIN = "LGI_TOT_LOGIN";  // 로그인
+  static const String FID_TOT_FINDID = "FID_TOT_FINDID";  // 아이디 찾기
+  static const String UPD_TOT_RANDPWD = "UPD_TOT_RANDPWD";  // 임시 비밀번호 생성
+
+  static const String INS_PRD_JOIN = "INS_PRD_JOIN";  // 제작사 회원가입
   static const String UPD_PRD_INFO = "UPD_PRD_INFO";  // 제작사 개인정보 수정
   static const String UDF_PRD_LOGO = "UDF_PRD_LOGO";  // 제작사 로고 이미지 수정
   static const String UDF_PRD_LOGO_FORMDATA = "UDF_PRD_LOGO_FormData";  // 제작사 로고 이미지 수정
@@ -147,6 +150,8 @@ class APIConstants {
   static const String autoLogin = "autoLogin";
   static const String id = "id";
   static const String pwd = "pwd";
+  static const String name = "name";
+  static const String email = "email";
 
   // 제작사 회원 관련
   static const String table_production_casting = "ProductionCasting";

@@ -503,6 +503,7 @@ class CustomStyles {
   static TextStyle normal14TextStyle() {
     return TextStyle(
         fontSize: 14,
+        height: 1.5,
         color: CustomColors.colorFontGrey,
         fontWeight: FontWeight.normal);
   }

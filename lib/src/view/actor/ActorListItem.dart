@@ -39,7 +39,7 @@ class _ActorListItem extends State<ActorListItem> with BaseUtilMixin {
                   addView(
                       context,
                       ActorDetail(
-                          seq: _data[APIConstants.seq],
+                          seq: _data[APIConstants.actor_seq],
                           actorProfileSeq:
                               _data[APIConstants.actorProfile_seq]));
                 },

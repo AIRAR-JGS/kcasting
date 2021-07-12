@@ -101,7 +101,9 @@ class HomeAppBar extends StatelessWidget
                                     fit: BoxFit.fitHeight))
                             : Image.asset('assets/images/btn_mypage.png',
                                 fit: BoxFit.fitHeight))
-                        : (KCastingAppData().myInfo != null
+                        : KCastingAppData().myInfo[APIConstants.member_type] ==
+                        APIConstants.member_type_product
+                        ? (KCastingAppData().myInfo != null
                             ? (KCastingAppData().myInfo[
                                         APIConstants.production_img_url] !=
                                     null
@@ -116,7 +118,23 @@ class HomeAppBar extends StatelessWidget
                                 : Image.asset('assets/images/btn_mypage.png',
                                     fit: BoxFit.fitHeight))
                             : Image.asset('assets/images/btn_mypage.png',
-                                fit: BoxFit.fitHeight)),
+                                fit: BoxFit.fitHeight)) :
+                    (KCastingAppData().myInfo != null
+                        ? (KCastingAppData().myInfo[
+                    APIConstants.management_logo_img_url] !=
+                        null
+                        ? ClipOval(
+                      child: Image.network(
+                          KCastingAppData().myInfo[
+                          APIConstants.management_logo_img_url],
+                          fit: BoxFit.cover,
+                          width: 40.0,
+                          height: 40.0),
+                    )
+                        : Image.asset('assets/images/btn_mypage.png',
+                        fit: BoxFit.fitHeight))
+                        : Image.asset('assets/images/btn_mypage.png',
+                        fit: BoxFit.fitHeight)),
                     onPressed: () {
                       onClickedOpenMyPage();
                     },

@@ -43,26 +43,30 @@ class _AgencyProfile extends State<AgencyProfile>
   /*
   * 매니지먼트 로고 이미지 수정
   * */
-  void requestUpdateAgencyProfile(BuildContext context, File profileFile) {
+  void requestUpdateAgencyProfile(BuildContext context, File profileFile) async {
     final dio = Dio();
 
-    final bytes = File(profileFile.path).readAsBytesSync();
-    String img64 = base64Encode(bytes);
+    /*final bytes = File(profileFile.path).readAsBytesSync();
+    String img64 = base64Encode(bytes);*/
 
     // 매니지먼트 로고 이미지 수정 api 호출 시 보낼 파라미터
-    Map<String, dynamic> fileData = new Map();
-    fileData[APIConstants.base64string] = APIConstants.data_image + img64;
+    /*Map<String, dynamic> fileData = new Map();
+    fileData[APIConstants.base64string] = APIConstants.data_image + img64;*/
 
     Map<String, dynamic> targetDatas = new Map();
-    targetDatas[APIConstants.seq] = KCastingAppData().myInfo[APIConstants.seq];
-    targetDatas[APIConstants.file] = fileData;
+    targetDatas[APIConstants.seq] = KCastingAppData().myInfo[APIConstants.management_seq];
 
     Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.UDF_PRD_LOGO;
+    params[APIConstants.key] = APIConstants.UDF_MGM_LOGO_FORMDATA;
     params[APIConstants.target] = targetDatas;
 
+    var temp = profileFile.path.split('/');
+    String fileName = temp[temp.length - 1];
+    params[APIConstants.target_files] =
+        await MultipartFile.fromFile(profileFile.path, filename: fileName);
+
     // 매니지먼트 로고 이미지 수정 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
+    RestClient(dio).postRequestMainControlFormData(params).then((value) async {
       if (value == null) {
         // 에러 - 데이터 널
         showSnackBar(context, APIConstants.error_msg_server_not_response);
@@ -78,9 +82,9 @@ class _AgencyProfile extends State<AgencyProfile>
               if (_responseList.length > 0) {
                 var newProfileData = _responseList[0];
 
-                if (newProfileData[APIConstants.production_img_url] != null) {
-                  KCastingAppData().myInfo[APIConstants.production_img_url] =
-                      newProfileData[APIConstants.production_img_url];
+                if (newProfileData[APIConstants.management_logo_img_url] != null) {
+                  KCastingAppData().myInfo[APIConstants.management_logo_img_url] =
+                      newProfileData[APIConstants.management_logo_img_url];
                 }
               }
             });
@@ -172,7 +176,7 @@ class _AgencyProfile extends State<AgencyProfile>
                               //
                             },
                             child: KCastingAppData().myInfo[
-                                        APIConstants.production_img_url] ==
+                                        APIConstants.management_logo_img_url] ==
                                     null
                                 ? Icon(
                                     Icons.account_circle,
@@ -182,7 +186,7 @@ class _AgencyProfile extends State<AgencyProfile>
                                 : ClipOval(
                                     child: Image.network(
                                         KCastingAppData().myInfo[
-                                            APIConstants.production_img_url],
+                                            APIConstants.management_logo_img_url],
                                         fit: BoxFit.cover,
                                         width: 100.0,
                                         height: 100.0),

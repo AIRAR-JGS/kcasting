@@ -53,32 +53,40 @@ class ActorProfileWidget {
                 padding: EdgeInsets.all(5),
                 child: GestureDetector(
                     onTap: () async {
-                      //
-                      var status = Platform.isAndroid
-                          ? await Permission.storage.request()
-                          : await Permission.photos.request();
-                      if (status.isGranted) {
+                      try {
+                        if(Platform.isAndroid || Platform.isIOS) {
+                          var status = Platform.isAndroid
+                              ? await Permission.storage.request()
+                              : await Permission.photos.request();
+                          if (status.isGranted) {
+                            onClickGetImageFromGallery();
+                          } else {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) =>
+                                    CupertinoAlertDialog(
+                                        title: Text('저장공간 접근권한'),
+                                        content: Text(
+                                            '사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
+                                        actions: <Widget>[
+                                          CupertinoDialogAction(
+                                            child: Text('거부'),
+                                            onPressed: () =>
+                                                Navigator.of(context).pop(),
+                                          ),
+                                          CupertinoDialogAction(
+                                            child: Text('허용'),
+                                            onPressed: () => openAppSettings(),
+                                          )
+                                        ]));
+                          }
+                        } else {
+                          onClickGetImageFromGallery();
+                        }
+                      } catch(e) {
                         onClickGetImageFromGallery();
-                      } else {
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) =>
-                                CupertinoAlertDialog(
-                                    title: Text('저장공간 접근권한'),
-                                    content: Text(
-                                        '사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
-                                    actions: <Widget>[
-                                      CupertinoDialogAction(
-                                        child: Text('거부'),
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(),
-                                      ),
-                                      CupertinoDialogAction(
-                                        child: Text('허용'),
-                                        onPressed: () => openAppSettings(),
-                                      )
-                                    ]));
                       }
+
                     },
                     child: Icon(Icons.camera_alt,
                         color: CustomColors.colorWhite, size: 30)))

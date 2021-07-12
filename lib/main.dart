@@ -131,10 +131,18 @@ class _MyHomePageState extends State<MyHomePage> with BaseUtilMixin {
     targetDatas[APIConstants.seq] = seq;
 
     Map<String, dynamic> params = new Map();
-    if (memberType == APIConstants.member_type_actor) {
-      params[APIConstants.key] = APIConstants.SEL_ACT_INFO;
-    } else {
-      params[APIConstants.key] = APIConstants.SEL_PRD_INFO;
+    switch(memberType) {
+      case APIConstants.member_type_actor:
+        params[APIConstants.key] = APIConstants.SEL_ACT_INFO;
+        break;
+
+      case APIConstants.member_type_product:
+        params[APIConstants.key] = APIConstants.SEL_PRD_INFO;
+        break;
+
+      case APIConstants.member_type_management:
+        params[APIConstants.key] = APIConstants.SEL_MGM_INFO;
+        break;
     }
 
     params[APIConstants.target] = targetDatas;

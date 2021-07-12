@@ -11,6 +11,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:encrypt/encrypt.dart';
+import 'package:pointycastle/asymmetric/api.dart';
 
 /*
 *  매니지먼트 회원가입 클래스
@@ -608,13 +611,20 @@ class _JoinAgency extends State<JoinAgency> with BaseUtilMixin {
   /*
   *  제작사 회원가입 api 호출
   * */
-  void requestJoinApi(BuildContext context) {
+  void requestJoinApi(BuildContext context) async {
     final dio = Dio();
+
+    // 비밀번호 암호화
+    final publicPem = await rootBundle.loadString('assets/files/public_key.pem');
+    final publicKey = RSAKeyParser().parse(publicPem) as RSAPublicKey;
+
+    final encryptor = Encrypter(RSA(publicKey: publicKey));
+    final encrypted = encryptor.encrypt(StringUtils.trimmedString(_txtFieldPW.text));
 
     // 회원가입 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetDatas = new Map();
     targetDatas[APIConstants.id] = StringUtils.trimmedString(_txtFieldID.text);
-    targetDatas[APIConstants.pwd] = StringUtils.trimmedString(_txtFieldPW.text);
+    targetDatas[APIConstants.pwd] = encrypted.base64;
     targetDatas[APIConstants.member_type] = APIConstants.member_type_management;
     targetDatas[APIConstants.management_name] = _txtFieldCompanyName.text;
     targetDatas[APIConstants.businessRegistration_number] = "";

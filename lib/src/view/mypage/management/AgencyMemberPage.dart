@@ -89,12 +89,12 @@ class _AgencyMemberPage extends State<AgencyMemberPage> with BaseUtilMixin {
                       size: 100,
                     )
                   : (KCastingAppData()
-                              .myInfo[APIConstants.production_img_url] !=
+                              .myInfo[APIConstants.management_logo_img_url] !=
                           null
                       ? ClipOval(
                           child: Image.network(
                               KCastingAppData()
-                                  .myInfo[APIConstants.production_img_url],
+                                  .myInfo[APIConstants.management_logo_img_url],
                               fit: BoxFit.cover,
                               width: 100.0,
                               height: 100.0),

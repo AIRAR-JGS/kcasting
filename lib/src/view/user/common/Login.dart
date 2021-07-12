@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/KCastingAppData.dart';
 import 'package:casting_call/res/CustomColors.dart';
@@ -11,6 +13,9 @@ import 'package:casting_call/src/view/user/common/FindPW.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:encrypt/encrypt.dart';
+import 'package:pointycastle/asymmetric/api.dart';
 
 import 'JoinSelectType.dart';
 
@@ -31,6 +36,10 @@ class _Login extends State<Login> with BaseUtilMixin {
   final _txtFieldPW = TextEditingController();
 
   int _isAutoLogin = 1;
+
+  Future<String> loadPublicKey() async {
+    return await rootBundle.loadString('assets/files/public_key.pem');
+  }
 
   @override
   void initState() {
@@ -193,20 +202,26 @@ class _Login extends State<Login> with BaseUtilMixin {
   /*
   * 로그인 api 호출
   * */
-  void requestLoginApi(BuildContext context) {
-    final dio = Dio();
+  void requestLoginApi(BuildContext context) async {
+
+    // 비밀번호 암호화
+    final publicPem = await rootBundle.loadString('assets/files/public_key.pem');
+    final publicKey = RSAKeyParser().parse(publicPem) as RSAPublicKey;
+
+    final encryptor = Encrypter(RSA(publicKey: publicKey));
+    final encrypted = encryptor.encrypt(StringUtils.trimmedString(_txtFieldPW.text));
 
     // 로그인 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetDatas = new Map();
     targetDatas[APIConstants.id] = StringUtils.trimmedString(_txtFieldID.text);
-    targetDatas[APIConstants.pwd] = StringUtils.trimmedString(_txtFieldPW.text);
+    targetDatas[APIConstants.pwd] = encrypted.base64;
 
     Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.LGI_TOT_LOGIN;
+    params[APIConstants.key] = APIConstants.LGI_TOT_LOGINRSA;
     params[APIConstants.target] = targetDatas;
 
     // 로그인 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
       if (value == null) {
         // 에러 - 데이터 널
         showSnackBar(context, APIConstants.error_msg_server_not_response);
@@ -218,23 +233,17 @@ class _Login extends State<Login> with BaseUtilMixin {
           // 회원데이터 전역변수에 저장
           KCastingAppData().myInfo = _listData.length > 0 ? _listData[0] : null;
 
-          String memberType =
-              KCastingAppData().myInfo[APIConstants.member_type];
+          String memberType = KCastingAppData().myInfo[APIConstants.member_type];
 
           // 로그인 성공
           if (_isAutoLogin == 1) {
+            print("11111111111111111111111111111111");
             final SharedPreferences prefs =
                 await SharedPreferences.getInstance();
             prefs.setBool(APIConstants.autoLogin, true);
-            if (memberType == APIConstants.member_type_actor) {
-              prefs.setString(
-                  APIConstants.member_type, APIConstants.member_type_actor);
-            } else {
-              prefs.setString(
-                  APIConstants.member_type, APIConstants.member_type_product);
-            }
-            prefs.setInt(
-                APIConstants.seq, KCastingAppData().myInfo[APIConstants.seq]);
+
+            prefs.setString(APIConstants.member_type, memberType);
+            prefs.setInt(APIConstants.seq, KCastingAppData().myInfo[APIConstants.seq]);
           }
 
           if (memberType == APIConstants.member_type_actor) {
@@ -273,7 +282,7 @@ class _Login extends State<Login> with BaseUtilMixin {
     targetData[APIConstants.actor_seq] =
         KCastingAppData().myInfo[APIConstants.seq];
     targetData[APIConstants.actor_profile_seq] =
-        KCastingAppData().myInfo[APIConstants.actorProfile_seq];
+        KCastingAppData().myInfo[APIConstants.actor_profile_seq];
 
     Map<String, dynamic> params = new Map();
     params[APIConstants.key] = APIConstants.SAR_APR_INFO;

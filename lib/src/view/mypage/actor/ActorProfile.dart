@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/KCastingAppData.dart';
@@ -16,6 +14,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags/flutter_tags.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -32,6 +31,8 @@ class ActorProfile extends StatefulWidget {
 class _ActorProfile extends State<ActorProfile>
     with SingleTickerProviderStateMixin, BaseUtilMixin {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+
+  bool _kIsWeb;
 
   final GlobalKey<TagsState> _myKeywordTagStateKey = GlobalKey<TagsState>();
 
@@ -67,6 +68,16 @@ class _ActorProfile extends State<ActorProfile>
   @override
   void initState() {
     super.initState();
+
+    try {
+      if (Platform.isAndroid || Platform.isIOS) {
+        _kIsWeb = false;
+      } else {
+        _kIsWeb = true;
+      }
+    } catch (e) {
+      _kIsWeb = true;
+    }
 
     _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(() {
@@ -269,50 +280,84 @@ class _ActorProfile extends State<ActorProfile>
   /*
   * 배우 이미지 추가
   * */
-  Future<void> requestAddActorImage(BuildContext context, File profileFile) async {
-    final dio = Dio();
+  Future<void> requestAddActorImage(
+      BuildContext context, File profileFile) async {
+    if (_kIsWeb) {
+      print("11111111111");
 
-    // 배우 이미지 추가 api 호출 시 보낼 파라미터
-    Map<String, dynamic> targetData = new Map();
-    targetData[APIConstants.actor_seq] =
-        KCastingAppData().myInfo[APIConstants.seq];
+      // 배우 이미지 추가 api 호출 시 보낼 파라미터
+      Map<String, dynamic> targetData = new Map();
+      targetData[APIConstants.actor_seq] =
+          KCastingAppData().myInfo[APIConstants.seq];
 
-    var files = [];
-    var temp = profileFile.path.split('/');
-    String fileName = temp[temp.length - 1];
-    files.add(await MultipartFile.fromFile(profileFile.path, filename: fileName));
+      Map<String, dynamic> params = new Map();
+      params[APIConstants.key] = APIConstants.INS_AIM_LIST_FORMDATA;
+      params[APIConstants.target] = targetData;
 
-    Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.INS_AIM_LIST_FORMDATA;
-    params[APIConstants.target] = targetData;
-    params[APIConstants.target_files_array] = files;
+      var request = http.MultipartRequest(
+        "POST",
+        Uri.parse(APIConstants.getURL(APIConstants.URL_MAIN_CONTROL)),
+      );
 
-    // 배우 이미지 추가 api 호출
-    RestClient(dio).postRequestMainControlFormData(params).then((value) async {
-      if (value == null) {
-        // 에러 - 데이터 널
-        showSnackBar(context, APIConstants.error_msg_server_not_response);
-      } else {
-        if (value[APIConstants.resultVal]) {
-          // 배우 이미지 추가 성공
-          var _responseData = value[APIConstants.data];
-          var _responseList = _responseData[APIConstants.list];
+      var files = [];
+      var temp = profileFile.path.split('/');
+      String fileName = temp[temp.length - 1];
+      request.files.add(http.MultipartFile.fromBytes(
+          APIConstants.target_files_array, await _profileImgFile.readAsBytes(),
+          filename: fileName));
 
-          setState(() {
-            // 수정된 회원정보 전역변수에 저장
-            if (_responseList.length > 0) {
-              KCastingAppData().myImage = _responseList;
+      params.forEach((k, v) => request.fields[k] = v);
 
-              _myPhotos = _responseList;
-              _originalMyPhotos = _responseList;
-            }
-          });
+      request.headers.addAll({'Content-Type': 'application/json'});
+
+      var streamedResponse = await request.send();
+      var _result = await http.Response.fromStream(streamedResponse);
+    } else {
+      // 배우 이미지 추가 api 호출 시 보낼 파라미터
+      Map<String, dynamic> targetData = new Map();
+      targetData[APIConstants.actor_seq] =
+          KCastingAppData().myInfo[APIConstants.seq];
+
+      var files = [];
+      var temp = profileFile.path.split('/');
+      String fileName = temp[temp.length - 1];
+      files.add(
+          await MultipartFile.fromFile(profileFile.path, filename: fileName));
+
+      Map<String, dynamic> params = new Map();
+      params[APIConstants.key] = APIConstants.INS_AIM_LIST_FORMDATA;
+      params[APIConstants.target] = targetData;
+      params[APIConstants.target_files_array] = files;
+
+      // 배우 이미지 추가 api 호출
+      RestClient(Dio())
+          .postRequestMainControlFormData(params)
+          .then((value) async {
+        if (value == null) {
+          // 에러 - 데이터 널
+          showSnackBar(context, APIConstants.error_msg_server_not_response);
         } else {
-          // 배우 이미지 추가 실패
-          showSnackBar(context, APIConstants.error_msg_try_again);
+          if (value[APIConstants.resultVal]) {
+            // 배우 이미지 추가 성공
+            var _responseData = value[APIConstants.data];
+            var _responseList = _responseData[APIConstants.list];
+
+            setState(() {
+              // 수정된 회원정보 전역변수에 저장
+              if (_responseList.length > 0) {
+                KCastingAppData().myImage = _responseList;
+
+                _myPhotos = _responseList;
+                _originalMyPhotos = _responseList;
+              }
+            });
+          } else {
+            // 배우 이미지 추가 실패
+            showSnackBar(context, APIConstants.error_msg_try_again);
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   /*
@@ -384,12 +429,14 @@ class _ActorProfile extends State<ActorProfile>
       var files = [];
       var temp = videoFile.path.split('/');
       String fileName = temp[temp.length - 1];
-      files.add(await MultipartFile.fromFile(videoFile.path, filename: fileName));
+      files.add(
+          await MultipartFile.fromFile(videoFile.path, filename: fileName));
 
       var thums = [];
       var tempImg = thumbFilePath.split('/');
       String thumbFileName = tempImg[tempImg.length - 1];
-      thums.add(await MultipartFile.fromFile(thumbFilePath, filename: thumbFileName));
+      thums.add(
+          await MultipartFile.fromFile(thumbFilePath, filename: thumbFileName));
 
       Map<String, dynamic> params = new Map();
       params[APIConstants.key] = APIConstants.INS_AVD_LIST_FORMDATA;
@@ -398,7 +445,9 @@ class _ActorProfile extends State<ActorProfile>
       params[APIConstants.target_files_thumb_array] = thums;
 
       // 배우 비디오 추가 api 호출
-      RestClient(dio).postRequestMainControlFormData(params).then((value) async {
+      RestClient(dio)
+          .postRequestMainControlFormData(params)
+          .then((value) async {
         if (value == null) {
           // 에러 - 데이터 널
           showSnackBar(context, APIConstants.error_msg_server_not_response);
@@ -482,28 +531,38 @@ class _ActorProfile extends State<ActorProfile>
 
   // 갤러리에서 이미지 가져오기
   Future getImageFromGallery(int type) async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    if(_kIsWeb) {
+      /*final fromPicker = await ImagePickerWeb.getImage(outputType: ImageType.file);
 
-    if (pickedFile != null) {
-      print(pickedFile.path);
-      if (type == 0) {
-        _profileImgFile = File(pickedFile.path);
-        requestUpdateActorProfile(context, _profileImgFile);
-      } else {
-        File _image = File(pickedFile.path);
-
-        final size = _image.readAsBytesSync().lengthInBytes;
-        final kb = size / 1024;
-        final mb = kb / 1024;
-
-        if (mb > 25) {
-          showSnackBar(context, "25MB 미만의 파일만 업로드 가능합니다.");
-        } else {
-          requestAddActorImage(context, _image);
-        }
-      }
+      if (fromPicker != null) {
+        setState(() {
+          print("111111111111");
+          _profileImgFile = fromPicker;
+        });
+      }*/
     } else {
-      showSnackBar(context, "선택된 이미지가 없습니다.");
+      final pickedFile = await picker.getImage(source: ImageSource.gallery);
+
+      if (pickedFile != null) {
+        if (type == 0) {
+          _profileImgFile = File(pickedFile.path);
+          requestUpdateActorProfile(context, _profileImgFile);
+        } else {
+          File _image = File(pickedFile.path);
+
+          final size = _image.readAsBytesSync().lengthInBytes;
+          final kb = size / 1024;
+          final mb = kb / 1024;
+
+          if (mb > 25) {
+            showSnackBar(context, "25MB 미만의 파일만 업로드 가능합니다.");
+          } else {
+            requestAddActorImage(context, _image);
+          }
+        }
+      } else {
+        showSnackBar(context, "선택된 이미지가 없습니다.");
+      }
     }
   }
 
@@ -524,12 +583,10 @@ class _ActorProfile extends State<ActorProfile>
         video: filePath, imageFormat: ImageFormat.JPEG);*/
 
     final fileName = await VideoThumbnail.thumbnailFile(
-      video: filePath,
-      thumbnailPath: (await getTemporaryDirectory()).path,
-      imageFormat: ImageFormat.JPEG
-    );
+        video: filePath,
+        thumbnailPath: (await getTemporaryDirectory()).path,
+        imageFormat: ImageFormat.JPEG);
 
-    print("ddddddddddd");
     print(fileName);
 
     var _videoFile = File(filePath);
@@ -566,7 +623,7 @@ class _ActorProfile extends State<ActorProfile>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   ActorProfileWidget.mainImageWidget(context,
-                                      true, KCastingAppData().myProfile, () {
+                                      true, KCastingAppData().myProfile == null ? new Map<String, dynamic>() : KCastingAppData().myProfile, () {
                                     getImageFromGallery(0);
                                   }),
                                   ActorProfileWidget.profileWidget(
@@ -739,51 +796,60 @@ class _ActorProfile extends State<ActorProfile>
                                                     child: CustomStyles
                                                         .darkBold14TextButtonStyle(
                                                             '추가', () async {
-                                                      //
-                                                      var status = Platform
-                                                              .isAndroid
-                                                          ? await Permission
-                                                              .storage
-                                                              .request()
-                                                          : await Permission
-                                                              .photos
-                                                              .request();
-                                                      if (status.isGranted) {
-                                                        if (_myPhotos.length ==
-                                                            8) {
-                                                          showSnackBar(context,
-                                                              '이미지는 최대 8장까지 등록하실 수 있습니다.');
-                                                        } else {
-                                                          getImageFromGallery(
-                                                              1);
-                                                        }
-                                                      } else {
-                                                        showDialog(
-                                                            context: context,
-                                                            builder: (BuildContext
-                                                                    context) =>
-                                                                CupertinoAlertDialog(
-                                                                    title: Text(
-                                                                        '저장공간 접근권한'),
-                                                                    content: Text(
-                                                                        '사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
-                                                                    actions: <
-                                                                        Widget>[
-                                                                      CupertinoDialogAction(
-                                                                        child: Text(
-                                                                            '거부'),
-                                                                        onPressed:
-                                                                            () =>
+                                                      try {
+                                                        if (Platform
+                                                                .isAndroid ||
+                                                            Platform.isIOS) {
+                                                          var status = Platform
+                                                                  .isAndroid
+                                                              ? await Permission
+                                                                  .storage
+                                                                  .request()
+                                                              : await Permission
+                                                                  .photos
+                                                                  .request();
+                                                          if (status
+                                                              .isGranted) {
+                                                            if (_myPhotos
+                                                                    .length ==
+                                                                8) {
+                                                              showSnackBar(
+                                                                  context,
+                                                                  '이미지는 최대 8장까지 등록하실 수 있습니다.');
+                                                            } else {
+                                                              getImageFromGallery(
+                                                                  1);
+                                                            }
+                                                          } else {
+                                                            showDialog(
+                                                                context:
+                                                                    context,
+                                                                builder: (BuildContext
+                                                                        context) =>
+                                                                    CupertinoAlertDialog(
+                                                                        title: Text(
+                                                                            '저장공간 접근권한'),
+                                                                        content:
+                                                                            Text(
+                                                                                '사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
+                                                                        actions: <
+                                                                            Widget>[
+                                                                          CupertinoDialogAction(
+                                                                            child:
+                                                                                Text('거부'),
+                                                                            onPressed: () =>
                                                                                 Navigator.of(context).pop(),
-                                                                      ),
-                                                                      CupertinoDialogAction(
-                                                                          child: Text(
-                                                                              '허용'),
-                                                                          onPressed: () =>
-                                                                              openAppSettings())
-                                                                    ]));
+                                                                          ),
+                                                                          CupertinoDialogAction(
+                                                                              child: Text('허용'),
+                                                                              onPressed: () => openAppSettings())
+                                                                        ]));
+                                                          }
+                                                          //
+                                                        }
+                                                      } catch (e) {
+                                                        getImageFromGallery(1);
                                                       }
-                                                      //
                                                     })),
                                                 Container(width: 20),
                                                 Expanded(

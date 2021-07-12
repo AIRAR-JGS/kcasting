@@ -11,6 +11,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:encrypt/encrypt.dart';
+import 'package:pointycastle/asymmetric/api.dart';
 
 /*
 *  제작사 회원가입 클래스
@@ -606,24 +609,28 @@ class _JoinProduction extends State<JoinProduction> with BaseUtilMixin {
   /*
   *  제작사 회원가입 api 호출
   * */
-  void requestJoinApi(BuildContext context) {
+  void requestJoinApi(BuildContext context) async {
     final dio = Dio();
+
+    // 비밀번호 암호화
+    final publicPem = await rootBundle.loadString('assets/files/public_key.pem');
+    final publicKey = RSAKeyParser().parse(publicPem) as RSAPublicKey;
+
+    final encryptor = Encrypter(RSA(publicKey: publicKey));
+    final encrypted = encryptor.encrypt(StringUtils.trimmedString(_txtFieldPW.text));
 
     // 회원가입 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetDatas = new Map();
     targetDatas[APIConstants.id] = StringUtils.trimmedString(_txtFieldID.text);
-    targetDatas[APIConstants.pwd] = StringUtils.trimmedString(_txtFieldPW.text);
+    targetDatas[APIConstants.pwd] = encrypted.base64;
     targetDatas[APIConstants.member_type] = APIConstants.member_type_product;
     targetDatas[APIConstants.production_name] = _txtFieldCompanyName.text;
     targetDatas[APIConstants.businessRegistration_number] = "";
-    targetDatas[APIConstants.production_CEO_name] =
-        StringUtils.trimmedString(_txtFieldCeoName.text);
+    targetDatas[APIConstants.production_CEO_name] = StringUtils.trimmedString(_txtFieldCeoName.text);
     targetDatas[APIConstants.production_bank_code] = "";
     targetDatas[APIConstants.production_account_number] = "";
-    targetDatas[APIConstants.production_homepage] =
-        StringUtils.trimmedString(_txtFieldHomepage.text);
-    targetDatas[APIConstants.production_email] =
-        StringUtils.trimmedString(_txtFieldEmail.text);
+    targetDatas[APIConstants.production_homepage] = StringUtils.trimmedString(_txtFieldHomepage.text);
+    targetDatas[APIConstants.production_email] = StringUtils.trimmedString(_txtFieldEmail.text);
     targetDatas[APIConstants.TOS_isAgree] = 1;
     targetDatas[APIConstants.PPA_isAgree] = 1;
 
@@ -644,17 +651,13 @@ class _JoinProduction extends State<JoinProduction> with BaseUtilMixin {
             var _responseList = _responseData[APIConstants.list];
 
             // 회원데이터 전역변수에 저장
-            KCastingAppData().myInfo =
-                _responseList.length > 0 ? _responseList[0] : null;
+            KCastingAppData().myInfo = _responseList.length > 0 ? _responseList[0] : null;
 
             // 자동로그인
-            final SharedPreferences prefs =
-                await SharedPreferences.getInstance();
+            final SharedPreferences prefs = await SharedPreferences.getInstance();
             prefs.setBool(APIConstants.autoLogin, true);
-            prefs.setString(
-                APIConstants.member_type, APIConstants.member_type_product);
-            prefs.setInt(
-                APIConstants.seq, KCastingAppData().myInfo[APIConstants.seq]);
+            prefs.setString(APIConstants.member_type, APIConstants.member_type_product);
+            prefs.setInt(APIConstants.seq, KCastingAppData().myInfo[APIConstants.seq]);
 
             // 메인 페이지 이동
             replaceView(context, Home(prevPage: APIConstants.INS_PRD_JOIN));

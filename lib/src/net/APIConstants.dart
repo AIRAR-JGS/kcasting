@@ -24,7 +24,8 @@ class APIConstants {
 
   static const String SEL_CCD_LIST  = "SEL_CCD_LIST";  // 공통 코드 조회
 
-  static const String LGI_TOT_LOGIN = "LGI_TOT_LOGIN";  // 로그인
+  //static const String LGI_TOT_LOGIN = "LGI_TOT_LOGIN";  // 로그인
+  static const String LGI_TOT_LOGINRSA = "LGI_TOT_LOGINRSA";  // 로그인
   static const String FID_TOT_FINDID = "FID_TOT_FINDID";  // 아이디 찾기
   static const String UPD_TOT_RANDPWD = "UPD_TOT_RANDPWD";  // 임시 비밀번호 생성
 
@@ -88,6 +89,8 @@ class APIConstants {
   static const String DEL_ACT_INFO  = "DEL_ACT_INFO";  // 배우 회원 탈퇴
 
   static const String INS_MGM_JOIN  = "INS_MGM_JOIN";  // 매니지먼트 회원가입
+  static const String UDF_MGM_LOGO_FORMDATA  = "UDF_MGM_LOGO_FormData";  // 매니지먼트 프로필 로고 이미지 수정(FormData)
+  static const String SEL_MGM_INFO  = "SEL_MGM_INFO";  // 매니지먼트 개인정보 단일 조회
 
   static const String server_error_already_exist = "already exists data";
   static const String server_error_not_joined = "This id not joind";
@@ -421,6 +424,7 @@ class APIConstants {
 
   // 소속사 회원 관련
   static const String table_management = "Management";
+  static const String management_seq = "management_seq";
   static const String member_type_management = "M";
   static const String management_name = "management_name";
   static const String management_CEO_name = "management_CEO_name";
@@ -428,4 +432,5 @@ class APIConstants {
   static const String management_account_number = "management_account_number";
   static const String management_homepage = "management_homepage";
   static const String management_email = "management_email";
+  static const String management_logo_img_url = "management_logo_img_url";
 }

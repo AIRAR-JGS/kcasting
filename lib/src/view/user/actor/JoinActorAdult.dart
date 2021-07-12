@@ -11,6 +11,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:encrypt/encrypt.dart';
+import 'package:pointycastle/asymmetric/api.dart';
 
 /*
 *  14세 이상 배우 회원가입
@@ -688,13 +691,20 @@ class _JoinActorAdult extends State<JoinActorAdult> with BaseUtilMixin {
   /*
   *  배우 회원가입 api 호출
   * */
-  void requestJoinApi(BuildContext context) {
+  void requestJoinApi(BuildContext context) async {
     final dio = Dio();
+
+    // 비밀번호 암호화
+    final publicPem = await rootBundle.loadString('assets/files/public_key.pem');
+    final publicKey = RSAKeyParser().parse(publicPem) as RSAPublicKey;
+
+    final encryptor = Encrypter(RSA(publicKey: publicKey));
+    final encrypted = encryptor.encrypt(StringUtils.trimmedString(_txtFieldPW.text));
 
     // 회원가입 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetDatas = new Map();
     targetDatas[APIConstants.id] = StringUtils.trimmedString(_txtFieldID.text);
-    targetDatas[APIConstants.pwd] = StringUtils.trimmedString(_txtFieldPW.text);
+    targetDatas[APIConstants.pwd] = encrypted.base64;
     targetDatas[APIConstants.member_type] = APIConstants.member_type_actor;
     targetDatas[APIConstants.actor_name] =
         StringUtils.trimmedString(_txtFieldName.text);

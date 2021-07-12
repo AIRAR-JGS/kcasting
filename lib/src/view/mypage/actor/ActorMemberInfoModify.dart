@@ -8,6 +8,9 @@ import 'package:casting_call/src/view/mypage/actor/ActorMemberInfo.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:encrypt/encrypt.dart';
+import 'package:pointycastle/asymmetric/api.dart';
 
 import '../../../../KCastingAppData.dart';
 
@@ -320,15 +323,20 @@ class _ActorMemberInfoModify extends State<ActorMemberInfoModify>
   /*
   * 제작사 회원정보 수정
   * */
-  void requestUpdateApi(BuildContext context) {
+  void requestUpdateApi(BuildContext context) async {
     final dio = Dio();
 
-    // 회원가입 api 호출 시 보낼 파라미터
+    // 비밀번호 암호화
+    final publicPem = await rootBundle.loadString('assets/files/public_key.pem');
+    final publicKey = RSAKeyParser().parse(publicPem) as RSAPublicKey;
 
+    final encryptor = Encrypter(RSA(publicKey: publicKey));
+    final encrypted = encryptor.encrypt(StringUtils.trimmedString(_txtFieldPW.text));
+
+    // 회원가입 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetDatas = new Map();
     targetDatas[APIConstants.seq] = KCastingAppData().myInfo[APIConstants.seq];
-    targetDatas[APIConstants.pwd] =
-        StringUtils.trimmedString(_txtFieldNewPW.text);
+    targetDatas[APIConstants.pwd] = encrypted.base64;
     targetDatas[APIConstants.actor_phone] =
         StringUtils.trimmedString(_txtFieldPhone.text);
     targetDatas[APIConstants.actor_email] =

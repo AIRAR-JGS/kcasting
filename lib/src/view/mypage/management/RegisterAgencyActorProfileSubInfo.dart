@@ -18,13 +18,16 @@ import 'package:flutter_tags/flutter_tags.dart';
 class RegisterAgencyActorProfileSubInfo extends StatefulWidget {
   final Map<String, dynamic> targetData;
 
-  const RegisterAgencyActorProfileSubInfo({Key key, this.targetData}) : super(key: key);
+  const RegisterAgencyActorProfileSubInfo({Key key, this.targetData})
+      : super(key: key);
 
   @override
-  _RegisterAgencyActorProfileSubInfo createState() => _RegisterAgencyActorProfileSubInfo();
+  _RegisterAgencyActorProfileSubInfo createState() =>
+      _RegisterAgencyActorProfileSubInfo();
 }
 
-class _RegisterAgencyActorProfileSubInfo extends State<RegisterAgencyActorProfileSubInfo>
+class _RegisterAgencyActorProfileSubInfo
+    extends State<RegisterAgencyActorProfileSubInfo>
     with SingleTickerProviderStateMixin, BaseUtilMixin {
   Map<String, dynamic> _targetData;
 
@@ -827,12 +830,13 @@ class _RegisterAgencyActorProfileSubInfo extends State<RegisterAgencyActorProfil
       if (value != null) {
         if (value[APIConstants.resultVal]) {
           // 매니지먼트 보유 배우 추가 성공
-          var _responseList = value[APIConstants.data] as List;
 
-
-
-         // Navigator.pop(context);
+          Navigator.pop(context);
+        } else {
+          showSnackBar(context, APIConstants.error_msg_try_again);
         }
+      } else {
+        showSnackBar(context, APIConstants.error_msg_server_not_response);
       }
     });
   }

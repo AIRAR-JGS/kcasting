@@ -243,8 +243,14 @@ class _AgencyActorList extends State<AgencyActorList>
                                                               onClickedAgree:
                                                                   (name,
                                                                       gender) {
-                                                        addView(context,
-                                                            RegisterAgencyActorProfileMainInfo());
+                                                        addView(
+                                                            context,
+                                                            RegisterAgencyActorProfileMainInfo(
+                                                                name: name,
+                                                                gender:
+                                                                    gender == 0
+                                                                        ? "남자"
+                                                                        : "여자"));
                                                       }),
                                                     );
                                                   },

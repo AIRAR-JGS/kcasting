@@ -109,6 +109,36 @@ class _MyHomePageState extends State<MyHomePage> with BaseUtilMixin {
         }
       }
 
+      // 은행코드 api 호출
+      requestBankCodeListApi(context);
+    });
+  }
+
+  /*
+  공통코드조회 - 은행코드
+  * */
+  void requestBankCodeListApi(BuildContext context) {
+    final dio = Dio();
+
+    // 공통코드조회 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetDatas = new Map();
+    targetDatas[APIConstants.parentCode] = APIConstants.b01;
+    targetDatas[APIConstants.isUse] = 1;
+
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.SEL_CCD_LIST;
+    params[APIConstants.target] = targetDatas;
+
+    // 공통코드조회 api 호출
+    RestClient(dio).postRequestMainControl(params).then((value) async {
+      if (value != null) {
+        if (value[APIConstants.resultVal]) {
+          // 공통코드조회 성공
+          var _responseList = value[APIConstants.data];
+          KCastingAppData().bankCode = _responseList[APIConstants.list];
+        }
+      }
+
       // 로그인 api 호출
       requestLoginApi(context);
     });

@@ -1,16 +1,12 @@
-import 'dart:io';
-
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/model/EducationListModel.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
-import 'package:casting_call/src/view/actor/ActorProfileWidget.dart';
 import 'package:casting_call/src/view/mypage/management/RegisterAgencyActorProfileSubInfo.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../../../../KCastingAppData.dart';
 
@@ -18,6 +14,12 @@ import '../../../../KCastingAppData.dart';
 * 보유 배우 프로필 추가 - 1
 * */
 class RegisterAgencyActorProfileMainInfo extends StatefulWidget {
+  final String name;
+  final String gender;
+
+  const RegisterAgencyActorProfileMainInfo({Key key, this.name, this.gender})
+      : super(key: key);
+
   @override
   _RegisterAgencyActorProfileMainInfo createState() =>
       _RegisterAgencyActorProfileMainInfo();
@@ -25,8 +27,8 @@ class RegisterAgencyActorProfileMainInfo extends StatefulWidget {
 
 class _RegisterAgencyActorProfileMainInfo
     extends State<RegisterAgencyActorProfileMainInfo> with BaseUtilMixin {
-  File _profileImgFile;
-  final picker = ImagePicker();
+  String _name;
+  String _gender;
 
   final _txtFieldName = TextEditingController();
   final _txtFieldIntroduce = TextEditingController();
@@ -36,8 +38,6 @@ class _RegisterAgencyActorProfileMainInfo
   final _txtFieldWeight = TextEditingController();
 
   List<Map<UniqueKey, EducationListModel>> _educationList = [];
-
-  String _actorLevel = APIConstants.actor_level_1;
 
   String _birthY = '2000';
   String _birthM = '01';
@@ -52,7 +52,12 @@ class _RegisterAgencyActorProfileMainInfo
   void initState() {
     super.initState();
 
-    _txtFieldIntroduce.text = StringUtils.isEmpty(
+    _name = widget.name;
+    _gender = widget.gender;
+
+    _txtFieldName.text = _name;
+
+    /*_txtFieldIntroduce.text = StringUtils.isEmpty(
             KCastingAppData().myProfile[APIConstants.actor_Introduce])
         ? ''
         : KCastingAppData().myProfile[APIConstants.actor_Introduce];
@@ -76,11 +81,6 @@ class _RegisterAgencyActorProfileMainInfo
             KCastingAppData().myProfile[APIConstants.actor_weight])
         ? ''
         : KCastingAppData().myProfile[APIConstants.actor_weight].toString();
-
-    _actorLevel = StringUtils.isEmpty(
-            KCastingAppData().myProfile[APIConstants.actor_level])
-        ? APIConstants.actor_level_1
-        : KCastingAppData().myProfile[APIConstants.actor_level];
 
     _birthDate = StringUtils.isEmpty(
             KCastingAppData().myProfile[APIConstants.actor_birth])
@@ -117,7 +117,7 @@ class _RegisterAgencyActorProfileMainInfo
       _educationList.add(_eduItem);
 
       _educationWidgets.add(educationHistory(_uKey));
-    }
+    }*/
   }
 
   Widget educationHistory(var uniqueKey) {
@@ -248,33 +248,6 @@ class _RegisterAgencyActorProfileMainInfo
     );
   }
 
-  // 갤러리에서 이미지 가져오기
-  Future getImageFromGallery(int type) async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      print(pickedFile.path);
-      if (type == 0) {
-        _profileImgFile = File(pickedFile.path);
-        //requestUpdateActorProfile(context, _profileImgFile);
-      } else {
-        File _image = File(pickedFile.path);
-
-        final size = _image.readAsBytesSync().lengthInBytes;
-        final kb = size / 1024;
-        final mb = kb / 1024;
-
-        if (mb > 25) {
-          showSnackBar(context, "25MB 미만의 파일만 업로드 가능합니다.");
-        } else {
-          //requestAddActorImage(context, _image);
-        }
-      }
-    } else {
-      showSnackBar(context, "선택된 이미지가 없습니다.");
-    }
-  }
-
   /*
   * 메인 위젯
   * */
@@ -298,10 +271,6 @@ class _RegisterAgencyActorProfileMainInfo
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                      ActorProfileWidget.mainImageWidget(context, true, null,
-                          () {
-                        getImageFromGallery(0);
-                      }),
                       Container(
                           margin: EdgeInsets.only(top: 20),
                           padding: EdgeInsets.only(left: 15, right: 15),
@@ -695,12 +664,16 @@ class _RegisterAgencyActorProfileMainInfo
     // 회원가입 api 호출 시 보낼 파라미터
     Map<String, dynamic> actorProfile = new Map();
 
+    Map<String, dynamic> infoTargetData = new Map();
+    infoTargetData[APIConstants.actor_name] = StringUtils.trimmedString(_txtFieldName.text);
+    infoTargetData[APIConstants.sex_type] = _gender;
+    infoTargetData[APIConstants.actor_birth] = _birthDate;
+    infoTargetData[APIConstants.management_seq] = KCastingAppData().myInfo[APIConstants.management_seq];
+
+    actorProfile[APIConstants.info_target] = infoTargetData;
+
     Map<String, dynamic> profileTargetData = new Map();
-    profileTargetData[APIConstants.actorProfile_seq] =
-        KCastingAppData().myInfo[APIConstants.actorProfile_seq];
     profileTargetData[APIConstants.actor_Introduce] = _txtFieldIntroduce.text;
-    profileTargetData[APIConstants.actor_level] = _actorLevel;
-    profileTargetData[APIConstants.actor_levelConfirmation_url] = null;
     profileTargetData[APIConstants.actor_drama_pay] = _txtFieldDramaPay.text;
     profileTargetData[APIConstants.actor_movie_pay] = _txtFieldMoviePay.text;
     profileTargetData[APIConstants.actor_tall] = _txtFieldTall.text;

@@ -12,6 +12,7 @@ class KCastingAppData {
 
   var  commonCodeK01 = [];                              //  공통코드 - 배역 특징 유형
   var commonCodeK02 = [];                               //  공통코드 - 외모 특징 유형
+  var bankCode = [];                               //  은행코드
 
   var myInfo = new Map<String, dynamic>();                                  // 내 회원정보(로그인 정보)
 

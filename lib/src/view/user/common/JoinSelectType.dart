@@ -1,10 +1,10 @@
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
+import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/view/user/actor/JoinActorSelectType.dart';
 import 'package:casting_call/src/view/user/common/Login.dart';
-import 'package:casting_call/src/view/user/management/JoinAgency.dart';
-import 'package:casting_call/src/view/user/production/JoinProduction.dart';
+import 'package:casting_call/src/view/user/production/CompanyAuth.dart';
 import 'package:flutter/material.dart';
 
 /*
@@ -78,7 +78,11 @@ class _JoinSelectType extends State<JoinSelectType> with BaseUtilMixin {
                                       ]))),
                           GestureDetector(
                               onTap: () {
-                                replaceView(context, JoinProduction());
+                                replaceView(
+                                    context,
+                                    CompanyAuth(
+                                        memberType:
+                                            APIConstants.member_type_product));
                               },
                               child: Container(
                                   margin: EdgeInsets.only(top: 20),
@@ -109,7 +113,11 @@ class _JoinSelectType extends State<JoinSelectType> with BaseUtilMixin {
                                       ]))),
                           GestureDetector(
                               onTap: () {
-                                replaceView(context, JoinAgency());
+                                replaceView(
+                                    context,
+                                    CompanyAuth(
+                                        memberType: APIConstants
+                                            .member_type_management));
                               },
                               child: Container(
                                   margin: EdgeInsets.only(top: 20),

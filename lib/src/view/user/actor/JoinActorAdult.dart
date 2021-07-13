@@ -8,12 +8,12 @@ import 'package:casting_call/src/util/StringUtils.dart';
 import 'package:casting_call/src/view/main/Home.dart';
 import 'package:casting_call/src/view/user/actor/JoinActorSelectType.dart';
 import 'package:dio/dio.dart';
+import 'package:encrypt/encrypt.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:encrypt/encrypt.dart';
 import 'package:pointycastle/asymmetric/api.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /*
 *  14세 이상 배우 회원가입
@@ -32,9 +32,13 @@ class _JoinActorAdult extends State<JoinActorAdult> with BaseUtilMixin {
   final _txtFieldName = TextEditingController();
   final _txtFieldPhone = TextEditingController();
   final _txtFieldEmail = TextEditingController();
+  final _txtFieldAccountName = TextEditingController();
+  final _txtFieldAccountBirth = TextEditingController();
+  final _txtFieldAccountNum = TextEditingController();
 
   int _userGender = 0;
-  String _bankVal = '은행선택';
+  Map<String, dynamic> _bankVal;
+  bool _isAccountChecked = false;
   int _agreeTerms = 0;
   int _agreePrivacyPolicy = 0;
   String _birthDate = '2000-01-01';
@@ -42,6 +46,59 @@ class _JoinActorAdult extends State<JoinActorAdult> with BaseUtilMixin {
   @override
   void initState() {
     super.initState();
+  }
+
+  /*
+  *  계좌 소유주 확인 api 호출
+  * */
+  void requestAccountCheckApi(BuildContext context) async {
+    final dio = Dio();
+
+    // 계좌 소유주 확인 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetDatas = new Map();
+    targetDatas[APIConstants.bankCode] = _bankVal[APIConstants.child_code];
+    targetDatas[APIConstants.accountNo] =
+        StringUtils.trimmedString(_txtFieldAccountNum.text);
+    targetDatas[APIConstants.name] =
+        StringUtils.trimmedString(_txtFieldAccountName.text);
+    targetDatas[APIConstants.isPersonalAccount] = true;
+    targetDatas[APIConstants.resId] =
+        StringUtils.trimmedString(_txtFieldAccountBirth.text);
+
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.CHK_TOT_ACCOUNT;
+    params[APIConstants.target] = targetDatas;
+
+    // 계좌 소유주 확인 api 호출
+    RestClient(dio).postRequestMainControl(params).then((value) async {
+      if (value == null) {
+        // 에러 - 데이터 널 - 서버가 응답하지 않습니다. 다시 시도해 주세요
+        showSnackBar(context, APIConstants.error_msg_server_not_response);
+      } else {
+        if (value[APIConstants.resultVal]) {
+          try {
+            // 계좌 소유주 확인 성공
+            var _responseData = value[APIConstants.data];
+
+            if (_responseData[APIConstants.resultCode] == "0000") {
+              setState(() {
+                _isAccountChecked = true;
+                showSnackBar(context, "계좌 인증이 완료되었습니다.");
+              });
+            } else {
+              if (_responseData[APIConstants.resultMsg] != null) {
+                showSnackBar(context, _responseData[APIConstants.resultMsg]);
+              }
+            }
+          } catch (e) {
+            showSnackBar(context, "계좌 소유주 확인 실패");
+          }
+        } else {
+          // 기업 실명확인 실패
+          showSnackBar(context, "계좌 소유주 확인 실패");
+        }
+      }
+    });
   }
 
   /*
@@ -388,27 +445,52 @@ class _JoinActorAdult extends State<JoinActorAdult> with BaseUtilMixin {
                                               style: CustomStyles
                                                   .normal14TextStyle())),
                                       Container(
+                                          padding: EdgeInsets.only(
+                                              left: 30, right: 30),
+                                          margin: EdgeInsets.only(top: 5),
+                                          child: CustomStyles
+                                              .greyBorderRound7TextFieldWithDisableOpt(
+                                                  _txtFieldAccountName,
+                                                  '예금주명 입력',
+                                                  !_isAccountChecked)),
+                                      Container(
+                                          padding: EdgeInsets.only(
+                                              left: 30, right: 30),
+                                          margin: EdgeInsets.only(top: 5),
+                                          child: CustomStyles
+                                              .greyBorderRound7NumbersOnlyTextFieldWithDisableOpt(
+                                                  _txtFieldAccountBirth,
+                                                  '예금주 생년월일 6자리 입력(숫자만)',
+                                                  !_isAccountChecked)),
+                                      Container(
                                         margin: EdgeInsets.only(top: 5),
                                         padding: EdgeInsets.only(
                                             left: 30, right: 30),
                                         width: double.infinity,
                                         child: DropdownButtonFormField(
-                                          value: _bankVal,
-                                          onChanged: (String newValue) {
-                                            setState(() {
-                                              _bankVal = newValue;
-                                            });
-                                          },
-                                          items: <String>[
-                                            '은행선택',
-                                            '국민',
-                                            '기업',
-                                            '농협'
-                                          ].map<DropdownMenuItem<String>>(
-                                              (String value) {
-                                            return DropdownMenuItem<String>(
+                                          //value: _bankVal,
+                                          hint: Container(
+                                            //and here
+                                            child: Text("은행 선택",
+                                                style: CustomStyles
+                                                    .light14TextStyle()),
+                                          ),
+                                          onChanged: _isAccountChecked
+                                              ? null
+                                              : (newValue) {
+                                                  setState(() {
+                                                    _bankVal = newValue;
+                                                  });
+                                                },
+                                          items: KCastingAppData()
+                                              .bankCode
+                                              .map((value) {
+                                            return DropdownMenuItem<
+                                                Map<String, dynamic>>(
                                               value: value,
-                                              child: Text(value,
+                                              child: Text(
+                                                  value[
+                                                      APIConstants.child_name],
                                                   style: CustomStyles
                                                       .normal14TextStyle()),
                                             );
@@ -439,9 +521,10 @@ class _JoinActorAdult extends State<JoinActorAdult> with BaseUtilMixin {
                                                 flex: 7,
                                                 child: Container(
                                                     child: CustomStyles
-                                                        .greyBorderRound7TextField(
-                                                            TextEditingController(),
-                                                            '계좌번호 입력')),
+                                                        .greyBorderRound7NumbersOnlyTextFieldWithDisableOpt(
+                                                            _txtFieldAccountNum,
+                                                            '계좌번호 입력',
+                                                            !_isAccountChecked)),
                                               ),
                                               Expanded(
                                                 flex: 0,
@@ -451,8 +534,55 @@ class _JoinActorAdult extends State<JoinActorAdult> with BaseUtilMixin {
                                                         left: 5),
                                                     child: CustomStyles
                                                         .greyBGRound7ButtonStyle(
-                                                            '계좌인증', () {
+                                                            _isAccountChecked
+                                                                ? '인증완료'
+                                                                : '계좌인증', () {
                                                       // 인증번호 받기 버튼 클릭
+                                                      if (_isAccountChecked) {
+                                                        showSnackBar(context,
+                                                            "이미 인증되었습니다.");
+                                                      } else {
+                                                        if (StringUtils.isEmpty(
+                                                            _txtFieldAccountName
+                                                                .text)) {
+                                                          showSnackBar(context,
+                                                              '예금주명을 입력해 주세요.');
+                                                          return false;
+                                                        }
+
+                                                        if (StringUtils.isEmpty(
+                                                            _txtFieldAccountBirth
+                                                                .text)) {
+                                                          showSnackBar(context,
+                                                              '예금주 생년월일 6자리를 입력해 주세요.');
+                                                          return false;
+                                                        }
+
+                                                        if (_bankVal == null) {
+                                                          showSnackBar(context,
+                                                              '은행을 선택해 주세요.');
+                                                          return false;
+                                                        }
+
+                                                        if (_bankVal[APIConstants
+                                                                .child_code] ==
+                                                            null) {
+                                                          showSnackBar(context,
+                                                              '은행을 선택해 주세요.');
+                                                          return false;
+                                                        }
+
+                                                        if (StringUtils.isEmpty(
+                                                            _txtFieldAccountNum
+                                                                .text)) {
+                                                          showSnackBar(context,
+                                                              '계좌번호를 입력해 주세요.');
+                                                          return false;
+                                                        }
+
+                                                        requestAccountCheckApi(
+                                                            context);
+                                                      }
                                                     })),
                                               )
                                             ],
@@ -695,11 +825,13 @@ class _JoinActorAdult extends State<JoinActorAdult> with BaseUtilMixin {
     final dio = Dio();
 
     // 비밀번호 암호화
-    final publicPem = await rootBundle.loadString('assets/files/public_key.pem');
+    final publicPem =
+        await rootBundle.loadString('assets/files/public_key.pem');
     final publicKey = RSAKeyParser().parse(publicPem) as RSAPublicKey;
 
     final encryptor = Encrypter(RSA(publicKey: publicKey));
-    final encrypted = encryptor.encrypt(StringUtils.trimmedString(_txtFieldPW.text));
+    final encrypted =
+        encryptor.encrypt(StringUtils.trimmedString(_txtFieldPW.text));
 
     // 회원가입 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetDatas = new Map();
@@ -713,8 +845,10 @@ class _JoinActorAdult extends State<JoinActorAdult> with BaseUtilMixin {
     targetDatas[APIConstants.guardian_RR_url] = "";
     targetDatas[APIConstants.guardian_COH_url] = "";
     targetDatas[APIConstants.guardian_COFR_url] = "";
-    targetDatas[APIConstants.actor_bank_code] = "";
-    targetDatas[APIConstants.actor_account_number] = "";
+    targetDatas[APIConstants.actor_bank_code] = _bankVal[APIConstants.child_code];
+    targetDatas[APIConstants.actor_account_number] =  StringUtils.trimmedString(_txtFieldAccountNum.text);
+    targetDatas[APIConstants.actor_account_holder] =  StringUtils.trimmedString(_txtFieldAccountName.text);
+    targetDatas[APIConstants.actor_account_holder_birth] =  StringUtils.trimmedString(_txtFieldAccountBirth.text);
     targetDatas[APIConstants.actor_birth] = _birthDate;
     targetDatas[APIConstants.sex_type] = _userGender == 0 ? "여자" : "남자";
     targetDatas[APIConstants.actor_phone] =

@@ -118,7 +118,7 @@ class _ProductionMemberInfo extends State<ProductionMemberInfo>
                               Expanded(
                                   flex: 3,
                                   child: Container(
-                                      child: Text('담당자',
+                                      child: Text('대표자',
                                           style: CustomStyles
                                               .normal14TextStyle()))),
                               Expanded(

@@ -706,12 +706,12 @@ class _RegisterAgencyActorProfileSubInfo extends State<RegisterAgencyActorProfil
   }
 
   /*
-  * 제작사 회원정보 수정
+  * 매니지먼트 보유 배우 추가 수정
   * */
   void requestUpdateApi(BuildContext context) {
     final dio = Dio();
 
-    // 회원가입 api 호출 시 보낼 파라미터
+    // 매니지먼트 보유 배우 추가 api 호출 시 보낼 파라미터
     List<Map<String, dynamic>> languageTargetDatas = [];
 
     for (int i = 0; i < _languages.length; i++) {
@@ -819,166 +819,19 @@ class _RegisterAgencyActorProfileSubInfo extends State<RegisterAgencyActorProfil
     }
 
     Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.IPC_APR_INFO;
+    params[APIConstants.key] = APIConstants.INS_MGM_JOINACTOR;
     params[APIConstants.target] = _targetData;
 
-    // 회원정보 수정 api 호출
+    // 매니지먼트 보유 배우 추가 api 호출
     RestClient(dio).postRequestMainControl(params).then((value) async {
       if (value != null) {
         if (value[APIConstants.resultVal]) {
-          // 배우프로필조회 성공
+          // 매니지먼트 보유 배우 추가 성공
           var _responseList = value[APIConstants.data] as List;
 
-          setState(() {
-            for (int i = 0; i < _responseList.length; i++) {
-              var _data = _responseList[i];
 
-              switch (_data[APIConstants.table]) {
-                // 배우 프로필
-                case APIConstants.table_actor_profile:
-                  {
-                    var _listData = _data[APIConstants.data] as List;
 
-                    if (_listData != null && _listData.length > 0) {
-                      var firstData = _listData[0];
-
-                      if (firstData != null) {
-                        var profileListData =
-                            firstData[APIConstants.list] as List;
-
-                        if (profileListData != null &&
-                            profileListData.length > 0) {
-                          KCastingAppData().myProfile = profileListData[0];
-                        }
-                      }
-                    }
-                    break;
-                  }
-
-                // 배우 학력사항
-                case APIConstants.table_actor_education:
-                  {
-                    var _listData = _data[APIConstants.data] as List;
-
-                    if (_listData != null && _listData.length > 0) {
-                      var firstData = _listData[0];
-
-                      if (firstData != null) {
-                        var profileListData =
-                            firstData[APIConstants.list] as List;
-
-                        if (profileListData != null) {
-                          KCastingAppData().myEducation = profileListData;
-                        }
-                      }
-                    }
-                    break;
-                  }
-
-                // 배우 언어
-                case APIConstants.table_actor_languge:
-                  {
-                    var _listData = _data[APIConstants.data] as List;
-
-                    if (_listData != null && _listData.length > 0) {
-                      var firstData = _listData[0];
-
-                      if (firstData != null) {
-                        var profileListData =
-                            firstData[APIConstants.list] as List;
-
-                        if (profileListData != null) {
-                          KCastingAppData().myLanguage = profileListData;
-                        }
-                      }
-                    }
-                    break;
-                  }
-
-                // 배우 사투리
-                case APIConstants.table_actor_dialect:
-                  {
-                    var _listData = _data[APIConstants.data] as List;
-
-                    if (_listData != null && _listData.length > 0) {
-                      var firstData = _listData[0];
-
-                      if (firstData != null) {
-                        var profileListData =
-                            firstData[APIConstants.list] as List;
-
-                        if (profileListData != null) {
-                          KCastingAppData().myDialect = profileListData;
-                        }
-                      }
-                    }
-                    break;
-                  }
-
-                // 배우 특기
-                case APIConstants.table_actor_ability:
-                  {
-                    var _listData = _data[APIConstants.data] as List;
-
-                    if (_listData != null && _listData.length > 0) {
-                      var firstData = _listData[0];
-
-                      if (firstData != null) {
-                        var profileListData =
-                            firstData[APIConstants.list] as List;
-
-                        if (profileListData != null) {
-                          KCastingAppData().myAbility = profileListData;
-                        }
-                      }
-                    }
-                    break;
-                  }
-
-                // 배우 외모 키워드
-                case APIConstants.table_actor_lookkwd:
-                  {
-                    var _listData = _data[APIConstants.data] as List;
-
-                    if (_listData != null && _listData.length > 0) {
-                      var firstData = _listData[0];
-
-                      if (firstData != null) {
-                        var profileListData =
-                            firstData[APIConstants.list] as List;
-
-                        if (profileListData != null) {
-                          KCastingAppData().myLookKwd = profileListData;
-                        }
-                      }
-                    }
-                    break;
-                  }
-
-                // 배우 캐스팅 키워드
-                case APIConstants.table_actor_castingKwd:
-                  {
-                    var _listData = _data[APIConstants.data] as List;
-
-                    if (_listData != null && _listData.length > 0) {
-                      var firstData = _listData[0];
-
-                      if (firstData != null) {
-                        var profileListData =
-                            firstData[APIConstants.list] as List;
-
-                        if (profileListData != null) {
-                          KCastingAppData().myCastingKwd = profileListData;
-                        }
-                      }
-                    }
-                    break;
-                  }
-              }
-            }
-          });
-
-          Navigator.pop(context);
+         // Navigator.pop(context);
         }
       }
     });

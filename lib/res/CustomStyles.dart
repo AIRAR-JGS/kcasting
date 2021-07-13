@@ -102,6 +102,30 @@ class CustomStyles {
     );
   }
 
+  static TextField greyBorderRound7TextFieldWithDisableOpt(
+      TextEditingController controller, String txtHint, bool isEnable) {
+    return TextField(
+      enabled: isEnable,
+      controller: controller,
+      decoration: InputDecoration(
+        isDense: true,
+        contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+        hintText: txtHint,
+        hintStyle:
+        TextStyle(fontSize: 16, color: CustomColors.colorFontLightGrey),
+        border: OutlineInputBorder(
+            borderSide:
+            BorderSide(color: CustomColors.colorFontGrey, width: 1.0),
+            borderRadius: circle7BorderRadius()),
+        focusedBorder: OutlineInputBorder(
+            borderSide:
+            BorderSide(color: CustomColors.colorFontGrey, width: 1.0),
+            borderRadius: circle7BorderRadius()),
+      ),
+      style: normal16TextStyle(),
+    );
+  }
+
   // 테투리있는 텍스트필드 - 숫자만 입력
   static TextField greyBorderRound7NumbersOnlyTextField(
       TextEditingController controller, String txtHint) {
@@ -121,6 +145,31 @@ class CustomStyles {
         focusedBorder: OutlineInputBorder(
             borderSide:
                 BorderSide(color: CustomColors.colorFontGrey, width: 1.0),
+            borderRadius: circle7BorderRadius()),
+      ),
+      style: normal16TextStyle(),
+    );
+  }
+
+  static TextField greyBorderRound7NumbersOnlyTextFieldWithDisableOpt(
+      TextEditingController controller, String txtHint, bool isEnable) {
+    return TextField(
+      enabled: isEnable,
+      controller: controller,
+      keyboardType: TextInputType.number,
+      decoration: InputDecoration(
+        isDense: true,
+        contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+        hintText: txtHint,
+        hintStyle:
+        TextStyle(fontSize: 16, color: CustomColors.colorFontLightGrey),
+        border: OutlineInputBorder(
+            borderSide:
+            BorderSide(color: CustomColors.colorFontGrey, width: 1.0),
+            borderRadius: circle7BorderRadius()),
+        focusedBorder: OutlineInputBorder(
+            borderSide:
+            BorderSide(color: CustomColors.colorFontGrey, width: 1.0),
             borderRadius: circle7BorderRadius()),
       ),
       style: normal16TextStyle(),

@@ -21,6 +21,7 @@ class ActorMemberInfo extends StatefulWidget {
 }
 
 class _ActorMemberInfo extends State<ActorMemberInfo> with BaseUtilMixin {
+
   @override
   void initState() {
     super.initState();

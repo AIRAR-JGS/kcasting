@@ -8,23 +8,35 @@ import 'package:casting_call/src/util/StringUtils.dart';
 import 'package:casting_call/src/view/main/Home.dart';
 import 'package:casting_call/src/view/user/common/JoinSelectType.dart';
 import 'package:dio/dio.dart';
+import 'package:encrypt/encrypt.dart' as encrtpt;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:encrypt/encrypt.dart';
 import 'package:pointycastle/asymmetric/api.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /*
 *  매니지먼트 회원가입 클래스
 * */
 class JoinAgency extends StatefulWidget {
+  final String companyName;
+  final String companyCEOName;
+  final String companyNum;
+
+  const JoinAgency(
+      {Key key, this.companyName, this.companyCEOName, this.companyNum})
+      : super(key: key);
+
   @override
   _JoinAgency createState() => _JoinAgency();
 }
 
 class _JoinAgency extends State<JoinAgency> with BaseUtilMixin {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+
+  String _companyName;
+  String _companyCEOName;
+  String _companyNum;
 
   final _txtFieldID = TextEditingController();
   final _txtFieldPW = TextEditingController();
@@ -34,14 +46,78 @@ class _JoinAgency extends State<JoinAgency> with BaseUtilMixin {
   final _txtFieldCeoName = TextEditingController();
   final _txtFieldHomepage = TextEditingController();
   final _txtFieldEmail = TextEditingController();
+  final _txtFieldAccountName = TextEditingController();
+  final _txtFieldAccountNum = TextEditingController();
 
-  String _bankVal = '은행선택';
+  Map<String, dynamic> _bankVal;
+  bool _isAccountChecked = false;
   int _agreeTerms = 0;
   int _agreePrivacyPolicy = 0;
 
   @override
   void initState() {
     super.initState();
+
+    _companyName = widget.companyName;
+    _companyCEOName = widget.companyCEOName;
+    _companyNum = widget.companyNum;
+
+    if (_companyCEOName != null && !StringUtils.isEmpty(_companyCEOName)) {
+      _txtFieldCeoName.text = _companyCEOName;
+    }
+  }
+
+  /*
+  *  계좌 소유주 확인 api 호출
+  * */
+  void requestAccountCheckApi(BuildContext context) async {
+    final dio = Dio();
+
+    // 계좌 소유주 확인 api 호출 시 보낼 파라미터
+    // 은행코드조회 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetDatas = new Map();
+    targetDatas[APIConstants.bankCode] = _bankVal[APIConstants.child_code];
+    targetDatas[APIConstants.accountNo] =
+        StringUtils.trimmedString(_txtFieldAccountNum.text);
+    targetDatas[APIConstants.name] =
+        StringUtils.trimmedString(_txtFieldAccountName.text);
+    targetDatas[APIConstants.isPersonalAccount] = false;
+    targetDatas[APIConstants.resId] = _companyNum;
+
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.CHK_TOT_ACCOUNT;
+    params[APIConstants.target] = targetDatas;
+
+    // 계좌 소유주 확인 api 호출
+    RestClient(dio).postRequestMainControl(params).then((value) async {
+      if (value == null) {
+        // 에러 - 데이터 널 - 서버가 응답하지 않습니다. 다시 시도해 주세요
+        showSnackBar(context, APIConstants.error_msg_server_not_response);
+      } else {
+        if (value[APIConstants.resultVal]) {
+          try {
+            // 계좌 소유주 확인 성공
+            var _responseData = value[APIConstants.data];
+
+            if (_responseData[APIConstants.resultCode] == "0000") {
+              setState(() {
+                _isAccountChecked = true;
+                showSnackBar(context, "계좌 인증이 완료되었습니다.");
+              });
+            } else {
+              if (_responseData[APIConstants.resultMsg] != null) {
+                showSnackBar(context, _responseData[APIConstants.resultMsg]);
+              }
+            }
+          } catch (e) {
+            showSnackBar(context, "계좌 소유주 확인 실패");
+          }
+        } else {
+          // 기업 실명확인 실패
+          showSnackBar(context, "계좌 소유주 확인 실패");
+        }
+      }
+    });
   }
 
   /*
@@ -196,9 +272,8 @@ class _JoinAgency extends State<JoinAgency> with BaseUtilMixin {
                                                   left: 30, right: 30),
                                               margin: EdgeInsets.only(top: 5),
                                               child: CustomStyles
-                                                  .greyBorderRound7TextField(
-                                                      _txtFieldCompanyName,
-                                                      '')),
+                                                  .disabledGreyBorderRound7TextField(
+                                                      _companyName)),
                                           Container(
                                               margin: EdgeInsets.only(top: 15),
                                               padding: EdgeInsets.only(
@@ -221,10 +296,8 @@ class _JoinAgency extends State<JoinAgency> with BaseUtilMixin {
                                                   left: 30, right: 30),
                                               margin: EdgeInsets.only(top: 5),
                                               child: CustomStyles
-                                                  .greyBorderRound7TextFieldWithOption(
-                                                      _txtFieldCompanyCode,
-                                                      TextInputType.number,
-                                                      '숫자로만 입력해 주세요.')),
+                                                  .disabledGreyBorderRound7TextField(
+                                                      _companyNum)),
                                           Container(
                                               margin: EdgeInsets.only(top: 15),
                                               padding: EdgeInsets.only(
@@ -251,15 +324,6 @@ class _JoinAgency extends State<JoinAgency> with BaseUtilMixin {
                                                       _txtFieldCeoName,
                                                       '반드시 본명을 입력해 주세요.')),
                                           Container(
-                                              height: 50,
-                                              margin: EdgeInsets.only(top: 20),
-                                              padding: EdgeInsets.only(
-                                                  left: 30, right: 30),
-                                              width: double.infinity,
-                                              child: CustomStyles
-                                                  .greyBorderRound7ButtonStyle(
-                                                      '인증하기', () {})),
-                                          Container(
                                             margin: EdgeInsets.only(
                                                 top: 25, bottom: 25),
                                             child: Divider(
@@ -276,27 +340,43 @@ class _JoinAgency extends State<JoinAgency> with BaseUtilMixin {
                                                   style: CustomStyles
                                                       .normal14TextStyle())),
                                           Container(
+                                              padding: EdgeInsets.only(
+                                                  left: 30, right: 30),
+                                              margin: EdgeInsets.only(top: 5),
+                                              child: CustomStyles
+                                                  .greyBorderRound7TextFieldWithDisableOpt(
+                                                      _txtFieldAccountName,
+                                                      '예금주명 입력',
+                                                      !_isAccountChecked)),
+                                          Container(
                                             margin: EdgeInsets.only(top: 5),
                                             padding: EdgeInsets.only(
                                                 left: 30, right: 30),
                                             width: double.infinity,
                                             child: DropdownButtonFormField(
-                                              value: _bankVal,
-                                              onChanged: (String newValue) {
-                                                setState(() {
-                                                  _bankVal = newValue;
-                                                });
-                                              },
-                                              items: <String>[
-                                                '은행선택',
-                                                '국민',
-                                                '기업',
-                                                '농협'
-                                              ].map<DropdownMenuItem<String>>(
-                                                  (String value) {
-                                                return DropdownMenuItem<String>(
+                                              //value: _bankVal,
+                                              hint: Container(
+                                                //and here
+                                                child: Text("은행 선택",
+                                                    style: CustomStyles
+                                                        .light14TextStyle()),
+                                              ),
+                                              onChanged: _isAccountChecked
+                                                  ? null
+                                                  : (newValue) {
+                                                      setState(() {
+                                                        _bankVal = newValue;
+                                                      });
+                                                    },
+                                              items: KCastingAppData()
+                                                  .bankCode
+                                                  .map((value) {
+                                                return DropdownMenuItem<
+                                                    Map<String, dynamic>>(
                                                   value: value,
-                                                  child: Text(value,
+                                                  child: Text(
+                                                      value[APIConstants
+                                                          .child_name],
                                                       style: CustomStyles
                                                           .normal14TextStyle()),
                                                 );
@@ -327,9 +407,10 @@ class _JoinAgency extends State<JoinAgency> with BaseUtilMixin {
                                                     flex: 7,
                                                     child: Container(
                                                         child: CustomStyles
-                                                            .greyBorderRound7TextField(
-                                                                TextEditingController(),
-                                                                '계좌번호 입력')),
+                                                            .greyBorderRound7NumbersOnlyTextFieldWithDisableOpt(
+                                                                _txtFieldAccountNum,
+                                                                '계좌번호 입력',
+                                                                !_isAccountChecked)),
                                                   ),
                                                   Expanded(
                                                     flex: 0,
@@ -339,8 +420,55 @@ class _JoinAgency extends State<JoinAgency> with BaseUtilMixin {
                                                             left: 5),
                                                         child: CustomStyles
                                                             .greyBGRound7ButtonStyle(
-                                                                '계좌인증', () {
+                                                                _isAccountChecked
+                                                                    ? '인증완료'
+                                                                    : '계좌인증',
+                                                                () {
                                                           // 인증번호 받기 버튼 클릭
+                                                          if (_isAccountChecked) {
+                                                            showSnackBar(
+                                                                context,
+                                                                "이미 인증되었습니다.");
+                                                          } else {
+                                                            if (StringUtils.isEmpty(
+                                                                _txtFieldAccountName
+                                                                    .text)) {
+                                                              showSnackBar(
+                                                                  context,
+                                                                  '예금주명을 입력해 주세요.');
+                                                              return false;
+                                                            }
+
+                                                            if (_bankVal ==
+                                                                null) {
+                                                              showSnackBar(
+                                                                  context,
+                                                                  '은행을 선택해 주세요.');
+                                                              return false;
+                                                            }
+
+                                                            if (_bankVal[
+                                                                    APIConstants
+                                                                        .child_code] ==
+                                                                null) {
+                                                              showSnackBar(
+                                                                  context,
+                                                                  '은행을 선택해 주세요.');
+                                                              return false;
+                                                            }
+
+                                                            if (StringUtils.isEmpty(
+                                                                _txtFieldAccountNum
+                                                                    .text)) {
+                                                              showSnackBar(
+                                                                  context,
+                                                                  '계좌번호를 입력해 주세요.');
+                                                              return false;
+                                                            }
+
+                                                            requestAccountCheckApi(
+                                                                context);
+                                                          }
                                                         })),
                                                   )
                                                 ],
@@ -534,8 +662,6 @@ class _JoinAgency extends State<JoinAgency> with BaseUtilMixin {
                               if (checkValidate(context)) {
                                 requestJoinApi(context);
                               }
-
-                              replaceView(context, Home());
                             }))
                       ],
                     ));
@@ -573,13 +699,13 @@ class _JoinAgency extends State<JoinAgency> with BaseUtilMixin {
       return false;
     }
 
-    if (StringUtils.isEmpty(_txtFieldCompanyName.text)) {
-      showSnackBar(context, '기업명을 입력해 주세요.');
+    if (StringUtils.isEmpty(_txtFieldCeoName.text)) {
+      showSnackBar(context, '대표자명을 입력해 주세요.');
       return false;
     }
 
-    if (StringUtils.isEmpty(_txtFieldCeoName.text)) {
-      showSnackBar(context, '대표자명을 입력해 주세요.');
+    if (!_isAccountChecked) {
+      showSnackBar(context, '법인 은행 계좌를 인증해 주세요.');
       return false;
     }
 
@@ -615,11 +741,13 @@ class _JoinAgency extends State<JoinAgency> with BaseUtilMixin {
     final dio = Dio();
 
     // 비밀번호 암호화
-    final publicPem = await rootBundle.loadString('assets/files/public_key.pem');
-    final publicKey = RSAKeyParser().parse(publicPem) as RSAPublicKey;
+    final publicPem =
+        await rootBundle.loadString('assets/files/public_key.pem');
+    final publicKey = encrtpt.RSAKeyParser().parse(publicPem) as RSAPublicKey;
 
-    final encryptor = Encrypter(RSA(publicKey: publicKey));
-    final encrypted = encryptor.encrypt(StringUtils.trimmedString(_txtFieldPW.text));
+    final encryptor = encrtpt.Encrypter(encrtpt.RSA(publicKey: publicKey));
+    final encrypted =
+        encryptor.encrypt(StringUtils.trimmedString(_txtFieldPW.text));
 
     // 회원가입 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetDatas = new Map();
@@ -627,11 +755,14 @@ class _JoinAgency extends State<JoinAgency> with BaseUtilMixin {
     targetDatas[APIConstants.pwd] = encrypted.base64;
     targetDatas[APIConstants.member_type] = APIConstants.member_type_management;
     targetDatas[APIConstants.management_name] = _txtFieldCompanyName.text;
-    targetDatas[APIConstants.businessRegistration_number] = "";
+    targetDatas[APIConstants.businessRegistration_number] = _companyNum;
     targetDatas[APIConstants.management_CEO_name] =
         StringUtils.trimmedString(_txtFieldCeoName.text);
-    targetDatas[APIConstants.management_bank_code] = "";
-    targetDatas[APIConstants.management_account_number] = "";
+    targetDatas[APIConstants.management_bank_code] =
+        _bankVal[APIConstants.child_code];
+    targetDatas[APIConstants.management_account_holder] = StringUtils.trimmedString(_txtFieldAccountName.text);
+    targetDatas[APIConstants.management_account_number] =
+        StringUtils.trimmedString(_txtFieldAccountNum.text);
     targetDatas[APIConstants.management_homepage] =
         StringUtils.trimmedString(_txtFieldHomepage.text);
     targetDatas[APIConstants.management_email] =
@@ -669,7 +800,7 @@ class _JoinAgency extends State<JoinAgency> with BaseUtilMixin {
                 APIConstants.seq, KCastingAppData().myInfo[APIConstants.seq]);
 
             // 메인 페이지 이동
-            //replaceView(context, Home(prevPage: APIConstants.INS_PRD_JOIN));
+            replaceView(context, Home(prevPage: APIConstants.INS_MGM_JOIN));
           } catch (e) {
             showSnackBar(context, APIConstants.error_msg_join_fail);
           }

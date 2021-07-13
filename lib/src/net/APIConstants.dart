@@ -28,6 +28,7 @@ class APIConstants {
   static const String LGI_TOT_LOGINRSA = "LGI_TOT_LOGINRSA";  // 로그인
   static const String FID_TOT_FINDID = "FID_TOT_FINDID";  // 아이디 찾기
   static const String UPD_TOT_RANDPWD = "UPD_TOT_RANDPWD";  // 임시 비밀번호 생성
+  static const String CHK_TOT_COMPAREPWD = "CHK_TOT_COMPAREPWD";  // 비밀번호 단순 비교
 
   static const String INS_PRD_JOIN = "INS_PRD_JOIN";  // 제작사 회원가입
   static const String UPD_PRD_INFO = "UPD_PRD_INFO";  // 제작사 개인정보 수정
@@ -91,6 +92,11 @@ class APIConstants {
   static const String INS_MGM_JOIN  = "INS_MGM_JOIN";  // 매니지먼트 회원가입
   static const String UDF_MGM_LOGO_FORMDATA  = "UDF_MGM_LOGO_FormData";  // 매니지먼트 프로필 로고 이미지 수정(FormData)
   static const String SEL_MGM_INFO  = "SEL_MGM_INFO";  // 매니지먼트 개인정보 단일 조회
+  static const String UPD_MGM_INFO  = "UPD_MGM_INFO";  // 매니지먼트 개인정보 수정
+  static const String INS_MGM_JOINACTOR  = "INS_MGM_JOINACTOR";  // 매니지먼트 보유 배우 추가
+
+  static const String CHK_TOT_REALCORPNAME  = "CHK_TOT_REALCORPNAME";  // 기업 실명확인
+  static const String CHK_TOT_ACCOUNT  = "CHK_TOT_ACCOUNT";  // 계좌 소유주 확인
 
   static const String server_error_already_exist = "already exists data";
   static const String server_error_not_joined = "This id not joind";
@@ -111,6 +117,8 @@ class APIConstants {
   static const String file = "file";
   static const String resultVal = "resultVal";
   static const String resultMsg = "resultMsg";
+  static const String resultCode = "resultCode";
+  static const String resultState = "resultState";
   static const String data = "data";
   static const String seq = "seq";
   static const String paging = "paging";
@@ -130,9 +138,12 @@ class APIConstants {
 
   // 공통코드 관련
   static const String parentCode = "parent_code";
+  static const String child_code = "child_code";
+  static const String isUse = "isUse";
   static const String parentType = "parent_type";
   static const String k01 = "K01";                                          // 배역 특징 유형
   static const String k02 = "K02";                                          // 외모 특징 유형
+  static const String b01 = "B01";                                          // 은행 코드
   static const String project_type_movie = "영화";
   static const String project_type_drama = "드라마";
   static const String casting_type_1 = "주연";
@@ -155,6 +166,13 @@ class APIConstants {
   static const String pwd = "pwd";
   static const String name = "name";
   static const String email = "email";
+  static const String input_pwd = "input_pwd";
+  static const String isCorrectPassword = "isCorrectPassword";
+
+  static const String resId = "resId";
+  static const String bankCode = "bankCode";
+  static const String accountNo = "accountNo";
+  static const String isPersonalAccount = "isPersonalAccount";
 
   // 제작사 회원 관련
   static const String table_production_casting = "ProductionCasting";
@@ -170,6 +188,7 @@ class APIConstants {
   static const String production_CEO_name = "production_CEO_name";
   static const String production_bank_code = "production_bank_code";
   static const String production_account_number = "production_account_number";
+  static const String production_account_holder = "production_account_holder";
   static const String production_homepage = "production_homepage";
   static const String production_email = "production_email";
   static const String production_logo_img_url = "production_logo_img_url";
@@ -299,6 +318,8 @@ class APIConstants {
   static const String guardian_COFR_url = "guardian_COFR_url";                // 보호자 가족관계증명서
   static const String actor_bank_code = "actor_bank_code";
   static const String actor_account_number = "actor_account_number";
+  static const String actor_account_holder = "actor_account_holder";
+  static const String actor_account_holder_birth = "actor_account_holder_birth";
   static const String actor_birth = "actor_birth";
   static const String sex_type = "sex_type";
   static const String actor_phone = "actor_phone";
@@ -320,6 +341,7 @@ class APIConstants {
   static const String secondAuditionTarget_seq   = "secondAuditionTarget_seq";
   static const String thirdAuditionTarget_seq   = "thirdAuditionTarget_seq";
 
+  static const String info_target = "info_target";
   static const String profile_target = "profile_target";
   static const String education_target = "education_target";
   static const String languge_target = "languge_target";
@@ -430,7 +452,10 @@ class APIConstants {
   static const String management_CEO_name = "management_CEO_name";
   static const String management_bank_code = "management_bank_code";
   static const String management_account_number = "management_account_number";
+  static const String management_account_holder = "management_account_holder";
   static const String management_homepage = "management_homepage";
   static const String management_email = "management_email";
   static const String management_logo_img_url = "management_logo_img_url";
+  static const String resultCorpName = "resultCorpName";
+  static const String resultCEOName = "resultCEOName";
 }

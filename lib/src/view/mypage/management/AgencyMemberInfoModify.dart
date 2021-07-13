@@ -5,10 +5,13 @@ import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/net/RestClientInterface.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
-import 'package:casting_call/src/view/mypage/production/ProductionMemberInfo.dart';
+import 'package:casting_call/src/view/mypage/management/AgencyMemberInfo.dart';
 import 'package:dio/dio.dart';
+import 'package:encrypt/encrypt.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:pointycastle/asymmetric/api.dart';
 
 class AgencyMemberInfoModify extends StatefulWidget {
   @override
@@ -19,13 +22,16 @@ class _AgencyMemberInfoModify extends State<AgencyMemberInfoModify>
     with BaseUtilMixin {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
-  String _bankVal = '은행선택';
-
   final _txtFieldPW = TextEditingController();
   final _txtFieldNewPW = TextEditingController();
   final _txtFieldPWCheck = TextEditingController();
   final _txtFieldHomepage = TextEditingController();
   final _txtFieldEmail = TextEditingController();
+  final _txtFieldAccountName = TextEditingController();
+  final _txtFieldAccountNum = TextEditingController();
+
+  Map<String, dynamic> _bankVal;
+  bool _isAccountChecked = false;
 
   @override
   void initState() {
@@ -40,6 +46,81 @@ class _AgencyMemberInfoModify extends State<AgencyMemberInfoModify>
             KCastingAppData().myInfo[APIConstants.management_email])
         ? ''
         : KCastingAppData().myInfo[APIConstants.management_email];
+
+    for (int i = 0; i < KCastingAppData().bankCode.length; i++) {
+      Map<String, dynamic> bankItem = KCastingAppData().bankCode[i];
+
+      if (bankItem[APIConstants.child_code] ==
+          KCastingAppData().myInfo[APIConstants.management_bank_code]) {
+        setState(() {
+          _bankVal = bankItem;
+        });
+      }
+    }
+
+    _txtFieldAccountNum.text = StringUtils.isEmpty(
+            KCastingAppData().myInfo[APIConstants.management_account_number])
+        ? ''
+        : KCastingAppData().myInfo[APIConstants.management_account_number];
+
+    _txtFieldAccountNum.text = StringUtils.isEmpty(
+            KCastingAppData().myInfo[APIConstants.management_account_holder])
+        ? ''
+        : KCastingAppData().myInfo[APIConstants.management_account_holder];
+  }
+
+  /*
+  *  계좌 소유주 확인 api 호출
+  * */
+  void requestAccountCheckApi(BuildContext context) async {
+    final dio = Dio();
+
+    // 계좌 소유주 확인 api 호출 시 보낼 파라미터
+    // 은행코드조회 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetDatas = new Map();
+    targetDatas[APIConstants.bankCode] = _bankVal[APIConstants.child_code];
+    targetDatas[APIConstants.accountNo] =
+        StringUtils.trimmedString(_txtFieldAccountNum.text);
+    targetDatas[APIConstants.name] =
+        StringUtils.trimmedString(_txtFieldAccountName.text);
+    targetDatas[APIConstants.isPersonalAccount] = false;
+    targetDatas[APIConstants.resId] =
+        KCastingAppData().myInfo[APIConstants.businessRegistration_number];
+
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.CHK_TOT_ACCOUNT;
+    params[APIConstants.target] = targetDatas;
+
+    // 계좌 소유주 확인 api 호출
+    RestClient(dio).postRequestMainControl(params).then((value) async {
+      if (value == null) {
+        // 에러 - 데이터 널 - 서버가 응답하지 않습니다. 다시 시도해 주세요
+        showSnackBar(context, APIConstants.error_msg_server_not_response);
+      } else {
+        if (value[APIConstants.resultVal]) {
+          try {
+            // 계좌 소유주 확인 성공
+            var _responseData = value[APIConstants.data];
+
+            if (_responseData[APIConstants.resultCode] == "0000") {
+              setState(() {
+                _isAccountChecked = true;
+                showSnackBar(context, "계좌 인증이 완료되었습니다.");
+              });
+            } else {
+              if (_responseData[APIConstants.resultMsg] != null) {
+                showSnackBar(context, _responseData[APIConstants.resultMsg]);
+              }
+            }
+          } catch (e) {
+            showSnackBar(context, "계좌 소유주 확인 실패");
+          }
+        } else {
+          // 기업 실명확인 실패
+          showSnackBar(context, "계좌 소유주 확인 실패");
+        }
+      }
+    });
   }
 
   /*
@@ -50,7 +131,7 @@ class _AgencyMemberInfoModify extends State<AgencyMemberInfoModify>
     return WillPopScope(
         onWillPop: () {
           // 개인정보 관리 페이지 이동
-          replaceView(context, ProductionMemberInfo());
+          replaceView(context, AgencyMemberInfo());
           return Future.value(false);
         },
         child: Theme(
@@ -58,7 +139,7 @@ class _AgencyMemberInfoModify extends State<AgencyMemberInfoModify>
             child: Scaffold(
                 key: _scaffoldKey,
                 appBar: CustomStyles.defaultAppBar('개인정보 수정', () {
-                  replaceView(context, ProductionMemberInfo());
+                  replaceView(context, AgencyMemberInfo());
                 }),
                 body: Builder(
                   builder: (BuildContext context) {
@@ -89,7 +170,8 @@ class _AgencyMemberInfoModify extends State<AgencyMemberInfoModify>
                                 margin: EdgeInsets.only(top: 15.0),
                                 padding: EdgeInsets.only(left: 18, right: 18),
                                 child: Text(
-                                    StringUtils.checkedString(KCastingAppData().myInfo[APIConstants.id]),
+                                    StringUtils.checkedString(KCastingAppData()
+                                        .myInfo[APIConstants.id]),
                                     style: CustomStyles.normal16TextStyle())),
                             Container(
                                 margin: EdgeInsets.only(top: 20.0),
@@ -195,71 +277,128 @@ class _AgencyMemberInfoModify extends State<AgencyMemberInfoModify>
                                     .disabledGreyBorderRound7TextField(
                                         KCastingAppData().myInfo[
                                             APIConstants.management_CEO_name])),
-                            /* Container(
-                      margin: EdgeInsets.only(top: 30, bottom: 30),
-                      child: Divider(
-                        height: 0.1,
-                        color: CustomColors.colorFontLightGrey,
-                      ),
-                    ),
-                    Container(
-                        padding: EdgeInsets.only(left: 18, right: 18),
-                        alignment: Alignment.centerLeft,
-                        child: Text('법인 은행 계좌',
-                            style: CustomStyles.normal14TextStyle())),
-                    Container(
-                      margin: EdgeInsets.only(top: 5),
-                      padding: EdgeInsets.only(left: 18, right: 18),
-                      width: double.infinity,
-                      child: DropdownButtonFormField(
-                        value: _bankVal,
-                        onChanged: (String newValue) {
-                          setState(() {
-                            _bankVal = newValue;
-                          });
-                        },
-                        items: <String>['은행선택', '국민', '기업', '농협']
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value,
-                                style: CustomStyles.normal14TextStyle()),
-                          );
-                        }).toList(),
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: CustomColors.colorFontLightGrey,
-                                    width: 1.0),
-                                borderRadius: BorderRadius.circular(7.0)),
-                            contentPadding: EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 10)),
-                      ),
-                    ),
-                    Container(
-                        margin: EdgeInsets.only(top: 5),
-                        padding: EdgeInsets.only(left: 18, right: 18),
-                        width: double.infinity,
-                        child: Row(
-                          children: [
-                            Expanded(
-                              flex: 7,
-                              child: Container(
-                                  child: CustomStyles.greyBorderRound7TextField(TextEditingController(),
-                                      '계좌번호 입력')),
+                            Container(
+                              margin: EdgeInsets.only(top: 30, bottom: 30),
+                              child: Divider(
+                                height: 0.1,
+                                color: CustomColors.colorFontLightGrey,
+                              ),
                             ),
-                            Expanded(
-                              flex: 0,
-                              child: Container(
-                                  height: 48,
-                                  margin: EdgeInsets.only(left: 5),
-                                  child: CustomStyles.greyBGRound7ButtonStyle(
-                                      '계좌인증', () {
-                                    // 인증번호 받기 버튼 클릭
-                                  })),
-                            )
-                          ],
-                        )),*/
+                            Container(
+                                padding: EdgeInsets.only(left: 18, right: 18),
+                                alignment: Alignment.centerLeft,
+                                child: Text('법인 은행 계좌',
+                                    style: CustomStyles.normal14TextStyle())),
+                            Container(
+                                padding: EdgeInsets.only(left: 18, right: 18),
+                                margin: EdgeInsets.only(top: 5),
+                                child: CustomStyles
+                                    .greyBorderRound7TextFieldWithDisableOpt(
+                                        _txtFieldAccountName,
+                                        '예금주명 입력',
+                                        !_isAccountChecked)),
+                            Container(
+                              margin: EdgeInsets.only(top: 5),
+                              padding: EdgeInsets.only(left: 18, right: 18),
+                              width: double.infinity,
+                              child: DropdownButtonFormField(
+                                value: _bankVal,
+                                hint: Container(
+                                  //and here
+                                  child: Text("은행 선택",
+                                      style: CustomStyles.light14TextStyle()),
+                                ),
+                                onChanged: _isAccountChecked
+                                    ? null
+                                    : (newValue) {
+                                        setState(() {
+                                          _bankVal = newValue;
+                                        });
+                                      },
+                                items: KCastingAppData().bankCode.map((value) {
+                                  return DropdownMenuItem<Map<String, dynamic>>(
+                                    value: value,
+                                    child: Text(value[APIConstants.child_name],
+                                        style:
+                                            CustomStyles.normal14TextStyle()),
+                                  );
+                                }).toList(),
+                                decoration: InputDecoration(
+                                    border: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color:
+                                                CustomColors.colorFontLightGrey,
+                                            width: 1.0),
+                                        borderRadius:
+                                            BorderRadius.circular(7.0)),
+                                    contentPadding: EdgeInsets.symmetric(
+                                        vertical: 5, horizontal: 10)),
+                              ),
+                            ),
+                            Container(
+                                margin: EdgeInsets.only(top: 5),
+                                padding: EdgeInsets.only(left: 18, right: 18),
+                                width: double.infinity,
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 7,
+                                      child: Container(
+                                          child: CustomStyles
+                                              .greyBorderRound7NumbersOnlyTextFieldWithDisableOpt(
+                                                  _txtFieldAccountNum,
+                                                  '계좌번호 입력',
+                                                  !_isAccountChecked)),
+                                    ),
+                                    Expanded(
+                                      flex: 0,
+                                      child: Container(
+                                          height: 48,
+                                          margin: EdgeInsets.only(left: 5),
+                                          child: CustomStyles
+                                              .greyBGRound7ButtonStyle(
+                                                  _isAccountChecked
+                                                      ? '인증완료'
+                                                      : '계좌인증', () {
+                                            // 인증번호 받기 버튼 클릭
+                                            if (_isAccountChecked) {
+                                              showSnackBar(
+                                                  context, "이미 인증되었습니다.");
+                                            } else {
+                                              if (StringUtils.isEmpty(
+                                                  _txtFieldAccountName.text)) {
+                                                showSnackBar(
+                                                    context, '예금주명을 입력해 주세요.');
+                                                return false;
+                                              }
+
+                                              if (_bankVal == null) {
+                                                showSnackBar(
+                                                    context, '은행을 선택해 주세요.');
+                                                return false;
+                                              }
+
+                                              if (_bankVal[APIConstants
+                                                      .child_code] ==
+                                                  null) {
+                                                showSnackBar(
+                                                    context, '은행을 선택해 주세요.');
+                                                return false;
+                                              }
+
+                                              if (StringUtils.isEmpty(
+                                                  _txtFieldAccountNum.text)) {
+                                                showSnackBar(
+                                                    context, '계좌번호를 입력해 주세요.');
+                                                return false;
+                                              }
+
+                                              requestAccountCheckApi(context);
+                                            }
+                                          })),
+                                    )
+                                  ],
+                                )),
                             Container(
                               margin: EdgeInsets.only(top: 30, bottom: 30),
                               child: Divider(
@@ -310,7 +449,7 @@ class _AgencyMemberInfoModify extends State<AgencyMemberInfoModify>
                                 child: CustomStyles.greyBorderRound7ButtonStyle(
                                     '수정완료', () {
                                   if (checkValidate(context)) {
-                                    requestUpdateApi(context);
+                                    requestComparePwdApi(context);
                                   }
                                 })),
                           ],
@@ -327,12 +466,6 @@ class _AgencyMemberInfoModify extends State<AgencyMemberInfoModify>
   bool checkValidate(BuildContext context) {
     if (StringUtils.isEmpty(_txtFieldPW.text)) {
       showSnackBar(context, '기존 비밀번호를 입력해 주세요.');
-      return false;
-    }
-
-    if (KCastingAppData().myInfo[APIConstants.pwd] !=
-        StringUtils.trimmedString(_txtFieldPW.text)) {
-      showSnackBar(context, '기존 비밀번호가 올바르지 않습니다.');
       return false;
     }
 
@@ -373,23 +506,91 @@ class _AgencyMemberInfoModify extends State<AgencyMemberInfoModify>
   }
 
   /*
+  * 기존 비밀번호 체크
+  * */
+  void requestComparePwdApi(BuildContext context) async {
+    final dio = Dio();
+
+    // 비밀번호 암호화
+    final publicPem =
+        await rootBundle.loadString('assets/files/public_key.pem');
+    final publicKey = RSAKeyParser().parse(publicPem) as RSAPublicKey;
+
+    final encryptor = Encrypter(RSA(publicKey: publicKey));
+    final encrypted =
+        encryptor.encrypt(StringUtils.trimmedString(_txtFieldPW.text));
+
+    // 기존 비밀번호 체크 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetDatas = new Map();
+    targetDatas[APIConstants.seq] = KCastingAppData().myInfo[APIConstants.seq];
+    targetDatas[APIConstants.member_type] =
+        KCastingAppData().myInfo[APIConstants.member_type];
+    targetDatas[APIConstants.input_pwd] = encrypted.base64;
+
+    Map<String, dynamic> params = new Map();
+
+    params[APIConstants.key] = APIConstants.CHK_TOT_COMPAREPWD;
+    params[APIConstants.target] = targetDatas;
+
+    // 기존 비밀번호 체크 api 호출
+    RestClient(dio).postRequestMainControl(params).then((value) async {
+      if (value == null) {
+        // 에러 - 데이터 널
+        showSnackBar(context, '다시 시도해 주세요.');
+      } else {
+        if (value[APIConstants.resultVal]) {
+          // 기존 비밀번호 체크 성공
+          var _responseData = value[APIConstants.data];
+
+          if (_responseData != null &&
+              _responseData[APIConstants.isCorrectPassword]) {
+            requestUpdateApi(context);
+          } else {
+            showSnackBar(context, value[APIConstants.resultMsg]);
+          }
+        } else {
+          // 기존 비밀번호 체크 실패
+          showSnackBar(context, value[APIConstants.resultMsg]);
+        }
+      }
+    });
+  }
+
+  /*
   * 제작사 회원정보 수정
   * */
-  void requestUpdateApi(BuildContext context) {
+  void requestUpdateApi(BuildContext context) async {
     final dio = Dio();
+
+    // 비밀번호 암호화
+    final publicPem =
+        await rootBundle.loadString('assets/files/public_key.pem');
+    final publicKey = RSAKeyParser().parse(publicPem) as RSAPublicKey;
+
+    final encryptor = Encrypter(RSA(publicKey: publicKey));
+    final encrypted =
+        encryptor.encrypt(StringUtils.trimmedString(_txtFieldPW.text));
 
     // 회원가입 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetDatas = new Map();
     targetDatas[APIConstants.seq] = KCastingAppData().myInfo[APIConstants.seq];
-    targetDatas[APIConstants.pwd] =
-        StringUtils.trimmedString(_txtFieldNewPW.text);
-    targetDatas[APIConstants.production_homepage] =
+    targetDatas[APIConstants.pwd] = encrypted.base64;
+    targetDatas[APIConstants.management_homepage] =
         StringUtils.trimmedString(_txtFieldHomepage.text);
-    targetDatas[APIConstants.production_email] =
+    targetDatas[APIConstants.management_email] =
         StringUtils.trimmedString(_txtFieldEmail.text);
 
+    if (_isAccountChecked) {
+      targetDatas[APIConstants.management_bank_code] =
+          _bankVal[APIConstants.child_code];
+      targetDatas[APIConstants.management_account_number] =
+          StringUtils.trimmedString(_txtFieldAccountNum.text);
+      targetDatas[APIConstants.management_account_holder] =
+          StringUtils.trimmedString(_txtFieldAccountName.text);
+    }
+
     Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.UPD_PRD_INFO;
+    params[APIConstants.key] = APIConstants.UPD_MGM_INFO;
     params[APIConstants.target] = targetDatas;
 
     // 회원정보 수정 api 호출
@@ -409,7 +610,7 @@ class _AgencyMemberInfoModify extends State<AgencyMemberInfoModify>
             }
 
             // 회원정보 수정 후 개인정보 관리 페이지로 이동
-            replaceView(context, ProductionMemberInfo());
+            replaceView(context, AgencyMemberInfo());
           } catch (e) {
             showSnackBar(context, APIConstants.error_msg_try_again);
           }

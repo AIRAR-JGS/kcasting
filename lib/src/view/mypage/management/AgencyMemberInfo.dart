@@ -5,7 +5,6 @@ import 'package:casting_call/src/dialog/DialogMemberLeaveConfirm.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
 import 'package:casting_call/src/view/mypage/management/AgencyMemberInfoModify.dart';
-import 'package:casting_call/src/view/mypage/production/ProductionMemberInfoModify.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -198,7 +197,9 @@ class _AgencyMemberInfo extends State<AgencyMemberInfo>
                               context: context,
                               builder: (BuildContext context) =>
                                   DialogMemberLeaveConfirm(
-                                onClickedAgree: () {},
+                                onClickedAgree: () {
+                                  //requestProductDeleteInfoApi(context);
+                                },
                               ),
                             );
                           })),

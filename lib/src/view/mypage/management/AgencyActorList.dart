@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:casting_call/BaseWidget.dart';
+import 'package:casting_call/KCastingAppData.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/dialog/DialogAddActor.dart';
@@ -42,7 +43,7 @@ class _AgencyActorList extends State<AgencyActorList>
 
   List<dynamic> _actorList = [];
   List<dynamic> _originalActorList = [];
-  List<dynamic> _deletedActorList = [];
+  List<int> _deletedActorList = [];
 
   @override
   void initState() {
@@ -109,13 +110,14 @@ class _AgencyActorList extends State<AgencyActorList>
     } else if (_tabIndex == 2) {
       targetData[APIConstants.sex_type] = APIConstants.actor_sex_male;
     }
+    targetData[APIConstants.management_seq] = KCastingAppData().myInfo[APIConstants.management_seq];
 
     Map<String, dynamic> paging = new Map();
     paging[APIConstants.offset] = _actorList.length;
     paging[APIConstants.limit] = _limit;
 
     Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.SEL_ACT_LIST;
+    params[APIConstants.key] = APIConstants.SEL_MGM_ACTORLIST;
     params[APIConstants.target] = targetData;
     params[APIConstants.paging] = paging;
 
@@ -147,6 +149,49 @@ class _AgencyActorList extends State<AgencyActorList>
             });
           } catch (e) {}
         }
+      }
+    });
+  }
+
+  /*
+  *배우 삭제
+  * */
+  void requestActorDeleteApi(BuildContext context) {
+    final dio = Dio();
+
+    // 배우 삭제 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetDatas = new Map();
+    targetDatas[APIConstants.actor_seq] = _deletedActorList;
+    targetDatas[APIConstants.management_seq] = KCastingAppData().myInfo[APIConstants.management_seq];
+
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.DEL_MGM_ACTORLIST;
+    params[APIConstants.target] = targetDatas;
+
+    // 배우 삭제 api 호출
+    RestClient(dio).postRequestMainControl(params).then((value) async {
+      if (value != null) {
+        if (value[APIConstants.resultVal]) {
+          try {
+            // 배우 삭제 성공
+            var _responseData = value[APIConstants.data];
+            var _responseList = _responseData[APIConstants.list] as List;
+
+            setState(() {
+              if (_responseList != null && _responseList.length > 0) {
+                _actorList = _responseList;
+                _originalActorList = _responseList;
+              }
+            });
+          } catch (e) {
+            showSnackBar(context, APIConstants.error_msg_try_again);
+          }
+        } else {
+          showSnackBar(context, APIConstants.error_msg_try_again);
+        }
+      } else {
+        // 에러 - 데이터 널 - 서버가 응답하지 않습니다. 다시 시도해 주세요
+        showSnackBar(context, APIConstants.error_msg_server_not_response);
       }
     });
   }
@@ -311,18 +356,12 @@ class _AgencyActorList extends State<AgencyActorList>
                                               TextButton(
                                                   onPressed: () {
                                                     setState(() {
-                                                      /*_originalActorList
-                                                          .clear();
-                                                      _originalActorList
-                                                          .addAll(_actorList);*/
-
                                                       for (int i = 0;
                                                           i < _actorList.length;
                                                           i++) {
                                                         if (_actorList[i]
                                                             ["isSelected"]) {
-                                                          _deletedActorList.add(
-                                                              _actorList[i]);
+                                                          _deletedActorList.add(_actorList[i][APIConstants.actor_seq]);
                                                         }
                                                       }
 
@@ -338,7 +377,7 @@ class _AgencyActorList extends State<AgencyActorList>
                                                                 _deletedActorList
                                                                     .length,
                                                             onClickedAgree: () {
-                                                              //requestActorListApi(context);
+                                                              requestActorDeleteApi(context);
                                                             },
                                                           ),
                                                         );
@@ -353,23 +392,6 @@ class _AgencyActorList extends State<AgencyActorList>
                                                   style: TextButton.styleFrom(
                                                       padding: EdgeInsets.zero,
                                                       minimumSize: Size(10, 10),
-                                                      alignment:
-                                                          Alignment.center)),
-                                              Container(
-                                                  height: 15,
-                                                  child: VerticalDivider(
-                                                    width: 0.1,
-                                                    color: CustomColors
-                                                        .colorFontGrey,
-                                                  )),
-                                              TextButton(
-                                                  onPressed: () {},
-                                                  child: Text("배우추가",
-                                                      style: CustomStyles
-                                                          .normal14TextStyle()),
-                                                  style: TextButton.styleFrom(
-                                                      padding: EdgeInsets.zero,
-                                                      minimumSize: Size(70, 10),
                                                       alignment:
                                                           Alignment.center))
                                             ])

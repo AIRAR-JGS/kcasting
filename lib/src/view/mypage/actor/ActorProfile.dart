@@ -14,7 +14,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags/flutter_tags.dart';
-import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -188,7 +187,7 @@ class _ActorProfile extends State<ActorProfile>
 
     Map<String, dynamic> targetData = new Map();
     targetData[APIConstants.seq] =
-        KCastingAppData().myInfo[APIConstants.actorProfile_seq];
+        KCastingAppData().myInfo[APIConstants.actor_profile_seq];
     //targetData[APIConstants.file] = fileData;
 
     Map<String, dynamic> params = new Map();
@@ -197,7 +196,7 @@ class _ActorProfile extends State<ActorProfile>
 
     var temp = profileFile.path.split('/');
     String fileName = temp[temp.length - 1];
-    params[APIConstants.target_files] =
+    params[APIConstants.target_files_array] =
         await MultipartFile.fromFile(profileFile.path, filename: fileName);
 
     // 배우프로필 이미지 수정 api 호출
@@ -282,82 +281,50 @@ class _ActorProfile extends State<ActorProfile>
   * */
   Future<void> requestAddActorImage(
       BuildContext context, File profileFile) async {
-    if (_kIsWeb) {
-      print("11111111111");
+    // 배우 이미지 추가 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetData = new Map();
+    targetData[APIConstants.actor_seq] =
+        KCastingAppData().myInfo[APIConstants.seq];
 
-      // 배우 이미지 추가 api 호출 시 보낼 파라미터
-      Map<String, dynamic> targetData = new Map();
-      targetData[APIConstants.actor_seq] =
-          KCastingAppData().myInfo[APIConstants.seq];
+    var files = [];
+    var temp = profileFile.path.split('/');
+    String fileName = temp[temp.length - 1];
+    files.add(
+        await MultipartFile.fromFile(profileFile.path, filename: fileName));
 
-      Map<String, dynamic> params = new Map();
-      params[APIConstants.key] = APIConstants.INS_AIM_LIST_FORMDATA;
-      params[APIConstants.target] = targetData;
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.INS_AIM_LIST_FORMDATA;
+    params[APIConstants.target] = targetData;
+    params[APIConstants.target_files_array] = files;
 
-      var request = http.MultipartRequest(
-        "POST",
-        Uri.parse(APIConstants.getURL(APIConstants.URL_MAIN_CONTROL)),
-      );
+    // 배우 이미지 추가 api 호출
+    RestClient(Dio())
+        .postRequestMainControlFormData(params)
+        .then((value) async {
+      if (value == null) {
+        // 에러 - 데이터 널
+        showSnackBar(context, APIConstants.error_msg_server_not_response);
+      } else {
+        if (value[APIConstants.resultVal]) {
+          // 배우 이미지 추가 성공
+          var _responseData = value[APIConstants.data];
+          var _responseList = _responseData[APIConstants.list];
 
-      var files = [];
-      var temp = profileFile.path.split('/');
-      String fileName = temp[temp.length - 1];
-      request.files.add(http.MultipartFile.fromBytes(
-          APIConstants.target_files_array, await _profileImgFile.readAsBytes(),
-          filename: fileName));
+          setState(() {
+            // 수정된 회원정보 전역변수에 저장
+            if (_responseList.length > 0) {
+              KCastingAppData().myImage = _responseList;
 
-      params.forEach((k, v) => request.fields[k] = v);
-
-      request.headers.addAll({'Content-Type': 'application/json'});
-
-      var streamedResponse = await request.send();
-      var _result = await http.Response.fromStream(streamedResponse);
-    } else {
-      // 배우 이미지 추가 api 호출 시 보낼 파라미터
-      Map<String, dynamic> targetData = new Map();
-      targetData[APIConstants.actor_seq] =
-          KCastingAppData().myInfo[APIConstants.seq];
-
-      var files = [];
-      var temp = profileFile.path.split('/');
-      String fileName = temp[temp.length - 1];
-      files.add(
-          await MultipartFile.fromFile(profileFile.path, filename: fileName));
-
-      Map<String, dynamic> params = new Map();
-      params[APIConstants.key] = APIConstants.INS_AIM_LIST_FORMDATA;
-      params[APIConstants.target] = targetData;
-      params[APIConstants.target_files_array] = files;
-
-      // 배우 이미지 추가 api 호출
-      RestClient(Dio())
-          .postRequestMainControlFormData(params)
-          .then((value) async {
-        if (value == null) {
-          // 에러 - 데이터 널
-          showSnackBar(context, APIConstants.error_msg_server_not_response);
+              _myPhotos = _responseList;
+              _originalMyPhotos = _responseList;
+            }
+          });
         } else {
-          if (value[APIConstants.resultVal]) {
-            // 배우 이미지 추가 성공
-            var _responseData = value[APIConstants.data];
-            var _responseList = _responseData[APIConstants.list];
-
-            setState(() {
-              // 수정된 회원정보 전역변수에 저장
-              if (_responseList.length > 0) {
-                KCastingAppData().myImage = _responseList;
-
-                _myPhotos = _responseList;
-                _originalMyPhotos = _responseList;
-              }
-            });
-          } else {
-            // 배우 이미지 추가 실패
-            showSnackBar(context, APIConstants.error_msg_try_again);
-          }
+          // 배우 이미지 추가 실패
+          showSnackBar(context, APIConstants.error_msg_try_again);
         }
-      });
-    }
+      }
+    });
   }
 
   /*
@@ -531,38 +498,31 @@ class _ActorProfile extends State<ActorProfile>
 
   // 갤러리에서 이미지 가져오기
   Future getImageFromGallery(int type) async {
-    if(_kIsWeb) {
-      /*final fromPicker = await ImagePickerWeb.getImage(outputType: ImageType.file);
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
-      if (fromPicker != null) {
-        setState(() {
-          print("111111111111");
-          _profileImgFile = fromPicker;
-        });
-      }*/
-    } else {
-      final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      if (type == 0) {
+        File file = File(pickedFile.path);
 
-      if (pickedFile != null) {
-        if (type == 0) {
-          _profileImgFile = File(pickedFile.path);
-          requestUpdateActorProfile(context, _profileImgFile);
-        } else {
-          File _image = File(pickedFile.path);
-
-          final size = _image.readAsBytesSync().lengthInBytes;
-          final kb = size / 1024;
-          final mb = kb / 1024;
-
-          if (mb > 25) {
-            showSnackBar(context, "25MB 미만의 파일만 업로드 가능합니다.");
-          } else {
-            requestAddActorImage(context, _image);
-          }
-        }
+        _profileImgFile = file;
+        requestUpdateActorProfile(context, _profileImgFile);
       } else {
-        showSnackBar(context, "선택된 이미지가 없습니다.");
+        print("1111111111111111111111111111");
+        print(pickedFile.path);
+        File _image = File(pickedFile.path);
+
+        final size = _image.readAsBytesSync().lengthInBytes;
+        final kb = size / 1024;
+        final mb = kb / 1024;
+
+        if (mb > 25) {
+          showSnackBar(context, "25MB 미만의 파일만 업로드 가능합니다.");
+        } else {
+          requestAddActorImage(context, _image);
+        }
       }
+    } else {
+      showSnackBar(context, "선택된 이미지가 없습니다.");
     }
   }
 
@@ -622,8 +582,12 @@ class _ActorProfile extends State<ActorProfile>
                             child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  ActorProfileWidget.mainImageWidget(context,
-                                      true, KCastingAppData().myProfile == null ? new Map<String, dynamic>() : KCastingAppData().myProfile, () {
+                                  ActorProfileWidget.mainImageWidget(
+                                      context,
+                                      true,
+                                      KCastingAppData().myProfile == null
+                                          ? new Map<String, dynamic>()
+                                          : KCastingAppData().myProfile, () {
                                     getImageFromGallery(0);
                                   }),
                                   ActorProfileWidget.profileWidget(
@@ -683,8 +647,13 @@ class _ActorProfile extends State<ActorProfile>
                                                         child: CustomStyles
                                                             .darkBold14TextButtonStyle(
                                                                 '추가', () {
-                                                          addView(context,
-                                                              ActorFilmoAdd());
+                                                          addView(
+                                                              context,
+                                                              ActorFilmoAdd(
+                                                                  actorSeq: KCastingAppData()
+                                                                          .myInfo[
+                                                                      APIConstants
+                                                                          .seq]));
                                                         })),
                                                     Container(width: 20),
                                                     Expanded(

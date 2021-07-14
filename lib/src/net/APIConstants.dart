@@ -93,7 +93,9 @@ class APIConstants {
   static const String UDF_MGM_LOGO_FORMDATA  = "UDF_MGM_LOGO_FormData";  // 매니지먼트 프로필 로고 이미지 수정(FormData)
   static const String SEL_MGM_INFO  = "SEL_MGM_INFO";  // 매니지먼트 개인정보 단일 조회
   static const String UPD_MGM_INFO  = "UPD_MGM_INFO";  // 매니지먼트 개인정보 수정
+  static const String SEL_MGM_ACTORLIST  = "SEL_MGM_ACTORLIST";  // 매니지먼트 보유 배우 목록 조회
   static const String INS_MGM_JOINACTOR  = "INS_MGM_JOINACTOR";  // 매니지먼트 보유 배우 추가
+  static const String DEL_MGM_ACTORLIST  = "DEL_MGM_ACTORLIST";  // 매니지먼트 보유 배우 삭제(일괄)
 
   static const String CHK_TOT_REALCORPNAME  = "CHK_TOT_REALCORPNAME";  // 기업 실명확인
   static const String CHK_TOT_ACCOUNT  = "CHK_TOT_ACCOUNT";  // 계좌 소유주 확인

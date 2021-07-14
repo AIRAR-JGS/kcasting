@@ -14,12 +14,18 @@ import '../../../../KCastingAppData.dart';
 * 배우 필모그래피 추가
 * */
 class ActorFilmoAdd extends StatefulWidget {
+  final int actorSeq;
+
+  const ActorFilmoAdd({Key key, this.actorSeq}) : super(key: key);
+
   @override
   _ActorFilmoAdd createState() => _ActorFilmoAdd();
 }
 
 class _ActorFilmoAdd extends State<ActorFilmoAdd> with BaseUtilMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  int _actorSeq;
 
   final _txtFieldProjectName = TextEditingController();
   final _txtFieldProjectReleaseYear = TextEditingController();
@@ -31,6 +37,8 @@ class _ActorFilmoAdd extends State<ActorFilmoAdd> with BaseUtilMixin {
   @override
   void initState() {
     super.initState();
+
+    _actorSeq = widget.actorSeq;
   }
 
   /*
@@ -280,8 +288,7 @@ class _ActorFilmoAdd extends State<ActorFilmoAdd> with BaseUtilMixin {
 
     // 제작사 필모그래피 추가 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetDatas = new Map();
-    targetDatas[APIConstants.actor_seq] =
-        KCastingAppData().myInfo[APIConstants.seq];
+    targetDatas[APIConstants.actor_seq] = _actorSeq;
     targetDatas[APIConstants.project_name] = _txtFieldProjectName.text;
     targetDatas[APIConstants.project_releaseYear] =
         StringUtils.trimmedString(_txtFieldProjectReleaseYear.text);

@@ -360,9 +360,9 @@ class _ActorDetail extends State<ActorDetail>
                           ))
                     ])),
                 visible: KCastingAppData().myInfo[APIConstants.member_type] ==
-                        APIConstants.member_type_actor
-                    ? false
-                    : true,
+                        APIConstants.member_type_product
+                    ? true
+                    : false,
               )
             ]))));
   }

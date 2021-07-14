@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/KCastingAppData.dart';
@@ -11,13 +9,13 @@ import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/net/RestClientInterface.dart';
 import 'package:casting_call/src/view/actor/ActorProfileWidget.dart';
 import 'package:casting_call/src/view/mypage/actor/ActorFilmoAdd.dart';
-import 'package:casting_call/src/view/mypage/actor/ActorProfileModifyMainInfo.dart';
-import 'package:casting_call/src/view/mypage/management/RegisterAgencyActorProfileMainInfo.dart';
+import 'package:casting_call/src/view/mypage/management/AgencyActorProfileModifyMainInfo.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags/flutter_tags.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
@@ -51,6 +49,12 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
   bool _isUpload = false;
 
   Map<String, dynamic> _actorProfile = new Map();
+  List<dynamic> _actorEducation = [];
+  List<dynamic> _actorLanguage = [];
+  List<dynamic> _actorDialect = [];
+  List<dynamic> _actorAbility = [];
+  List<dynamic> _actorCastingKwd = [];
+  List<dynamic> _actorLookKwd = [];
   String _actorAgeStr = "";
   String _actorEducationStr = "";
   String _actorLanguageStr = "";
@@ -123,13 +127,13 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
               var _data = _responseList[i];
 
               switch (_data[APIConstants.table]) {
-              // 배우 프로필
+                // 배우 프로필
                 case APIConstants.table_actor_profile:
                   {
                     var _listData = _data[APIConstants.data];
                     if (_listData != null) {
                       List<dynamic> _actorProfileList =
-                      _listData[APIConstants.list] as List;
+                          _listData[APIConstants.list] as List;
                       if (_actorProfileList != null) {
                         _actorProfile = _actorProfileList.length > 0
                             ? _actorProfileList[0]
@@ -139,11 +143,10 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
                     break;
                   }
 
-              // 배우 학력사항
+                // 배우 학력사항
                 case APIConstants.table_actor_education:
                   {
                     var _listData = _data[APIConstants.data];
-                    List<dynamic> _actorEducation;
                     if (_listData != null) {
                       _actorEducation = _listData[APIConstants.list] as List;
                     } else {
@@ -153,7 +156,7 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
                     for (int i = 0; i < _actorEducation.length; i++) {
                       var _eduData = _actorEducation[i];
                       _actorEducationStr +=
-                      _eduData[APIConstants.education_name];
+                          _eduData[APIConstants.education_name];
                       _actorEducationStr += "\t";
                       _actorEducationStr += _eduData[APIConstants.major_name];
 
@@ -164,11 +167,11 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
                     break;
                   }
 
-              // 배우 언어
+                // 배우 언어
                 case APIConstants.table_actor_languge:
                   {
                     var _listData = _data[APIConstants.data];
-                    List<dynamic> _actorLanguage;
+
                     if (_listData != null) {
                       _actorLanguage = _listData[APIConstants.list] as List;
                     } else {
@@ -186,11 +189,25 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
                     break;
                   }
 
-              // 배우 특기
+                // 배우 사투리
+                case APIConstants.table_actor_dialect:
+                  {
+                    var _listData = _data[APIConstants.data];
+
+                    if (_listData != null) {
+                      _actorDialect = _listData[APIConstants.list] as List;
+                    } else {
+                      _actorDialect = [];
+                    }
+
+                    break;
+                  }
+
+                // 배우 특기
                 case APIConstants.table_actor_ability:
                   {
                     var _listData = _data[APIConstants.data];
-                    List<dynamic> _actorAbility;
+
                     if (_listData != null) {
                       _actorAbility = _listData[APIConstants.list] as List;
                     } else {
@@ -207,11 +224,25 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
                     break;
                   }
 
-              // 배우 외모 키워드
+                // 배우 키워드
+                case APIConstants.table_actor_castingKwd:
+                  {
+                    var _listData = _data[APIConstants.data];
+
+                    if (_listData != null) {
+                      _actorCastingKwd = _listData[APIConstants.list] as List;
+                    } else {
+                      _actorCastingKwd = [];
+                    }
+
+                    break;
+                  }
+
+                // 배우 외모 키워드
                 case APIConstants.table_actor_lookkwd:
                   {
                     var _listData = _data[APIConstants.data];
-                    List<dynamic> _actorLookKwd;
+
                     if (_listData != null) {
                       _actorLookKwd = _listData[APIConstants.list] as List;
                     } else {
@@ -222,8 +253,8 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
                       var _lookKwdData = _actorLookKwd[i];
 
                       for (int j = 0;
-                      j < KCastingAppData().commonCodeK02.length;
-                      j++) {
+                          j < KCastingAppData().commonCodeK02.length;
+                          j++) {
                         var _lookKwdCode = KCastingAppData().commonCodeK02[j];
 
                         if (_lookKwdData[APIConstants.code_seq] ==
@@ -237,20 +268,21 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
                     break;
                   }
 
-              // 배우 필모그래피
+                // 배우 필모그래피
                 case APIConstants.table_actor_filmography:
                   {
                     var _listData = _data[APIConstants.data];
                     if (_listData != null) {
                       _actorFilmorgraphy = _listData[APIConstants.list] as List;
-                      _originalFilmorgraphyList = _listData[APIConstants.list] as List;
+                      _originalFilmorgraphyList =
+                          _listData[APIConstants.list] as List;
                     } else {
                       _actorFilmorgraphy = [];
                     }
                     break;
                   }
 
-              // 배우 이미지
+                // 배우 이미지
                 case APIConstants.table_actor_image:
                   {
                     var _listData = _data[APIConstants.data];
@@ -263,7 +295,7 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
                     break;
                   }
 
-              // 배우 비디오
+                // 배우 비디오
                 case APIConstants.table_actor_video:
                   {
                     var _listData = _data[APIConstants.data];
@@ -290,27 +322,24 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
   /*
   * 배우프로필 이미지 수정
   * */
-  void requestUpdateActorProfile(BuildContext context, File profileFile) {
+  void requestUpdateActorProfile(BuildContext context, File profileFile) async {
     final dio = Dio();
 
-    final bytes = File(profileFile.path).readAsBytesSync();
-    String img64 = base64Encode(bytes);
-
-    // 배우프로필 이미지 수정 api 호출 시 보낼 파라미터
-    Map<String, dynamic> fileData = new Map();
-    fileData[APIConstants.base64string] = APIConstants.data_image + img64;
-
     Map<String, dynamic> targetData = new Map();
-    targetData[APIConstants.seq] =
-        KCastingAppData().myInfo[APIConstants.actorProfile_seq];
-    targetData[APIConstants.file] = fileData;
+    targetData[APIConstants.seq] = _actorProfileSeq;
+    //targetData[APIConstants.file] = fileData;
 
     Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.UPD_APR_MAINIMG;
+    params[APIConstants.key] = APIConstants.UPD_APR_MAINIMG_FORMDATA;
     params[APIConstants.target] = targetData;
 
+    var temp = profileFile.path.split('/');
+    String fileName = temp[temp.length - 1];
+    params[APIConstants.target_files_array] =
+        await MultipartFile.fromFile(profileFile.path, filename: fileName);
+
     // 배우프로필 이미지 수정 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
+    RestClient(dio).postRequestMainControlFormData(params).then((value) async {
       if (value == null) {
         // 에러 - 데이터 널
         showSnackBar(context, APIConstants.error_msg_server_not_response);
@@ -326,7 +355,7 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
               var newProfileData = _responseList[0];
 
               if (newProfileData[APIConstants.main_img_url] != null) {
-                KCastingAppData().myProfile[APIConstants.main_img_url] =
+                _actorProfile[APIConstants.main_img_url] =
                     newProfileData[APIConstants.main_img_url];
               }
             }
@@ -389,30 +418,26 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
   /*
   * 배우 이미지 추가
   * */
-  void requestAddActorImage(BuildContext context, File profileFile) {
-    final dio = Dio();
-
-    final bytes = File(profileFile.path).readAsBytesSync();
-    String img64 = base64Encode(bytes);
-
+  void requestAddActorImage(BuildContext context, File profileFile) async {
     // 배우 이미지 추가 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
-    targetData[APIConstants.actor_seq] =
-        KCastingAppData().myInfo[APIConstants.seq];
+    targetData[APIConstants.actor_seq] = _seq;
 
-    Map<String, dynamic> fileData = new Map();
-    fileData[APIConstants.base64string] = APIConstants.data_image + img64;
-    List<Map<String, dynamic>> fileDatas = [];
-    fileDatas.add(fileData);
-
-    targetData[APIConstants.file] = fileDatas;
+    var files = [];
+    var temp = profileFile.path.split('/');
+    String fileName = temp[temp.length - 1];
+    files.add(
+        await MultipartFile.fromFile(profileFile.path, filename: fileName));
 
     Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.INS_AIM_LIST;
+    params[APIConstants.key] = APIConstants.INS_AIM_LIST_FORMDATA;
     params[APIConstants.target] = targetData;
+    params[APIConstants.target_files_array] = files;
 
     // 배우 이미지 추가 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
+    RestClient(Dio())
+        .postRequestMainControlFormData(params)
+        .then((value) async {
       if (value == null) {
         // 에러 - 데이터 널
         showSnackBar(context, APIConstants.error_msg_server_not_response);
@@ -447,8 +472,7 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
 
     // 배우 이미지 삭제 api 호출 시 보낼 파라미터
     Map<String, dynamic> callbackDatas = new Map();
-    callbackDatas[APIConstants.actor_seq] =
-        KCastingAppData().myInfo[APIConstants.seq];
+    callbackDatas[APIConstants.actor_seq] = _seq;
 
     Map<String, dynamic> targetDatas = new Map();
     targetDatas[APIConstants.seq] = _deletedImageList;
@@ -492,7 +516,7 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
   * 배우 비디오 추가
   * */
   void requestAddActorVideo(
-      BuildContext context, File videoFile, Uint8List bytes) {
+      BuildContext context, File videoFile, String thumbFilePath) async {
     setState(() {
       _isUpload = true;
     });
@@ -500,34 +524,32 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
     try {
       final dio = Dio();
 
-      final videoFileBytes = File(videoFile.path).readAsBytesSync();
-      String videoFile64 = base64Encode(videoFileBytes);
-
-      //final bytes = File(thumbnailFile.path).readAsBytesSync();
-      String thumbnailFile62 = base64Encode(bytes);
-
       // 배우 비디오 추가 api 호출 시 보낼 파라미터
       Map<String, dynamic> targetData = new Map();
-      targetData[APIConstants.actor_seq] =
-          KCastingAppData().myInfo[APIConstants.seq];
+      targetData[APIConstants.actor_seq] = _seq;
 
-      Map<String, dynamic> fileData = new Map();
-      fileData[APIConstants.base64string] =
-          APIConstants.data_file + videoFile64;
-      fileData[APIConstants.base64string_thumb] =
-          APIConstants.data_image + thumbnailFile62;
+      var files = [];
+      var temp = videoFile.path.split('/');
+      String fileName = temp[temp.length - 1];
+      files.add(
+          await MultipartFile.fromFile(videoFile.path, filename: fileName));
 
-      List<Map<String, dynamic>> fileDatas = [];
-      fileDatas.add(fileData);
-
-      targetData[APIConstants.file] = fileDatas;
+      var thums = [];
+      var tempImg = thumbFilePath.split('/');
+      String thumbFileName = tempImg[tempImg.length - 1];
+      thums.add(
+          await MultipartFile.fromFile(thumbFilePath, filename: thumbFileName));
 
       Map<String, dynamic> params = new Map();
-      params[APIConstants.key] = APIConstants.INS_AVD_LIST;
+      params[APIConstants.key] = APIConstants.INS_AVD_LIST_FORMDATA;
       params[APIConstants.target] = targetData;
+      params[APIConstants.target_files_array] = files;
+      params[APIConstants.target_files_thumb_array] = thums;
 
       // 배우 비디오 추가 api 호출
-      RestClient(dio).postRequestMainControl(params).then((value) async {
+      RestClient(dio)
+          .postRequestMainControlFormData(params)
+          .then((value) async {
         if (value == null) {
           // 에러 - 데이터 널
           showSnackBar(context, APIConstants.error_msg_server_not_response);
@@ -570,8 +592,7 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
 
     // 배우 필모그래피 삭제 api 호출 시 보낼 파라미터
     Map<String, dynamic> callbackDatas = new Map();
-    callbackDatas[APIConstants.actor_seq] =
-        KCastingAppData().myInfo[APIConstants.seq];
+    callbackDatas[APIConstants.actor_seq] = _seq;
 
     Map<String, dynamic> targetDatas = new Map();
     targetDatas[APIConstants.seq] = _deletedVideoList;
@@ -649,8 +670,15 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
   }
 
   getVideoThumbnail(String filePath) async {
-    Uint8List bytes = await VideoThumbnail.thumbnailData(
-        video: filePath, imageFormat: ImageFormat.JPEG);
+    /*Uint8List bytes = await VideoThumbnail.thumbnailData(
+        video: filePath, imageFormat: ImageFormat.JPEG);*/
+
+    final fileName = await VideoThumbnail.thumbnailFile(
+        video: filePath,
+        thumbnailPath: (await getTemporaryDirectory()).path,
+        imageFormat: ImageFormat.JPEG);
+
+    print(fileName);
 
     var _videoFile = File(filePath);
     final size = _videoFile.readAsBytesSync().lengthInBytes;
@@ -660,7 +688,7 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
     if (mb > 25) {
       showSnackBar(context, "25MB 미만의 파일만 업로드 가능합니다.");
     } else {
-      requestAddActorVideo(context, _videoFile, bytes);
+      requestAddActorVideo(context, _videoFile, fileName);
     }
   }
 
@@ -685,8 +713,8 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
                             child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  ActorProfileWidget.mainImageWidget(context,
-                                      true, _actorProfile, () {
+                                  ActorProfileWidget.mainImageWidget(
+                                      context, true, _actorProfile, () {
                                     getImageFromGallery(0);
                                   }),
                                   ActorProfileWidget.profileWidget(
@@ -706,8 +734,19 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
                                       child: CustomStyles
                                           .greyBorderRound7ButtonStyle('프로필 편집',
                                               () {
-                                        addView(context,
-                                            RegisterAgencyActorProfileMainInfo());
+                                        addView(
+                                            context,
+                                            AgencyActorProfileModifyMainInfo(
+                                                actorProfileSeq:
+                                                    _actorProfileSeq,
+                                                actorProfile: _actorProfile,
+                                                actorEducation: _actorEducation,
+                                                actorLanguage: _actorLanguage,
+                                                actorDialect: _actorDialect,
+                                                actorAbility: _actorAbility,
+                                                actorCastingKwd:
+                                                    _actorCastingKwd,
+                                                actorLookKwd: _actorLookKwd));
                                       })),
                                   Container(
                                     margin: EdgeInsets.only(top: 30),
@@ -746,8 +785,11 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
                                                         child: CustomStyles
                                                             .darkBold14TextButtonStyle(
                                                                 '추가', () {
-                                                          addView(context,
-                                                              ActorFilmoAdd());
+                                                          addView(
+                                                              context,
+                                                              ActorFilmoAdd(
+                                                                  actorSeq:
+                                                                      _seq));
                                                         })),
                                                     Container(width: 20),
                                                     Expanded(
@@ -830,7 +872,8 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
                                             ActorProfileWidget
                                                 .filmorgraphyListWidget(
                                                     _isFlimorgraphyListEditMode,
-                                                    _actorFilmorgraphy, (index) {
+                                                    _actorFilmorgraphy,
+                                                    (index) {
                                               setState(() {
                                                 _deletedFilmorgraphyList.add(
                                                     _actorFilmorgraphy[index]
@@ -869,7 +912,8 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
                                                               .photos
                                                               .request();
                                                       if (status.isGranted) {
-                                                        if (_actorImage.length ==
+                                                        if (_actorImage
+                                                                .length ==
                                                             8) {
                                                           showSnackBar(context,
                                                               '이미지는 최대 8장까지 등록하실 수 있습니다.');

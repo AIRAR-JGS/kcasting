@@ -7,22 +7,23 @@ import 'package:flutter/material.dart';
 import 'package:pinch_zoom/pinch_zoom.dart';
 
 class ImageView extends StatefulWidget {
-  final File videoURL;
+  //final File videoURL;
+  final String imgURL;
 
-  const ImageView({Key key, this.videoURL}) : super(key: key);
+  const ImageView({Key key, this.imgURL}) : super(key: key);
 
   @override
   _ImageView createState() => _ImageView();
 }
 
 class _ImageView extends State<ImageView> {
-  File _videoFile;
+  String _imgURL;
 
   @override
   void initState() {
     super.initState();
 
-    _videoFile = widget.videoURL;
+    _imgURL = widget.imgURL;
   }
 
   //========================================================================================================================
@@ -40,7 +41,7 @@ class _ImageView extends State<ImageView> {
                 alignment: Alignment.center,
                 color: CustomColors.colorWhite,
                 child: PinchZoom(
-                  image: Image.file(_videoFile),
+                  image: Image.network(_imgURL),
                   zoomedBackgroundColor: Colors.black.withOpacity(0.5),
                   resetDuration: const Duration(milliseconds: 100),
                   maxScale: 2.5,

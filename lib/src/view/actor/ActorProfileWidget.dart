@@ -494,7 +494,7 @@ class ActorProfileWidget {
                           context,
                           MaterialPageRoute(
                               builder: (context) => ImageView(
-                                  videoURL: actorImageList[index].photo)),
+                                  imgURL: actorImageList[index][APIConstants.actor_img_url])),
                         );
                       },
                       child: Container(

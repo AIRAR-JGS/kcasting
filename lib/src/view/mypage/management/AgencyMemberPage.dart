@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/KCastingAppData.dart';
 import 'package:casting_call/res/CustomColors.dart';
@@ -8,7 +9,6 @@ import 'package:casting_call/src/net/RestClientInterface.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
 import 'package:casting_call/src/view/audition/actor/AgencyActorAuditionApplyList.dart';
 import 'package:casting_call/src/view/audition/actor/AgencyActorOfferedAuditionList.dart';
-import 'package:casting_call/src/view/audition/production/ProposedAuditionList.dart';
 import 'package:casting_call/src/view/mypage/management/AgencyActorList.dart';
 import 'package:casting_call/src/view/mypage/management/AgencyMemberInfo.dart';
 import 'package:casting_call/src/view/mypage/management/AgencyProfile.dart';
@@ -92,13 +92,17 @@ class _AgencyMemberPage extends State<AgencyMemberPage> with BaseUtilMixin {
                               .myInfo[APIConstants.management_logo_img_url] !=
                           null
                       ? ClipOval(
-                          child: Image.network(
-                              KCastingAppData()
+                          child: CachedNetworkImage(
+                              imageUrl: KCastingAppData()
                                   .myInfo[APIConstants.management_logo_img_url],
                               fit: BoxFit.cover,
                               width: 100.0,
-                              height: 100.0),
-                        )
+                              height: 100.0,
+                              errorWidget: (context, url, error) => Icon(
+                                    Icons.account_circle,
+                                    color: CustomColors.colorFontLightGrey,
+                                    size: 100,
+                                  )))
                       : Icon(
                           Icons.account_circle,
                           color: CustomColors.colorFontLightGrey,

@@ -47,7 +47,7 @@ class _ProductionMemberInfoModify extends State<ProductionMemberInfoModify>
         ? ''
         : KCastingAppData().myInfo[APIConstants.production_email];
 
-    for(int i = 0; i < KCastingAppData().bankCode.length; i++) {
+    /*for(int i = 0; i < KCastingAppData().bankCode.length; i++) {
       Map<String, dynamic> bankItem = KCastingAppData().bankCode[i];
 
       if(bankItem[APIConstants.child_code] == KCastingAppData().myInfo[APIConstants.production_bank_code]){
@@ -56,7 +56,6 @@ class _ProductionMemberInfoModify extends State<ProductionMemberInfoModify>
         });
       }
     }
-
     _txtFieldAccountName.text = StringUtils.isEmpty(
         KCastingAppData().myInfo[APIConstants.production_account_holder])
         ? ''
@@ -65,7 +64,7 @@ class _ProductionMemberInfoModify extends State<ProductionMemberInfoModify>
     _txtFieldAccountNum.text = StringUtils.isEmpty(
         KCastingAppData().myInfo[APIConstants.production_account_number])
         ? ''
-        : KCastingAppData().myInfo[APIConstants.production_account_number];
+        : KCastingAppData().myInfo[APIConstants.production_account_number];*/
   }
 
   /*
@@ -275,7 +274,7 @@ class _ProductionMemberInfoModify extends State<ProductionMemberInfoModify>
                                     .disabledGreyBorderRound7TextField(
                                         KCastingAppData().myInfo[
                                             APIConstants.production_CEO_name])),
-                            Container(
+                            /*Container(
                               margin: EdgeInsets.only(top: 30, bottom: 30),
                               child: Divider(
                                 height: 0.1,
@@ -406,7 +405,7 @@ class _ProductionMemberInfoModify extends State<ProductionMemberInfoModify>
                                           })),
                                     )
                                   ],
-                                )),
+                                )),*/
                             Container(
                               margin: EdgeInsets.only(top: 30, bottom: 30),
                               child: Divider(
@@ -588,14 +587,14 @@ class _ProductionMemberInfoModify extends State<ProductionMemberInfoModify>
     targetDatas[APIConstants.production_email] =
         StringUtils.trimmedString(_txtFieldEmail.text);
 
-    if (_isAccountChecked) {
+    /*if (_isAccountChecked) {
       targetDatas[APIConstants.production_bank_code] =
       _bankVal[APIConstants.child_code];
       targetDatas[APIConstants.production_account_number] =
           StringUtils.trimmedString(_txtFieldAccountNum.text);
       targetDatas[APIConstants.production_account_holder] =
           StringUtils.trimmedString(_txtFieldAccountName.text);
-    }
+    }*/
 
     Map<String, dynamic> params = new Map();
     params[APIConstants.key] = APIConstants.UPD_PRD_INFO;

@@ -323,7 +323,7 @@ class _JoinAgency extends State<JoinAgency> with BaseUtilMixin {
                                                   .greyBorderRound7TextField(
                                                       _txtFieldCeoName,
                                                       '반드시 본명을 입력해 주세요.')),
-                                          Container(
+                                          /*Container(
                                             margin: EdgeInsets.only(
                                                 top: 25, bottom: 25),
                                             child: Divider(
@@ -472,7 +472,7 @@ class _JoinAgency extends State<JoinAgency> with BaseUtilMixin {
                                                         })),
                                                   )
                                                 ],
-                                              )),
+                                              )),*/
                                           Container(
                                             margin: EdgeInsets.only(
                                                 top: 30, bottom: 30),
@@ -704,10 +704,10 @@ class _JoinAgency extends State<JoinAgency> with BaseUtilMixin {
       return false;
     }
 
-    if (!_isAccountChecked) {
+    /*if (!_isAccountChecked) {
       showSnackBar(context, '법인 은행 계좌를 인증해 주세요.');
       return false;
-    }
+    }*/
 
     if (StringUtils.isEmpty(_txtFieldEmail.text)) {
       showSnackBar(context, '이메일을 입력해 주세요.');
@@ -758,11 +758,12 @@ class _JoinAgency extends State<JoinAgency> with BaseUtilMixin {
     targetDatas[APIConstants.businessRegistration_number] = _companyNum;
     targetDatas[APIConstants.management_CEO_name] =
         StringUtils.trimmedString(_txtFieldCeoName.text);
-    targetDatas[APIConstants.management_bank_code] =
-        _bankVal[APIConstants.child_code];
+    /*targetDatas[APIConstants.management_bank_code] = _bankVal[APIConstants.child_code];
     targetDatas[APIConstants.management_account_holder] = StringUtils.trimmedString(_txtFieldAccountName.text);
-    targetDatas[APIConstants.management_account_number] =
-        StringUtils.trimmedString(_txtFieldAccountNum.text);
+    targetDatas[APIConstants.management_account_number] = StringUtils.trimmedString(_txtFieldAccountNum.text);*/
+    targetDatas[APIConstants.management_bank_code] = "";
+    targetDatas[APIConstants.management_account_holder] = "";
+    targetDatas[APIConstants.management_account_number] = "";
     targetDatas[APIConstants.management_homepage] =
         StringUtils.trimmedString(_txtFieldHomepage.text);
     targetDatas[APIConstants.management_email] =

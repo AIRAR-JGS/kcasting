@@ -341,7 +341,7 @@ class _JoinProduction extends State<JoinProduction> with BaseUtilMixin {
                                                   .colorFontLightGrey,
                                             ),
                                           ),
-                                          Container(
+                                          /*Container(
                                               padding: EdgeInsets.only(
                                                   left: 30, right: 30),
                                               alignment: Alignment.centerLeft,
@@ -487,7 +487,7 @@ class _JoinProduction extends State<JoinProduction> with BaseUtilMixin {
                                               color: CustomColors
                                                   .colorFontLightGrey,
                                             ),
-                                          ),
+                                          ),*/
                                           Container(
                                               padding: EdgeInsets.only(
                                                   left: 30, right: 30),
@@ -710,10 +710,10 @@ class _JoinProduction extends State<JoinProduction> with BaseUtilMixin {
       return false;
     }
 
-    if (!_isAccountChecked) {
+    /*if (!_isAccountChecked) {
       showSnackBar(context, '법인 은행 계좌를 인증해 주세요.');
       return false;
-    }
+    }*/
 
     if (StringUtils.isEmpty(_txtFieldEmail.text)) {
       showSnackBar(context, '이메일을 입력해 주세요.');
@@ -763,9 +763,12 @@ class _JoinProduction extends State<JoinProduction> with BaseUtilMixin {
     targetDatas[APIConstants.production_name] = _companyName;
     targetDatas[APIConstants.businessRegistration_number] = _companyNum;
     targetDatas[APIConstants.production_CEO_name] = StringUtils.trimmedString(_txtFieldCeoName.text);
-    targetDatas[APIConstants.production_bank_code] = _bankVal[APIConstants.child_code];
+    /*targetDatas[APIConstants.production_bank_code] = _bankVal[APIConstants.child_code];
     targetDatas[APIConstants.production_account_holder] = StringUtils.trimmedString(_txtFieldAccountName.text);
-    targetDatas[APIConstants.production_account_number] = StringUtils.trimmedString(_txtFieldAccountNum.text);
+    targetDatas[APIConstants.production_account_number] = StringUtils.trimmedString(_txtFieldAccountNum.text);*/
+    targetDatas[APIConstants.production_bank_code] = "";
+    targetDatas[APIConstants.production_account_holder] = "";
+    targetDatas[APIConstants.production_account_number] = "";
     targetDatas[APIConstants.production_homepage] = StringUtils.trimmedString(_txtFieldHomepage.text);
     targetDatas[APIConstants.production_email] = StringUtils.trimmedString(_txtFieldEmail.text);
     targetDatas[APIConstants.TOS_isAgree] = 1;

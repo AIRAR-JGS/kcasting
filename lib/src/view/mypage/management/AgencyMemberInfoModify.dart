@@ -47,7 +47,7 @@ class _AgencyMemberInfoModify extends State<AgencyMemberInfoModify>
         ? ''
         : KCastingAppData().myInfo[APIConstants.management_email];
 
-    for (int i = 0; i < KCastingAppData().bankCode.length; i++) {
+    /*for (int i = 0; i < KCastingAppData().bankCode.length; i++) {
       Map<String, dynamic> bankItem = KCastingAppData().bankCode[i];
 
       if (bankItem[APIConstants.child_code] ==
@@ -66,7 +66,7 @@ class _AgencyMemberInfoModify extends State<AgencyMemberInfoModify>
     _txtFieldAccountNum.text = StringUtils.isEmpty(
             KCastingAppData().myInfo[APIConstants.management_account_holder])
         ? ''
-        : KCastingAppData().myInfo[APIConstants.management_account_holder];
+        : KCastingAppData().myInfo[APIConstants.management_account_holder];*/
   }
 
   /*
@@ -277,7 +277,7 @@ class _AgencyMemberInfoModify extends State<AgencyMemberInfoModify>
                                     .disabledGreyBorderRound7TextField(
                                         KCastingAppData().myInfo[
                                             APIConstants.management_CEO_name])),
-                            Container(
+                            /*Container(
                               margin: EdgeInsets.only(top: 30, bottom: 30),
                               child: Divider(
                                 height: 0.1,
@@ -398,7 +398,7 @@ class _AgencyMemberInfoModify extends State<AgencyMemberInfoModify>
                                           })),
                                     )
                                   ],
-                                )),
+                                )),*/
                             Container(
                               margin: EdgeInsets.only(top: 30, bottom: 30),
                               child: Divider(
@@ -580,14 +580,14 @@ class _AgencyMemberInfoModify extends State<AgencyMemberInfoModify>
     targetDatas[APIConstants.management_email] =
         StringUtils.trimmedString(_txtFieldEmail.text);
 
-    if (_isAccountChecked) {
+    /*if (_isAccountChecked) {
       targetDatas[APIConstants.management_bank_code] =
           _bankVal[APIConstants.child_code];
       targetDatas[APIConstants.management_account_number] =
           StringUtils.trimmedString(_txtFieldAccountNum.text);
       targetDatas[APIConstants.management_account_holder] =
           StringUtils.trimmedString(_txtFieldAccountName.text);
-    }
+    }*/
 
     Map<String, dynamic> params = new Map();
     params[APIConstants.key] = APIConstants.UPD_MGM_INFO;

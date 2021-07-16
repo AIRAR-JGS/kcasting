@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/KCastingAppData.dart';
 import 'package:casting_call/res/CustomColors.dart';
@@ -140,7 +140,8 @@ class _ProductionProfile extends State<ProductionProfile>
   /*
   * 제작사 로고 이미지 수정
   * */
-  Future<void> requestUpdateProductionProfile(BuildContext context, File profileFile) async {
+  Future<void> requestUpdateProductionProfile(
+      BuildContext context, File profileFile) async {
     final dio = Dio();
 
     // 제작사 로고 이미지 수정 api 호출 시 보낼 파라미터
@@ -201,8 +202,8 @@ class _ProductionProfile extends State<ProductionProfile>
       final kb = size / 1024;
       final mb = kb / 1024;
 
-      if (mb > 25) {
-        showSnackBar(context, "25MB 미만의 파일만 업로드 가능합니다.");
+      if (mb > 100) {
+        showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
       } else {
         setState(() {
           _profileImgFile = file;
@@ -443,13 +444,19 @@ class _ProductionProfile extends State<ProductionProfile>
                                     size: 100,
                                   )
                                 : ClipOval(
-                                    child: Image.network(
-                                        KCastingAppData().myInfo[
+                                    child: CachedNetworkImage(
+                                        imageUrl: KCastingAppData().myInfo[
                                             APIConstants.production_img_url],
                                         fit: BoxFit.cover,
                                         width: 100.0,
-                                        height: 100.0),
-                                  ),
+                                        height: 100.0,
+                                        errorWidget: (context, url, error) =>
+                                            Icon(
+                                              Icons.account_circle,
+                                              color: CustomColors
+                                                  .colorFontLightGrey,
+                                              size: 100,
+                                            ))),
                           )),
                       Container(
                           margin: EdgeInsets.only(bottom: 30),

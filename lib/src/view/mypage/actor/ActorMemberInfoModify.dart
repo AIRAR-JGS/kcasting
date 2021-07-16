@@ -50,7 +50,7 @@ class _ActorMemberInfoModify extends State<ActorMemberInfoModify>
             ? ''
             : KCastingAppData().myInfo[APIConstants.actor_email];
 
-    for (int i = 0; i < KCastingAppData().bankCode.length; i++) {
+    /*for (int i = 0; i < KCastingAppData().bankCode.length; i++) {
       Map<String, dynamic> bankItem = KCastingAppData().bankCode[i];
 
       if (bankItem[APIConstants.child_code] ==
@@ -60,7 +60,6 @@ class _ActorMemberInfoModify extends State<ActorMemberInfoModify>
         });
       }
     }
-
     _txtFieldAccountNum.text = StringUtils.isEmpty(
             KCastingAppData().myInfo[APIConstants.actor_account_number])
         ? ''
@@ -74,7 +73,7 @@ class _ActorMemberInfoModify extends State<ActorMemberInfoModify>
     _txtFieldAccountBirth.text = StringUtils.isEmpty(
             KCastingAppData().myInfo[APIConstants.actor_account_holder_birth])
         ? ''
-        : KCastingAppData().myInfo[APIConstants.actor_account_holder_birth];
+        : KCastingAppData().myInfo[APIConstants.actor_account_holder_birth];*/
   }
 
   /*
@@ -263,7 +262,7 @@ class _ActorMemberInfoModify extends State<ActorMemberInfoModify>
                             color: CustomColors.colorFontLightGrey,
                           ),
                         ),
-                        Container(
+                        /*Container(
                             padding: EdgeInsets.only(left: 18, right: 18),
                             alignment: Alignment.centerLeft,
                             child: Text('은행 계좌',
@@ -395,7 +394,7 @@ class _ActorMemberInfoModify extends State<ActorMemberInfoModify>
                             height: 0.1,
                             color: CustomColors.colorFontLightGrey,
                           ),
-                        ),
+                        ),*/
                         Container(
                             padding: EdgeInsets.only(left: 18, right: 18),
                             alignment: Alignment.centerLeft,
@@ -540,7 +539,7 @@ class _ActorMemberInfoModify extends State<ActorMemberInfoModify>
     targetDatas[APIConstants.actor_email] =
         StringUtils.trimmedString(_txtFieldEmail.text);
 
-    if (_isAccountChecked) {
+    /*if (_isAccountChecked) {
       targetDatas[APIConstants.actor_bank_code] =
           _bankVal[APIConstants.child_code];
       targetDatas[APIConstants.actor_account_number] =
@@ -549,7 +548,7 @@ class _ActorMemberInfoModify extends State<ActorMemberInfoModify>
           StringUtils.trimmedString(_txtFieldAccountName.text);
       targetDatas[APIConstants.actor_account_holder_birth] =
           StringUtils.trimmedString(_txtFieldAccountBirth.text);
-    }
+    }*/
 
     Map<String, dynamic> params = new Map();
     params[APIConstants.key] = APIConstants.UPD_ACT_INFO;

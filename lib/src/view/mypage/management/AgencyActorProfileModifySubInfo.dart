@@ -6,7 +6,6 @@ import 'package:casting_call/src/model/CheckboxITemModel.dart';
 import 'package:casting_call/src/model/CommonCodeModel.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/net/RestClientInterface.dart';
-import 'package:casting_call/src/view/mypage/management/AgencyActorProfileModifyMainInfo.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -434,295 +433,310 @@ class _AgencyActorProfileModifySubInfo
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: CustomStyles.defaultTheme(),
-      child: Scaffold(
-        appBar: CustomStyles.defaultAppBar('프로필 편집', () {
-          Navigator.pop(context);
-        }),
-        body: Container(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                  flex: 1,
-                  child: SingleChildScrollView(
-                      child: Container(
-                          padding: EdgeInsets.only(top: 30, bottom: 30),
-                          child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                    margin: EdgeInsets.only(bottom: 5),
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    alignment: Alignment.centerLeft,
-                                    child: Text('언어',
-                                        style: CustomStyles.bold14TextStyle())),
-                                Wrap(
-                                  children: [
-                                    GridView.count(
-                                      childAspectRatio: 3,
-                                      padding:
-                                          EdgeInsets.only(left: 15, right: 10),
-                                      physics: NeverScrollableScrollPhysics(),
-                                      shrinkWrap: true,
-                                      crossAxisCount: 4,
-                                      children: List.generate(_languages.length,
-                                          (index) {
-                                        return Container(
-                                            child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            SizedBox(
-                                              width: 24,
-                                              height: 24,
-                                              child: Checkbox(
-                                                materialTapTargetSize:
-                                                    MaterialTapTargetSize
-                                                        .shrinkWrap,
-                                                value: _languages[index]
-                                                    .isSelected,
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    _languages[index]
-                                                        .isSelected = value;
-                                                  });
-                                                },
-                                              ),
-                                            ),
-                                            Text(_languages[index].itemName,
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: CustomStyles
-                                                    .normal14TextStyle())
-                                          ],
-                                        ));
-                                      }),
-                                    ),
-                                  ],
-                                ),
-                                Container(
-                                    margin: EdgeInsets.only(bottom: 5, top: 20),
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    alignment: Alignment.centerLeft,
-                                    child: Text('사투리',
-                                        style: CustomStyles.bold14TextStyle())),
-                                Wrap(
-                                  children: [
-                                    GridView.count(
-                                      childAspectRatio: 3,
-                                      padding:
-                                          EdgeInsets.only(left: 15, right: 10),
-                                      physics: NeverScrollableScrollPhysics(),
-                                      shrinkWrap: true,
-                                      crossAxisCount: 4,
-                                      children: List.generate(_dialect.length,
-                                          (index) {
-                                        return Container(
-                                            child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            SizedBox(
-                                              width: 24,
-                                              height: 24,
-                                              child: Checkbox(
-                                                materialTapTargetSize:
-                                                    MaterialTapTargetSize
-                                                        .shrinkWrap,
-                                                value:
-                                                    _dialect[index].isSelected,
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    _dialect[index].isSelected =
-                                                        value;
-                                                  });
-                                                },
-                                              ),
-                                            ),
-                                            Text(_dialect[index].itemName,
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: CustomStyles
-                                                    .normal14TextStyle())
-                                          ],
-                                        ));
-                                      }),
-                                    ),
-                                  ],
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(top: 20),
-                                  child: Divider(
-                                    height: 1,
-                                    color: CustomColors.colorFontLightGrey,
-                                  ),
-                                ),
-                                Container(
-                                    margin: EdgeInsets.only(bottom: 5, top: 15),
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    alignment: Alignment.centerLeft,
-                                    child: Text('특기',
-                                        style: CustomStyles.bold14TextStyle())),
-                                Container(
-                                    margin: EdgeInsets.only(top: 5),
-                                    width: MediaQuery.of(context).size.width,
-                                    color: CustomColors.colorWhite,
-                                    child: TabBar(
-                                        controller: _tabController,
-                                        indicatorSize:
-                                            TabBarIndicatorSize.label,
-                                        indicatorPadding: EdgeInsets.zero,
-                                        labelStyle:
-                                            CustomStyles.bold14TextStyle(),
-                                        unselectedLabelStyle:
-                                            CustomStyles.normal14TextStyle(),
-                                        tabs: [
-                                          Tab(text: '음악'),
-                                          Tab(text: '춤'),
-                                          Tab(text: '스포츠'),
-                                          Tab(text: '기타')
-                                        ])),
-                                Expanded(
-                                  flex: 0,
-                                  child: [
-                                    tabSpecialityMusic(),
-                                    tabSpecialityDance(),
-                                    tabSpecialitySports(),
-                                    tabSpecialityEtc()
-                                  ][_tabIndex],
-                                ),
-                                Container(
-                                    margin: EdgeInsets.only(top: 20),
-                                    child: Divider(
-                                      height: 0.1,
-                                      color: CustomColors.colorFontLightGrey,
-                                    )),
-                                Container(
-                                    margin: EdgeInsets.only(top: 15),
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    alignment: Alignment.centerLeft,
-                                    child: Text('키워드',
-                                        style: CustomStyles.bold14TextStyle())),
-                                Container(
-                                    margin: EdgeInsets.only(top: 10),
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                        '회원님에게 맞는 키워드를 설정하여 제작자들에게 회원님을 노출해보세요.(최대 3개)',
-                                        style:
-                                            CustomStyles.normal14TextStyle())),
-                                Container(
-                                    margin: EdgeInsets.only(top: 20),
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    alignment: Alignment.centerLeft,
-                                    child: Text('배역 특징',
-                                        style: CustomStyles.bold14TextStyle())),
-                                Container(
-                                  alignment: Alignment.topLeft,
-                                  margin: EdgeInsets.only(top: 10),
-                                  padding: EdgeInsets.only(
-                                    left: 15,
-                                    right: 15,
-                                  ),
-                                  child: Tags(
-                                    runSpacing: 5,
-                                    alignment: WrapAlignment.start,
-                                    key: _characterTagStateKey,
-                                    itemCount: _castingKeyword.length,
-                                    itemBuilder: (int index) {
-                                      final item = _castingKeyword[index];
-                                      return ItemTags(
-                                          textStyle:
-                                              CustomStyles.dark14TextStyle(),
-                                          textColor:
-                                              CustomColors.colorFontDarkGrey,
-                                          activeColor:
-                                              CustomColors.colorPrimary,
-                                          textActiveColor:
-                                              CustomColors.colorWhite,
-                                          key: Key(index.toString()),
-                                          index: index,
-                                          title: item.childName,
-                                          active: item.isSelected,
-                                          combine:
-                                              ItemTagsCombine.withTextBefore,
-                                          elevation: 0.0,
-                                          borderRadius:
-                                              BorderRadius.circular(50),
-                                          onPressed: (item) {
-                                            _castingKeyword[index].isSelected =
-                                                item.active;
-                                          });
-                                    },
-                                  ),
-                                ),
-                                Container(
-                                    margin: EdgeInsets.only(top: 25),
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    alignment: Alignment.centerLeft,
-                                    child: Text('외모 특징',
-                                        style: CustomStyles.bold14TextStyle())),
-                                Container(
-                                  alignment: Alignment.topLeft,
-                                  margin: EdgeInsets.only(top: 10),
-                                  padding: EdgeInsets.only(
-                                    left: 15,
-                                    right: 15,
-                                  ),
-                                  child: Tags(
-                                    runSpacing: 5,
-                                    alignment: WrapAlignment.start,
-                                    key: _appearanceTagStateKey,
-                                    itemCount: _lookKeyword.length,
-                                    itemBuilder: (int index) {
-                                      final item = _lookKeyword[index];
-                                      return ItemTags(
-                                        textStyle:
-                                            CustomStyles.dark14TextStyle(),
-                                        textColor:
-                                            CustomColors.colorFontDarkGrey,
-                                        activeColor: CustomColors.colorPrimary,
-                                        textActiveColor:
-                                            CustomColors.colorWhite,
-                                        key: Key(index.toString()),
-                                        index: index,
-                                        title: item.childName,
-                                        active: item.isSelected,
-                                        combine: ItemTagsCombine.withTextBefore,
-                                        elevation: 0.0,
-                                        borderRadius: BorderRadius.circular(50),
-                                        onPressed: (item) {
-                                          _lookKeyword[index].isSelected =
-                                              item.active;
-                                          print(item.active);
-                                        },
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ])))),
-              Container(
-                  width: double.infinity,
-                  height: 50,
-                  color: Colors.grey,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
+        data: CustomStyles.defaultTheme(),
+        child: Scaffold(
+            appBar: CustomStyles.defaultAppBar('프로필 편집', () {
+              Navigator.pop(context);
+            }),
+            body: Container(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
+                  Expanded(
+                      flex: 1,
+                      child: SingleChildScrollView(
                           child: Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: 55,
-                              child: CustomStyles.greyBGSquareButtonStyle('이전',
-                                  () {
-                                replaceView(
+                              padding: EdgeInsets.only(top: 30, bottom: 30),
+                              child: Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                        margin: EdgeInsets.only(bottom: 5),
+                                        padding: EdgeInsets.only(
+                                            left: 15, right: 15),
+                                        alignment: Alignment.centerLeft,
+                                        child: Text('언어',
+                                            style: CustomStyles
+                                                .bold14TextStyle())),
+                                    Wrap(
+                                      children: [
+                                        GridView.count(
+                                          childAspectRatio: 3,
+                                          padding: EdgeInsets.only(
+                                              left: 15, right: 10),
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
+                                          shrinkWrap: true,
+                                          crossAxisCount: 4,
+                                          children: List.generate(
+                                              _languages.length, (index) {
+                                            return Container(
+                                                child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                SizedBox(
+                                                  width: 24,
+                                                  height: 24,
+                                                  child: Checkbox(
+                                                    materialTapTargetSize:
+                                                        MaterialTapTargetSize
+                                                            .shrinkWrap,
+                                                    value: _languages[index]
+                                                        .isSelected,
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        _languages[index]
+                                                            .isSelected = value;
+                                                      });
+                                                    },
+                                                  ),
+                                                ),
+                                                Text(_languages[index].itemName,
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: CustomStyles
+                                                        .normal14TextStyle())
+                                              ],
+                                            ));
+                                          }),
+                                        ),
+                                      ],
+                                    ),
+                                    Container(
+                                        margin:
+                                            EdgeInsets.only(bottom: 5, top: 20),
+                                        padding: EdgeInsets.only(
+                                            left: 15, right: 15),
+                                        alignment: Alignment.centerLeft,
+                                        child: Text('사투리',
+                                            style: CustomStyles
+                                                .bold14TextStyle())),
+                                    Wrap(
+                                      children: [
+                                        GridView.count(
+                                          childAspectRatio: 3,
+                                          padding: EdgeInsets.only(
+                                              left: 15, right: 10),
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
+                                          shrinkWrap: true,
+                                          crossAxisCount: 4,
+                                          children: List.generate(
+                                              _dialect.length, (index) {
+                                            return Container(
+                                                child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                SizedBox(
+                                                  width: 24,
+                                                  height: 24,
+                                                  child: Checkbox(
+                                                    materialTapTargetSize:
+                                                        MaterialTapTargetSize
+                                                            .shrinkWrap,
+                                                    value: _dialect[index]
+                                                        .isSelected,
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        _dialect[index]
+                                                            .isSelected = value;
+                                                      });
+                                                    },
+                                                  ),
+                                                ),
+                                                Text(_dialect[index].itemName,
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: CustomStyles
+                                                        .normal14TextStyle())
+                                              ],
+                                            ));
+                                          }),
+                                        ),
+                                      ],
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(top: 20),
+                                      child: Divider(
+                                        height: 1,
+                                        color: CustomColors.colorFontLightGrey,
+                                      ),
+                                    ),
+                                    Container(
+                                        margin:
+                                            EdgeInsets.only(bottom: 5, top: 15),
+                                        padding: EdgeInsets.only(
+                                            left: 15, right: 15),
+                                        alignment: Alignment.centerLeft,
+                                        child: Text('특기',
+                                            style: CustomStyles
+                                                .bold14TextStyle())),
+                                    Container(
+                                        margin: EdgeInsets.only(top: 5),
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        color: CustomColors.colorWhite,
+                                        child: TabBar(
+                                            controller: _tabController,
+                                            indicatorSize:
+                                                TabBarIndicatorSize.label,
+                                            indicatorPadding: EdgeInsets.zero,
+                                            labelStyle:
+                                                CustomStyles.bold14TextStyle(),
+                                            unselectedLabelStyle: CustomStyles
+                                                .normal14TextStyle(),
+                                            tabs: [
+                                              Tab(text: '음악'),
+                                              Tab(text: '춤'),
+                                              Tab(text: '스포츠'),
+                                              Tab(text: '기타')
+                                            ])),
+                                    Expanded(
+                                      flex: 0,
+                                      child: [
+                                        tabSpecialityMusic(),
+                                        tabSpecialityDance(),
+                                        tabSpecialitySports(),
+                                        tabSpecialityEtc()
+                                      ][_tabIndex],
+                                    ),
+                                    Container(
+                                        margin: EdgeInsets.only(top: 20),
+                                        child: Divider(
+                                          height: 0.1,
+                                          color:
+                                              CustomColors.colorFontLightGrey,
+                                        )),
+                                    Container(
+                                        margin: EdgeInsets.only(top: 15),
+                                        padding: EdgeInsets.only(
+                                            left: 15, right: 15),
+                                        alignment: Alignment.centerLeft,
+                                        child: Text('키워드',
+                                            style: CustomStyles
+                                                .bold14TextStyle())),
+                                    Container(
+                                        margin: EdgeInsets.only(top: 10),
+                                        padding: EdgeInsets.only(
+                                            left: 15, right: 15),
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                            '회원님에게 맞는 키워드를 설정하여 제작자들에게 회원님을 노출해보세요.(최대 3개)',
+                                            style: CustomStyles
+                                                .normal14TextStyle())),
+                                    Container(
+                                        margin: EdgeInsets.only(top: 20),
+                                        padding: EdgeInsets.only(
+                                            left: 15, right: 15),
+                                        alignment: Alignment.centerLeft,
+                                        child: Text('배역 특징',
+                                            style: CustomStyles
+                                                .bold14TextStyle())),
+                                    Container(
+                                      alignment: Alignment.topLeft,
+                                      margin: EdgeInsets.only(top: 10),
+                                      padding: EdgeInsets.only(
+                                        left: 15,
+                                        right: 15,
+                                      ),
+                                      child: Tags(
+                                        runSpacing: 5,
+                                        alignment: WrapAlignment.start,
+                                        key: _characterTagStateKey,
+                                        itemCount: _castingKeyword.length,
+                                        itemBuilder: (int index) {
+                                          final item = _castingKeyword[index];
+                                          return ItemTags(
+                                              textStyle: CustomStyles
+                                                  .dark14TextStyle(),
+                                              textColor: CustomColors
+                                                  .colorFontDarkGrey,
+                                              activeColor:
+                                                  CustomColors.colorPrimary,
+                                              textActiveColor:
+                                                  CustomColors.colorWhite,
+                                              key: Key(index.toString()),
+                                              index: index,
+                                              title: item.childName,
+                                              active: item.isSelected,
+                                              combine: ItemTagsCombine
+                                                  .withTextBefore,
+                                              elevation: 0.0,
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                              onPressed: (item) {
+                                                _castingKeyword[index]
+                                                    .isSelected = item.active;
+                                              });
+                                        },
+                                      ),
+                                    ),
+                                    Container(
+                                        margin: EdgeInsets.only(top: 25),
+                                        padding: EdgeInsets.only(
+                                            left: 15, right: 15),
+                                        alignment: Alignment.centerLeft,
+                                        child: Text('외모 특징',
+                                            style: CustomStyles
+                                                .bold14TextStyle())),
+                                    Container(
+                                      alignment: Alignment.topLeft,
+                                      margin: EdgeInsets.only(top: 10),
+                                      padding: EdgeInsets.only(
+                                        left: 15,
+                                        right: 15,
+                                      ),
+                                      child: Tags(
+                                        runSpacing: 5,
+                                        alignment: WrapAlignment.start,
+                                        key: _appearanceTagStateKey,
+                                        itemCount: _lookKeyword.length,
+                                        itemBuilder: (int index) {
+                                          final item = _lookKeyword[index];
+                                          return ItemTags(
+                                            textStyle:
+                                                CustomStyles.dark14TextStyle(),
+                                            textColor:
+                                                CustomColors.colorFontDarkGrey,
+                                            activeColor:
+                                                CustomColors.colorPrimary,
+                                            textActiveColor:
+                                                CustomColors.colorWhite,
+                                            key: Key(index.toString()),
+                                            index: index,
+                                            title: item.childName,
+                                            active: item.isSelected,
+                                            combine:
+                                                ItemTagsCombine.withTextBefore,
+                                            elevation: 0.0,
+                                            borderRadius:
+                                                BorderRadius.circular(50),
+                                            onPressed: (item) {
+                                              _lookKeyword[index].isSelected =
+                                                  item.active;
+                                              print(item.active);
+                                            },
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ])))),
+                  Container(
+                      width: double.infinity,
+                      height: 50,
+                      color: Colors.grey,
+                      child: Row(mainAxisSize: MainAxisSize.max, children: [
+                        Expanded(
+                            child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                height: 55,
+                                child: CustomStyles.greyBGSquareButtonStyle(
+                                    '이전', () {
+                                  /*replaceView(
                                     context,
                                     AgencyActorProfileModifyMainInfo(
                                         actorProfileSeq: _actorProfileSeq,
@@ -732,23 +746,19 @@ class _AgencyActorProfileModifySubInfo
                                         actorDialect: _actorDialect,
                                         actorAbility: _actorAbility,
                                         actorCastingKwd: _actorCastingKwd,
-                                        actorLookKwd: _actorLookKwd));
-                              }))),
-                      Expanded(
-                          child: Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: 55,
-                              child: CustomStyles.blueBGSquareButtonStyle('다음',
-                                  () {
-                                requestUpdateApi(context);
-                              })))
-                    ],
-                  ))
-            ],
-          ),
-        ),
-      ),
-    );
+                                        actorLookKwd: _actorLookKwd));*/
+                                  Navigator.pop(context);
+                                }))),
+                        Expanded(
+                            child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                height: 55,
+                                child: CustomStyles.blueBGSquareButtonStyle(
+                                    '다음', () {
+                                  requestUpdateApi(context);
+                                })))
+                      ]))
+                ]))));
   }
 
   /*
@@ -875,7 +885,8 @@ class _AgencyActorProfileModifySubInfo
           // 배우프로필조회 성공
           var _responseList = value[APIConstants.data] as List;
 
-          Navigator.pop(context);
+          Navigator.popUntil(
+              context, ModalRoute.withName('AgencyActorProfile'));
         }
       }
     });

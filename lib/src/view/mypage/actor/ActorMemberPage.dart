@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/KCastingAppData.dart';
 import 'package:casting_call/res/CustomColors.dart';
@@ -91,13 +92,17 @@ class _ActorMemberPage extends State<ActorMemberPage> with BaseUtilMixin {
                   : (KCastingAppData().myProfile[APIConstants.main_img_url] !=
                           null
                       ? ClipOval(
-                          child: Image.network(
-                              KCastingAppData()
+                          child: CachedNetworkImage(
+                              imageUrl: KCastingAppData()
                                   .myProfile[APIConstants.main_img_url],
                               fit: BoxFit.cover,
                               width: 100.0,
-                              height: 100.0),
-                        )
+                              height: 100.0,
+                              errorWidget: (context, url, error) => Icon(
+                                    Icons.account_circle,
+                                    color: CustomColors.colorFontLightGrey,
+                                    size: 100,
+                                  )))
                       : Icon(
                           Icons.account_circle,
                           color: CustomColors.colorFontLightGrey,
@@ -105,8 +110,9 @@ class _ActorMemberPage extends State<ActorMemberPage> with BaseUtilMixin {
                         ))),
           Container(
               margin: EdgeInsets.only(bottom: 15),
-              child: Text(StringUtils.checkedString(
-                  KCastingAppData().myInfo[APIConstants.actor_name]),
+              child: Text(
+                  StringUtils.checkedString(
+                      KCastingAppData().myInfo[APIConstants.actor_name]),
                   style: CustomStyles.normal32TextStyle())),
           Container(
             margin: EdgeInsets.only(bottom: 20),

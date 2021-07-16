@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/KCastingAppData.dart';
 import 'package:casting_call/res/CustomColors.dart';
@@ -43,7 +43,8 @@ class _AgencyProfile extends State<AgencyProfile>
   /*
   * 매니지먼트 로고 이미지 수정
   * */
-  void requestUpdateAgencyProfile(BuildContext context, File profileFile) async {
+  void requestUpdateAgencyProfile(
+      BuildContext context, File profileFile) async {
     final dio = Dio();
 
     /*final bytes = File(profileFile.path).readAsBytesSync();
@@ -54,7 +55,8 @@ class _AgencyProfile extends State<AgencyProfile>
     fileData[APIConstants.base64string] = APIConstants.data_image + img64;*/
 
     Map<String, dynamic> targetDatas = new Map();
-    targetDatas[APIConstants.seq] = KCastingAppData().myInfo[APIConstants.management_seq];
+    targetDatas[APIConstants.seq] =
+        KCastingAppData().myInfo[APIConstants.management_seq];
 
     Map<String, dynamic> params = new Map();
     params[APIConstants.key] = APIConstants.UDF_MGM_LOGO_FORMDATA;
@@ -82,8 +84,10 @@ class _AgencyProfile extends State<AgencyProfile>
               if (_responseList.length > 0) {
                 var newProfileData = _responseList[0];
 
-                if (newProfileData[APIConstants.management_logo_img_url] != null) {
-                  KCastingAppData().myInfo[APIConstants.management_logo_img_url] =
+                if (newProfileData[APIConstants.management_logo_img_url] !=
+                    null) {
+                  KCastingAppData()
+                          .myInfo[APIConstants.management_logo_img_url] =
                       newProfileData[APIConstants.management_logo_img_url];
                 }
               }
@@ -110,8 +114,8 @@ class _AgencyProfile extends State<AgencyProfile>
       final kb = size / 1024;
       final mb = kb / 1024;
 
-      if (mb > 25) {
-        showSnackBar(context, "25MB 미만의 파일만 업로드 가능합니다.");
+      if (mb > 100) {
+        showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
       } else {
         setState(() {
           _profileImgFile = file;
@@ -184,13 +188,20 @@ class _AgencyProfile extends State<AgencyProfile>
                                     size: 100,
                                   )
                                 : ClipOval(
-                                    child: Image.network(
-                                        KCastingAppData().myInfo[
-                                            APIConstants.management_logo_img_url],
+                                    child: CachedNetworkImage(
+                                        imageUrl: KCastingAppData().myInfo[
+                                            APIConstants
+                                                .management_logo_img_url],
                                         fit: BoxFit.cover,
                                         width: 100.0,
-                                        height: 100.0),
-                                  ),
+                                        height: 100.0,
+                                        errorWidget: (context, url, error) =>
+                                            Icon(
+                                              Icons.account_circle,
+                                              color: CustomColors
+                                                  .colorFontLightGrey,
+                                              size: 100,
+                                            ))),
                           )),
                       Container(
                           margin: EdgeInsets.only(bottom: 30),
@@ -211,11 +222,10 @@ class _AgencyProfile extends State<AgencyProfile>
                           padding: EdgeInsets.only(left: 15, right: 15),
                           margin: EdgeInsets.only(top: 10.0),
                           child: Text(
-                              StringUtils.isEmpty(KCastingAppData()
-                                      .myInfo[APIConstants.id])
+                              StringUtils.isEmpty(
+                                      KCastingAppData().myInfo[APIConstants.id])
                                   ? '-'
-                                  : KCastingAppData()
-                                      .myInfo[APIConstants.id],
+                                  : KCastingAppData().myInfo[APIConstants.id],
                               style: CustomStyles.dark14TextStyle())),
                       Container(
                           width: MediaQuery.of(context).size.width,

@@ -187,7 +187,7 @@ class _ActorProfile extends State<ActorProfile>
 
     Map<String, dynamic> targetData = new Map();
     targetData[APIConstants.seq] =
-        KCastingAppData().myInfo[APIConstants.actor_profile_seq];
+        KCastingAppData().myInfo[APIConstants.actorProfile_seq];
     //targetData[APIConstants.file] = fileData;
 
     Map<String, dynamic> params = new Map();
@@ -515,8 +515,8 @@ class _ActorProfile extends State<ActorProfile>
         final kb = size / 1024;
         final mb = kb / 1024;
 
-        if (mb > 25) {
-          showSnackBar(context, "25MB 미만의 파일만 업로드 가능합니다.");
+        if (mb > 100) {
+          showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
         } else {
           requestAddActorImage(context, _image);
         }
@@ -554,8 +554,8 @@ class _ActorProfile extends State<ActorProfile>
     final kb = size / 1024;
     final mb = kb / 1024;
 
-    if (mb > 25) {
-      showSnackBar(context, "25MB 미만의 파일만 업로드 가능합니다.");
+    if (mb > 100) {
+      showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
     } else {
       requestAddActorVideo(context, _videoFile, fileName);
     }

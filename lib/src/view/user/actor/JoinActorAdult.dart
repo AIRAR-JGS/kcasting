@@ -437,7 +437,7 @@ class _JoinActorAdult extends State<JoinActorAdult> with BaseUtilMixin {
                                               CustomColors.colorFontLightGrey,
                                         ),
                                       ),
-                                      Container(
+                                      /*Container(
                                           padding: EdgeInsets.only(
                                               left: 30, right: 30),
                                           alignment: Alignment.centerLeft,
@@ -595,7 +595,7 @@ class _JoinActorAdult extends State<JoinActorAdult> with BaseUtilMixin {
                                           color:
                                               CustomColors.colorFontLightGrey,
                                         ),
-                                      ),
+                                      ),*/
                                       Container(
                                           padding: EdgeInsets.only(
                                               left: 30, right: 30),
@@ -845,10 +845,14 @@ class _JoinActorAdult extends State<JoinActorAdult> with BaseUtilMixin {
     targetDatas[APIConstants.guardian_RR_url] = "";
     targetDatas[APIConstants.guardian_COH_url] = "";
     targetDatas[APIConstants.guardian_COFR_url] = "";
-    targetDatas[APIConstants.actor_bank_code] = _bankVal[APIConstants.child_code];
+    /*targetDatas[APIConstants.actor_bank_code] = _bankVal[APIConstants.child_code];
     targetDatas[APIConstants.actor_account_number] =  StringUtils.trimmedString(_txtFieldAccountNum.text);
     targetDatas[APIConstants.actor_account_holder] =  StringUtils.trimmedString(_txtFieldAccountName.text);
-    targetDatas[APIConstants.actor_account_holder_birth] =  StringUtils.trimmedString(_txtFieldAccountBirth.text);
+    targetDatas[APIConstants.actor_account_holder_birth] =  StringUtils.trimmedString(_txtFieldAccountBirth.text);*/
+    targetDatas[APIConstants.actor_bank_code] = "";
+    targetDatas[APIConstants.actor_account_number] =  "";
+    targetDatas[APIConstants.actor_account_holder] =  "";
+    targetDatas[APIConstants.actor_account_holder_birth] =  "";
     targetDatas[APIConstants.actor_birth] = _birthDate;
     targetDatas[APIConstants.sex_type] = _userGender == 0 ? "여자" : "남자";
     targetDatas[APIConstants.actor_phone] =

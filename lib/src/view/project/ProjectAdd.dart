@@ -65,8 +65,8 @@ class _ProjectAdd extends State<ProjectAdd> with BaseUtilMixin {
       final kb = size / 1024;
       final mb = kb / 1024;
 
-      if (mb > 25) {
-        showSnackBar(context, "25MB 미만의 파일만 업로드 가능합니다.");
+      if (mb > 100) {
+        showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
       } else {
         setState(() {
           _profileImgFile = file;

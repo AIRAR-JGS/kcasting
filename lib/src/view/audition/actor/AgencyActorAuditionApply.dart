@@ -7,6 +7,8 @@ import 'package:casting_call/src/view/audition/actor/AuditionApplyUploadImage.da
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../KCastingAppData.dart';
+
 /*
 * 매니지먼트 보유배우 오디션 지원하기
 * */
@@ -91,13 +93,15 @@ class _AgencyActorAuditionApply extends State<AgencyActorAuditionApply>
 
     // 배우목록조회 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
+    targetData[APIConstants.management_seq] =
+        KCastingAppData().myInfo[APIConstants.management_seq];
 
     Map<String, dynamic> paging = new Map();
     paging[APIConstants.offset] = _actorList.length;
     paging[APIConstants.limit] = _limit;
 
     Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.SEL_ACT_LIST;
+    params[APIConstants.key] = APIConstants.SEL_MGM_ACTORLIST;
     params[APIConstants.target] = targetData;
     params[APIConstants.paging] = paging;
 

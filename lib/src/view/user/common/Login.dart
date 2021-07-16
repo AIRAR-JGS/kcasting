@@ -237,7 +237,6 @@ class _Login extends State<Login> with BaseUtilMixin {
 
           // 로그인 성공
           if (_isAutoLogin == 1) {
-            print("11111111111111111111111111111111");
             final SharedPreferences prefs =
                 await SharedPreferences.getInstance();
             prefs.setBool(APIConstants.autoLogin, true);
@@ -282,7 +281,7 @@ class _Login extends State<Login> with BaseUtilMixin {
     targetData[APIConstants.actor_seq] =
         KCastingAppData().myInfo[APIConstants.seq];
     targetData[APIConstants.actor_profile_seq] =
-        KCastingAppData().myInfo[APIConstants.actor_profile_seq];
+        KCastingAppData().myInfo[APIConstants.actorProfile_seq];
 
     Map<String, dynamic> params = new Map();
     params[APIConstants.key] = APIConstants.SAR_APR_INFO;

@@ -110,7 +110,8 @@ class _AgencyActorList extends State<AgencyActorList>
     } else if (_tabIndex == 2) {
       targetData[APIConstants.sex_type] = APIConstants.actor_sex_male;
     }
-    targetData[APIConstants.management_seq] = KCastingAppData().myInfo[APIConstants.management_seq];
+    targetData[APIConstants.management_seq] =
+        KCastingAppData().myInfo[APIConstants.management_seq];
 
     Map<String, dynamic> paging = new Map();
     paging[APIConstants.offset] = _actorList.length;
@@ -162,7 +163,8 @@ class _AgencyActorList extends State<AgencyActorList>
     // 배우 삭제 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetDatas = new Map();
     targetDatas[APIConstants.actor_seq] = _deletedActorList;
-    targetDatas[APIConstants.management_seq] = KCastingAppData().myInfo[APIConstants.management_seq];
+    targetDatas[APIConstants.management_seq] =
+        KCastingAppData().myInfo[APIConstants.management_seq];
 
     Map<String, dynamic> params = new Map();
     params[APIConstants.key] = APIConstants.DEL_MGM_ACTORLIST;
@@ -361,7 +363,10 @@ class _AgencyActorList extends State<AgencyActorList>
                                                           i++) {
                                                         if (_actorList[i]
                                                             ["isSelected"]) {
-                                                          _deletedActorList.add(_actorList[i][APIConstants.actor_seq]);
+                                                          _deletedActorList.add(
+                                                              _actorList[i][
+                                                                  APIConstants
+                                                                      .actor_seq]);
                                                         }
                                                       }
 
@@ -377,7 +382,8 @@ class _AgencyActorList extends State<AgencyActorList>
                                                                 _deletedActorList
                                                                     .length,
                                                             onClickedAgree: () {
-                                                              requestActorDeleteApi(context);
+                                                              requestActorDeleteApi(
+                                                                  context);
                                                             },
                                                           ),
                                                         );
@@ -511,15 +517,20 @@ class _AgencyActorList extends State<AgencyActorList>
                                                     .width,
                                                 child: GestureDetector(
                                                     onTap: () {
-                                                      addView(
-                                                          context,
-                                                          AgencyActorProfile(
-                                                              seq: _data[
-                                                                  APIConstants
-                                                                      .seq],
-                                                              actorProfileSeq:
-                                                                  _data[APIConstants
-                                                                      .actorProfile_seq]));
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            settings: RouteSettings(
+                                                                name:
+                                                                    'AgencyActorProfile'),
+                                                            builder: (context) => AgencyActorProfile(
+                                                                seq: _data[
+                                                                    APIConstants
+                                                                        .seq],
+                                                                actorProfileSeq:
+                                                                    _data[APIConstants
+                                                                        .actorProfile_seq])),
+                                                      );
                                                     },
                                                     child: Column(
                                                         children: <Widget>[

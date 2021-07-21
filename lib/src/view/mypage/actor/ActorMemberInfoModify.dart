@@ -528,7 +528,7 @@ class _ActorMemberInfoModify extends State<ActorMemberInfoModify>
 
     final encryptor = Encrypter(RSA(publicKey: publicKey));
     final encrypted =
-        encryptor.encrypt(StringUtils.trimmedString(_txtFieldPW.text));
+        encryptor.encrypt(StringUtils.trimmedString(_txtFieldNewPW.text));
 
     // 배우 회원정보 수정 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetDatas = new Map();

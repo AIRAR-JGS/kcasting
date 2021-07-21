@@ -27,12 +27,24 @@ class _AgencyProfile extends State<AgencyProfile>
     with SingleTickerProviderStateMixin, BaseUtilMixin {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
+  bool _kIsWeb;
+
   File _profileImgFile;
   final picker = ImagePicker();
 
   @override
   void initState() {
     super.initState();
+
+    try {
+      if (Platform.isAndroid || Platform.isIOS) {
+        _kIsWeb = false;
+      } else {
+        _kIsWeb = true;
+      }
+    } catch (e) {
+      _kIsWeb = true;
+    }
   }
 
   @override
@@ -105,25 +117,29 @@ class _AgencyProfile extends State<AgencyProfile>
 
   // 갤러리에서 이미지 가져오기
   Future getImageFromGallery() async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      File file = File(pickedFile.path);
-
-      final size = file.readAsBytesSync().lengthInBytes;
-      final kb = size / 1024;
-      final mb = kb / 1024;
-
-      if (mb > 100) {
-        showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
-      } else {
-        setState(() {
-          _profileImgFile = file;
-          requestUpdateAgencyProfile(context, _profileImgFile);
-        });
-      }
+    if (_kIsWeb) {
+      showSnackBar(context, APIConstants.use_mobile_app);
     } else {
-      showSnackBar(context, "선택된 이미지가 없습니다.");
+      final pickedFile = await picker.getImage(source: ImageSource.gallery);
+
+      if (pickedFile != null) {
+        File file = File(pickedFile.path);
+
+        final size = file.readAsBytesSync().lengthInBytes;
+        final kb = size / 1024;
+        final mb = kb / 1024;
+
+        if (mb > 100) {
+          showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
+        } else {
+          setState(() {
+            _profileImgFile = file;
+            requestUpdateAgencyProfile(context, _profileImgFile);
+          });
+        }
+      } else {
+        showSnackBar(context, "선택된 이미지가 없습니다.");
+      }
     }
   }
 
@@ -149,35 +165,38 @@ class _AgencyProfile extends State<AgencyProfile>
                           margin: EdgeInsets.only(top: 30, bottom: 15),
                           child: GestureDetector(
                             onTap: () async {
-                              //
-                              var status = Platform.isAndroid
-                                  ? await Permission.storage.request()
-                                  : await Permission.photos.request();
-                              if (status.isGranted) {
-                                getImageFromGallery();
+                              if (_kIsWeb) {
+                                showSnackBar(
+                                    context, APIConstants.use_mobile_app);
                               } else {
-                                showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) =>
-                                        CupertinoAlertDialog(
-                                          title: Text('저장공간 접근권한'),
-                                          content: Text(
-                                              '사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
-                                          actions: <Widget>[
-                                            CupertinoDialogAction(
-                                              child: Text('거부'),
-                                              onPressed: () =>
-                                                  Navigator.of(context).pop(),
-                                            ),
-                                            CupertinoDialogAction(
-                                              child: Text('허용'),
-                                              onPressed: () =>
-                                                  openAppSettings(),
-                                            ),
-                                          ],
-                                        ));
+                                var status = Platform.isAndroid
+                                    ? await Permission.storage.request()
+                                    : await Permission.photos.request();
+                                if (status.isGranted) {
+                                  getImageFromGallery();
+                                } else {
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) =>
+                                          CupertinoAlertDialog(
+                                            title: Text('저장공간 접근권한'),
+                                            content: Text(
+                                                '사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
+                                            actions: <Widget>[
+                                              CupertinoDialogAction(
+                                                child: Text('거부'),
+                                                onPressed: () =>
+                                                    Navigator.of(context).pop(),
+                                              ),
+                                              CupertinoDialogAction(
+                                                child: Text('허용'),
+                                                onPressed: () =>
+                                                    openAppSettings(),
+                                              ),
+                                            ],
+                                          ));
+                                }
                               }
-                              //
                             },
                             child: KCastingAppData().myInfo[
                                         APIConstants.management_logo_img_url] ==

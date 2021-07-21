@@ -93,15 +93,15 @@ class _AgencyActorAuditionApply extends State<AgencyActorAuditionApply>
 
     // 배우목록조회 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
-    targetData[APIConstants.management_seq] =
-        KCastingAppData().myInfo[APIConstants.management_seq];
+    targetData[APIConstants.management_seq] = KCastingAppData().myInfo[APIConstants.management_seq];
+    targetData[APIConstants.casting_seq] = _castingSeq;
 
     Map<String, dynamic> paging = new Map();
     paging[APIConstants.offset] = _actorList.length;
     paging[APIConstants.limit] = _limit;
 
     Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.SEL_MGM_ACTORLIST;
+    params[APIConstants.key] = APIConstants.SEL_MGM_AUDITIONTARGETLIST;
     params[APIConstants.target] = targetData;
     params[APIConstants.paging] = paging;
 

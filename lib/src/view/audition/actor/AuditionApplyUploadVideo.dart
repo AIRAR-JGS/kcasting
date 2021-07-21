@@ -43,6 +43,8 @@ class _AuditionApplyUploadVideo extends State<AuditionApplyUploadVideo>
     with BaseUtilMixin {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
+  bool _kIsWeb;
+
   final picker = ImagePicker();
 
   int _castingSeq;
@@ -57,6 +59,16 @@ class _AuditionApplyUploadVideo extends State<AuditionApplyUploadVideo>
   @override
   void initState() {
     super.initState();
+
+    try {
+      if (Platform.isAndroid || Platform.isIOS) {
+        _kIsWeb = false;
+      } else {
+        _kIsWeb = true;
+      }
+    } catch (e) {
+      _kIsWeb = true;
+    }
 
     _castingSeq = widget.castingSeq;
     _projectName = widget.projectName;
@@ -222,44 +234,51 @@ class _AuditionApplyUploadVideo extends State<AuditionApplyUploadVideo>
                                                   elevation: 0.0,
                                                 ),
                                                 onPressed: () async {
-                                                  //
-                                                  var status = Platform
-                                                          .isAndroid
-                                                      ? await Permission.storage
-                                                          .request()
-                                                      : await Permission.photos
-                                                          .request();
-                                                  if (status.isGranted) {
-                                                    getVideoFromGallery();
+                                                  if (_kIsWeb) {
+                                                    showSnackBar(
+                                                        context,
+                                                        APIConstants
+                                                            .use_mobile_app);
                                                   } else {
-                                                    showDialog(
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                                context) =>
-                                                            CupertinoAlertDialog(
-                                                              title: Text(
-                                                                  '저장공간 접근권한'),
-                                                              content: Text(
-                                                                  '사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
-                                                              actions: <Widget>[
-                                                                CupertinoDialogAction(
-                                                                  child: Text(
-                                                                      '거부'),
-                                                                  onPressed: () =>
-                                                                      Navigator.of(
-                                                                              context)
-                                                                          .pop(),
-                                                                ),
-                                                                CupertinoDialogAction(
-                                                                  child: Text(
-                                                                      '허용'),
-                                                                  onPressed: () =>
-                                                                      openAppSettings(),
-                                                                ),
-                                                              ],
-                                                            ));
+                                                    var status =
+                                                        Platform.isAndroid
+                                                            ? await Permission
+                                                                .storage
+                                                                .request()
+                                                            : await Permission
+                                                                .photos
+                                                                .request();
+                                                    if (status.isGranted) {
+                                                      getVideoFromGallery();
+                                                    } else {
+                                                      showDialog(
+                                                          context: context,
+                                                          builder: (BuildContext
+                                                                  context) =>
+                                                              CupertinoAlertDialog(
+                                                                title: Text(
+                                                                    '저장공간 접근권한'),
+                                                                content: Text(
+                                                                    '사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
+                                                                actions: <
+                                                                    Widget>[
+                                                                  CupertinoDialogAction(
+                                                                    child: Text(
+                                                                        '거부'),
+                                                                    onPressed: () =>
+                                                                        Navigator.of(context)
+                                                                            .pop(),
+                                                                  ),
+                                                                  CupertinoDialogAction(
+                                                                    child: Text(
+                                                                        '허용'),
+                                                                    onPressed: () =>
+                                                                        openAppSettings(),
+                                                                  ),
+                                                                ],
+                                                              ));
+                                                    }
                                                   }
-                                                  //
                                                 },
                                                 label: Text("업로드",
                                                     style: CustomStyles

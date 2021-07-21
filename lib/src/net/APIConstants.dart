@@ -96,6 +96,7 @@ class APIConstants {
   static const String SEL_MGM_ACTORLIST  = "SEL_MGM_ACTORLIST";  // 매니지먼트 보유 배우 목록 조회
   static const String INS_MGM_JOINACTOR  = "INS_MGM_JOINACTOR";  // 매니지먼트 보유 배우 추가
   static const String DEL_MGM_ACTORLIST  = "DEL_MGM_ACTORLIST";  // 매니지먼트 보유 배우 삭제(일괄)
+  static const String SEL_MGM_AUDITIONTARGETLIST  = "SEL_MGM_AUDITIONTARGETLIST";  // 매니지먼트 보유 배우 오디션 가능 목록 조회
 
   static const String CHK_TOT_REALCORPNAME  = "CHK_TOT_REALCORPNAME";  // 기업 실명확인
   static const String CHK_TOT_ACCOUNT  = "CHK_TOT_ACCOUNT";  // 계좌 소유주 확인
@@ -112,6 +113,8 @@ class APIConstants {
   static const String error_msg_join_already_exist = "이미 존재하는 아이디입니다.";
   static const String error_msg_login_not_valid_id = "존재하지 않는 아이디입니다.";
   static const String error_msg_login_not_valid_pwd = "비밀번호가 올바르지 않습니다.";
+
+  static const String use_mobile_app = "모바일 앱에서만 사용 가능한 기능입니다.";
 
   // 공통 - request, response
   static const String table = "table";
@@ -351,7 +354,6 @@ class APIConstants {
   static const String ability_target = "ability_target";
   static const String lookKwd_target = "lookKwd_target";
   static const String castingKwd_target = "castingKwd_target";
-
 
   static const String main_img_url = "main_img_url";
   static const String actorProfile_seq = "actorProfile_seq";

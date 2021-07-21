@@ -46,15 +46,14 @@ class ActorProfileWidget {
                               alignment: Alignment.center,
                               child: Text('대표 이미지를 등록해 주세요.',
                                   style: CustomStyles.dark20TextStyle()),
-                            ))
-                ),
+                            ))),
             Container(
                 color: CustomColors.colorFontTitle,
                 padding: EdgeInsets.all(5),
                 child: GestureDetector(
                     onTap: () async {
                       try {
-                        if(Platform.isAndroid || Platform.isIOS) {
+                        if (Platform.isAndroid || Platform.isIOS) {
                           var status = Platform.isAndroid
                               ? await Permission.storage.request()
                               : await Permission.photos.request();
@@ -83,10 +82,9 @@ class ActorProfileWidget {
                         } else {
                           onClickGetImageFromGallery();
                         }
-                      } catch(e) {
+                      } catch (e) {
                         onClickGetImageFromGallery();
                       }
-
                     },
                     child: Icon(Icons.camera_alt,
                         color: CustomColors.colorWhite, size: 30)))
@@ -494,7 +492,8 @@ class ActorProfileWidget {
                           context,
                           MaterialPageRoute(
                               builder: (context) => ImageView(
-                                  imgURL: actorImageList[index][APIConstants.actor_img_url])),
+                                  imgURL: actorImageList[index]
+                                      [APIConstants.actor_img_url])),
                         );
                       },
                       child: Container(

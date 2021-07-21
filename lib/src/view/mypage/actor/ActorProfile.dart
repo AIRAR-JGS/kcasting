@@ -498,50 +498,54 @@ class _ActorProfile extends State<ActorProfile>
 
   // 갤러리에서 이미지 가져오기
   Future getImageFromGallery(int type) async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      if (type == 0) {
-        File file = File(pickedFile.path);
-
-        _profileImgFile = file;
-        requestUpdateActorProfile(context, _profileImgFile);
-      } else {
-        print("1111111111111111111111111111");
-        print(pickedFile.path);
-        File _image = File(pickedFile.path);
-
-        final size = _image.readAsBytesSync().lengthInBytes;
-        final kb = size / 1024;
-        final mb = kb / 1024;
-
-        if (mb > 100) {
-          showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
-        } else {
-          requestAddActorImage(context, _image);
-        }
-      }
+    if (_kIsWeb) {
+      showSnackBar(context, APIConstants.use_mobile_app);
     } else {
-      showSnackBar(context, "선택된 이미지가 없습니다.");
+      final pickedFile = await picker.getImage(source: ImageSource.gallery);
+
+      if (pickedFile != null) {
+        if (type == 0) {
+          File file = File(pickedFile.path);
+
+          _profileImgFile = file;
+          requestUpdateActorProfile(context, _profileImgFile);
+        } else {
+          print(pickedFile.path);
+          File _image = File(pickedFile.path);
+
+          final size = _image.readAsBytesSync().lengthInBytes;
+          final kb = size / 1024;
+          final mb = kb / 1024;
+
+          if (mb > 100) {
+            showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
+          } else {
+            requestAddActorImage(context, _image);
+          }
+        }
+      } else {
+        showSnackBar(context, "선택된 이미지가 없습니다.");
+      }
     }
   }
 
   Future getVideoFromGallery() async {
-    final pickedFile = await picker.getVideo(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      print(pickedFile.path);
-
-      getVideoThumbnail(pickedFile.path);
+    if (_kIsWeb) {
+      showSnackBar(context, APIConstants.use_mobile_app);
     } else {
-      showSnackBar(context, "선택된 이미지가 없습니다.");
+      final pickedFile = await picker.getVideo(source: ImageSource.gallery);
+
+      if (pickedFile != null) {
+        print(pickedFile.path);
+
+        getVideoThumbnail(pickedFile.path);
+      } else {
+        showSnackBar(context, "선택된 이미지가 없습니다.");
+      }
     }
   }
 
   getVideoThumbnail(String filePath) async {
-    /*Uint8List bytes = await VideoThumbnail.thumbnailData(
-        video: filePath, imageFormat: ImageFormat.JPEG);*/
-
     final fileName = await VideoThumbnail.thumbnailFile(
         video: filePath,
         thumbnailPath: (await getTemporaryDirectory()).path,
@@ -920,53 +924,59 @@ class _ActorProfile extends State<ActorProfile>
                                                       child: CustomStyles
                                                           .darkBold14TextButtonStyle(
                                                               '추가', () async {
-                                                        //
-                                                        var status = Platform
-                                                                .isAndroid
-                                                            ? await Permission
-                                                                .storage
-                                                                .request()
-                                                            : await Permission
-                                                                .photos
-                                                                .request();
-                                                        if (status.isGranted) {
-                                                          if (_myVideos
-                                                                  .length ==
-                                                              2) {
-                                                            showSnackBar(
-                                                                context,
-                                                                "비디오는 최대 2개까지 등록하실 수 있습니다.");
+                                                        try {
+                                                          if (_kIsWeb) {
+                                                            var status = Platform.isAndroid
+                                                                ? await Permission
+                                                                    .storage
+                                                                    .request()
+                                                                : await Permission
+                                                                    .photos
+                                                                    .request();
+                                                            if (status
+                                                                .isGranted) {
+                                                              if (_myVideos
+                                                                      .length ==
+                                                                  2) {
+                                                                showSnackBar(
+                                                                    context,
+                                                                    "비디오는 최대 2개까지 등록하실 수 있습니다.");
+                                                              } else {
+                                                                getVideoFromGallery();
+                                                              }
+                                                            } else {
+                                                              showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder: (BuildContext
+                                                                          context) =>
+                                                                      CupertinoAlertDialog(
+                                                                        title: Text(
+                                                                            '저장공간 접근권한'),
+                                                                        content:
+                                                                            Text('사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
+                                                                        actions: <
+                                                                            Widget>[
+                                                                          CupertinoDialogAction(
+                                                                            child:
+                                                                                Text('거부'),
+                                                                            onPressed: () =>
+                                                                                Navigator.of(context).pop(),
+                                                                          ),
+                                                                          CupertinoDialogAction(
+                                                                            child:
+                                                                                Text('허용'),
+                                                                            onPressed: () =>
+                                                                                openAppSettings(),
+                                                                          ),
+                                                                        ],
+                                                                      ));
+                                                            }
                                                           } else {
                                                             getVideoFromGallery();
                                                           }
-                                                        } else {
-                                                          showDialog(
-                                                              context: context,
-                                                              builder: (BuildContext
-                                                                      context) =>
-                                                                  CupertinoAlertDialog(
-                                                                    title: Text(
-                                                                        '저장공간 접근권한'),
-                                                                    content: Text(
-                                                                        '사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
-                                                                    actions: <
-                                                                        Widget>[
-                                                                      CupertinoDialogAction(
-                                                                        child: Text(
-                                                                            '거부'),
-                                                                        onPressed:
-                                                                            () =>
-                                                                                Navigator.of(context).pop(),
-                                                                      ),
-                                                                      CupertinoDialogAction(
-                                                                        child: Text(
-                                                                            '허용'),
-                                                                        onPressed:
-                                                                            () =>
-                                                                                openAppSettings(),
-                                                                      ),
-                                                                    ],
-                                                                  ));
+                                                        } catch (e) {
+                                                          getVideoFromGallery();
                                                         }
                                                         //
                                                       })),

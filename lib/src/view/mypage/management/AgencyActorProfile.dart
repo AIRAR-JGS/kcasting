@@ -1,5 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
+
+// import 'dart:html' as html;
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/KCastingAppData.dart';
@@ -14,7 +18,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags/flutter_tags.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+
+// import 'package:image_picker_web/image_picker_web.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
@@ -41,6 +48,7 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
   int _actorProfileSeq;
 
   File _profileImgFile;
+  Uint8List _profileImgFile2;
   final picker = ImagePicker();
 
   TabController _tabController;
@@ -376,6 +384,79 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
     });
   }
 
+  void requestUpdateActorProfileWeb(
+      BuildContext context, Uint8List profileFile) async {
+    var client = new http.Client();
+    try {
+      /*  List<html.File> fileArr = [];
+      fileArr.add(profileFile);*/
+
+      var uri = Uri.parse(APIConstants.getURL(APIConstants.URL_MAIN_CONTROL));
+
+      Map<String, String> targetData = new Map();
+      targetData[APIConstants.seq] = _actorProfileSeq.toString();
+      Map<String, String> params = new Map();
+      params[APIConstants.key] = 'UPD_APR_MAINIMG_FormData_one';
+      //params[APIConstants.key] = APIConstants.UPD_APR_MAINIMG_FORMDATA;
+      params[APIConstants.target] = json.encode(targetData);
+
+      http.MultipartRequest request = new http.MultipartRequest('POST', uri)
+        ..fields.addAll(params);
+
+      /*http.MultipartRequest request = new http.MultipartRequest('POST', uri);
+      request.fields.ad*/
+
+      //요청에 이미지 파일 추가
+      /*for (int i = 0; i < fileArr.length; i++) {
+        request.files.add(
+          http.MultipartFile(
+            'target_files$i',
+            http.ByteStream.fromBytes(await _getHtmlFileContent(fileArr[i])),
+            fileArr[i].size
+          ),
+        );
+      }*/
+
+      request.files.add(
+          http.MultipartFile.fromBytes(APIConstants.target_files, profileFile));
+
+      var response = await request.send().then((value) async {
+        if (value.statusCode == 200) {
+          print(request.toString());
+          print(request.fields.toString());
+          print(request.files.toString());
+          var result = await value.stream.toBytes();
+          print(String.fromCharCodes(result));
+        }
+      });
+    } catch (e) {
+      print(e.toString());
+    } finally {
+      client.close();
+    }
+  }
+
+  /*Future<Uint8List> _getHtmlFileContent(html.File blob) async {
+    Uint8List file;
+    final reader = html.FileReader();
+    reader.readAsDataUrl(blob.slice(0, blob.size, blob.type));
+    reader.onLoadEnd.listen((event) {
+      Uint8List data =
+          Base64Decoder().convert(reader.result.toString().split(",").last);
+      file = data;
+    }).onData((data) {
+      file = Base64Decoder().convert(reader.result.toString().split(",").last);
+      return file;
+    });
+    while (file == null) {
+      await new Future.delayed(const Duration(milliseconds: 1));
+      if (file != null) {
+        break;
+      }
+    }
+    return file;
+  }*/
+
   /*
   *배우 필모그래피 삭제
   * */
@@ -640,12 +721,21 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
 
   // 갤러리에서 이미지 가져오기
   Future getImageFromGallery(int type) async {
+    // 웹 테스트
+    /*Uint8List bytesFromPicker = await ImagePickerWeb.getImage(outputType: ImageType.bytes);
+    requestUpdateActorProfileWeb(context, bytesFromPicker);
+
+    setState(() {
+      _profileImgFile2 = bytesFromPicker;
+    });*/
+
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       print(pickedFile.path);
       if (type == 0) {
         _profileImgFile = File(pickedFile.path);
+
         requestUpdateActorProfile(context, _profileImgFile);
       } else {
         File _image = File(pickedFile.path);

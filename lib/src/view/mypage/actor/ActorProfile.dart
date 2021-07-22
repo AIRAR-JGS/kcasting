@@ -101,6 +101,8 @@ class _ActorProfile extends State<ActorProfile>
   void didChangeDependencies() {
     super.didChangeDependencies();
 
+    print("ddddddddddddddddd");
+
     initData();
   }
 

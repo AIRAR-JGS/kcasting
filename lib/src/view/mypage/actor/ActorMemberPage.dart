@@ -37,6 +37,10 @@ class _ActorMemberPage extends State<ActorMemberPage> with BaseUtilMixin {
     requestGetActorState(context);
   }
 
+  void initData() {
+    setState(() {});
+  }
+
   /*
   * 배우 상태 조회
   * */
@@ -228,7 +232,13 @@ class _ActorMemberPage extends State<ActorMemberPage> with BaseUtilMixin {
                           // 프로필 관리
                           case 1:
                             // 프로필 관리 페이지 이동
-                            addView(context, ActorProfile());
+                            Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ActorProfile()))
+                                .then((value) => {initData()});
+
+                            //addView(context, ActorProfile());
                             break;
 
                           // 지원현황

@@ -279,6 +279,57 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
     }
   }
 
+  /*
+  * 배우 실명인증
+  * */
+  void requestCheckRealName(BuildContext context) {
+    final dio = Dio();
+
+    // 배우 실명인증 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetData = new Map();
+    targetData[APIConstants.jumin1] = '';
+    targetData[APIConstants.jumin2] = '';
+    targetData[APIConstants.name] = '';
+
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.CHK_TOT_REALNAME;
+    params[APIConstants.target] = targetData;
+
+    // 배우 실명인증 api 호출
+    RestClient(dio).postRequestMainControl(params).then((value) async {
+      if (value != null) {
+        if (value[APIConstants.resultVal]) {
+          try {
+            // 배우 실명인증 성공
+            var _responseData = value[APIConstants.data];
+
+            if(_responseData != null) {
+              var returnCode = _responseData[APIConstants.iReturnCode];
+              switch(returnCode) {
+                case "1":
+                  // 성공
+                  break;
+
+                default:
+                // 실패
+                  break;
+
+                
+              }
+            }
+            
+          } catch (e) {
+            showSnackBar(context, APIConstants.error_msg_try_again);
+          }
+        } else {
+          showSnackBar(context, APIConstants.error_msg_try_again);
+        }
+      } else {
+        showSnackBar(context, APIConstants.error_msg_server_not_response);
+      }
+    });
+  }
+
   Widget tabFirstAudition() {
     String state = StringUtils.checkedString(
         _auditionState[APIConstants.firstAuditionTarget_result_type]);

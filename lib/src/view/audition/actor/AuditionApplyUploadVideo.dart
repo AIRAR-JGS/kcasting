@@ -1,16 +1,17 @@
-import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/model/VideoListModel.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
+import 'package:casting_call/src/net/RestClientInterface.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
@@ -25,14 +26,18 @@ class AuditionApplyUploadVideo extends StatefulWidget {
   final int castingSeq;
   final String projectName;
   final String castingName;
-  final List<dynamic> applyImageData;
+  final List<Map<String, dynamic>> dbImgages;
+  final List<File> newImgages;
+  final int actorSeq;
 
   const AuditionApplyUploadVideo(
       {Key key,
       this.castingSeq,
       this.projectName,
       this.castingName,
-      this.applyImageData})
+      this.dbImgages,
+      this.newImgages,
+      this.actorSeq})
       : super(key: key);
 
   @override
@@ -50,11 +55,15 @@ class _AuditionApplyUploadVideo extends State<AuditionApplyUploadVideo>
   int _castingSeq;
   String _projectName;
   String _castingName;
-  List<dynamic> _applyImageData;
+  List<Map<String, dynamic>> _dbImgages;
+  List<File> _newImgages;
+  int _actorSeq;
 
   List<VideoListModel> _myVideos = [];
 
   bool _isUpload = false;
+
+  var actorVideo = [];
 
   @override
   void initState() {
@@ -73,13 +82,60 @@ class _AuditionApplyUploadVideo extends State<AuditionApplyUploadVideo>
     _castingSeq = widget.castingSeq;
     _projectName = widget.projectName;
     _castingName = widget.castingName;
-    _applyImageData = widget.applyImageData;
+    _dbImgages = widget.dbImgages;
+    _newImgages = widget.newImgages;
+    _actorSeq = widget.actorSeq;
 
-    // 배우 비디오
-    for (int i = 0; i < KCastingAppData().myVideo.length; i++) {
-      _myVideos.add(new VideoListModel(
-          false, false, null, null, KCastingAppData().myVideo[i]));
+    if (KCastingAppData().myInfo[APIConstants.member_type] ==
+        APIConstants.member_type_actor) {
+      actorVideo = KCastingAppData().myVideo;
+
+      // 배우 비디오
+      for (int i = 0; i < actorVideo.length; i++) {
+        _myVideos
+            .add(new VideoListModel(false, false, null, null, actorVideo[i]));
+      }
+    } else {
+      // 매니지먼트 보유 배우 비디오 목록 api 호출
+      requestActorListApi(context);
     }
+  }
+
+  /*
+  * 매니지먼트 보유 배우 비디오 목록 api 호출
+  * */
+  void requestActorListApi(BuildContext context) {
+    final dio = Dio();
+
+    // 매니지먼트 보유 배우 비디오 목록 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetData = new Map();
+    targetData[APIConstants.actor_seq] = _actorSeq;
+
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.SEL_AVD_LIST;
+    params[APIConstants.target] = targetData;
+
+    // 매니지먼트 보유 배우 비디오 목록 api 호출
+    RestClient(dio).postRequestMainControl(params).then((value) async {
+      if (value != null) {
+        if (value[APIConstants.resultVal]) {
+          try {
+            // 매니지먼트 보유 배우 비디오 목록 성공
+            setState(() {
+              var _responseList = value[APIConstants.data];
+              if (_responseList != null && _responseList.length > 0) {
+                actorVideo.addAll(_responseList[APIConstants.list]);
+
+                for (int i = 0; i < actorVideo.length; i++) {
+                  _myVideos.add(new VideoListModel(
+                      false, false, null, null, actorVideo[i]));
+                }
+              }
+            });
+          } catch (e) {}
+        }
+      }
+    });
   }
 
   // 갤러리에서 비디오 가져오기
@@ -96,10 +152,18 @@ class _AuditionApplyUploadVideo extends State<AuditionApplyUploadVideo>
   }
 
   getVideoThumbnail(String filePath) async {
-    var _videoFile = File(filePath);
+    /*var _videoFile = File(filePath);
 
     Uint8List _thumbnailBytes = await VideoThumbnail.thumbnailData(
-        video: filePath, imageFormat: ImageFormat.JPEG);
+        video: filePath, imageFormat: ImageFormat.JPEG);*/
+
+    final thumbFileName = await VideoThumbnail.thumbnailFile(
+        video: filePath,
+        thumbnailPath: (await getTemporaryDirectory()).path,
+        imageFormat: ImageFormat.JPEG);
+
+    var _videoFile = File(filePath);
+    var _videoThumbFile = File(thumbFileName);
 
     setState(() {
       final size = _videoFile.readAsBytesSync().lengthInBytes;
@@ -110,7 +174,7 @@ class _AuditionApplyUploadVideo extends State<AuditionApplyUploadVideo>
         showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
       } else {
         _myVideos.add(
-            new VideoListModel(true, false, _videoFile, _thumbnailBytes, null));
+            new VideoListModel(true, false, _videoFile, _videoThumbFile, null));
       }
     });
   }
@@ -320,7 +384,7 @@ class _AuditionApplyUploadVideo extends State<AuditionApplyUploadVideo>
                                                                         .colorFontLightGrey))),
                                                         child: _myVideos[index]
                                                                 .isFile
-                                                            ? Image.memory(
+                                                            ? Image.file(
                                                                 _myVideos[index]
                                                                     .thumbnailFile,
                                                                 fit: BoxFit
@@ -433,7 +497,8 @@ class _AuditionApplyUploadVideo extends State<AuditionApplyUploadVideo>
                                                         projectName:
                                                             _projectName,
                                                         castingName:
-                                                            _castingName)),
+                                                            _castingName,
+                                                        actorSeq: _actorSeq)),
                                           );
                                         }))),
                                 Expanded(
@@ -483,12 +548,15 @@ class _AuditionApplyUploadVideo extends State<AuditionApplyUploadVideo>
       return;
     }
 
-    List<Map<String, dynamic>> videoFile = [];
+    //List<Map<String, dynamic>> videoFile = [];
+    List<Map<String, dynamic>> dbVideoFiles = [];
+    List<File> newVideoFiles = [];
+    List<File> newVideoThumbFiles = [];
 
     for (int i = 0; i < _myVideos.length; i++) {
       if (_myVideos[i].isSelected) {
         if (_myVideos[i].isFile) {
-          final bytes = _myVideos[i].videoFile.readAsBytesSync();
+          /*final bytes = _myVideos[i].videoFile.readAsBytesSync();
           String videoFile64 = base64Encode(bytes);
 
           String thumbnailFile64 = base64Encode(_myVideos[i].thumbnailFile);
@@ -499,9 +567,19 @@ class _AuditionApplyUploadVideo extends State<AuditionApplyUploadVideo>
           fileData[APIConstants.base64string_thumb] =
               APIConstants.data_image + thumbnailFile64;
 
-          videoFile.add(fileData);
+          videoFile.add(fileData);*/
+
+          newVideoFiles.add(_myVideos[i].videoFile);
+          newVideoThumbFiles.add(_myVideos[i].thumbnailFile);
         } else {
           // url 비디오 업로드
+          Map<String, dynamic> fileData = new Map();
+          fileData[APIConstants.url] =
+              _myVideos[i].videoData[APIConstants.actor_video_url];
+          fileData[APIConstants.thumb_url] =
+              _myVideos[i].videoData[APIConstants.actor_video_url_thumb];
+
+          dbVideoFiles.add(fileData);
         }
       }
     }
@@ -509,10 +587,15 @@ class _AuditionApplyUploadVideo extends State<AuditionApplyUploadVideo>
     replaceView(
         context,
         AuditionApplyUploadProfile(
-            castingSeq: _castingSeq,
-            projectName: _projectName,
-            castingName: _castingName,
-            applyImageData: _applyImageData,
-            applyVideoData: videoFile));
+          castingSeq: _castingSeq,
+          projectName: _projectName,
+          castingName: _castingName,
+          dbImgages: _dbImgages,
+          newImgages: _newImgages,
+          dbVideos: dbVideoFiles,
+          newVideos: newVideoFiles,
+          newVideoThumbs: newVideoThumbFiles,
+          actorSeq: _actorSeq,
+        ));
   }
 }

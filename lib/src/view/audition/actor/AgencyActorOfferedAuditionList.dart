@@ -1,4 +1,5 @@
 import 'package:casting_call/BaseWidget.dart';
+import 'package:casting_call/KCastingAppData.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
@@ -81,13 +82,14 @@ class _AgencyActorOfferedAuditionList
 
     // 배우목록조회 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
+    targetData[APIConstants.management_seq] = KCastingAppData().myInfo[APIConstants.management_seq];
 
     Map<String, dynamic> paging = new Map();
     paging[APIConstants.offset] = _actorList.length;
     paging[APIConstants.limit] = _limit;
 
     Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.SEL_ACT_LIST;
+    params[APIConstants.key] = APIConstants.SEL_MGM_ACTORLIST;
     params[APIConstants.target] = targetData;
     params[APIConstants.paging] = paging;
 

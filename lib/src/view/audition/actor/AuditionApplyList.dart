@@ -1,6 +1,7 @@
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
+import 'package:casting_call/src/dialog/DialogAuditionApplyCancel.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/net/RestClientInterface.dart';
 import 'package:dio/dio.dart';
@@ -15,6 +16,10 @@ import 'AuditionApplyDetail.dart';
 * 지원 현황 목록
 * */
 class AuditionApplyList extends StatefulWidget {
+  final int actorSeq;
+
+  const AuditionApplyList({Key key, this.actorSeq}) : super(key: key);
+
   @override
   _AuditionApplyList createState() => _AuditionApplyList();
 }
@@ -22,6 +27,8 @@ class AuditionApplyList extends StatefulWidget {
 class _AuditionApplyList extends State<AuditionApplyList>
     with SingleTickerProviderStateMixin, BaseUtilMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  int _actorSeq;
 
   TabController _tabController;
   int _tabIndex = 0;
@@ -38,6 +45,12 @@ class _AuditionApplyList extends State<AuditionApplyList>
   @override
   void initState() {
     super.initState();
+
+    _actorSeq = widget.actorSeq;
+    if (KCastingAppData().myInfo[APIConstants.member_type] ==
+        APIConstants.member_type_actor) {
+      _actorSeq = KCastingAppData().myInfo[APIConstants.seq];
+    }
 
     _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(_handleTabSelection);
@@ -106,8 +119,7 @@ class _AuditionApplyList extends State<AuditionApplyList>
 
     // 지원현황 조회 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
-    targetData[APIConstants.actor_seq] =
-        KCastingAppData().myInfo[APIConstants.seq];
+    targetData[APIConstants.actor_seq] = _actorSeq;
     targetData[APIConstants.state_type] = stateType;
 
     Map<String, dynamic> paging = new Map();
@@ -164,6 +176,13 @@ class _AuditionApplyList extends State<AuditionApplyList>
         if (value[APIConstants.resultVal]) {
           // 지원현황 조회 성공
           showSnackBar(context, "지원을 취소했습니다.");
+
+          _tabIndex = 0;
+
+          _total = 0;
+          _auditionList = [];
+
+          requestMyApplyListApi(context, "진행중");
         } else {
           showSnackBar(context, value[APIConstants.resultMsg]);
         }
@@ -245,11 +264,21 @@ class _AuditionApplyList extends State<AuditionApplyList>
                                                         .underline10TextButtonStyle(
                                                             '지원취소', () {
                                                       // 지원취소 버튼 클릭
-                                                      requestCancelApplyAuditionApi(
-                                                          context,
-                                                          _auditionList[index][
-                                                              APIConstants
-                                                                  .audition_apply_seq]);
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext _context) =>
+                                                            DialogAuditionApplyCancel(
+                                                              onClickedAgree: () {
+
+                                                                requestCancelApplyAuditionApi(
+                                                                    context,
+                                                                    _auditionList[index][
+                                                                    APIConstants
+                                                                        .audition_apply_seq]);
+                                                              },
+                                                            ),
+                                                      );
+
                                                     })
                                                   ])),
                                                   visible: _tabIndex == 0

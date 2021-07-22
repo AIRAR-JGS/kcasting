@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:casting_call/BaseWidget.dart';
@@ -7,7 +6,9 @@ import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/model/ImageListModel.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
+import 'package:casting_call/src/net/RestClientInterface.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -23,9 +24,14 @@ class AuditionApplyUploadImage extends StatefulWidget {
   final int castingSeq;
   final String projectName;
   final String castingName;
+  final int actorSeq;
 
   const AuditionApplyUploadImage(
-      {Key key, this.castingSeq, this.projectName, this.castingName})
+      {Key key,
+      this.castingSeq,
+      this.projectName,
+      this.castingName,
+      this.actorSeq})
       : super(key: key);
 
   @override
@@ -41,10 +47,13 @@ class _AuditionApplyUploadImage extends State<AuditionApplyUploadImage>
   int _casting_seq;
   String _projectName;
   String _castingName;
+  int _actor_seq;
 
   File _imageFile;
   List<ImageListModel> _myPhotos = [];
   final picker = ImagePicker();
+
+  var actorImage = []; // 보유 배우 회원 이미지
 
   @override
   void initState() {
@@ -63,12 +72,62 @@ class _AuditionApplyUploadImage extends State<AuditionApplyUploadImage>
     _casting_seq = widget.castingSeq;
     _projectName = widget.projectName;
     _castingName = widget.castingName;
+    _actor_seq = widget.actorSeq;
 
-    // 배우 이미지
-    for (int i = 0; i < KCastingAppData().myImage.length; i++) {
-      _myPhotos.add(
-          new ImageListModel(false, false, null, KCastingAppData().myImage[i]));
+    if (KCastingAppData().myInfo[APIConstants.member_type] == APIConstants.member_type_actor) {
+      actorImage = KCastingAppData().myImage;
+
+      // 배우 이미지
+      for (int i = 0; i < actorImage.length; i++) {
+        _myPhotos.add(
+            new ImageListModel(false, false, null, actorImage[i]));
+      }
+    } else if (KCastingAppData().myInfo[APIConstants.member_type] == APIConstants.member_type_management) {
+      // 매니지먼트 보유 배우 이미지 목록 api 호출
+      requestActorListApi(context);
     }
+  }
+
+  /*
+  * 매니지먼트 보유 배우 이미지 목록 api 호출
+  * */
+  void requestActorListApi(BuildContext context) {
+    final dio = Dio();
+
+    // 매니지먼트 보유 배우 이미지 목록 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetData = new Map();
+    targetData[APIConstants.actor_seq] = _actor_seq;
+
+    /*Map<String, dynamic> paging = new Map();
+    paging[APIConstants.offset] = _actorList.length;
+    paging[APIConstants.limit] = _limit;*/
+
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.SEL_AIM_LIST;
+    params[APIConstants.target] = targetData;
+    //params[APIConstants.paging] = paging;
+
+    // 매니지먼트 보유 배우 이미지 목록 api 호출
+    RestClient(dio).postRequestMainControl(params).then((value) async {
+      if (value != null) {
+        if (value[APIConstants.resultVal]) {
+          try {
+            // 매니지먼트 보유 배우 이미지 목록 성공
+            setState(() {
+              var _responseList = value[APIConstants.data];
+              if (_responseList != null && _responseList.length > 0) {
+                actorImage.addAll(_responseList[APIConstants.list]);
+
+                for (int i = 0; i < actorImage.length; i++) {
+                  _myPhotos.add(
+                      new ImageListModel(false, false, null, actorImage[i]));
+                }
+              }
+            });
+          } catch (e) {}
+        }
+      }
+    });
   }
 
   Future getImageFromGallery() async {
@@ -359,22 +418,29 @@ class _AuditionApplyUploadImage extends State<AuditionApplyUploadImage>
       return;
     }
 
-    List<Map<String, dynamic>> imageFiles = [];
+    //List<Map<String, dynamic>> imageFiles = [];
+    List<Map<String, dynamic>> dbImageFiles = [];
+    List<File> newImgageFiles = [];
 
     for (int i = 0; i < _myPhotos.length; i++) {
       if (_myPhotos[i].isSelected) {
         if (_myPhotos[i].isFile) {
-          print("ddd");
-
-          final bytes = _myPhotos[i].photoFile.readAsBytesSync();
+          /*final bytes = _myPhotos[i].photoFile.readAsBytesSync();
           String img64 = base64Encode(bytes);
 
           Map<String, dynamic> fileData = new Map();
           fileData[APIConstants.base64string] = APIConstants.data_image + img64;
 
-          imageFiles.add(fileData);
+          imageFiles.add(fileData);*/
+
+          newImgageFiles.add(_myPhotos[i].photoFile);
         } else {
           // url 이미지 업로드
+          Map<String, dynamic> fileData = new Map();
+          fileData[APIConstants.url] =
+              _myPhotos[i].photoData[APIConstants.actor_img_url];
+
+          dbImageFiles.add(fileData);
         }
       }
     }
@@ -383,8 +449,10 @@ class _AuditionApplyUploadImage extends State<AuditionApplyUploadImage>
         context,
         AuditionApplyUploadVideo(
             castingSeq: _casting_seq,
-            applyImageData: imageFiles,
+            dbImgages: dbImageFiles,
+            newImgages: newImgageFiles,
             projectName: _projectName,
-            castingName: _castingName));
+            castingName: _castingName,
+            actorSeq: _actor_seq));
   }
 }

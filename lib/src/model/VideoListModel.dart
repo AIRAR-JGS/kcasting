@@ -6,7 +6,7 @@ class VideoListModel {
   bool _isFile;
   bool _isSelected = false;
   File _videoFile;
-  Uint8List _thumbnailFile;
+  File _thumbnailFile;
   Map<String, dynamic> _videoData;
 
   VideoListModel(this._isFile, this._isSelected, this._videoFile,
@@ -18,9 +18,9 @@ class VideoListModel {
     _videoData = value;
   }
 
-  Uint8List get thumbnailFile => _thumbnailFile;
+  File get thumbnailFile => _thumbnailFile;
 
-  set thumbnailFile(Uint8List value) {
+  set thumbnailFile(File value) {
     _thumbnailFile = value;
   }
 

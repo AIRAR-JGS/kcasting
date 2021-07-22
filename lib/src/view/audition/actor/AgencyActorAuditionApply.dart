@@ -135,6 +135,7 @@ class _AgencyActorAuditionApply extends State<AgencyActorAuditionApply>
             child: GestureDetector(
                 onTap: () {
                   setState(() {
+                    //_selectActorIdx = _data[APIConstants.actor_seq];
                     _selectActorIdx = idx;
                   });
                 },
@@ -327,7 +328,8 @@ class _AgencyActorAuditionApply extends State<AgencyActorAuditionApply>
                                           AuditionApplyUploadImage(
                                               castingSeq: _castingSeq,
                                               projectName: _projectName,
-                                              castingName: _castingName)));
+                                              castingName: _castingName,
+                                          actorSeq: _actorList[_selectActorIdx][APIConstants.actor_seq])));
                             }))),
                   ]))
             ],

@@ -17,6 +17,10 @@ import 'OfferedAuditionDetail.dart';
 * 받은 제안 목록
 * */
 class OfferedAuditionList extends StatefulWidget {
+  final int actorSeq;
+
+  const OfferedAuditionList({Key key, this.actorSeq}) : super(key: key);
+
   @override
   _OfferedAuditionList createState() => _OfferedAuditionList();
 }
@@ -24,6 +28,8 @@ class OfferedAuditionList extends StatefulWidget {
 class _OfferedAuditionList extends State<OfferedAuditionList>
     with SingleTickerProviderStateMixin, BaseUtilMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  int _actorSeq;
 
   TabController _tabController;
   int _tabIndex = 0;
@@ -39,6 +45,12 @@ class _OfferedAuditionList extends State<OfferedAuditionList>
   @override
   void initState() {
     super.initState();
+
+    _actorSeq = widget.actorSeq;
+    if (KCastingAppData().myInfo[APIConstants.member_type] ==
+        APIConstants.member_type_actor) {
+      _actorSeq = KCastingAppData().myInfo[APIConstants.seq];
+    }
 
     _tabController = TabController(length: 4, vsync: this);
     _tabController.addListener(_handleTabSelection);
@@ -95,8 +107,7 @@ class _OfferedAuditionList extends State<OfferedAuditionList>
 
     // 배우 제안 받은 목록 조회 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
-    targetData[APIConstants.actor_seq] =
-        KCastingAppData().myInfo[APIConstants.seq];
+    targetData[APIConstants.actor_seq] = _actorSeq;
     if (_tabIndex == 1) {
       targetData[APIConstants.state_type] = "수락";
     } else if (_tabIndex == 2) {

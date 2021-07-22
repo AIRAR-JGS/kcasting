@@ -9,15 +9,23 @@ import 'AuditionApplyList.dart';
 * 오디션 지원 완료 화면
 * */
 class AuditionApplyComplete extends StatefulWidget {
+  final int actorSeq;
+
+  const AuditionApplyComplete({Key key, this.actorSeq}) : super(key: key);
+
   @override
   _AuditionApplyComplete createState() => _AuditionApplyComplete();
 }
 
 class _AuditionApplyComplete extends State<AuditionApplyComplete>
     with BaseUtilMixin {
+  int _actorSeq;
+
   @override
   void initState() {
     super.initState();
+
+    _actorSeq = widget.actorSeq;
   }
 
   /*
@@ -51,7 +59,8 @@ class _AuditionApplyComplete extends State<AuditionApplyComplete>
                           width: MediaQuery.of(context).size.width * 0.4,
                           child: CustomStyles.greyBorderRound7ButtonStyle(
                               '지원현황', () {
-                            replaceView(context, AuditionApplyList());
+                            replaceView(context,
+                                AuditionApplyList(actorSeq: _actorSeq));
                           }))
                     ]))));
   }

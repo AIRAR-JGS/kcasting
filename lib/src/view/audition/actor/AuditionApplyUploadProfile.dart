@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
@@ -22,16 +24,24 @@ class AuditionApplyUploadProfile extends StatefulWidget {
   final int castingSeq;
   final String projectName;
   final String castingName;
-  final List<dynamic> applyImageData;
-  final List<dynamic> applyVideoData;
+  final List<Map<String, dynamic>> dbImgages;
+  final List<File> newImgages;
+  final List<Map<String, dynamic>> dbVideos;
+  final List<File> newVideos;
+  final List<File> newVideoThumbs;
+  final int actorSeq;
 
   const AuditionApplyUploadProfile(
       {Key key,
       this.castingSeq,
       this.projectName,
       this.castingName,
-      this.applyImageData,
-      this.applyVideoData})
+      this.dbImgages,
+      this.newImgages,
+      this.dbVideos,
+      this.newVideos,
+      this.newVideoThumbs,
+      this.actorSeq})
       : super(key: key);
 
   @override
@@ -45,8 +55,12 @@ class _AuditionApplyUploadProfile extends State<AuditionApplyUploadProfile>
   int _castingSeq;
   String _projectName;
   String _castingName;
-  List<dynamic> _applyImageData;
-  List<dynamic> _applyVideoData;
+  List<Map<String, dynamic>> _dbImgages;
+  List<File> _newImgages;
+  List<Map<String, dynamic>> _dbVideos;
+  List<File> _newVideos;
+  List<File> _newVideoThumbs;
+  int _actorSeq;
 
   final GlobalKey<TagsState> _myKeywordTagStateKey = GlobalKey<TagsState>();
 
@@ -67,8 +81,12 @@ class _AuditionApplyUploadProfile extends State<AuditionApplyUploadProfile>
     _castingSeq = widget.castingSeq;
     _projectName = widget.projectName;
     _castingName = widget.castingName;
-    _applyVideoData = widget.applyVideoData;
-    _applyImageData = widget.applyImageData;
+    _dbImgages = widget.dbImgages;
+    _newImgages = widget.newImgages;
+    _dbVideos = widget.dbVideos;
+    _newVideos = widget.newVideos;
+    _newVideoThumbs = widget.newVideoThumbs;
+    _actorSeq = widget.actorSeq;
 
     // 배우 학력사항
     for (int i = 0; i < KCastingAppData().myEducation.length; i++) {
@@ -135,395 +153,436 @@ class _AuditionApplyUploadProfile extends State<AuditionApplyUploadProfile>
                   Container(
                       child: Column(children: [
                     Expanded(
-                      flex: 1,
-                      child: SingleChildScrollView(
-                        child: Container(
-                          padding: EdgeInsets.only(top: 20, bottom: 30),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  child: Text(
-                                      StringUtils.checkedString(_projectName),
-                                      style:
-                                          CustomStyles.darkBold12TextStyle())),
-                              Container(
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  margin: EdgeInsets.only(top: 5.0),
-                                  child: Text(
-                                      StringUtils.checkedString(_castingName) +
-                                          "역",
-                                      style: CustomStyles.dark24TextStyle())),
-                              Container(
-                                margin: EdgeInsets.only(top: 20, bottom: 10),
-                                child: Divider(
-                                  height: 0.1,
-                                  color: CustomColors.colorFontLightGrey,
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.only(left: 15, right: 15),
-                                child: Container(
-                                  padding: const EdgeInsets.all(10.0),
-                                  decoration: new BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: CustomColors.colorFontTitle,
-                                  ),
-                                  child: new Text('3',
-                                      style: new TextStyle(
-                                          color: Colors.white, fontSize: 20.0)),
-                                ),
-                              ),
-                              Container(
-                                  margin: EdgeInsets.only(top: 5.0),
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  child: Text('내 프로필',
-                                      style: CustomStyles.bold14TextStyle())),
-                              Container(
-                                  margin: EdgeInsets.only(top: 5),
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  child: Text(
-                                      '제출되는 내 프로필을 확인 후 지원하기를 눌러주세요.\n프로필수정은 내 프로필에서 할 수 있습니다.',
-                                      style: CustomStyles.normal14TextStyle())),
-                              Container(
-                                  margin: EdgeInsets.only(top: 30.0),
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  child: Text(
-                                      StringUtils.checkedString(
-                                          KCastingAppData().myProfile[
-                                              APIConstants.actor_name]),
-                                      style: CustomStyles.normal32TextStyle())),
-                              Container(
-                                  margin: EdgeInsets.only(top: 15),
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  child: Text(
-                                      StringUtils.checkedString(
-                                          KCastingAppData().myProfile[
-                                              APIConstants.actor_Introduce]),
-                                      style: CustomStyles.normal16TextStyle())),
-                              Container(
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  margin: EdgeInsets.only(top: 20.0),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                          flex: 3,
-                                          child: Container(
-                                              child: Text('드라마페이',
-                                                  style: CustomStyles
-                                                      .normal14TextStyle()))),
-                                      Expanded(
-                                          flex: 7,
-                                          child: Container(
-                                              child: Text(
-                                                  StringUtils.checkedString(
-                                                          KCastingAppData()
-                                                                  .myProfile[
-                                                              APIConstants
-                                                                  .actor_drama_pay]) +
-                                                      "만원",
-                                                  style: CustomStyles
-                                                      .normal14TextStyle())))
-                                    ],
-                                  )),
-                              Container(
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  margin: EdgeInsets.only(top: 10.0),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                          flex: 3,
-                                          child: Container(
-                                              child: Text('영화페이',
-                                                  style: CustomStyles
-                                                      .normal14TextStyle()))),
-                                      Expanded(
-                                          flex: 7,
-                                          child: Container(
-                                              child: Text(
-                                                  StringUtils.checkedString(
-                                                          KCastingAppData()
-                                                                  .myProfile[
-                                                              APIConstants
-                                                                  .actor_movie_pay]) +
-                                                      "만원",
-                                                  style: CustomStyles
-                                                      .normal14TextStyle())))
-                                    ],
-                                  )),
-                              Container(
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  margin: EdgeInsets.only(top: 10.0),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                          flex: 3,
-                                          child: Container(
-                                              child: Text('나이',
-                                                  style: CustomStyles
-                                                      .normal14TextStyle()))),
-                                      Expanded(
-                                          flex: 7,
-                                          child: Container(
-                                              child: Text(
-                                                  StringUtils.checkedString(
-                                                      KCastingAppData()
-                                                              .myProfile[
-                                                          APIConstants
-                                                              .actor_birth]),
-                                                  style: CustomStyles
-                                                      .normal14TextStyle())))
-                                    ],
-                                  )),
-                              Container(
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  margin: EdgeInsets.only(top: 10.0),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                          flex: 3,
-                                          child: Container(
-                                              child: Text('키',
-                                                  style: CustomStyles
-                                                      .normal14TextStyle()))),
-                                      Expanded(
-                                          flex: 7,
-                                          child: Container(
-                                              child: Text(
-                                                  StringUtils.checkedString(
-                                                          KCastingAppData()
-                                                                  .myProfile[
-                                                              APIConstants
-                                                                  .actor_tall]) +
-                                                      "cm",
-                                                  style: CustomStyles
-                                                      .normal14TextStyle())))
-                                    ],
-                                  )),
-                              Container(
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  margin: EdgeInsets.only(top: 10.0),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                          flex: 3,
-                                          child: Container(
-                                              child: Text('체중',
-                                                  style: CustomStyles
-                                                      .normal14TextStyle()))),
-                                      Expanded(
-                                          flex: 7,
-                                          child: Container(
-                                              child: Text(
-                                                  StringUtils.checkedString(
-                                                          KCastingAppData()
-                                                                  .myProfile[
-                                                              APIConstants
-                                                                  .actor_weight]) +
-                                                      "kg",
-                                                  style: CustomStyles
-                                                      .normal14TextStyle())))
-                                    ],
-                                  )),
-                              Container(
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  margin: EdgeInsets.only(top: 10.0),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                          flex: 3,
-                                          child: Container(
-                                              child: Text('전공여부',
-                                                  style: CustomStyles
-                                                      .normal14TextStyle()))),
-                                      Expanded(
-                                          flex: 7,
-                                          child: Container(
-                                              child: Text(
-                                                  KCastingAppData().myProfile[
-                                                              APIConstants
-                                                                  .actor_major_isAuth] ==
-                                                          0
-                                                      ? "비전공"
-                                                      : "전공",
-                                                  style: CustomStyles
-                                                      .normal14TextStyle())))
-                                    ],
-                                  )),
-                              Container(
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  margin: EdgeInsets.only(top: 10.0),
-                                  child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                            flex: 3,
-                                            child: Container(
-                                                child: Text('학력사항',
-                                                    style: CustomStyles
-                                                        .normal14TextStyle()))),
-                                        Expanded(
-                                            flex: 7,
-                                            child: Container(
-                                                child: Text(_actorEducationStr,
-                                                    style: CustomStyles
-                                                        .normal14TextStyle())))
-                                      ])),
-                              Container(
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  margin: EdgeInsets.only(top: 10.0),
-                                  child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                            flex: 3,
-                                            child: Container(
-                                                child: Text('언어',
-                                                    style: CustomStyles
-                                                        .normal14TextStyle()))),
-                                        Expanded(
-                                            flex: 7,
-                                            child: Container(
-                                                child: Text(_actorLanguageStr,
-                                                    style: CustomStyles
-                                                        .normal14TextStyle())))
-                                      ])),
-                              Container(
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  margin: EdgeInsets.only(top: 10.0),
-                                  child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                            flex: 3,
-                                            child: Container(
-                                                child: Text('특기',
-                                                    style: CustomStyles
-                                                        .normal14TextStyle()))),
-                                        Expanded(
-                                            flex: 7,
-                                            child: Container(
-                                                child: Text(_actorAbilityStr,
-                                                    style: CustomStyles
-                                                        .normal14TextStyle())))
-                                      ])),
-                              Container(
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  margin: EdgeInsets.only(top: 10.0),
-                                  child: Row(
+                        flex: 1,
+                        child: SingleChildScrollView(
+                            child: Container(
+                                padding: EdgeInsets.only(top: 20, bottom: 30),
+                                child: Column(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Expanded(
-                                          flex: 3,
-                                          child: Container(
-                                              child: Text('키워드',
-                                                  style: CustomStyles
-                                                      .normal14TextStyle()))),
-                                      Expanded(
-                                        flex: 7,
-                                        child: Container(
-                                          alignment: Alignment.topLeft,
-                                          margin: EdgeInsets.only(bottom: 10),
+                                      Container(
                                           padding: EdgeInsets.only(
-                                            right: 15,
-                                          ),
-                                          child: Tags(
-                                            runSpacing: 5,
-                                            spacing: 5,
-                                            alignment: WrapAlignment.start,
-                                            runAlignment: WrapAlignment.start,
-                                            key: _myKeywordTagStateKey,
-                                            itemCount: _actorLookKwdList.length,
-                                            // required
-                                            itemBuilder: (int index) {
-                                              final item =
-                                                  _actorLookKwdList[index];
-                                              return ItemTags(
-                                                textStyle: CustomStyles
-                                                    .dark14TextStyle(),
-                                                textColor:
-                                                    CustomColors.colorFontGrey,
-                                                activeColor:
-                                                    CustomColors.colorFontGrey,
-                                                textActiveColor:
-                                                    CustomColors.colorWhite,
-                                                key: Key(index.toString()),
-                                                index: index,
-                                                title: item,
-                                                active: false,
-                                                pressEnabled: false,
-                                                combine: ItemTagsCombine
-                                                    .withTextBefore,
-                                                elevation: 0.0,
-                                                borderRadius:
-                                                    BorderRadius.circular(50),
-                                                onPressed: (item) =>
-                                                    print(item),
-                                                onLongPressed: (item) =>
-                                                    print(item),
-                                              );
-                                            },
-                                          ),
+                                              left: 15, right: 15),
+                                          child: Text(
+                                              StringUtils.checkedString(
+                                                  _projectName),
+                                              style: CustomStyles
+                                                  .darkBold12TextStyle())),
+                                      Container(
+                                          padding: EdgeInsets.only(
+                                              left: 15, right: 15),
+                                          margin: EdgeInsets.only(top: 5.0),
+                                          child: Text(
+                                              StringUtils.checkedString(
+                                                      _castingName) +
+                                                  "역",
+                                              style: CustomStyles
+                                                  .dark24TextStyle())),
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                            top: 20, bottom: 10),
+                                        child: Divider(
+                                          height: 0.1,
+                                          color:
+                                              CustomColors.colorFontLightGrey,
                                         ),
-                                      )
-                                    ],
-                                  )),
-                              Container(
-                                  margin: EdgeInsets.only(top: 30.0, bottom: 5),
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  child: Text('경력사항',
-                                      style: CustomStyles.bold16TextStyle())),
-                              Wrap(
-                                children: [
-                                  ListView.builder(
-                                    physics: NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    padding:
-                                        EdgeInsets.only(left: 10, right: 10),
-                                    itemCount: _filmorgraphyList.length,
-                                    itemBuilder: (context, index) {
-                                      return Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Container(
-                                            margin: EdgeInsets.only(bottom: 10),
-                                            child: Divider(
-                                              height: 0.1,
-                                              color: CustomColors
-                                                  .colorFontLightGrey,
-                                            ),
+                                      ),
+                                      Container(
+                                        padding: EdgeInsets.only(
+                                            left: 15, right: 15),
+                                        child: Container(
+                                          padding: const EdgeInsets.all(10.0),
+                                          decoration: new BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: CustomColors.colorFontTitle,
                                           ),
-                                          ActorFilmoListItem(
-                                              idx: index,
-                                              data: _filmorgraphyList[index],
-                                              isEditMode: false,
-                                              onClickEvent: () {
-                                                setState(() {
-                                                  _filmorgraphyList
-                                                      .removeAt(index);
-                                                });
-                                              })
-                                        ],
-                                      );
-                                    },
-                                  )
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+                                          child: new Text('3',
+                                              style: new TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 20.0)),
+                                        ),
+                                      ),
+                                      Container(
+                                          margin: EdgeInsets.only(top: 5.0),
+                                          padding: EdgeInsets.only(
+                                              left: 15, right: 15),
+                                          child: Text('내 프로필',
+                                              style: CustomStyles
+                                                  .bold14TextStyle())),
+                                      Container(
+                                          margin: EdgeInsets.only(top: 5),
+                                          padding: EdgeInsets.only(
+                                              left: 15, right: 15),
+                                          child: Text(
+                                              '제출되는 내 프로필을 확인 후 지원하기를 눌러주세요.\n프로필수정은 내 프로필에서 할 수 있습니다.',
+                                              style: CustomStyles
+                                                  .normal14TextStyle())),
+                                      Container(
+                                          margin: EdgeInsets.only(top: 30.0),
+                                          padding: EdgeInsets.only(
+                                              left: 15, right: 15),
+                                          child: Text(
+                                              StringUtils.checkedString(
+                                                  KCastingAppData().myProfile[
+                                                      APIConstants.actor_name]),
+                                              style: CustomStyles
+                                                  .normal32TextStyle())),
+                                      Container(
+                                          margin: EdgeInsets.only(top: 15),
+                                          padding: EdgeInsets.only(
+                                              left: 15, right: 15),
+                                          child: Text(
+                                              StringUtils.checkedString(
+                                                  KCastingAppData().myProfile[
+                                                      APIConstants
+                                                          .actor_Introduce]),
+                                              style: CustomStyles
+                                                  .normal16TextStyle())),
+                                      Container(
+                                          padding: EdgeInsets.only(
+                                              left: 15, right: 15),
+                                          margin: EdgeInsets.only(top: 20.0),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                  flex: 3,
+                                                  child: Container(
+                                                      child: Text('드라마페이',
+                                                          style: CustomStyles
+                                                              .normal14TextStyle()))),
+                                              Expanded(
+                                                  flex: 7,
+                                                  child: Container(
+                                                      child: Text(
+                                                          StringUtils.checkedString(
+                                                                  KCastingAppData()
+                                                                          .myProfile[
+                                                                      APIConstants
+                                                                          .actor_drama_pay]) +
+                                                              "만원",
+                                                          style: CustomStyles
+                                                              .normal14TextStyle())))
+                                            ],
+                                          )),
+                                      Container(
+                                          padding: EdgeInsets.only(
+                                              left: 15, right: 15),
+                                          margin: EdgeInsets.only(top: 10.0),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                  flex: 3,
+                                                  child: Container(
+                                                      child: Text('영화페이',
+                                                          style: CustomStyles
+                                                              .normal14TextStyle()))),
+                                              Expanded(
+                                                  flex: 7,
+                                                  child: Container(
+                                                      child: Text(
+                                                          StringUtils.checkedString(
+                                                                  KCastingAppData()
+                                                                          .myProfile[
+                                                                      APIConstants
+                                                                          .actor_movie_pay]) +
+                                                              "만원",
+                                                          style: CustomStyles
+                                                              .normal14TextStyle())))
+                                            ],
+                                          )),
+                                      Container(
+                                          padding: EdgeInsets.only(
+                                              left: 15, right: 15),
+                                          margin: EdgeInsets.only(top: 10.0),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                  flex: 3,
+                                                  child: Container(
+                                                      child: Text('나이',
+                                                          style: CustomStyles
+                                                              .normal14TextStyle()))),
+                                              Expanded(
+                                                  flex: 7,
+                                                  child: Container(
+                                                      child: Text(
+                                                          StringUtils.checkedString(
+                                                              KCastingAppData()
+                                                                      .myProfile[
+                                                                  APIConstants
+                                                                      .actor_birth]),
+                                                          style: CustomStyles
+                                                              .normal14TextStyle())))
+                                            ],
+                                          )),
+                                      Container(
+                                          padding: EdgeInsets.only(
+                                              left: 15, right: 15),
+                                          margin: EdgeInsets.only(top: 10.0),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                  flex: 3,
+                                                  child: Container(
+                                                      child: Text('키',
+                                                          style: CustomStyles
+                                                              .normal14TextStyle()))),
+                                              Expanded(
+                                                  flex: 7,
+                                                  child: Container(
+                                                      child: Text(
+                                                          StringUtils.checkedString(
+                                                                  KCastingAppData()
+                                                                          .myProfile[
+                                                                      APIConstants
+                                                                          .actor_tall]) +
+                                                              "cm",
+                                                          style: CustomStyles
+                                                              .normal14TextStyle())))
+                                            ],
+                                          )),
+                                      Container(
+                                          padding: EdgeInsets.only(
+                                              left: 15, right: 15),
+                                          margin: EdgeInsets.only(top: 10.0),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                  flex: 3,
+                                                  child: Container(
+                                                      child: Text('체중',
+                                                          style: CustomStyles
+                                                              .normal14TextStyle()))),
+                                              Expanded(
+                                                  flex: 7,
+                                                  child: Container(
+                                                      child: Text(
+                                                          StringUtils.checkedString(
+                                                                  KCastingAppData()
+                                                                          .myProfile[
+                                                                      APIConstants
+                                                                          .actor_weight]) +
+                                                              "kg",
+                                                          style: CustomStyles
+                                                              .normal14TextStyle())))
+                                            ],
+                                          )),
+                                      Container(
+                                          padding: EdgeInsets.only(
+                                              left: 15, right: 15),
+                                          margin: EdgeInsets.only(top: 10.0),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                  flex: 3,
+                                                  child: Container(
+                                                      child: Text('전공여부',
+                                                          style: CustomStyles
+                                                              .normal14TextStyle()))),
+                                              Expanded(
+                                                  flex: 7,
+                                                  child: Container(
+                                                      child: Text(
+                                                          KCastingAppData()
+                                                                          .myProfile[
+                                                                      APIConstants
+                                                                          .actor_major_isAuth] ==
+                                                                  0
+                                                              ? "비전공"
+                                                              : "전공",
+                                                          style: CustomStyles
+                                                              .normal14TextStyle())))
+                                            ],
+                                          )),
+                                      Container(
+                                          padding: EdgeInsets.only(
+                                              left: 15, right: 15),
+                                          margin: EdgeInsets.only(top: 10.0),
+                                          child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Expanded(
+                                                    flex: 3,
+                                                    child: Container(
+                                                        child: Text('학력사항',
+                                                            style: CustomStyles
+                                                                .normal14TextStyle()))),
+                                                Expanded(
+                                                    flex: 7,
+                                                    child: Container(
+                                                        child: Text(
+                                                            _actorEducationStr,
+                                                            style: CustomStyles
+                                                                .normal14TextStyle())))
+                                              ])),
+                                      Container(
+                                          padding: EdgeInsets.only(
+                                              left: 15, right: 15),
+                                          margin: EdgeInsets.only(top: 10.0),
+                                          child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Expanded(
+                                                    flex: 3,
+                                                    child: Container(
+                                                        child: Text('언어',
+                                                            style: CustomStyles
+                                                                .normal14TextStyle()))),
+                                                Expanded(
+                                                    flex: 7,
+                                                    child: Container(
+                                                        child: Text(
+                                                            _actorLanguageStr,
+                                                            style: CustomStyles
+                                                                .normal14TextStyle())))
+                                              ])),
+                                      Container(
+                                          padding: EdgeInsets.only(
+                                              left: 15, right: 15),
+                                          margin: EdgeInsets.only(top: 10.0),
+                                          child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Expanded(
+                                                    flex: 3,
+                                                    child: Container(
+                                                        child: Text('특기',
+                                                            style: CustomStyles
+                                                                .normal14TextStyle()))),
+                                                Expanded(
+                                                    flex: 7,
+                                                    child: Container(
+                                                        child: Text(
+                                                            _actorAbilityStr,
+                                                            style: CustomStyles
+                                                                .normal14TextStyle())))
+                                              ])),
+                                      Container(
+                                          padding: EdgeInsets.only(
+                                              left: 15, right: 15),
+                                          margin: EdgeInsets.only(top: 10.0),
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Expanded(
+                                                  flex: 3,
+                                                  child: Container(
+                                                      child: Text('키워드',
+                                                          style: CustomStyles
+                                                              .normal14TextStyle()))),
+                                              Expanded(
+                                                flex: 7,
+                                                child: Container(
+                                                  alignment: Alignment.topLeft,
+                                                  margin: EdgeInsets.only(
+                                                      bottom: 10),
+                                                  padding: EdgeInsets.only(
+                                                    right: 15,
+                                                  ),
+                                                  child: Tags(
+                                                    runSpacing: 5,
+                                                    spacing: 5,
+                                                    alignment:
+                                                        WrapAlignment.start,
+                                                    runAlignment:
+                                                        WrapAlignment.start,
+                                                    key: _myKeywordTagStateKey,
+                                                    itemCount: _actorLookKwdList
+                                                        .length,
+                                                    // required
+                                                    itemBuilder: (int index) {
+                                                      final item =
+                                                          _actorLookKwdList[
+                                                              index];
+                                                      return ItemTags(
+                                                        textStyle: CustomStyles
+                                                            .dark14TextStyle(),
+                                                        textColor: CustomColors
+                                                            .colorFontGrey,
+                                                        activeColor:
+                                                            CustomColors
+                                                                .colorFontGrey,
+                                                        textActiveColor:
+                                                            CustomColors
+                                                                .colorWhite,
+                                                        key: Key(
+                                                            index.toString()),
+                                                        index: index,
+                                                        title: item,
+                                                        active: false,
+                                                        pressEnabled: false,
+                                                        combine: ItemTagsCombine
+                                                            .withTextBefore,
+                                                        elevation: 0.0,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(50),
+                                                        onPressed: (item) =>
+                                                            print(item),
+                                                        onLongPressed: (item) =>
+                                                            print(item),
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          )),
+                                      Container(
+                                          margin: EdgeInsets.only(
+                                              top: 30.0, bottom: 5),
+                                          padding: EdgeInsets.only(
+                                              left: 15, right: 15),
+                                          child: Text('경력사항',
+                                              style: CustomStyles
+                                                  .bold16TextStyle())),
+                                      Wrap(children: [
+                                        ListView.builder(
+                                            physics:
+                                                NeverScrollableScrollPhysics(),
+                                            shrinkWrap: true,
+                                            padding: EdgeInsets.only(
+                                                left: 10, right: 10),
+                                            itemCount: _filmorgraphyList.length,
+                                            itemBuilder: (context, index) {
+                                              return Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    Container(
+                                                      margin: EdgeInsets.only(
+                                                          bottom: 10),
+                                                      child: Divider(
+                                                        height: 0.1,
+                                                        color: CustomColors
+                                                            .colorFontLightGrey,
+                                                      ),
+                                                    ),
+                                                    ActorFilmoListItem(
+                                                        idx: index,
+                                                        data: _filmorgraphyList[
+                                                            index],
+                                                        isEditMode: false,
+                                                        onClickEvent: () {
+                                                          setState(() {
+                                                            _filmorgraphyList
+                                                                .removeAt(
+                                                                    index);
+                                                          });
+                                                        })
+                                                  ]);
+                                            })
+                                      ])
+                                    ])))),
                     Container(
                         width: double.infinity,
                         height: 50,
@@ -543,7 +602,9 @@ class _AuditionApplyUploadProfile extends State<AuditionApplyUploadProfile>
                                               castingSeq: _castingSeq,
                                               projectName: _projectName,
                                               castingName: _castingName,
-                                              applyImageData: _applyImageData));
+                                              dbImgages: _dbImgages,
+                                              newImgages: _newImgages,
+                                              actorSeq: _actorSeq));
                                     }))),
                             Expanded(
                                 child: Container(
@@ -583,23 +644,73 @@ class _AuditionApplyUploadProfile extends State<AuditionApplyUploadProfile>
   /*
   * 지원하기
   * */
-  void requestAddApply(BuildContext context) {
+  Future<void> requestAddApply(BuildContext context) async {
     try {
       final dio = Dio();
 
       Map<String, dynamic> targetData = new Map();
-      targetData[APIConstants.actor_seq] =
-          KCastingAppData().myInfo[APIConstants.seq];
+
+      if (KCastingAppData().myInfo[APIConstants.member_type] ==
+          APIConstants.member_type_actor) {
+        targetData[APIConstants.actor_seq] =
+            KCastingAppData().myInfo[APIConstants.seq];
+      } else if (KCastingAppData().myInfo[APIConstants.member_type] ==
+          APIConstants.member_type_management) {
+        targetData[APIConstants.actor_seq] = _actorSeq;
+      }
+
       targetData[APIConstants.casting_seq] = _castingSeq;
-      targetData[APIConstants.file_image] = _applyImageData;
-      targetData[APIConstants.file_video] = _applyVideoData;
+
+      if (_dbImgages.length > 0) {
+        targetData[APIConstants.db_imgages] = _dbImgages;
+      }
+
+      if (_dbVideos.length > 0) {
+        targetData[APIConstants.db_videos] = _dbVideos;
+      }
 
       Map<String, dynamic> params = new Map();
-      params[APIConstants.key] = APIConstants.INS_AAA_INFO;
+      params[APIConstants.key] = APIConstants.INS_AAA_INFO_FORMDATA;
       params[APIConstants.target] = targetData;
 
+      // 새로 등록한 이미지 추가
+      var newImageFiles = [];
+      for (int i = 0; i < _newImgages.length; i++) {
+        var temp = _newImgages[i].path.split('/');
+        String fileName = temp[temp.length - 1];
+        newImageFiles.add(await MultipartFile.fromFile(_newImgages[i].path,
+            filename: fileName));
+      }
+
+      if (newImageFiles.length > 0) {
+        params[APIConstants.new_images] = newImageFiles;
+      }
+
+      // 새로 등록한 비디오 및 썸네일 추가
+      var newVideoFiles = [];
+      var newVideoThumbFiles = [];
+      for (int i = 0; i < _newVideos.length; i++) {
+        var temp = _newVideos[i].path.split('/');
+        String fileName = temp[temp.length - 1];
+        newVideoFiles.add(await MultipartFile.fromFile(_newVideos[i].path,
+            filename: fileName));
+
+        var tempImg = _newVideoThumbs[i].path.split('/');
+        String thumbFileName = tempImg[tempImg.length - 1];
+        newVideoThumbFiles.add(await MultipartFile.fromFile(
+            _newVideoThumbs[i].path,
+            filename: thumbFileName));
+      }
+
+      if (newVideoFiles.length > 0) {
+        params[APIConstants.new_videos] = newVideoFiles;
+        params[APIConstants.new_videos_thumb] = newVideoThumbFiles;
+      }
+
       // 지원하기 api 호출
-      RestClient(dio).postRequestMainControl(params).then((value) async {
+      RestClient(dio)
+          .postRequestMainControlFormData(params)
+          .then((value) async {
         if (value == null) {
           // 에러 - 데이터 널
           showSnackBar(context, APIConstants.error_msg_server_not_response);
@@ -611,7 +722,14 @@ class _AuditionApplyUploadProfile extends State<AuditionApplyUploadProfile>
                 _isUpload = false;
               });
 
-              replaceView(context, AuditionApplyComplete());
+              if (KCastingAppData().myInfo[APIConstants.member_type] ==
+                  APIConstants.member_type_actor) {
+                replaceView(context, AuditionApplyComplete());
+              } else if (KCastingAppData().myInfo[APIConstants.member_type] ==
+                  APIConstants.member_type_management) {
+                replaceView(
+                    context, AuditionApplyComplete(actorSeq: _actorSeq));
+              }
             } catch (e) {
               showSnackBar(context, APIConstants.error_msg_try_again);
             }

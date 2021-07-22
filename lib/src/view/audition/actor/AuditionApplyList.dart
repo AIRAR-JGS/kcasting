@@ -36,6 +36,11 @@ class _AuditionApplyList extends State<AuditionApplyList>
   // 지원현황 리스트 관련 변수
   List<dynamic> _auditionList = [];
 
+  // 지원 현황 상세 조회 윗부분
+  int applyIngCnt = 0;
+  int applyCompleteCnt = 0;
+  int applyFailCnt = 0;
+
   ScrollController _scrollController;
 
   int _total = 0;
@@ -51,6 +56,8 @@ class _AuditionApplyList extends State<AuditionApplyList>
         APIConstants.member_type_actor) {
       _actorSeq = KCastingAppData().myInfo[APIConstants.seq];
     }
+
+    requestMyApplyListHeadApi(context);
 
     _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(_handleTabSelection);
@@ -77,7 +84,7 @@ class _AuditionApplyList extends State<AuditionApplyList>
         _tabIndex = _tabController.index;
 
         String stateType =
-            _tabIndex == 0 ? "진행중" : (_tabIndex == 1 ? "합격" : "불합격");
+            _tabIndex == 0 ? "진행중" : (_tabIndex == 1 ? "계약완료" : "불합격");
         _auditionList = [];
         requestMyApplyListApi(context, stateType);
       });
@@ -98,7 +105,7 @@ class _AuditionApplyList extends State<AuditionApplyList>
           print("RUNNING LOAD MORE");
 
           String stateType =
-              _tabIndex == 0 ? "진행중" : (_tabIndex == 1 ? "합격" : "불합격");
+              _tabIndex == 0 ? "진행중" : (_tabIndex == 1 ? "계약완료" : "불합격");
           requestMyApplyListApi(context, stateType);
         }
       });
@@ -109,6 +116,53 @@ class _AuditionApplyList extends State<AuditionApplyList>
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  /*
+  * 지원현황 윗부분 조회
+  * */
+  void requestMyApplyListHeadApi(BuildContext _context) {
+    final dio = Dio();
+
+    // 지원현황 윗부분 조회 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetData = new Map();
+    targetData[APIConstants.actor_seq] = _actorSeq;
+
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.SEL_MGM_ACTORAUDITION_HEAD;
+    params[APIConstants.target] = targetData;
+
+    // 지원현황 윗부분 조회 api 호출
+    RestClient(dio).postRequestMainControl(params).then((value) async {
+      if (value != null) {
+        if (value[APIConstants.resultVal]) {
+          // 지원현황 윗부분 조회 성공
+          var _responseData = value[APIConstants.data];
+
+          if (_responseData == null) {
+            return;
+          }
+
+          setState(() {
+            List<dynamic> _responseList = _responseData[APIConstants.list];
+
+            if (_responseList != null && _responseList.length > 0) {
+              Map<String, dynamic> headerData = _responseList[0];
+
+              if (headerData != null) {
+                applyIngCnt = headerData[APIConstants.applyIngCnt];
+                applyCompleteCnt = headerData[APIConstants.applyCompleteCnt];
+                applyFailCnt = headerData[APIConstants.applyFailCnt];
+              }
+            }
+          });
+        } else {
+          showSnackBar(context, value[APIConstants.resultMsg]);
+        }
+      } else {
+        showSnackBar(context, '다시 시도해 주세요.');
+      }
+    });
   }
 
   /*
@@ -266,19 +320,19 @@ class _AuditionApplyList extends State<AuditionApplyList>
                                                       // 지원취소 버튼 클릭
                                                       showDialog(
                                                         context: context,
-                                                        builder: (BuildContext _context) =>
+                                                        builder: (BuildContext
+                                                                _context) =>
                                                             DialogAuditionApplyCancel(
-                                                              onClickedAgree: () {
-
-                                                                requestCancelApplyAuditionApi(
-                                                                    context,
-                                                                    _auditionList[index][
+                                                          onClickedAgree: () {
+                                                            requestCancelApplyAuditionApi(
+                                                                context,
+                                                                _auditionList[
+                                                                        index][
                                                                     APIConstants
                                                                         .audition_apply_seq]);
-                                                              },
-                                                            ),
+                                                          },
+                                                        ),
                                                       );
-
                                                     })
                                                   ])),
                                                   visible: _tabIndex == 0
@@ -356,7 +410,7 @@ class _AuditionApplyList extends State<AuditionApplyList>
                           style: CustomStyles.normal24TextStyle()),
                     ),
                     Container(
-                      width: MediaQuery.of(context).size.width * 0.7,
+                      width: MediaQuery.of(context).size.width,
                       color: CustomColors.colorWhite,
                       child: TabBar(
                         controller: _tabController,
@@ -365,9 +419,9 @@ class _AuditionApplyList extends State<AuditionApplyList>
                         labelStyle: CustomStyles.bold14TextStyle(),
                         unselectedLabelStyle: CustomStyles.normal14TextStyle(),
                         tabs: [
-                          Tab(text: '진행중'),
-                          Tab(text: '합격'),
-                          Tab(text: '불합격'),
+                          Tab(text: '진행중($applyIngCnt)'),
+                          Tab(text: '계약완료($applyCompleteCnt)'),
+                          Tab(text: '불합격($applyFailCnt)'),
                         ],
                       ),
                     ),

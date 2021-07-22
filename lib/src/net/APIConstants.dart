@@ -100,6 +100,7 @@ class APIConstants {
   static const String SEL_AIM_LIST = "SEL_AIM_LIST";                              // 매니지먼트 보유 배우 이미지 목록
   static const String SEL_AVD_LIST = "SEL_AVD_LIST";                              // 매니지먼트 보유 배우 비디오 목록
   static const String SEL_MGM_AUDITIONSTATELIST = "SEL_MGM_AUDITIONSTATELIST";    // 보유 배우 지원 현황 목록 조회
+  static const String SEL_MGM_ACTORAUDITION_HEAD = "SEL_MGM_ACTORAUDITION_HEAD";  // 보유 배우 지원 현황 상세 조회 윗부분
 
   // 공통 - request, response
   static const String key = "key";

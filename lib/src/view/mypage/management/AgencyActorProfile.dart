@@ -66,9 +66,12 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
   String _actorAgeStr = "";
   String _actorEducationStr = "";
   String _actorLanguageStr = "";
+  String _actorDialectStr = "";
   String _actorAbilityStr = "";
+  List<String> _actorCastingKwdList = [];
   List<String> _actorLookKwdList = [];
   final GlobalKey<TagsState> _myKeywordTagStateKey = GlobalKey<TagsState>();
+  final GlobalKey<TagsState> _myCastingKeywordTagStateKey = GlobalKey<TagsState>();
 
   List<dynamic> _actorFilmorgraphy = [];
   List<dynamic> _originalFilmorgraphyList = [];
@@ -200,16 +203,23 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
                     break;
                   }
 
-                // 배우 사투리
+              // 배우 사투리
                 case APIConstants.table_actor_dialect:
                   {
                     var _listData = _data[APIConstants.data];
-
+                    List<dynamic> _actorDialect;
                     if (_listData != null) {
-                      _actorDialect.clear();
                       _actorDialect = _listData[APIConstants.list] as List;
                     } else {
                       _actorDialect = [];
+                    }
+
+                    for (int i = 0; i < _actorDialect.length; i++) {
+                      var _lanData = _actorDialect[i];
+                      _actorDialectStr += _lanData[APIConstants.language_type];
+
+                      if (i != _actorDialect.length - 1)
+                        _actorDialectStr += ",\t";
                     }
 
                     break;
@@ -238,16 +248,32 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
                     break;
                   }
 
-                // 배우 키워드
+              // 배우 캐스팅 키워드
                 case APIConstants.table_actor_castingKwd:
                   {
                     var _listData = _data[APIConstants.data];
-
+                    List<dynamic> _actorCastingKwd;
                     if (_listData != null) {
-                      _actorCastingKwd.clear();
                       _actorCastingKwd = _listData[APIConstants.list] as List;
                     } else {
                       _actorCastingKwd = [];
+                    }
+
+                    for (int i = 0; i < _actorCastingKwd.length; i++) {
+                      var _lookKwdData = _actorCastingKwd[i];
+
+                      for (int j = 0;
+                      j < KCastingAppData().commonCodeK01.length;
+                      j++) {
+                        var _castingKwdCode =
+                        KCastingAppData().commonCodeK01[j];
+
+                        if (_lookKwdData[APIConstants.code_seq] ==
+                            _castingKwdCode[APIConstants.seq]) {
+                          _actorCastingKwdList
+                              .add(_castingKwdCode[APIConstants.child_name]);
+                        }
+                      }
                     }
 
                     break;
@@ -821,11 +847,14 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
                                       ActorProfileWidget.profileWidget(
                                           context,
                                           _myKeywordTagStateKey,
+                                          _myCastingKeywordTagStateKey,
                                           _actorProfile,
                                           _actorAgeStr,
                                           _actorEducationStr,
                                           _actorLanguageStr,
+                                          _actorDialectStr,
                                           _actorAbilityStr,
+                                          _actorCastingKwdList,
                                           _actorLookKwdList),
                                       Container(
                                           height: 50,

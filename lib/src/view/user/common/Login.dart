@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/KCastingAppData.dart';
 import 'package:casting_call/res/CustomColors.dart';
@@ -11,11 +9,11 @@ import 'package:casting_call/src/view/main/Home.dart';
 import 'package:casting_call/src/view/user/common/FindID.dart';
 import 'package:casting_call/src/view/user/common/FindPW.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:encrypt/encrypt.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:pointycastle/asymmetric/api.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'JoinSelectType.dart';
 
@@ -29,6 +27,8 @@ class Login extends StatefulWidget {
 
 class _Login extends State<Login> with BaseUtilMixin {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+
+  bool _isUpload = false;
 
   DateTime currentBackPressTime;
 
@@ -71,7 +71,8 @@ class _Login extends State<Login> with BaseUtilMixin {
                 key: _scaffoldKey,
                 appBar: CustomStyles.appBarWithoutBtn(),
                 body: Builder(builder: (BuildContext context) {
-                  return SingleChildScrollView(
+                  return Stack(children: [
+                    SingleChildScrollView(
                       child: Container(
                           padding: EdgeInsets.only(left: 30, right: 30),
                           alignment: Alignment.centerLeft,
@@ -178,7 +179,16 @@ class _Login extends State<Login> with BaseUtilMixin {
                                             replaceView(context, FindPW());
                                           })
                                         ]))
-                              ])));
+                              ])),
+                    ),
+                    Visibility(
+                      child: Container(
+                          color: Colors.black38,
+                          alignment: Alignment.center,
+                          child: CircularProgressIndicator()),
+                      visible: _isUpload,
+                    )
+                  ]);
                 }))));
   }
 
@@ -203,13 +213,18 @@ class _Login extends State<Login> with BaseUtilMixin {
   * 로그인 api 호출
   * */
   void requestLoginApi(BuildContext context) async {
+    setState(() {
+      _isUpload = true;
+    });
 
     // 비밀번호 암호화
-    final publicPem = await rootBundle.loadString('assets/files/public_key.pem');
+    final publicPem =
+        await rootBundle.loadString('assets/files/public_key.pem');
     final publicKey = RSAKeyParser().parse(publicPem) as RSAPublicKey;
 
     final encryptor = Encrypter(RSA(publicKey: publicKey));
-    final encrypted = encryptor.encrypt(StringUtils.trimmedString(_txtFieldPW.text));
+    final encrypted =
+        encryptor.encrypt(StringUtils.trimmedString(_txtFieldPW.text));
 
     // 로그인 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetDatas = new Map();
@@ -222,59 +237,74 @@ class _Login extends State<Login> with BaseUtilMixin {
 
     // 로그인 api 호출
     RestClient(Dio()).postRequestMainControl(params).then((value) async {
-      if (value == null) {
-        // 에러 - 데이터 널
-        showSnackBar(context, APIConstants.error_msg_server_not_response);
-      } else {
-        if (value[APIConstants.resultVal]) {
-          var _responseList = value[APIConstants.data];
-          List<dynamic> _listData = _responseList[APIConstants.list];
-
-          // 회원데이터 전역변수에 저장
-          KCastingAppData().myInfo = _listData.length > 0 ? _listData[0] : null;
-
-          String memberType = KCastingAppData().myInfo[APIConstants.member_type];
-
-          // 로그인 성공
-          if (_isAutoLogin == 1) {
-            final SharedPreferences prefs =
-                await SharedPreferences.getInstance();
-            prefs.setBool(APIConstants.autoLogin, true);
-
-            prefs.setString(APIConstants.member_type, memberType);
-            prefs.setInt(APIConstants.seq, KCastingAppData().myInfo[APIConstants.seq]);
-          }
-
-          if (memberType == APIConstants.member_type_actor) {
-            requestActorProfileApi(context);
-          } else {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => Home()),
-            );
-          }
+      try {
+        if (value == null) {
+          // 에러 - 데이터 널
+          showSnackBar(context, APIConstants.error_msg_server_not_response);
         } else {
-          switch (value[APIConstants.resultMsg]) {
-            // 존재하지 않는 아이디입니다.
-            case APIConstants.server_error_not_joined:
-              showSnackBar(context, APIConstants.error_msg_login_not_valid_id);
-              break;
-            // 비밀번호가 올바르지 않습니다.
-            case APIConstants.server_error_not_valid_pwd:
-              showSnackBar(context, APIConstants.error_msg_login_not_valid_pwd);
-              break;
-            default:
-              showSnackBar(context, APIConstants.error_msg_try_again);
-              break;
+          if (value[APIConstants.resultVal]) {
+            var _responseList = value[APIConstants.data];
+            List<dynamic> _listData = _responseList[APIConstants.list];
+
+            // 회원데이터 전역변수에 저장
+            KCastingAppData().myInfo =
+                _listData.length > 0 ? _listData[0] : null;
+
+            String memberType =
+                KCastingAppData().myInfo[APIConstants.member_type];
+
+            // 로그인 성공
+            if (_isAutoLogin == 1) {
+              final SharedPreferences prefs =
+                  await SharedPreferences.getInstance();
+              prefs.setBool(APIConstants.autoLogin, true);
+
+              prefs.setString(APIConstants.member_type, memberType);
+              prefs.setInt(
+                  APIConstants.seq, KCastingAppData().myInfo[APIConstants.seq]);
+            }
+
+            if (memberType == APIConstants.member_type_actor) {
+              requestActorProfileApi(context);
+            } else {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => Home()),
+              );
+            }
+          } else {
+            switch (value[APIConstants.resultMsg]) {
+              // 존재하지 않는 아이디입니다.
+              case APIConstants.server_error_not_joined:
+                showSnackBar(
+                    context, APIConstants.error_msg_login_not_valid_id);
+                break;
+              // 비밀번호가 올바르지 않습니다.
+              case APIConstants.server_error_not_valid_pwd:
+                showSnackBar(
+                    context, APIConstants.error_msg_login_not_valid_pwd);
+                break;
+              default:
+                showSnackBar(context, APIConstants.error_msg_try_again);
+                break;
+            }
           }
         }
+      } catch (e) {
+        showSnackBar(context, value[APIConstants.error_msg_try_again]);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }
 
   // 배우프로필조회 api 호출
   void requestActorProfileApi(BuildContext context) {
-    final dio = Dio();
+    setState(() {
+      _isUpload = true;
+    });
 
     // 배우프로필조회 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
@@ -287,7 +317,7 @@ class _Login extends State<Login> with BaseUtilMixin {
     params[APIConstants.key] = APIConstants.SAR_APR_INFO;
     params[APIConstants.target] = targetData;
 
-    RestClient(dio).postRequestMainControl(params).then((value) async {
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
       if (value != null) {
         if (value[APIConstants.resultVal]) {
           // 배우프로필조회 성공
@@ -440,6 +470,10 @@ class _Login extends State<Login> with BaseUtilMixin {
           });
         }
       }
+
+      setState(() {
+        _isUpload = false;
+      });
 
       replaceView(context, Home());
     });

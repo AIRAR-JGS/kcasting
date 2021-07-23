@@ -668,8 +668,6 @@ class _ActorProfileModifyMainInfo extends State<ActorProfileModifyMainInfo>
     profileTargetData[APIConstants.actorProfile_seq] =
         KCastingAppData().myInfo[APIConstants.actorProfile_seq];
     profileTargetData[APIConstants.actor_Introduce] = _txtFieldIntroduce.text;
-    profileTargetData[APIConstants.actor_level] = "";
-    //profileTargetData[APIConstants.actor_levelConfirmation_url] = null;
     profileTargetData[APIConstants.actor_drama_pay] = _txtFieldDramaPay.text;
     profileTargetData[APIConstants.actor_movie_pay] = _txtFieldMoviePay.text;
     profileTargetData[APIConstants.actor_tall] = _txtFieldTall.text;

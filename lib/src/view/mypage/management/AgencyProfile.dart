@@ -76,7 +76,7 @@ class _AgencyProfile extends State<AgencyProfile>
 
     var temp = profileFile.path.split('/');
     String fileName = temp[temp.length - 1];
-    params[APIConstants.target_files] =
+    params[APIConstants.target_files_array] =
         await MultipartFile.fromFile(profileFile.path, filename: fileName);
 
     // 매니지먼트 로고 이미지 수정 api 호출

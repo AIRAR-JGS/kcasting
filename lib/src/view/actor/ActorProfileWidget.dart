@@ -106,11 +106,14 @@ class ActorProfileWidget {
   static Widget profileWidget(
       BuildContext context,
       GlobalKey<TagsState> myKeywordTagStateKey,
+      GlobalKey<TagsState> myCastingKeywordTagStateKey,
       Map<String, dynamic> actorProfile,
       String actorAgeStr,
       String actorEducationStr,
       String actorLanguageStr,
+      String actorDialectStr,
       String actorAbilityStr,
+      List<String> actorCastingKwdList,
       List<String> actorLookKwdList) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Container(
@@ -283,6 +286,21 @@ class ActorProfileWidget {
                 flex: 3,
                 child: Container(
                     child:
+                        Text('사투리', style: CustomStyles.normal14TextStyle()))),
+            Expanded(
+                flex: 7,
+                child: Container(
+                    child: Text(actorDialectStr,
+                        style: CustomStyles.normal14TextStyle())))
+          ])),
+      Container(
+          padding: EdgeInsets.only(left: 15, right: 15),
+          margin: EdgeInsets.only(top: 10.0),
+          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Expanded(
+                flex: 3,
+                child: Container(
+                    child:
                         Text('특기', style: CustomStyles.normal14TextStyle()))),
             Expanded(
                 flex: 7,
@@ -299,7 +317,58 @@ class ActorProfileWidget {
               Expanded(
                   flex: 3,
                   child: Container(
-                      child: Text('키워드',
+                      child: Text('캐스팅키워드',
+                          style: CustomStyles.normal14TextStyle()))),
+              Expanded(
+                flex: 7,
+                child: Container(
+                  alignment: Alignment.topLeft,
+                  margin: EdgeInsets.only(bottom: 10),
+                  padding: EdgeInsets.only(
+                    right: 15,
+                  ),
+                  child: Tags(
+                    runSpacing: 5,
+                    spacing: 5,
+                    alignment: WrapAlignment.start,
+                    runAlignment: WrapAlignment.start,
+                    key: myCastingKeywordTagStateKey,
+                    itemCount: actorCastingKwdList.length,
+                    // required
+                    itemBuilder: (int index) {
+                      final item = actorCastingKwdList[index];
+                      return ItemTags(
+                        textStyle: CustomStyles.dark14TextStyle(),
+                        textColor: CustomColors.colorFontGrey,
+                        activeColor: CustomColors.colorFontGrey,
+                        textActiveColor: CustomColors.colorWhite,
+                        key: Key(index.toString()),
+                        index: index,
+                        title: item,
+                        active: false,
+                        pressEnabled: false,
+                        combine: ItemTagsCombine.withTextBefore,
+                        elevation: 0.0,
+                        borderRadius: BorderRadius.circular(50),
+                        onPressed: (item) => print(item),
+                        onLongPressed: (item) => print(item),
+                      );
+                    },
+                  ),
+                ),
+              )
+            ],
+          )),
+      Container(
+          padding: EdgeInsets.only(left: 15, right: 15),
+          margin: EdgeInsets.only(top: 10.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                  flex: 3,
+                  child: Container(
+                      child: Text('외모키워드',
                           style: CustomStyles.normal14TextStyle()))),
               Expanded(
                 flex: 7,

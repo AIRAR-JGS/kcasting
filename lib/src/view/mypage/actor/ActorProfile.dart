@@ -31,9 +31,12 @@ class _ActorProfile extends State<ActorProfile>
     with SingleTickerProviderStateMixin, BaseUtilMixin {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
+  bool _isUpload = false;
   bool _kIsWeb;
 
   final GlobalKey<TagsState> _myKeywordTagStateKey = GlobalKey<TagsState>();
+  final GlobalKey<TagsState> _myCastingKeywordTagStateKey =
+      GlobalKey<TagsState>();
 
   File _profileImgFile;
   final picker = ImagePicker();
@@ -41,12 +44,12 @@ class _ActorProfile extends State<ActorProfile>
   TabController _tabController;
   int _tabIndex = 0;
 
-  bool _isUpload = false;
-
   String _actorAgeStr = "";
   String _actorEducationStr = "";
   String _actorLanguageStr = "";
+  String _actordialectStr = "";
   String _actorAbilityStr = "";
+  List<String> _actorCastingKwdList = [];
   List<String> _actorLookKwdList = [];
 
   List<dynamic> _filmorgraphyList = [];
@@ -101,8 +104,6 @@ class _ActorProfile extends State<ActorProfile>
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    print("ddddddddddddddddd");
-
     initData();
   }
 
@@ -111,7 +112,9 @@ class _ActorProfile extends State<ActorProfile>
       _actorAgeStr = "";
       _actorEducationStr = "";
       _actorLanguageStr = "";
+      _actordialectStr = "";
       _actorAbilityStr = "";
+      _actorCastingKwdList = [];
       _actorLookKwdList = [];
       _filmorgraphyList = [];
       _originalFilmorgraphyList = [];
@@ -126,6 +129,7 @@ class _ActorProfile extends State<ActorProfile>
         for (int i = 0; i < KCastingAppData().myEducation.length; i++) {
           var _eduData = KCastingAppData().myEducation[i];
           _actorEducationStr += _eduData[APIConstants.education_name];
+          _actorEducationStr += _eduData[APIConstants.education_type];
           _actorEducationStr += "\t";
           _actorEducationStr += _eduData[APIConstants.major_name];
 
@@ -141,7 +145,18 @@ class _ActorProfile extends State<ActorProfile>
           _actorLanguageStr += _lanData[APIConstants.language_type];
 
           if (i != KCastingAppData().myLanguage.length - 1)
-            _actorLanguageStr += "\t";
+            _actorLanguageStr += ",\t";
+        }
+      }
+
+      // 배우 사투리
+      if (KCastingAppData().myDialect != null) {
+        for (int i = 0; i < KCastingAppData().myDialect.length; i++) {
+          var _dialectData = KCastingAppData().myDialect[i];
+          _actordialectStr += _dialectData[APIConstants.dialect_type];
+
+          if (i != KCastingAppData().myDialect.length - 1)
+            _actordialectStr += ",\t";
         }
       }
 
@@ -153,6 +168,24 @@ class _ActorProfile extends State<ActorProfile>
 
           if (i != KCastingAppData().myAbility.length - 1)
             _actorAbilityStr += ",\t";
+        }
+      }
+
+      // 배우 캐스팅 키워드
+      if (KCastingAppData().myCastingKwd != null) {
+        for (int i = 0; i < KCastingAppData().myCastingKwd.length; i++) {
+          var _castingKwdData = KCastingAppData().myCastingKwd[i];
+
+          for (int j = 0; j < KCastingAppData().commonCodeK01.length; j++) {
+            var _castingKwdCode = KCastingAppData().commonCodeK01[j];
+
+            if (_castingKwdData[APIConstants.code_seq] ==
+                _castingKwdCode[APIConstants.seq]) {
+              print("------------");
+              _actorCastingKwdList
+                  .add(_castingKwdCode[APIConstants.child_name]);
+            }
+          }
         }
       }
 
@@ -599,11 +632,14 @@ class _ActorProfile extends State<ActorProfile>
                                   ActorProfileWidget.profileWidget(
                                       context,
                                       _myKeywordTagStateKey,
+                                      _myCastingKeywordTagStateKey,
                                       KCastingAppData().myProfile,
                                       _actorAgeStr,
                                       _actorEducationStr,
                                       _actorLanguageStr,
+                                      _actordialectStr,
                                       _actorAbilityStr,
+                                      _actorCastingKwdList,
                                       _actorLookKwdList),
                                   Container(
                                       height: 50,

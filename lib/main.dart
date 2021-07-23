@@ -327,6 +327,7 @@ class _MyHomePageState extends State<MyHomePage> with BaseUtilMixin {
                     var _listData = _data[APIConstants.data];
 
                     if (_listData != null) {
+                      print("꺄아아아아아아");
                       KCastingAppData().myCastingKwd =
                           _listData[APIConstants.list] as List;
                     } else {

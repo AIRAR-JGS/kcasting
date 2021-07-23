@@ -34,6 +34,8 @@ class JoinProduction extends StatefulWidget {
 class _JoinProduction extends State<JoinProduction> with BaseUtilMixin {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
+  bool _isUpload = false;
+
   String _companyName;
   String _companyCEOName;
   String _companyNum;
@@ -44,13 +46,14 @@ class _JoinProduction extends State<JoinProduction> with BaseUtilMixin {
   final _txtFieldCeoName = TextEditingController();
   final _txtFieldHomepage = TextEditingController();
   final _txtFieldEmail = TextEditingController();
-  final _txtFieldAccountName = TextEditingController();
-  final _txtFieldAccountNum = TextEditingController();
 
-  Map<String, dynamic> _bankVal;
-  bool _isAccountChecked = false;
   int _agreeTerms = 0;
   int _agreePrivacyPolicy = 0;
+
+  /*Map<String, dynamic> _bankVal;
+  bool _isAccountChecked = false;
+  final _txtFieldAccountName = TextEditingController();
+  final _txtFieldAccountNum = TextEditingController();*/
 
   @override
   void initState() {
@@ -68,7 +71,7 @@ class _JoinProduction extends State<JoinProduction> with BaseUtilMixin {
   /*
   *  계좌 소유주 확인 api 호출
   * */
-  void requestAccountCheckApi(BuildContext context) async {
+  /*void requestAccountCheckApi(BuildContext context) async {
     final dio = Dio();
 
     // 계좌 소유주 확인 api 호출 시 보낼 파라미터
@@ -85,17 +88,6 @@ class _JoinProduction extends State<JoinProduction> with BaseUtilMixin {
     Map<String, dynamic> params = new Map();
     params[APIConstants.key] = APIConstants.CHK_TOT_ACCOUNT;
     params[APIConstants.target] = targetDatas;
-
-    /*Map<String, dynamic> targetDatas = new Map();
-    targetDatas[APIConstants.bankCode] = _bankVal[APIConstants.child_code];
-    targetDatas[APIConstants.accountNo] = StringUtils.trimmedString(_txtFieldAccountNum.text);
-    targetDatas[APIConstants.name] = StringUtils.trimmedString(_txtFieldAccountName.text);
-    targetDatas[APIConstants.isPersonalAccount] = true;
-    targetDatas[APIConstants.resId] = "890719";
-
-    Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.CHK_TOT_ACCOUNT;
-    params[APIConstants.target] = targetDatas;*/
 
     // 계좌 소유주 확인 api 호출
     RestClient(dio).postRequestMainControl(params).then((value) async {
@@ -127,7 +119,7 @@ class _JoinProduction extends State<JoinProduction> with BaseUtilMixin {
         }
       }
     });
-  }
+  }*/
 
   /*
   *  메인위젯
@@ -154,194 +146,196 @@ class _JoinProduction extends State<JoinProduction> with BaseUtilMixin {
                 }),
                 body: Builder(
                   builder: (BuildContext context) {
-                    return Container(
-                        child: Column(
+                    return Stack(
                       children: [
-                        Expanded(
-                            flex: 1,
-                            child: SingleChildScrollView(
-                                child: Container(
-                                    padding:
-                                        EdgeInsets.only(top: 30, bottom: 50),
-                                    child: Column(
-                                        mainAxisSize: MainAxisSize.max,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                              margin:
-                                                  EdgeInsets.only(bottom: 30),
-                                              alignment: Alignment.center,
-                                              child: Text('회원가입',
-                                                  style: CustomStyles
-                                                      .normal24TextStyle())),
-                                          Container(
-                                              padding: EdgeInsets.only(
-                                                  left: 30, right: 30),
-                                              alignment: Alignment.centerLeft,
-                                              child: RichText(
-                                                  text: TextSpan(
-                                                      style: CustomStyles
-                                                          .normal14TextStyle(),
-                                                      children: <TextSpan>[
-                                                    TextSpan(text: '아이디'),
-                                                    TextSpan(
-                                                        style: TextStyle(
-                                                            color: CustomColors
-                                                                .colorRed),
-                                                        text: '*'),
-                                                  ]))),
-                                          Container(
-                                              padding: EdgeInsets.only(
-                                                  left: 30, right: 30),
-                                              margin: EdgeInsets.only(top: 5),
-                                              child: CustomStyles
-                                                  .greyBorderRound7TextField(
-                                                      _txtFieldID,
-                                                      '영문, 숫자만 가능합니다.')),
-                                          Container(
-                                              margin: EdgeInsets.only(top: 15),
-                                              padding: EdgeInsets.only(
-                                                  left: 30, right: 30),
-                                              alignment: Alignment.centerLeft,
-                                              child: RichText(
-                                                  text: TextSpan(
-                                                      style: CustomStyles
-                                                          .normal14TextStyle(),
-                                                      children: <TextSpan>[
-                                                    TextSpan(text: '비밀번호'),
-                                                    TextSpan(
-                                                        style: TextStyle(
-                                                            color: CustomColors
-                                                                .colorRed),
-                                                        text: '*'),
-                                                  ]))),
-                                          Container(
-                                              margin: EdgeInsets.only(top: 5),
-                                              padding: EdgeInsets.only(
-                                                  left: 30, right: 30),
-                                              child: CustomStyles
-                                                  .greyBorderRound7PWDTextField(
-                                                      _txtFieldPW,
-                                                      '대문자, 소문자, 숫자 조합으로 가능합니다.')),
-                                          Container(
-                                              margin: EdgeInsets.only(top: 15),
-                                              padding: EdgeInsets.only(
-                                                  left: 30, right: 30),
-                                              alignment: Alignment.centerLeft,
-                                              child: RichText(
-                                                  text: TextSpan(
-                                                      style: CustomStyles
-                                                          .normal14TextStyle(),
-                                                      children: <TextSpan>[
-                                                    TextSpan(text: '비밀번호 확인'),
-                                                    TextSpan(
-                                                        style: TextStyle(
-                                                            color: CustomColors
-                                                                .colorRed),
-                                                        text: '*'),
-                                                  ]))),
-                                          Container(
-                                              margin: EdgeInsets.only(top: 5),
-                                              padding: EdgeInsets.only(
-                                                  left: 30, right: 30),
-                                              child: CustomStyles
-                                                  .greyBorderRound7PWDTextField(
-                                                      _txtFieldPWCheck,
-                                                      '비밀번호를 한번 더 입력해 주세요.')),
-                                          Container(
-                                            margin: EdgeInsets.only(
-                                                top: 30, bottom: 30),
-                                            child: Divider(
-                                              height: 0.1,
-                                              color: CustomColors
-                                                  .colorFontLightGrey,
-                                            ),
-                                          ),
-                                          Container(
-                                              padding: EdgeInsets.only(
-                                                  left: 30, right: 30),
-                                              alignment: Alignment.centerLeft,
-                                              child: RichText(
-                                                  text: TextSpan(
-                                                      style: CustomStyles
-                                                          .normal14TextStyle(),
-                                                      children: <TextSpan>[
-                                                    TextSpan(text: '기업명'),
-                                                    TextSpan(
-                                                        style: TextStyle(
-                                                            color: CustomColors
-                                                                .colorRed),
-                                                        text: '*'),
-                                                  ]))),
-                                          Container(
-                                              padding: EdgeInsets.only(
-                                                  left: 30, right: 30),
-                                              margin: EdgeInsets.only(top: 5),
-                                              child: CustomStyles
-                                                  .disabledGreyBorderRound7TextField(
-                                                      _companyName)),
-                                          Container(
-                                              margin: EdgeInsets.only(top: 15),
-                                              padding: EdgeInsets.only(
-                                                  left: 30, right: 30),
-                                              alignment: Alignment.centerLeft,
-                                              child: RichText(
-                                                  text: TextSpan(
-                                                      style: CustomStyles
-                                                          .normal14TextStyle(),
-                                                      children: <TextSpan>[
-                                                    TextSpan(text: '사업자등록번호'),
-                                                    TextSpan(
-                                                        style: TextStyle(
-                                                            color: CustomColors
-                                                                .colorRed),
-                                                        text: '*'),
-                                                  ]))),
-                                          Container(
-                                              padding: EdgeInsets.only(
-                                                  left: 30, right: 30),
-                                              margin: EdgeInsets.only(top: 5),
-                                              child: CustomStyles
-                                                  .disabledGreyBorderRound7TextField(
-                                                      _companyNum)),
-                                          Container(
-                                              margin: EdgeInsets.only(top: 15),
-                                              padding: EdgeInsets.only(
-                                                  left: 30, right: 30),
-                                              alignment: Alignment.centerLeft,
-                                              child: RichText(
-                                                  text: TextSpan(
-                                                      style: CustomStyles
-                                                          .normal14TextStyle(),
-                                                      children: <TextSpan>[
-                                                    TextSpan(text: '대표자명'),
-                                                    TextSpan(
-                                                        style: TextStyle(
-                                                            color: CustomColors
-                                                                .colorRed),
-                                                        text: '*'),
-                                                  ]))),
-                                          Container(
-                                              padding: EdgeInsets.only(
-                                                  left: 30, right: 30),
-                                              margin: EdgeInsets.only(top: 5),
-                                              child: CustomStyles
-                                                  .greyBorderRound7TextField(
-                                                      _txtFieldCeoName,
-                                                      '반드시 본명을 입력해 주세요.')),
-                                          Container(
-                                            margin: EdgeInsets.only(
-                                                top: 25, bottom: 25),
-                                            child: Divider(
-                                              height: 0.1,
-                                              color: CustomColors
-                                                  .colorFontLightGrey,
-                                            ),
-                                          ),
-                                          /*Container(
+                        Container(
+                            child: Column(
+                              children: [
+                                Expanded(
+                                    flex: 1,
+                                    child: SingleChildScrollView(
+                                        child: Container(
+                                            padding:
+                                            EdgeInsets.only(top: 30, bottom: 50),
+                                            child: Column(
+                                                mainAxisSize: MainAxisSize.max,
+                                                mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                                children: [
+                                                  Container(
+                                                      margin:
+                                                      EdgeInsets.only(bottom: 30),
+                                                      alignment: Alignment.center,
+                                                      child: Text('회원가입',
+                                                          style: CustomStyles
+                                                              .normal24TextStyle())),
+                                                  Container(
+                                                      padding: EdgeInsets.only(
+                                                          left: 30, right: 30),
+                                                      alignment: Alignment.centerLeft,
+                                                      child: RichText(
+                                                          text: TextSpan(
+                                                              style: CustomStyles
+                                                                  .normal14TextStyle(),
+                                                              children: <TextSpan>[
+                                                                TextSpan(text: '아이디'),
+                                                                TextSpan(
+                                                                    style: TextStyle(
+                                                                        color: CustomColors
+                                                                            .colorRed),
+                                                                    text: '*'),
+                                                              ]))),
+                                                  Container(
+                                                      padding: EdgeInsets.only(
+                                                          left: 30, right: 30),
+                                                      margin: EdgeInsets.only(top: 5),
+                                                      child: CustomStyles
+                                                          .greyBorderRound7TextField(
+                                                          _txtFieldID,
+                                                          '영문, 숫자만 가능합니다.')),
+                                                  Container(
+                                                      margin: EdgeInsets.only(top: 15),
+                                                      padding: EdgeInsets.only(
+                                                          left: 30, right: 30),
+                                                      alignment: Alignment.centerLeft,
+                                                      child: RichText(
+                                                          text: TextSpan(
+                                                              style: CustomStyles
+                                                                  .normal14TextStyle(),
+                                                              children: <TextSpan>[
+                                                                TextSpan(text: '비밀번호'),
+                                                                TextSpan(
+                                                                    style: TextStyle(
+                                                                        color: CustomColors
+                                                                            .colorRed),
+                                                                    text: '*'),
+                                                              ]))),
+                                                  Container(
+                                                      margin: EdgeInsets.only(top: 5),
+                                                      padding: EdgeInsets.only(
+                                                          left: 30, right: 30),
+                                                      child: CustomStyles
+                                                          .greyBorderRound7PWDTextField(
+                                                          _txtFieldPW,
+                                                          '대문자, 소문자, 숫자 조합으로 가능합니다.')),
+                                                  Container(
+                                                      margin: EdgeInsets.only(top: 15),
+                                                      padding: EdgeInsets.only(
+                                                          left: 30, right: 30),
+                                                      alignment: Alignment.centerLeft,
+                                                      child: RichText(
+                                                          text: TextSpan(
+                                                              style: CustomStyles
+                                                                  .normal14TextStyle(),
+                                                              children: <TextSpan>[
+                                                                TextSpan(text: '비밀번호 확인'),
+                                                                TextSpan(
+                                                                    style: TextStyle(
+                                                                        color: CustomColors
+                                                                            .colorRed),
+                                                                    text: '*'),
+                                                              ]))),
+                                                  Container(
+                                                      margin: EdgeInsets.only(top: 5),
+                                                      padding: EdgeInsets.only(
+                                                          left: 30, right: 30),
+                                                      child: CustomStyles
+                                                          .greyBorderRound7PWDTextField(
+                                                          _txtFieldPWCheck,
+                                                          '비밀번호를 한번 더 입력해 주세요.')),
+                                                  Container(
+                                                    margin: EdgeInsets.only(
+                                                        top: 30, bottom: 30),
+                                                    child: Divider(
+                                                      height: 0.1,
+                                                      color: CustomColors
+                                                          .colorFontLightGrey,
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                      padding: EdgeInsets.only(
+                                                          left: 30, right: 30),
+                                                      alignment: Alignment.centerLeft,
+                                                      child: RichText(
+                                                          text: TextSpan(
+                                                              style: CustomStyles
+                                                                  .normal14TextStyle(),
+                                                              children: <TextSpan>[
+                                                                TextSpan(text: '기업명'),
+                                                                TextSpan(
+                                                                    style: TextStyle(
+                                                                        color: CustomColors
+                                                                            .colorRed),
+                                                                    text: '*'),
+                                                              ]))),
+                                                  Container(
+                                                      padding: EdgeInsets.only(
+                                                          left: 30, right: 30),
+                                                      margin: EdgeInsets.only(top: 5),
+                                                      child: CustomStyles
+                                                          .disabledGreyBorderRound7TextField(
+                                                          _companyName)),
+                                                  Container(
+                                                      margin: EdgeInsets.only(top: 15),
+                                                      padding: EdgeInsets.only(
+                                                          left: 30, right: 30),
+                                                      alignment: Alignment.centerLeft,
+                                                      child: RichText(
+                                                          text: TextSpan(
+                                                              style: CustomStyles
+                                                                  .normal14TextStyle(),
+                                                              children: <TextSpan>[
+                                                                TextSpan(text: '사업자등록번호'),
+                                                                TextSpan(
+                                                                    style: TextStyle(
+                                                                        color: CustomColors
+                                                                            .colorRed),
+                                                                    text: '*'),
+                                                              ]))),
+                                                  Container(
+                                                      padding: EdgeInsets.only(
+                                                          left: 30, right: 30),
+                                                      margin: EdgeInsets.only(top: 5),
+                                                      child: CustomStyles
+                                                          .disabledGreyBorderRound7TextField(
+                                                          _companyNum)),
+                                                  Container(
+                                                      margin: EdgeInsets.only(top: 15),
+                                                      padding: EdgeInsets.only(
+                                                          left: 30, right: 30),
+                                                      alignment: Alignment.centerLeft,
+                                                      child: RichText(
+                                                          text: TextSpan(
+                                                              style: CustomStyles
+                                                                  .normal14TextStyle(),
+                                                              children: <TextSpan>[
+                                                                TextSpan(text: '대표자명'),
+                                                                TextSpan(
+                                                                    style: TextStyle(
+                                                                        color: CustomColors
+                                                                            .colorRed),
+                                                                    text: '*'),
+                                                              ]))),
+                                                  Container(
+                                                      padding: EdgeInsets.only(
+                                                          left: 30, right: 30),
+                                                      margin: EdgeInsets.only(top: 5),
+                                                      child: CustomStyles
+                                                          .greyBorderRound7TextField(
+                                                          _txtFieldCeoName,
+                                                          '반드시 본명을 입력해 주세요.')),
+                                                  Container(
+                                                    margin: EdgeInsets.only(
+                                                        top: 25, bottom: 25),
+                                                    child: Divider(
+                                                      height: 0.1,
+                                                      color: CustomColors
+                                                          .colorFontLightGrey,
+                                                    ),
+                                                  ),
+                                                  /*Container(
                                               padding: EdgeInsets.only(
                                                   left: 30, right: 30),
                                               alignment: Alignment.centerLeft,
@@ -488,189 +482,198 @@ class _JoinProduction extends State<JoinProduction> with BaseUtilMixin {
                                                   .colorFontLightGrey,
                                             ),
                                           ),*/
-                                          Container(
-                                              padding: EdgeInsets.only(
-                                                  left: 30, right: 30),
-                                              alignment: Alignment.centerLeft,
-                                              child: Text('홈페이지',
-                                                  style: CustomStyles
-                                                      .normal14TextStyle())),
-                                          Container(
-                                              padding: EdgeInsets.only(
-                                                  left: 30, right: 30),
-                                              margin: EdgeInsets.only(top: 5),
-                                              child: CustomStyles
-                                                  .greyBorderRound7TextFieldWithOption(
-                                                      _txtFieldHomepage,
-                                                      TextInputType.url,
-                                                      '')),
-                                          Container(
-                                              margin: EdgeInsets.only(top: 15),
-                                              padding: EdgeInsets.only(
-                                                  left: 30, right: 30),
-                                              alignment: Alignment.centerLeft,
-                                              child: RichText(
-                                                  text: TextSpan(
-                                                      style: CustomStyles
-                                                          .normal14TextStyle(),
-                                                      children: <TextSpan>[
-                                                    TextSpan(text: '이메일'),
-                                                    TextSpan(
-                                                        style: TextStyle(
-                                                            color: CustomColors
-                                                                .colorRed),
-                                                        text: '*'),
-                                                  ]))),
-                                          Container(
-                                              padding: EdgeInsets.only(
-                                                  left: 30, right: 30),
-                                              margin: EdgeInsets.only(top: 5),
-                                              child: CustomStyles
-                                                  .greyBorderRound7TextFieldWithOption(
-                                                      _txtFieldEmail,
-                                                      TextInputType
-                                                          .emailAddress,
-                                                      '')),
-                                          Container(
-                                              margin: EdgeInsets.only(top: 30),
-                                              padding: EdgeInsets.only(
-                                                  left: 30, right: 30),
-                                              alignment: Alignment.centerLeft,
-                                              child: Text('이용약관',
-                                                  style: CustomStyles
-                                                      .normal14TextStyle())),
-                                          Container(
-                                              margin: EdgeInsets.only(top: 20),
-                                              padding: EdgeInsets.only(
-                                                  left: 30, right: 30),
-                                              alignment: Alignment.centerLeft,
-                                              child: RichText(
-                                                  text: TextSpan(
-                                                      style: CustomStyles
-                                                          .normal14TextStyle(),
-                                                      children: <TextSpan>[
-                                                    TextSpan(
-                                                        text: '서비스 제공을 위해 '),
-                                                    TextSpan(
-                                                        style: TextStyle(
-                                                            color: CustomColors
-                                                                .colorRed,
-                                                            decoration:
-                                                                TextDecoration
-                                                                    .underline),
-                                                        text: '이용약관',
-                                                        recognizer:
-                                                            TapGestureRecognizer()
-                                                              ..onTap = () {
-                                                                // 엔터로뱅 홈페이지 내의 개인정보 처리방침 페이지로 이동
-                                                                launchInBrowser(
-                                                                    APIConstants
-                                                                        .URL_PRIVACY_POLICY);
-                                                              }),
-                                                    TextSpan(text: ' 및 '),
-                                                    TextSpan(
-                                                        style: TextStyle(
-                                                            color: CustomColors
-                                                                .colorRed,
-                                                            decoration:
-                                                                TextDecoration
-                                                                    .underline),
-                                                        text: '개인정보 수집, 이용',
-                                                        recognizer:
-                                                            TapGestureRecognizer()
-                                                              ..onTap = () {
-                                                                // 엔터로뱅 홈페이지 내의 개인정보 처리방침 페이지로 이동
-                                                                launchInBrowser(
-                                                                    APIConstants
-                                                                        .URL_PRIVACY_POLICY);
-                                                              }),
-                                                    TextSpan(
-                                                        text: ' 내용에 동의해 주세요.'),
-                                                  ]))),
-                                          Container(
-                                              margin: EdgeInsets.only(top: 10),
-                                              padding: EdgeInsets.only(
-                                                  left: 30, right: 30),
-                                              child: Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.max,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  children: [
-                                                    Radio<int>(
-                                                      value: _agreeTerms,
-                                                      visualDensity:
-                                                          VisualDensity.compact,
-                                                      groupValue: 1,
-                                                      toggleable: true,
-                                                      onChanged: (_) {
-                                                        setState(() {
-                                                          if (_agreeTerms ==
-                                                              0) {
-                                                            _agreeTerms = 1;
-                                                          } else {
-                                                            _agreeTerms = 0;
-                                                          }
-                                                        });
-                                                      },
-                                                      materialTapTargetSize:
-                                                          MaterialTapTargetSize
-                                                              .shrinkWrap,
-                                                    ),
-                                                    Text('이용약관에 동의합니다.(필수)',
-                                                        style: CustomStyles
-                                                            .normal14TextStyle())
-                                                  ])),
-                                          Container(
-                                              margin: EdgeInsets.only(top: 10),
-                                              padding: EdgeInsets.only(
-                                                  left: 30, right: 30),
-                                              child: Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.max,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  children: [
-                                                    Radio<int>(
-                                                      value:
-                                                          _agreePrivacyPolicy,
-                                                      visualDensity:
-                                                          VisualDensity.compact,
-                                                      groupValue: 1,
-                                                      toggleable: true,
-                                                      onChanged: (_) {
-                                                        setState(() {
-                                                          if (_agreePrivacyPolicy ==
-                                                              0) {
-                                                            _agreePrivacyPolicy =
-                                                                1;
-                                                          } else {
-                                                            _agreePrivacyPolicy =
-                                                                0;
-                                                          }
-                                                        });
-                                                      },
-                                                      materialTapTargetSize:
-                                                          MaterialTapTargetSize
-                                                              .shrinkWrap,
-                                                    ),
-                                                    Text(
-                                                        '개인정보 수집 이용에 동의합니다.(필수)',
-                                                        style: CustomStyles
-                                                            .normal14TextStyle())
-                                                  ]))
-                                        ])))),
-                        Container(
-                            height: 50,
-                            width: double.infinity,
-                            child: CustomStyles.lightGreyBGSquareButtonStyle(
-                                '회원가입', () {
-                              if (checkValidate(context)) {
-                                requestJoinApi(context);
-                              }
-                            }))
+                                                  Container(
+                                                      padding: EdgeInsets.only(
+                                                          left: 30, right: 30),
+                                                      alignment: Alignment.centerLeft,
+                                                      child: Text('홈페이지',
+                                                          style: CustomStyles
+                                                              .normal14TextStyle())),
+                                                  Container(
+                                                      padding: EdgeInsets.only(
+                                                          left: 30, right: 30),
+                                                      margin: EdgeInsets.only(top: 5),
+                                                      child: CustomStyles
+                                                          .greyBorderRound7TextFieldWithOption(
+                                                          _txtFieldHomepage,
+                                                          TextInputType.url,
+                                                          '')),
+                                                  Container(
+                                                      margin: EdgeInsets.only(top: 15),
+                                                      padding: EdgeInsets.only(
+                                                          left: 30, right: 30),
+                                                      alignment: Alignment.centerLeft,
+                                                      child: RichText(
+                                                          text: TextSpan(
+                                                              style: CustomStyles
+                                                                  .normal14TextStyle(),
+                                                              children: <TextSpan>[
+                                                                TextSpan(text: '이메일'),
+                                                                TextSpan(
+                                                                    style: TextStyle(
+                                                                        color: CustomColors
+                                                                            .colorRed),
+                                                                    text: '*'),
+                                                              ]))),
+                                                  Container(
+                                                      padding: EdgeInsets.only(
+                                                          left: 30, right: 30),
+                                                      margin: EdgeInsets.only(top: 5),
+                                                      child: CustomStyles
+                                                          .greyBorderRound7TextFieldWithOption(
+                                                          _txtFieldEmail,
+                                                          TextInputType
+                                                              .emailAddress,
+                                                          '')),
+                                                  Container(
+                                                      margin: EdgeInsets.only(top: 30),
+                                                      padding: EdgeInsets.only(
+                                                          left: 30, right: 30),
+                                                      alignment: Alignment.centerLeft,
+                                                      child: Text('이용약관',
+                                                          style: CustomStyles
+                                                              .normal14TextStyle())),
+                                                  Container(
+                                                      margin: EdgeInsets.only(top: 20),
+                                                      padding: EdgeInsets.only(
+                                                          left: 30, right: 30),
+                                                      alignment: Alignment.centerLeft,
+                                                      child: RichText(
+                                                          text: TextSpan(
+                                                              style: CustomStyles
+                                                                  .normal14TextStyle(),
+                                                              children: <TextSpan>[
+                                                                TextSpan(
+                                                                    text: '서비스 제공을 위해 '),
+                                                                TextSpan(
+                                                                    style: TextStyle(
+                                                                        color: CustomColors
+                                                                            .colorRed,
+                                                                        decoration:
+                                                                        TextDecoration
+                                                                            .underline),
+                                                                    text: '이용약관',
+                                                                    recognizer:
+                                                                    TapGestureRecognizer()
+                                                                      ..onTap = () {
+                                                                        // 엔터로뱅 홈페이지 내의 개인정보 처리방침 페이지로 이동
+                                                                        launchInBrowser(
+                                                                            APIConstants
+                                                                                .URL_PRIVACY_POLICY);
+                                                                      }),
+                                                                TextSpan(text: ' 및 '),
+                                                                TextSpan(
+                                                                    style: TextStyle(
+                                                                        color: CustomColors
+                                                                            .colorRed,
+                                                                        decoration:
+                                                                        TextDecoration
+                                                                            .underline),
+                                                                    text: '개인정보 수집, 이용',
+                                                                    recognizer:
+                                                                    TapGestureRecognizer()
+                                                                      ..onTap = () {
+                                                                        // 엔터로뱅 홈페이지 내의 개인정보 처리방침 페이지로 이동
+                                                                        launchInBrowser(
+                                                                            APIConstants
+                                                                                .URL_PRIVACY_POLICY);
+                                                                      }),
+                                                                TextSpan(
+                                                                    text: ' 내용에 동의해 주세요.'),
+                                                              ]))),
+                                                  Container(
+                                                      margin: EdgeInsets.only(top: 10),
+                                                      padding: EdgeInsets.only(
+                                                          left: 30, right: 30),
+                                                      child: Row(
+                                                          mainAxisSize:
+                                                          MainAxisSize.max,
+                                                          mainAxisAlignment:
+                                                          MainAxisAlignment.start,
+                                                          children: [
+                                                            Radio<int>(
+                                                              value: _agreeTerms,
+                                                              visualDensity:
+                                                              VisualDensity.compact,
+                                                              groupValue: 1,
+                                                              toggleable: true,
+                                                              onChanged: (_) {
+                                                                setState(() {
+                                                                  if (_agreeTerms ==
+                                                                      0) {
+                                                                    _agreeTerms = 1;
+                                                                  } else {
+                                                                    _agreeTerms = 0;
+                                                                  }
+                                                                });
+                                                              },
+                                                              materialTapTargetSize:
+                                                              MaterialTapTargetSize
+                                                                  .shrinkWrap,
+                                                            ),
+                                                            Text('이용약관에 동의합니다.(필수)',
+                                                                style: CustomStyles
+                                                                    .normal14TextStyle())
+                                                          ])),
+                                                  Container(
+                                                      margin: EdgeInsets.only(top: 10),
+                                                      padding: EdgeInsets.only(
+                                                          left: 30, right: 30),
+                                                      child: Row(
+                                                          mainAxisSize:
+                                                          MainAxisSize.max,
+                                                          mainAxisAlignment:
+                                                          MainAxisAlignment.start,
+                                                          children: [
+                                                            Radio<int>(
+                                                              value:
+                                                              _agreePrivacyPolicy,
+                                                              visualDensity:
+                                                              VisualDensity.compact,
+                                                              groupValue: 1,
+                                                              toggleable: true,
+                                                              onChanged: (_) {
+                                                                setState(() {
+                                                                  if (_agreePrivacyPolicy ==
+                                                                      0) {
+                                                                    _agreePrivacyPolicy =
+                                                                    1;
+                                                                  } else {
+                                                                    _agreePrivacyPolicy =
+                                                                    0;
+                                                                  }
+                                                                });
+                                                              },
+                                                              materialTapTargetSize:
+                                                              MaterialTapTargetSize
+                                                                  .shrinkWrap,
+                                                            ),
+                                                            Text(
+                                                                '개인정보 수집 이용에 동의합니다.(필수)',
+                                                                style: CustomStyles
+                                                                    .normal14TextStyle())
+                                                          ]))
+                                                ])))),
+                                Container(
+                                    height: 50,
+                                    width: double.infinity,
+                                    child: CustomStyles.lightGreyBGSquareButtonStyle(
+                                        '회원가입', () {
+                                      if (checkValidate(context)) {
+                                        requestJoinApi(context);
+                                      }
+                                    }))
+                              ],
+                            )),
+                        Visibility(
+                          child: Container(
+                              color: Colors.black38,
+                              alignment: Alignment.center,
+                              child: CircularProgressIndicator()),
+                          visible: _isUpload,
+                        )
                       ],
-                    ));
+                    );
                   },
                 ))));
   }
@@ -710,11 +713,6 @@ class _JoinProduction extends State<JoinProduction> with BaseUtilMixin {
       return false;
     }
 
-    /*if (!_isAccountChecked) {
-      showSnackBar(context, '법인 은행 계좌를 인증해 주세요.');
-      return false;
-    }*/
-
     if (StringUtils.isEmpty(_txtFieldEmail.text)) {
       showSnackBar(context, '이메일을 입력해 주세요.');
       return false;
@@ -744,7 +742,9 @@ class _JoinProduction extends State<JoinProduction> with BaseUtilMixin {
   *  제작사 회원가입 api 호출
   * */
   void requestJoinApi(BuildContext context) async {
-    final dio = Dio();
+    setState(() {
+      _isUpload = true;
+    });
 
     // 비밀번호 암호화
     final publicPem =
@@ -763,9 +763,6 @@ class _JoinProduction extends State<JoinProduction> with BaseUtilMixin {
     targetDatas[APIConstants.production_name] = _companyName;
     targetDatas[APIConstants.businessRegistration_number] = _companyNum;
     targetDatas[APIConstants.production_CEO_name] = StringUtils.trimmedString(_txtFieldCeoName.text);
-    /*targetDatas[APIConstants.production_bank_code] = _bankVal[APIConstants.child_code];
-    targetDatas[APIConstants.production_account_holder] = StringUtils.trimmedString(_txtFieldAccountName.text);
-    targetDatas[APIConstants.production_account_number] = StringUtils.trimmedString(_txtFieldAccountNum.text);*/
     targetDatas[APIConstants.production_bank_code] = "";
     targetDatas[APIConstants.production_account_holder] = "";
     targetDatas[APIConstants.production_account_number] = "";
@@ -779,24 +776,25 @@ class _JoinProduction extends State<JoinProduction> with BaseUtilMixin {
     params[APIConstants.target] = targetDatas;
 
     // 회원가입 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
-      if (value == null) {
-        // 에러 - 데이터 널 - 서버가 응답하지 않습니다. 다시 시도해 주세요
-        showSnackBar(context, APIConstants.error_msg_server_not_response);
-      } else {
-        if (value[APIConstants.resultVal]) {
-          try {
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value == null) {
+          // 에러 - 데이터 널 - 서버가 응답하지 않습니다. 다시 시도해 주세요
+          showSnackBar(context, APIConstants.error_msg_server_not_response);
+        } else {
+          if (value[APIConstants.resultVal]) {
+
             // 회원가입 성공
             var _responseData = value[APIConstants.data];
             var _responseList = _responseData[APIConstants.list];
 
             // 회원데이터 전역변수에 저장
             KCastingAppData().myInfo =
-                _responseList.length > 0 ? _responseList[0] : null;
+            _responseList.length > 0 ? _responseList[0] : null;
 
             // 자동로그인
             final SharedPreferences prefs =
-                await SharedPreferences.getInstance();
+            await SharedPreferences.getInstance();
             prefs.setBool(APIConstants.autoLogin, true);
             prefs.setString(
                 APIConstants.member_type, APIConstants.member_type_product);
@@ -805,23 +803,28 @@ class _JoinProduction extends State<JoinProduction> with BaseUtilMixin {
 
             // 메인 페이지 이동
             replaceView(context, Home(prevPage: APIConstants.INS_PRD_JOIN));
-          } catch (e) {
-            showSnackBar(context, APIConstants.error_msg_join_fail);
-          }
-        } else {
-          // 회원가입 실패
-          switch (StringUtils.checkedString(value[APIConstants.resultMsg])) {
+
+          } else {
+            // 회원가입 실패
+            switch (StringUtils.checkedString(value[APIConstants.resultMsg])) {
             // 이미 존재하는 아이디입니다.
-            case APIConstants.server_error_already_exist:
-              showSnackBar(context, APIConstants.error_msg_join_already_exist);
-              break;
+              case APIConstants.server_error_already_exist:
+                showSnackBar(context, APIConstants.error_msg_join_already_exist);
+                break;
 
             // 기타 에러 - 회원가입에 실패하였습니다. 다시 시도해 주세요.
-            default:
-              showSnackBar(context, APIConstants.error_msg_join_fail);
-              break;
+              default:
+                showSnackBar(context, APIConstants.error_msg_join_fail);
+                break;
+            }
           }
         }
+      } catch(e) {
+        showSnackBar(context, value[APIConstants.error_msg_try_again]);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }

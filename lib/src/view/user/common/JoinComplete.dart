@@ -45,7 +45,7 @@ class _JoinComplete extends State<JoinComplete> with BaseUtilMixin {
             break;
           // 매니지먼트 회원
           case APIConstants.member_type_management:
-            _userName = KCastingAppData().myInfo[APIConstants.production_name];
+            _userName = KCastingAppData().myInfo[APIConstants.management_name];
             _msg = '캐스팅을 위한 보유배우를 추가해 주세요.';
             _btnName = "보유배우";
             _nextWidget = ProjectList();

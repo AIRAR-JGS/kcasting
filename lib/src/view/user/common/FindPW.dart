@@ -8,8 +8,6 @@ import 'package:casting_call/src/view/user/common/Login.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
-import 'FindPWAuth.dart';
-
 /*
 * 비밀번호 찾기
 * */
@@ -21,13 +19,9 @@ class FindPW extends StatefulWidget {
 class _FindPW extends State<FindPW> with BaseUtilMixin {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
-  final _txtFieldID = TextEditingController();
-  final _txtFieldEmail = TextEditingController();
+  bool _isUpload = false;
 
-  @override
-  void initState() {
-    super.initState();
-  }
+  final _txtFieldID = TextEditingController();
 
   /*
   *메인 위젯
@@ -47,94 +41,62 @@ class _FindPW extends State<FindPW> with BaseUtilMixin {
                   replaceView(context, Login());
                   return Future.value(false);
                 }),
-                body: Container(
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                      Expanded(
-                          flex: 1,
-                          child: Container(
-                              padding: EdgeInsets.only(left: 30, right: 30),
-                              child: Column(children: [
-                                Container(
-                                    margin: EdgeInsets.only(top: 30),
-                                    alignment: Alignment.center,
-                                    width: double.infinity,
-                                    child: Text('비밀번호 찾기',
-                                        textAlign: TextAlign.center,
-                                        style:
-                                            CustomStyles.normal24TextStyle())),
-                                Container(
-                                  margin: EdgeInsets.only(top: 30),
+                body: Stack(
+                  children: [
+                    Container(
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                  flex: 1,
+                                  child: Container(
+                                      padding: EdgeInsets.only(
+                                          left: 30, right: 30),
+                                      child: Column(children: [
+                                        Container(
+                                            margin: EdgeInsets.only(top: 30),
+                                            alignment: Alignment.center,
+                                            width: double.infinity,
+                                            child: Text('비밀번호 찾기',
+                                                textAlign: TextAlign.center,
+                                                style: CustomStyles
+                                                    .normal24TextStyle())),
+                                        Container(
+                                          margin: EdgeInsets.only(top: 30),
+                                          width: double.infinity,
+                                          child: Text(
+                                              '가입 시 등록한 이메일 주소로 임시 비밀번호가 발송됩니다.',
+                                              textAlign: TextAlign.start,
+                                              style:
+                                              CustomStyles.normal14TextStyle()),
+                                        ),
+                                        Container(
+                                            margin: EdgeInsets.only(top: 10),
+                                            child: CustomStyles
+                                                .greyBorderRound7TextField(
+                                                _txtFieldID, '아이디'))
+                                      ]))),
+                              Container(
+                                  height: 50,
                                   width: double.infinity,
-                                  child: Text(
-                                      '가입 시 등록한 아이디와 이메일 주소를 입력해 주세요.\n임시 비밀번호가 입력하신 이메일 주소로 전송됩니다.',
-                                      textAlign: TextAlign.start,
-                                      style: CustomStyles.normal14TextStyle()),
-                                ),
-                                Container(
-                                    margin: EdgeInsets.only(top: 10),
-                                    child:
-                                        CustomStyles.greyBorderRound7TextField(
-                                            _txtFieldID, '아이디')),
-                                Container(
-                                    margin: EdgeInsets.only(top: 5),
-                                    child: CustomStyles
-                                        .greyBorderRound7TextFieldWithOption(
-                                            _txtFieldEmail,
-                                            TextInputType.emailAddress,
-                                            '이메일 주소'))
-                              ]))),
-                      Container(
-                          height: 50,
-                          width: double.infinity,
-                          child: CustomStyles.lightGreyBGSquareButtonStyle('다음',
-                              () {
-                            if (checkValidate(context)) {
-                              requestFindPWApi(context);
-                            }
-                          }))
-                    ])) /*Container(
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                      Expanded(
-                          flex: 1,
-                          child: Container(
-                              padding: EdgeInsets.only(left: 30, right: 30),
-                              child: Column(children: [
-                                Container(
-                                    margin: EdgeInsets.only(top: 30),
-                                    alignment: Alignment.center,
-                                    width: double.infinity,
-                                    child: Text('비밀번호 찾기',
-                                        textAlign: TextAlign.center,
-                                        style:
-                                            CustomStyles.normal24TextStyle())),
-                                Container(
-                                  margin: EdgeInsets.only(top: 30),
-                                  width: double.infinity,
-                                  child: Text('비밀번호를 찾고자 하는 아이디를 입력해 주세요.',
-                                      textAlign: TextAlign.center,
-                                      style: CustomStyles.normal14TextStyle()),
-                                ),
-                                Container(
-                                    margin: EdgeInsets.only(top: 30),
-                                    child:
-                                        CustomStyles.greyBorderRound7TextField(
-                                            _txtFieldID, '아이디'))
-                              ]))),
-                      Container(
-                          height: 50,
-                          width: double.infinity,
-                          child: CustomStyles.lightGreyBGSquareButtonStyle('다음',
-                              () {
-                            replaceView(context, FindPWAuth());
-                          }))
-                    ]))*/
-                )));
+                                  child: CustomStyles
+                                      .lightGreyBGSquareButtonStyle(
+                                      '다음', () {
+                                    if (checkValidate(context)) {
+                                      requestFindPWApi(context);
+                                    }
+                                  }))
+                            ])),
+                    Visibility(
+                      child: Container(
+                          color: Colors.black38,
+                          alignment: Alignment.center,
+                          child: CircularProgressIndicator()),
+                      visible: _isUpload,
+                    )
+                  ],
+                ))));
   }
 
   /*
@@ -146,11 +108,6 @@ class _FindPW extends State<FindPW> with BaseUtilMixin {
       return false;
     }
 
-    if (StringUtils.isEmpty(_txtFieldEmail.text)) {
-      showSnackBar(context, '이메일 주소를 입력해 주세요.');
-      return false;
-    }
-
     return true;
   }
 
@@ -158,29 +115,43 @@ class _FindPW extends State<FindPW> with BaseUtilMixin {
   * 임시비밀번호 이메일 발송 api 호출
   * */
   void requestFindPWApi(BuildContext context) {
-    final dio = Dio();
+    setState(() {
+      _isUpload = true;
+    });
 
     // 임시비밀번호 이메일 발송 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetDatas = new Map();
     targetDatas[APIConstants.id] = StringUtils.trimmedString(_txtFieldID.text);
-    //targetDatas[APIConstants.email] = StringUtils.trimmedString(_txtFieldEmail.text);
 
     Map<String, dynamic> params = new Map();
     params[APIConstants.key] = APIConstants.UPD_TOT_RANDPWD;
     params[APIConstants.target] = targetDatas;
 
     // 임시비밀번호 이메일 발송 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
-      if (value == null) {
-        // 에러 - 데이터 널
-        showSnackBar(context, APIConstants.error_msg_server_not_response);
-      } else {
-        if (value[APIConstants.resultVal]) {
-          replaceView(context, FindPWResult(id: StringUtils.trimmedString(_txtFieldEmail.text)));
+    RestClient(Dio())
+        .postRequestMainControl(params)
+        .then((value) async {
+      try {
+        if (value == null) {
+          // 에러 - 데이터 널
+          showSnackBar(context, APIConstants.error_msg_server_not_response);
         } else {
-          showSnackBar(context, value[APIConstants.resultMsg]);
+          if (value[APIConstants.resultVal]) {
+            var _responseData = value[APIConstants.data];
+            var _responseList = _responseData[APIConstants.list];
+
+            replaceView(context, FindPWResult());
+          } else {
+            showSnackBar(context, value[APIConstants.resultMsg]);
+          }
         }
+      } catch (e) {
+        showSnackBar(context, value[APIConstants.error_msg_try_again]);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
-    });
-  }
-}
+    }
+  );
+}}

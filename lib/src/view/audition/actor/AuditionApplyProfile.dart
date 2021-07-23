@@ -36,9 +36,11 @@ class _AuditionApplyProfile extends State<AuditionApplyProfile>
   List<dynamic> _actorFilmorgraphy = [];
   List<dynamic> _actorImage = [];
   List<dynamic> _actorVideo = [];
+  List<String> _actorCastingKwdList = [];
   List<String> _actorLookKwdList = [];
 
   final GlobalKey<TagsState> _myKeywordTagStateKey = GlobalKey<TagsState>();
+  final GlobalKey<TagsState> _myCastingKeywordTagStateKey = GlobalKey<TagsState>();
 
   // 탭바 뷰 관련 변수(필모그래피, 이미지, 비디오)
   TabController _tabController;
@@ -195,6 +197,7 @@ class _AuditionApplyProfile extends State<AuditionApplyProfile>
                         ActorProfileWidget.profileWidget(
                             context,
                             _myKeywordTagStateKey,
+                            _myCastingKeywordTagStateKey,
                             _actorProfile,
                             "",
                             StringUtils.checkedString(
@@ -202,7 +205,10 @@ class _AuditionApplyProfile extends State<AuditionApplyProfile>
                             StringUtils.checkedString(
                                 _actorProfile[APIConstants.actor_languge]),
                             StringUtils.checkedString(
+                                _actorProfile[APIConstants.table_actor_dialect]),
+                            StringUtils.checkedString(
                                 _actorProfile[APIConstants.actor_ability]),
+                            _actorCastingKwdList,
                             _actorLookKwdList),
                         Container(
                           margin: EdgeInsets.only(top: 20),

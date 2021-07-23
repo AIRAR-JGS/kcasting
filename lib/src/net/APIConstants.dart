@@ -241,6 +241,7 @@ class APIConstants {
   static const String actor_sex_female = "여자";
   static const String actor_education = "actor_education";
   static const String actor_languge = "actor_languge";
+  static const String actor_dialect = "actor_dialect";
   static const String actor_ability = "actor_ability";
   static const String actor_kwd = "actor_kwd";
   static const String min = "min";

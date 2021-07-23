@@ -39,11 +39,9 @@ class _ActorDetail extends State<ActorDetail>
   String _actorLanguageStr = "";
   String _actordialectStr = "";
   String _actorAbilityStr = "";
-  List<String> _actorCastingKwdList = [];
-  List<String> _actorLookKwdList = [];
+  List<String> _actorKwdList = [];
 
   final GlobalKey<TagsState> _myKeywordTagStateKey = GlobalKey<TagsState>();
-  final GlobalKey<TagsState> _myCastingKeywordTagStateKey = GlobalKey<TagsState>();
 
   // 탭바 뷰 관련 변수(필모그래피, 이미지, 비디오)
   TabController _tabController;
@@ -228,7 +226,7 @@ class _ActorDetail extends State<ActorDetail>
 
                         if (_lookKwdData[APIConstants.code_seq] ==
                             _castingKwdCode[APIConstants.seq]) {
-                          _actorCastingKwdList
+                          _actorKwdList
                               .add(_castingKwdCode[APIConstants.child_name]);
                         }
                       }
@@ -258,7 +256,7 @@ class _ActorDetail extends State<ActorDetail>
 
                         if (_lookKwdData[APIConstants.code_seq] ==
                             _lookKwdCode[APIConstants.seq]) {
-                          _actorLookKwdList
+                          _actorKwdList
                               .add(_lookKwdCode[APIConstants.child_name]);
                         }
                       }
@@ -339,15 +337,13 @@ class _ActorDetail extends State<ActorDetail>
                         ActorProfileWidget.profileWidget(
                             context,
                             _myKeywordTagStateKey,
-                            _myCastingKeywordTagStateKey,
                             _actorProfile,
                             _actorAgeStr,
                             _actorEducationStr,
                             _actordialectStr,
                             _actorLanguageStr,
                             _actorAbilityStr,
-                            _actorCastingKwdList,
-                            _actorLookKwdList),
+                            _actorKwdList),
                         Container(
                             margin: EdgeInsets.only(top: 20),
                             child: Divider(

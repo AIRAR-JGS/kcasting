@@ -35,8 +35,6 @@ class _ActorProfile extends State<ActorProfile>
   bool _kIsWeb;
 
   final GlobalKey<TagsState> _myKeywordTagStateKey = GlobalKey<TagsState>();
-  final GlobalKey<TagsState> _myCastingKeywordTagStateKey =
-      GlobalKey<TagsState>();
 
   File _profileImgFile;
   final picker = ImagePicker();
@@ -49,8 +47,7 @@ class _ActorProfile extends State<ActorProfile>
   String _actorLanguageStr = "";
   String _actordialectStr = "";
   String _actorAbilityStr = "";
-  List<String> _actorCastingKwdList = [];
-  List<String> _actorLookKwdList = [];
+  List<String> _actorKwdList = [];
 
   List<dynamic> _filmorgraphyList = [];
   List<dynamic> _originalFilmorgraphyList = [];
@@ -114,8 +111,7 @@ class _ActorProfile extends State<ActorProfile>
       _actorLanguageStr = "";
       _actordialectStr = "";
       _actorAbilityStr = "";
-      _actorCastingKwdList = [];
-      _actorLookKwdList = [];
+      _actorKwdList = [];
       _filmorgraphyList = [];
       _originalFilmorgraphyList = [];
       _isFlimorgraphyListEditMode = false;
@@ -181,9 +177,7 @@ class _ActorProfile extends State<ActorProfile>
 
             if (_castingKwdData[APIConstants.code_seq] ==
                 _castingKwdCode[APIConstants.seq]) {
-              print("------------");
-              _actorCastingKwdList
-                  .add(_castingKwdCode[APIConstants.child_name]);
+              _actorKwdList.add(_castingKwdCode[APIConstants.child_name]);
             }
           }
         }
@@ -199,7 +193,7 @@ class _ActorProfile extends State<ActorProfile>
 
             if (_lookKwdData[APIConstants.code_seq] ==
                 _lookKwdCode[APIConstants.seq]) {
-              _actorLookKwdList.add(_lookKwdCode[APIConstants.child_name]);
+              _actorKwdList.add(_lookKwdCode[APIConstants.child_name]);
             }
           }
         }
@@ -632,15 +626,13 @@ class _ActorProfile extends State<ActorProfile>
                                   ActorProfileWidget.profileWidget(
                                       context,
                                       _myKeywordTagStateKey,
-                                      _myCastingKeywordTagStateKey,
                                       KCastingAppData().myProfile,
                                       _actorAgeStr,
                                       _actorEducationStr,
                                       _actorLanguageStr,
                                       _actordialectStr,
                                       _actorAbilityStr,
-                                      _actorCastingKwdList,
-                                      _actorLookKwdList),
+                                      _actorKwdList),
                                   Container(
                                       height: 50,
                                       margin: EdgeInsets.only(

@@ -33,7 +33,7 @@ class _AgencyMemberPage extends State<AgencyMemberPage> with BaseUtilMixin {
   void initState() {
     super.initState();
 
-    //requestGetManagementState(context);
+    requestGetManagementState(context);
   }
 
   /*
@@ -44,10 +44,10 @@ class _AgencyMemberPage extends State<AgencyMemberPage> with BaseUtilMixin {
 
     // 매니지먼트 상태 조회 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
-    targetData[APIConstants.seq] = KCastingAppData().myInfo[APIConstants.seq];
+    targetData[APIConstants.management_seq] = KCastingAppData().myInfo[APIConstants.management_seq];
 
     Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.SEL_ACT_STATE;
+    params[APIConstants.key] = APIConstants.SEL_MGM_PROFILESTATE;
     params[APIConstants.target] = targetData;
 
     // 매니지먼트 상태 조회 api 호출
@@ -112,7 +112,7 @@ class _AgencyMemberPage extends State<AgencyMemberPage> with BaseUtilMixin {
               margin: EdgeInsets.only(bottom: 15),
               child: Text(
                   StringUtils.checkedString(
-                      KCastingAppData().myInfo[APIConstants.production_name]),
+                      KCastingAppData().myInfo[APIConstants.management_name]),
                   style: CustomStyles.normal32TextStyle())),
           Container(
             margin: EdgeInsets.only(bottom: 20),
@@ -131,7 +131,7 @@ class _AgencyMemberPage extends State<AgencyMemberPage> with BaseUtilMixin {
                           margin: EdgeInsets.only(top: 5),
                           child: Text(
                               StringUtils.checkedString(
-                                  _stateData[APIConstants.applyIngCnt]),
+                                  _stateData[APIConstants.applyCnt]),
                               style: CustomStyles.dark24TextStyle()))
                     ],
                   ),
@@ -175,7 +175,7 @@ class _AgencyMemberPage extends State<AgencyMemberPage> with BaseUtilMixin {
                           margin: EdgeInsets.only(top: 5),
                           child: Text(
                               StringUtils.checkedString(
-                                  _stateData[APIConstants.viewCnt]),
+                                  _stateData[APIConstants.actorCnt]),
                               style: CustomStyles.dark24TextStyle()))
                     ],
                   ),

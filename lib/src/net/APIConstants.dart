@@ -20,7 +20,6 @@ class APIConstants {
   
   // 공통
   static const String SEL_CCD_LIST = "SEL_CCD_LIST";                              // 공통 코드 조회
-  //static const String LGI_TOT_LOGIN = "LGI_TOT_LOGIN";                          // 로그인
   static const String LGI_TOT_LOGINRSA = "LGI_TOT_LOGINRSA";                      // 로그인
   static const String FID_TOT_FINDID = "FID_TOT_FINDID";                          // 아이디 찾기
   static const String UPD_TOT_RANDPWD = "UPD_TOT_RANDPWD";                        // 임시 비밀번호 생성
@@ -43,14 +42,14 @@ class APIConstants {
   static const String DEA_AIM_LIST = "DEA_AIM_LIST";                              // 배우 이미지 일괄 삭제
   static const String INS_AVD_LIST_FORMDATA = "INS_AVD_LIST_FormData";            // 배우 비디오 등록
   static const String DEA_AVD_LIST = "DEA_AVD_LIST";                              // 배우 비디오 일괄 삭제
-  //static const String INS_AAA_INFO = "INS_AAA_INFO";                              // 배우 오디션 지원
   static const String INS_AAA_INFO_FORMDATA = "INS_AAA_INFO_FormData";            // 배우 오디션 지원
   static const String SEL_AAA_LIST = "SEL_AAA_LIST";                              // 배우 오디션 지원 현황 조회
   static const String DEL_AAA_INFO = "DEL_AAA_INFO";                              // 배우 오디션 지원 취소
   static const String SAR_AAP_INFO = "SAR_AAP_INFO";                              // 배우 오디션 제출 프로필 조회
   static const String SEL_AAA_STATE = "SEL_AAA_STATE";                            // 배우 오디션 지원 상태 조회
   static const String UPD_SAT_SUBMIT = "UPD_SAT_SUBMIT";                          // 배우 비디오 등록 및 연락처 공개 동의
-  static const String SEL_APP_LIST = "SEL_APP_LIST";                              // 배우 제안 받은 목록 조회
+  static const String SEL_APP_ACTORSLIST = "SEL_APP_ACTORSLIST";                  // 배우 제안 받은 목록 조회
+  static const String SEL_APP_ACTORSDETAILS = "SEL_APP_ACTORSDETAILS";            // 보유 배우 받은 제안 상세
   static const String UPD_APP_ANSWER = "UPD_APP_ANSWER";                          // 배우 제안 거절 or 수락
   static const String SEL_MKM_LIST = "SEL_MKM_LIST";                              // 메인 : 남배우 외모 특징 목록 조회
   static const String SEL_MKW_LIST = "SEL_MKW_LIST";                              // 메인 : 여배우 외모 특징 목록 조회
@@ -70,9 +69,9 @@ class APIConstants {
   static const String IPC_PCT_INFO = "IPC_PCT_INFO";                              // 캐스팅 등록(배역 추가) - 특정 배역 추가, 다수 배역 추가
   static const String SAR_PCT_INFO = "SAR_PCT_INFO";                              // 캐스팅 단일 조회
   static const String SEL_PCT_LIST = "SEL_PCT_LIST";                              // 캐스팅 목록 조회
-  static const String INS_PAP_INFO = "INS_PAP_INFO";                              // 오디션 제안 등록
+  static const String INS_APP_INFO = "INS_APP_INFO";                              // 오디션 제안 등록
   static const String SEL_PCT_PAPOKLIST = "SEL_PCT_PAPOKLIST";                    // 오디션 제안 가능 목록 조회
-  static const String SEL_PAP_LIST = "SEL_PAP_LIST";                              // 오디션 제안 목록 조회
+  static const String SEL_APP_PRODUCTIONSLIST = "SEL_APP_PRODUCTIONSLIST";        // 오디션 제안 목록 조회
   static const String SEL_PCT_INGLIST = "SEL_PCT_INGLIST";                        // 캐스팅 진행 현황 조회 : 진행중
   static const String SEL_PCT_CMPLIST = "SEL_PCT_CMPLIST";                        // 캐스팅 진행 현황 조회 : 계약완료
   static const String SEL_PCT_FINLIST = "SEL_PCT_FINLIST";                        // 캐스팅 진행 현황 조회 : 마감
@@ -101,6 +100,9 @@ class APIConstants {
   static const String SEL_AVD_LIST = "SEL_AVD_LIST";                              // 매니지먼트 보유 배우 비디오 목록
   static const String SEL_MGM_AUDITIONSTATELIST = "SEL_MGM_AUDITIONSTATELIST";    // 보유 배우 지원 현황 목록 조회
   static const String SEL_MGM_ACTORAUDITION_HEAD = "SEL_MGM_ACTORAUDITION_HEAD";  // 보유 배우 지원 현황 상세 조회 윗부분
+  static const String SEL_MGM_ACTORAUDITION_BODY = "SEL_MGM_ACTORAUDITION_BODY";  // 보유 배우 지원 현황 상세 조회 아랫부분
+  static const String SEL_MGM_PROFILESTATE = "SEL_MGM_PROFILESTATE";              // 매니지먼트 프로필 상태 조회
+  static const String SEL_MGM_ACTOPROPOSALLIST = "SEL_MGM_ACTOPROPOSALLIST";      // 매니지먼트 보유 배우 받은 제안 목록
 
   // 공통 - request, response
   static const String key = "key";
@@ -126,7 +128,10 @@ class APIConstants {
   static const String order_type_fin = "FIN";
   static const String look_kwd_seq = "look_kwd_seq";
   static const String isSubmitVideo = "isSubmitVideo";
+  static const String actorCnt = "actorCnt";
   static const String applyIngCnt = "applyIngCnt";
+  static const String applyCnt = "applyCnt";
+  static const String applyNotViewCnt = "applyNotViewCnt";
   static const String applyCompleteCnt = "applyCompleteCnt";
   static const String applyFailCnt = "applyFailCnt";
   static const String proposalCnt = "proposalCnt";
@@ -259,7 +264,6 @@ class APIConstants {
   static const String actorProfile_seq = "actorProfile_seq";
   static const String actor_Introduce = "actor_Introduce";
   static const String actor_level = "actor_level";
-  static const String actor_levelConfirmation_url = "actor_levelConfirmation_url";
   static const String actor_drama_pay = "actor_drama_pay";
   static const String actor_movie_pay = "actor_movie_pay";
   static const String actor_tall = "actor_tall";
@@ -284,7 +288,6 @@ class APIConstants {
   static const String apply_cnt = "apply_cnt";
   static const String project_file_url = "project_file_url";
   static const String casting_character_name = "casting_character_name";
-  static const String employmentCertificate_url = "employmentCertificate_url";
   static const String actor_img_url = "actor_img_url";
   static const String actor_img = "actor_img";
   static const String actor_video_url = "actor_video_url";
@@ -405,6 +408,7 @@ class APIConstants {
   static const String audition_apply_seq = "audition_apply_seq";
   static const String second_audition_seq = "second_audition_seq";
   static const String apply_date = "apply_date";
+  static const String state = "state";
   static const String state_type = "state_type";
   static const String firstautidion_startdate = "firstAudition_startDate";
   static const String firstautidion_enddate = "firstAudition_endDate";
@@ -440,5 +444,13 @@ class APIConstants {
   static const String third_audition_target_bank_code = "third_audition_target_bank_code";
   static const String thirdAudition_target_account_isAuth = "thirdAudition_target_account_isAuth";
   static const String thirdAudition_target_phone = "thirdAudition_target_phone";
+  static const String actor_levelConfirmation_url = "actor_levelConfirmation_url";
+  static const String employmentCertificate_url = "employmentCertificate_url";
   static const String thirdAudition_phone_use_isAgree = "thirdAudition_phone_use_isAgree";*/
+
+  //static const String LGI_TOT_LOGIN = "LGI_TOT_LOGIN";                            // 로그인
+  //static const String INS_AAA_INFO = "INS_AAA_INFO";                              // 배우 오디션 지원
+  //static const String SEL_APP_LIST = "SEL_APP_LIST";                              // 배우 제안 받은 목록 조회
+  //static const String INS_PAP_INFO = "INS_PAP_INFO";                              // 오디션 제안 등록
+  //static const String SEL_PAP_LIST = "SEL_PAP_LIST";                              // 오디션 제안 목록 조회
 }

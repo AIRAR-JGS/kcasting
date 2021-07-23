@@ -121,7 +121,7 @@ class _OfferedAuditionList extends State<OfferedAuditionList>
     paging[APIConstants.limit] = _limit;
 
     Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.SEL_APP_LIST;
+    params[APIConstants.key] = APIConstants.SEL_APP_ACTORSLIST;
     params[APIConstants.target] = targetData;
     params[APIConstants.paging] = paging;
 
@@ -173,7 +173,8 @@ class _OfferedAuditionList extends State<OfferedAuditionList>
                         addView(
                             context,
                             OfferedAuditionDetail(
-                                scoutData: _scoutList[index]));
+                                seq: _scoutList[index]
+                                    [APIConstants.auditionProposal_seq]));
                       },
                       child: Container(
                           alignment: Alignment.center,

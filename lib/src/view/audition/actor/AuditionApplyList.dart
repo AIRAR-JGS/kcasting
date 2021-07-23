@@ -181,7 +181,7 @@ class _AuditionApplyList extends State<AuditionApplyList>
     paging[APIConstants.limit] = _limit;
 
     Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.SEL_AAA_LIST;
+    params[APIConstants.key] = APIConstants.SEL_MGM_ACTORAUDITION_BODY;
     params[APIConstants.target] = targetData;
     params[APIConstants.paging] = paging;
 
@@ -267,7 +267,7 @@ class _AuditionApplyList extends State<AuditionApplyList>
                                 context,
                                 AuditionApplyDetail(
                                     applySeq: _auditionList[index]
-                                        [APIConstants.audition_apply_seq]));
+                                        [APIConstants.auditionApply_seq]));
                           },
                           child: Container(
                               alignment: Alignment.center,
@@ -307,7 +307,7 @@ class _AuditionApplyList extends State<AuditionApplyList>
                                                         '지원일: ' +
                                                             _auditionList[index]
                                                                 [APIConstants
-                                                                    .apply_date],
+                                                                    .addDate],
                                                         style: CustomStyles
                                                             .dark10TextStyle()),
                                                     Padding(
@@ -366,7 +366,7 @@ class _AuditionApplyList extends State<AuditionApplyList>
                                               Container(
                                                 child: Text(
                                                   _auditionList[index]
-                                                      [APIConstants.state_type],
+                                                      [APIConstants.state],
                                                   style: CustomStyles
                                                       .dark16TextStyle(),
                                                 ),

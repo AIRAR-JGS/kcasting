@@ -116,7 +116,8 @@ class _AgencyActorAuditionApplyList extends State<AgencyActorAuditionApplyList>
 
               _isLoading = false;
             });
-          } catch (e) {}
+          } catch (e) {
+          }
         }
       }
     });

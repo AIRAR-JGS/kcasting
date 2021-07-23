@@ -16,9 +16,9 @@ import 'package:flutter/material.dart';
 * 받은 제안 상세
 * */
 class OfferedAuditionDetail extends StatefulWidget {
-  final Map<String, dynamic> scoutData;
+  final int seq;
 
-  const OfferedAuditionDetail({Key key, this.scoutData}) : super(key: key);
+  const OfferedAuditionDetail({Key key, this.seq}) : super(key: key);
 
   @override
   _OfferedAuditionDetail createState() => _OfferedAuditionDetail();
@@ -28,13 +28,55 @@ class _OfferedAuditionDetail extends State<OfferedAuditionDetail>
     with BaseUtilMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  Map<String, dynamic> _scoutData;
+  int _seq;
+
+  Map<String, dynamic> _scoutData = new Map();
 
   @override
   void initState() {
     super.initState();
 
-    _scoutData = widget.scoutData;
+    _seq = widget.seq;
+
+    requestReplyProposalDetail(context);
+  }
+
+  /*
+  * 제안 상세
+  * */
+  void requestReplyProposalDetail(BuildContext context) {
+    final dio = Dio();
+
+    // 제안 상세 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetData = new Map();
+    targetData[APIConstants.auditionProposal_seq] = _seq;
+
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.SEL_APP_ACTORSDETAILS;
+    params[APIConstants.target] = targetData;
+
+    // 제안 상세 api 호출
+    RestClient(dio).postRequestMainControl(params).then((value) async {
+      if (value == null) {
+        // 에러 - 데이터 널
+        showSnackBar(context, APIConstants.error_msg_server_not_response);
+      } else {
+        if (value[APIConstants.resultVal]) {
+          try {
+            // 제안 상세 성공
+            setState(() {
+              var _responseData = value[APIConstants.data];
+              _scoutData = _responseData[APIConstants.list][0];
+            });
+          } catch (e) {
+            showSnackBar(context, APIConstants.error_msg_try_again);
+          }
+        } else {
+          // 수락 거절 실패
+          showSnackBar(context, APIConstants.error_msg_try_again);
+        }
+      }
+    });
   }
 
   /*
@@ -43,10 +85,10 @@ class _OfferedAuditionDetail extends State<OfferedAuditionDetail>
   void requestReplyProposal(BuildContext context, String type, String msg) {
     final dio = Dio();
 
-    // 배우프로필 이미지 수정 api 호출 시 보낼 파라미터
+    // 수락 거절 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
     targetData[APIConstants.auditionProposal_seq] =
-        _scoutData[APIConstants.audition_prps_seq];
+        _scoutData[APIConstants.auditionProposal_seq];
     targetData[APIConstants.state_type] = type;
     targetData[APIConstants.audition_prps_reply_contents] = msg;
 
@@ -121,7 +163,8 @@ class _OfferedAuditionDetail extends State<OfferedAuditionDetail>
                                     margin: EdgeInsets.only(right: 5),
                                     alignment: Alignment.topCenter,
                                     child: ClipOval(
-                                      child: CachedNetworkImage(
+                                      child: (_scoutData[
+                                      APIConstants.production_img_url] != null) ? CachedNetworkImage(
                                         imageUrl: _scoutData[
                                             APIConstants.production_img_url],
                                         errorWidget: (context, url, error) =>
@@ -132,7 +175,12 @@ class _OfferedAuditionDetail extends State<OfferedAuditionDetail>
                                                 color:
                                                     CustomColors.colorBgGrey),
                                         height: 67,
-                                      ),
+                                      ) : Image.asset(
+                                          'assets/images/btn_mypage.png',
+                                          fit: BoxFit.contain,
+                                          width: 67,
+                                          color:
+                                          CustomColors.colorBgGrey),
                                     )),
                               ),
                               Expanded(

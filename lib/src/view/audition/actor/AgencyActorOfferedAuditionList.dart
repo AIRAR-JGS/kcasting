@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/KCastingAppData.dart';
 import 'package:casting_call/res/CustomColors.dart';
@@ -5,7 +6,6 @@ import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/net/RestClientInterface.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
-import 'package:casting_call/src/view/audition/actor/AuditionApplyList.dart';
 import 'package:casting_call/src/view/audition/actor/OfferedAuditionList.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -82,14 +82,15 @@ class _AgencyActorOfferedAuditionList
 
     // 배우목록조회 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
-    targetData[APIConstants.management_seq] = KCastingAppData().myInfo[APIConstants.management_seq];
+    targetData[APIConstants.management_seq] =
+        KCastingAppData().myInfo[APIConstants.management_seq];
 
     Map<String, dynamic> paging = new Map();
     paging[APIConstants.offset] = _actorList.length;
     paging[APIConstants.limit] = _limit;
 
     Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.SEL_MGM_ACTORLIST;
+    params[APIConstants.key] = APIConstants.SEL_MGM_ACTOPROPOSALLIST;
     params[APIConstants.target] = targetData;
     params[APIConstants.paging] = paging;
 
@@ -122,7 +123,7 @@ class _AgencyActorOfferedAuditionList
         child: Visibility(
             child: GestureDetector(
                 onTap: () {
-                  addView(context, OfferedAuditionList());
+                  addView(context, OfferedAuditionList(actorSeq: _data[APIConstants.actor_seq]));
                 },
                 child: Container(
                     padding: EdgeInsets.only(
@@ -137,12 +138,19 @@ class _AgencyActorOfferedAuditionList
                                 children: [
                                   _data[APIConstants.main_img_url] != null
                                       ? ClipOval(
-                                          child: Image.network(
-                                              _data[APIConstants.main_img_url],
+                                          child: CachedNetworkImage(
+                                              imageUrl: _data[
+                                                  APIConstants.main_img_url],
                                               fit: BoxFit.cover,
                                               width: 50.0,
-                                              height: 50.0),
-                                        )
+                                              height: 50.0,
+                                              errorWidget:
+                                                  (context, url, error) => Icon(
+                                                        Icons.account_circle,
+                                                        color: CustomColors
+                                                            .colorFontLightGrey,
+                                                        size: 50,
+                                                      )))
                                       : ClipOval(
                                           child: Icon(
                                           Icons.account_circle,
@@ -169,10 +177,9 @@ class _AgencyActorOfferedAuditionList
                                       Container(
                                         margin: EdgeInsets.only(top: 5),
                                         child: Text(
-                                            StringUtils.checkedString(_data[
-                                                    APIConstants
-                                                        .firstAuditionTarget_cnt]
-                                                .toString()),
+                                            StringUtils.checkedString(
+                                                _data[APIConstants.proposalCnt]
+                                                    .toString()),
                                             style:
                                                 CustomStyles.dark16TextStyle()),
                                       )

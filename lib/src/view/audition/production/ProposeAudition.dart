@@ -434,7 +434,7 @@ class _ProposeAudition extends State<ProposeAudition> with BaseUtilMixin {
     targetDatas[APIConstants.state_type] = "대기";
 
     Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.INS_PAP_INFO;
+    params[APIConstants.key] = APIConstants.INS_APP_INFO;
     params[APIConstants.target] = targetDatas;
 
     // 오디션 제안하기 api 호출

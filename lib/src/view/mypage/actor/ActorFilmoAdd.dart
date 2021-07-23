@@ -296,7 +296,6 @@ class _ActorFilmoAdd extends State<ActorFilmoAdd> with BaseUtilMixin {
     targetDatas[APIConstants.casting_name] = _castingType;
     targetDatas[APIConstants.casting_character_name] =
         _txtFieldCastingName.text;
-    targetDatas[APIConstants.employmentCertificate_url] = null;
 
     Map<String, dynamic> params = new Map();
     params[APIConstants.key] = APIConstants.INS_AFM_INFO;

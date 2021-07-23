@@ -99,7 +99,7 @@ class _ProposedAuditionList extends State<ProposedAuditionList>
     paging[APIConstants.limit] = _limit;
 
     Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.SEL_PAP_LIST;
+    params[APIConstants.key] = APIConstants.SEL_APP_PRODUCTIONSLIST;
     params[APIConstants.target] = targetData;
     params[APIConstants.paging] = paging;
 

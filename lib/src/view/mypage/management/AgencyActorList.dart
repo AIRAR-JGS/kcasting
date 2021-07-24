@@ -29,6 +29,8 @@ class _AgencyActorList extends State<AgencyActorList>
     with SingleTickerProviderStateMixin, BaseUtilMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
+  bool _isUpload = false;
+
   TabController _tabController;
   int _tabIndex = 0;
 
@@ -101,7 +103,9 @@ class _AgencyActorList extends State<AgencyActorList>
   * 배우목록조회 api 호출
   * */
   void requestActorListApi(BuildContext context) {
-    final dio = Dio();
+    setState(() {
+      _isUpload = true;
+    });
 
     // 배우목록조회 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
@@ -123,10 +127,10 @@ class _AgencyActorList extends State<AgencyActorList>
     params[APIConstants.paging] = paging;
 
     // 배우목록조회 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
-      if (value != null) {
-        if (value[APIConstants.resultVal]) {
-          try {
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value != null) {
+          if (value[APIConstants.resultVal]) {
             // 배우목록조회 성공
             setState(() {
               var _responseList = value[APIConstants.data];
@@ -148,8 +152,14 @@ class _AgencyActorList extends State<AgencyActorList>
 
               _isLoading = false;
             });
-          } catch (e) {}
+          }
         }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }
@@ -158,7 +168,9 @@ class _AgencyActorList extends State<AgencyActorList>
   *배우 삭제
   * */
   void requestActorDeleteApi(BuildContext context) {
-    final dio = Dio();
+    setState(() {
+      _isUpload = true;
+    });
 
     // 배우 삭제 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetDatas = new Map();
@@ -171,10 +183,10 @@ class _AgencyActorList extends State<AgencyActorList>
     params[APIConstants.target] = targetDatas;
 
     // 배우 삭제 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
-      if (value != null) {
-        if (value[APIConstants.resultVal]) {
-          try {
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value != null) {
+          if (value[APIConstants.resultVal]) {
             // 배우 삭제 성공
             var _responseData = value[APIConstants.data];
             var _responseList = _responseData[APIConstants.list] as List;
@@ -185,15 +197,19 @@ class _AgencyActorList extends State<AgencyActorList>
                 _originalActorList = _responseList;
               }
             });
-          } catch (e) {
+          } else {
             showSnackBar(context, APIConstants.error_msg_try_again);
           }
         } else {
-          showSnackBar(context, APIConstants.error_msg_try_again);
+          // 에러 - 데이터 널 - 서버가 응답하지 않습니다. 다시 시도해 주세요
+          showSnackBar(context, APIConstants.error_msg_server_not_response);
         }
-      } else {
-        // 에러 - 데이터 널 - 서버가 응답하지 않습니다. 다시 시도해 주세요
-        showSnackBar(context, APIConstants.error_msg_server_not_response);
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }
@@ -210,374 +226,430 @@ class _AgencyActorList extends State<AgencyActorList>
             appBar: CustomStyles.defaultAppBar('보유 배우', () {
               Navigator.pop(context);
             }),
-            body: Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                child: SingleChildScrollView(
-                    key: ObjectKey(_actorList.length > 0 ? _actorList[0] : ""),
-                    controller: _scrollController,
-                    child: Column(children: [
-                      Expanded(
-                          flex: 0,
-                          child: Container(
-                              child: Column(children: [
-                            Container(
-                                padding: EdgeInsets.only(left: 10, right: 10),
-                                margin: EdgeInsets.only(bottom: 10),
-                                decoration: BoxDecoration(
-                                    border: Border(
-                                  bottom: BorderSide(
-                                      color: CustomColors.colorBgGrey),
-                                )),
-                                width: MediaQuery.of(context).size.width,
-                                child: TabBar(
-                                    indicatorPadding: EdgeInsets.zero,
-                                    isScrollable: true,
-                                    automaticIndicatorColorAdjustment: true,
-                                    controller: _tabController,
-                                    labelStyle: CustomStyles.bold16TextStyle(),
-                                    unselectedLabelStyle:
-                                        CustomStyles.normal16TextStyle(),
-                                    tabs: [
-                                      Tab(text: '전체'),
-                                      Tab(text: '여배우'),
-                                      Tab(text: '남배우')
-                                    ])),
-                            Visibility(
+            body: Stack(
+              children: [
+                Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height,
+                    child: SingleChildScrollView(
+                        key: ObjectKey(
+                            _actorList.length > 0 ? _actorList[0] : ""),
+                        controller: _scrollController,
+                        child: Column(children: [
+                          Expanded(
+                              flex: 0,
                               child: Container(
-                                  alignment: Alignment.centerLeft,
-                                  margin: EdgeInsets.only(left: 20, right: 15),
-                                  child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text((_actorList.length > 0
-                                                ? _actorList.length.toString()
-                                                : "0") +
-                                            "명"),
-                                        Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              TextButton(
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      _isEditMode = true;
-                                                    });
-                                                  },
-                                                  child: Text("편집",
-                                                      style: CustomStyles
-                                                          .normal14TextStyle()),
-                                                  style: TextButton.styleFrom(
-                                                      padding: EdgeInsets.zero,
-                                                      minimumSize: Size(10, 10),
-                                                      alignment:
-                                                          Alignment.center)),
-                                              Container(
-                                                  height: 15,
-                                                  child: VerticalDivider(
-                                                    width: 0.1,
-                                                    color: CustomColors
-                                                        .colorFontGrey,
-                                                  )),
-                                              TextButton(
-                                                  onPressed: () {
-                                                    showDialog(
-                                                      context: context,
-                                                      builder: (BuildContext
-                                                              context) =>
-                                                          DialogAddActor(
-                                                              onClickedAgree:
-                                                                  (name,
-                                                                      gender) {
-                                                        addView(
-                                                            context,
-                                                            RegisterAgencyActorProfileMainInfo(
-                                                                name: name,
-                                                                gender:
-                                                                    gender == 0
-                                                                        ? "남자"
-                                                                        : "여자"));
-                                                      }),
-                                                    );
-                                                  },
-                                                  child: Text("배우추가",
-                                                      style: CustomStyles
-                                                          .normal14TextStyle()),
-                                                  style: TextButton.styleFrom(
-                                                      padding: EdgeInsets.zero,
-                                                      minimumSize: Size(70, 10),
-                                                      alignment:
-                                                          Alignment.center))
-                                            ])
-                                      ])),
-                              visible: !_isEditMode,
-                            ),
-                            Visibility(
-                              child: Container(
-                                  alignment: Alignment.centerLeft,
-                                  margin: EdgeInsets.only(left: 20, right: 15),
-                                  child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text((_actorList.length > 0
-                                                ? _actorList.length.toString()
-                                                : "0") +
-                                            "명"),
-                                        Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              TextButton(
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      _actorList.clear();
-                                                      _actorList.addAll(
-                                                          _originalActorList);
-                                                      _deletedActorList = [];
-
-                                                      _isEditMode = false;
-                                                    });
-                                                  },
-                                                  child: Text("취소",
-                                                      style: CustomStyles
-                                                          .normal14TextStyle()),
-                                                  style: TextButton.styleFrom(
-                                                      padding: EdgeInsets.zero,
-                                                      minimumSize: Size(10, 10),
-                                                      alignment:
-                                                          Alignment.center)),
-                                              Container(
-                                                  height: 15,
-                                                  child: VerticalDivider(
-                                                    width: 0.1,
-                                                    color: CustomColors
-                                                        .colorFontGrey,
-                                                  )),
-                                              TextButton(
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      for (int i = 0;
-                                                          i < _actorList.length;
-                                                          i++) {
-                                                        if (_actorList[i]
-                                                            ["isSelected"]) {
-                                                          _deletedActorList.add(
-                                                              _actorList[i][
-                                                                  APIConstants
-                                                                      .actor_seq]);
-                                                        }
-                                                      }
-
-                                                      if (_deletedActorList
-                                                              .length >
-                                                          0) {
+                                  child: Column(children: [
+                                Container(
+                                    padding:
+                                        EdgeInsets.only(left: 10, right: 10),
+                                    margin: EdgeInsets.only(bottom: 10),
+                                    decoration: BoxDecoration(
+                                        border: Border(
+                                      bottom: BorderSide(
+                                          color: CustomColors.colorBgGrey),
+                                    )),
+                                    width: MediaQuery.of(context).size.width,
+                                    child: TabBar(
+                                        indicatorPadding: EdgeInsets.zero,
+                                        isScrollable: true,
+                                        automaticIndicatorColorAdjustment: true,
+                                        controller: _tabController,
+                                        labelStyle:
+                                            CustomStyles.bold16TextStyle(),
+                                        unselectedLabelStyle:
+                                            CustomStyles.normal16TextStyle(),
+                                        tabs: [
+                                          Tab(text: '전체'),
+                                          Tab(text: '여배우'),
+                                          Tab(text: '남배우')
+                                        ])),
+                                Visibility(
+                                  child: Container(
+                                      alignment: Alignment.centerLeft,
+                                      margin:
+                                          EdgeInsets.only(left: 20, right: 15),
+                                      child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text((_actorList.length > 0
+                                                    ? _actorList.length
+                                                        .toString()
+                                                    : "0") +
+                                                "명"),
+                                            Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.end,
+                                                children: [
+                                                  TextButton(
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          _isEditMode = true;
+                                                        });
+                                                      },
+                                                      child: Text("편집",
+                                                          style: CustomStyles
+                                                              .normal14TextStyle()),
+                                                      style:
+                                                          TextButton.styleFrom(
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .zero,
+                                                              minimumSize:
+                                                                  Size(10, 10),
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center)),
+                                                  Container(
+                                                      height: 15,
+                                                      child: VerticalDivider(
+                                                        width: 0.1,
+                                                        color: CustomColors
+                                                            .colorFontGrey,
+                                                      )),
+                                                  TextButton(
+                                                      onPressed: () {
                                                         showDialog(
                                                           context: context,
                                                           builder: (BuildContext
                                                                   context) =>
-                                                              DialogDeleteActorConfirm(
-                                                            deleteCnt:
-                                                                _deletedActorList
-                                                                    .length,
-                                                            onClickedAgree: () {
-                                                              requestActorDeleteApi(
-                                                                  context);
-                                                            },
-                                                          ),
+                                                              DialogAddActor(
+                                                                  onClickedAgree:
+                                                                      (name,
+                                                                          gender) {
+                                                            Navigator.pop(
+                                                                context);
+                                                            replaceView(
+                                                                context,
+                                                                RegisterAgencyActorProfileMainInfo(
+                                                                    name: name,
+                                                                    gender: gender ==
+                                                                            0
+                                                                        ? "남자"
+                                                                        : "여자"));
+                                                          }),
                                                         );
-                                                      }
+                                                      },
+                                                      child: Text("배우추가",
+                                                          style: CustomStyles
+                                                              .normal14TextStyle()),
+                                                      style:
+                                                          TextButton.styleFrom(
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .zero,
+                                                              minimumSize:
+                                                                  Size(70, 10),
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center))
+                                                ])
+                                          ])),
+                                  visible: !_isEditMode,
+                                ),
+                                Visibility(
+                                  child: Container(
+                                      alignment: Alignment.centerLeft,
+                                      margin:
+                                          EdgeInsets.only(left: 20, right: 15),
+                                      child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text((_actorList.length > 0
+                                                    ? _actorList.length
+                                                        .toString()
+                                                    : "0") +
+                                                "명"),
+                                            Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.end,
+                                                children: [
+                                                  TextButton(
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          _actorList.clear();
+                                                          _actorList.addAll(
+                                                              _originalActorList);
+                                                          _deletedActorList =
+                                                              [];
 
-                                                      _isEditMode = false;
-                                                    });
-                                                  },
-                                                  child: Text("삭제",
-                                                      style: CustomStyles
-                                                          .normal14TextStyle()),
-                                                  style: TextButton.styleFrom(
-                                                      padding: EdgeInsets.zero,
-                                                      minimumSize: Size(10, 10),
-                                                      alignment:
-                                                          Alignment.center))
-                                            ])
-                                      ])),
-                              visible: _isEditMode,
-                            )
-                          ]))),
-                      _actorList.length > 0
-                          ? Wrap(children: [
-                              GridView.count(
-                                  padding: EdgeInsets.only(
-                                      left: 16, right: 16, bottom: 50),
-                                  physics: NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  crossAxisCount: 2,
-                                  crossAxisSpacing: 10,
-                                  mainAxisSpacing: 5,
-                                  childAspectRatio: (0.76),
-                                  children:
-                                      List.generate(_actorList.length, (index) {
-                                    Map<String, dynamic> _data =
-                                        _actorList[index];
-                                    return _isEditMode
-                                        ? Center(
-                                            child: Container(
-                                                width: MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                child: GestureDetector(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        _data["isSelected"] =
-                                                            !_data[
-                                                                "isSelected"];
-                                                      });
-                                                    },
-                                                    child: Column(
-                                                        children: <Widget>[
-                                                          Stack(children: [
-                                                            Container(
-                                                                decoration: BoxDecoration(
-                                                                    borderRadius:
-                                                                        CustomStyles
-                                                                            .circle7BorderRadius(),
-                                                                    color: CustomColors
-                                                                        .colorBgGrey,
-                                                                    border: Border.all(
-                                                                        width:
-                                                                            3,
-                                                                        color: (_data["isSelected"]
-                                                                            ? CustomColors
-                                                                                .colorPrimary
-                                                                            : CustomColors
-                                                                                .colorFontLightGrey))),
-                                                                width: (MediaQuery.of(context)
-                                                                        .size
-                                                                        .width /
-                                                                    2),
-                                                                height: (MediaQuery.of(context)
-                                                                        .size
-                                                                        .width /
-                                                                    2),
-                                                                child: _data[APIConstants.main_img_url] != null
-                                                                    ? ClipRRect(
+                                                          _isEditMode = false;
+                                                        });
+                                                      },
+                                                      child: Text("취소",
+                                                          style: CustomStyles
+                                                              .normal14TextStyle()),
+                                                      style:
+                                                          TextButton.styleFrom(
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .zero,
+                                                              minimumSize:
+                                                                  Size(10, 10),
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center)),
+                                                  Container(
+                                                      height: 15,
+                                                      child: VerticalDivider(
+                                                        width: 0.1,
+                                                        color: CustomColors
+                                                            .colorFontGrey,
+                                                      )),
+                                                  TextButton(
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          for (int i = 0;
+                                                              i <
+                                                                  _actorList
+                                                                      .length;
+                                                              i++) {
+                                                            if (_actorList[i][
+                                                                "isSelected"]) {
+                                                              _deletedActorList
+                                                                  .add(_actorList[
+                                                                          i][
+                                                                      APIConstants
+                                                                          .actor_seq]);
+                                                            }
+                                                          }
+
+                                                          if (_deletedActorList
+                                                                  .length >
+                                                              0) {
+                                                            showDialog(
+                                                              context: context,
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  DialogDeleteActorConfirm(
+                                                                deleteCnt:
+                                                                    _deletedActorList
+                                                                        .length,
+                                                                onClickedAgree:
+                                                                    () {
+                                                                  requestActorDeleteApi(
+                                                                      context);
+                                                                },
+                                                              ),
+                                                            );
+                                                          }
+
+                                                          _isEditMode = false;
+                                                        });
+                                                      },
+                                                      child: Text("삭제",
+                                                          style: CustomStyles
+                                                              .normal14TextStyle()),
+                                                      style:
+                                                          TextButton.styleFrom(
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .zero,
+                                                              minimumSize:
+                                                                  Size(10, 10),
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center))
+                                                ])
+                                          ])),
+                                  visible: _isEditMode,
+                                )
+                              ]))),
+                          _actorList.length > 0
+                              ? Wrap(children: [
+                                  GridView.count(
+                                      padding: EdgeInsets.only(
+                                          left: 16, right: 16, bottom: 50),
+                                      physics: NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      crossAxisCount: 2,
+                                      crossAxisSpacing: 10,
+                                      mainAxisSpacing: 5,
+                                      childAspectRatio: (0.76),
+                                      children: List.generate(_actorList.length,
+                                          (index) {
+                                        Map<String, dynamic> _data =
+                                            _actorList[index];
+                                        return _isEditMode
+                                            ? Center(
+                                                child: Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                            .size
+                                                            .width,
+                                                    child: GestureDetector(
+                                                        onTap: () {
+                                                          setState(() {
+                                                            _data["isSelected"] =
+                                                                !_data[
+                                                                    "isSelected"];
+                                                          });
+                                                        },
+                                                        child: Column(
+                                                            children: <Widget>[
+                                                              Stack(children: [
+                                                                Container(
+                                                                    decoration: BoxDecoration(
                                                                         borderRadius:
-                                                                            CustomStyles.circle4BorderRadius(),
-                                                                        child: CachedNetworkImage(imageUrl: _data[APIConstants.main_img_url], fit: BoxFit.cover))
-                                                                    : null),
-                                                            Container(
-                                                                margin:
-                                                                    EdgeInsets
+                                                                            CustomStyles
+                                                                                .circle7BorderRadius(),
+                                                                        color: CustomColors
+                                                                            .colorBgGrey,
+                                                                        border: Border.all(
+                                                                            width:
+                                                                                3,
+                                                                            color: (_data["isSelected"]
+                                                                                ? CustomColors
+                                                                                    .colorPrimary
+                                                                                : CustomColors
+                                                                                    .colorFontLightGrey))),
+                                                                    width: (MediaQuery.of(context)
+                                                                            .size
+                                                                            .width /
+                                                                        2),
+                                                                    height: (MediaQuery.of(context)
+                                                                            .size
+                                                                            .width /
+                                                                        2),
+                                                                    child: _data[APIConstants.main_img_url] !=
+                                                                            null
+                                                                        ? ClipRRect(
+                                                                            borderRadius: CustomStyles.circle4BorderRadius(),
+                                                                            child: CachedNetworkImage(imageUrl: _data[APIConstants.main_img_url], fit: BoxFit.cover))
+                                                                        : null),
+                                                                Container(
+                                                                    margin: EdgeInsets
                                                                         .all(
                                                                             10),
-                                                                alignment:
-                                                                    Alignment
-                                                                        .topRight,
-                                                                child: InkWell(
-                                                                    onTap: () {
-                                                                      setState(
-                                                                          () {
-                                                                        _data["isSelected"] =
-                                                                            !_data["isSelected"];
-                                                                      });
-                                                                    },
-                                                                    child: Container(
-                                                                        decoration: BoxDecoration(shape: BoxShape.circle, color: (_data["isSelected"] ? CustomColors.colorPrimary : CustomColors.colorFontLightGrey)),
-                                                                        child: Padding(
-                                                                            padding: const EdgeInsets.all(5.0),
-                                                                            child: _data["isSelected"]
-                                                                                ? Icon(
-                                                                                    Icons.check,
-                                                                                    size: 15.0,
-                                                                                    color: CustomColors.colorWhite,
-                                                                                  )
-                                                                                : Icon(
-                                                                                    Icons.check_box_outline_blank,
-                                                                                    size: 15.0,
-                                                                                    color: CustomColors.colorFontLightGrey,
-                                                                                  )))))
-                                                          ]),
-                                                          Container(
-                                                              alignment: Alignment
-                                                                  .centerLeft,
-                                                              margin: EdgeInsets
-                                                                  .only(top: 5),
-                                                              child: Text(
-                                                                  StringUtils.checkedString(_data[
-                                                                      APIConstants
-                                                                          .actor_name]),
-                                                                  style: CustomStyles
-                                                                      .dark20TextStyle()))
-                                                        ]))))
-                                        : Center(
-                                            child: Container(
-                                                width: MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                child: GestureDetector(
-                                                    onTap: () {
-                                                      Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            settings: RouteSettings(
-                                                                name:
-                                                                    'AgencyActorProfile'),
-                                                            builder: (context) => AgencyActorProfile(
-                                                                seq: _data[
-                                                                    APIConstants
-                                                                        .seq],
-                                                                actorProfileSeq:
-                                                                    _data[APIConstants
-                                                                        .actorProfile_seq])),
-                                                      );
-                                                    },
-                                                    child: Column(
-                                                        children: <Widget>[
-                                                          Container(
-                                                              decoration: BoxDecoration(
-                                                                  color: CustomColors
-                                                                      .colorBgGrey,
-                                                                  borderRadius:
-                                                                      CustomStyles
-                                                                          .circle7BorderRadius()),
-                                                              width: (MediaQuery.of(context)
-                                                                      .size
-                                                                      .width /
-                                                                  2),
-                                                              height: (MediaQuery.of(context)
-                                                                      .size
-                                                                      .width /
-                                                                  2),
-                                                              child: _data[APIConstants.main_img_url] !=
-                                                                      null
-                                                                  ? ClipRRect(
+                                                                    alignment:
+                                                                        Alignment
+                                                                            .topRight,
+                                                                    child: InkWell(
+                                                                        onTap: () {
+                                                                          setState(
+                                                                              () {
+                                                                            _data["isSelected"] =
+                                                                                !_data["isSelected"];
+                                                                          });
+                                                                        },
+                                                                        child: Container(
+                                                                            decoration: BoxDecoration(shape: BoxShape.circle, color: (_data["isSelected"] ? CustomColors.colorPrimary : CustomColors.colorFontLightGrey)),
+                                                                            child: Padding(
+                                                                                padding: const EdgeInsets.all(5.0),
+                                                                                child: _data["isSelected"]
+                                                                                    ? Icon(
+                                                                                        Icons.check,
+                                                                                        size: 15.0,
+                                                                                        color: CustomColors.colorWhite,
+                                                                                      )
+                                                                                    : Icon(
+                                                                                        Icons.check_box_outline_blank,
+                                                                                        size: 15.0,
+                                                                                        color: CustomColors.colorFontLightGrey,
+                                                                                      )))))
+                                                              ]),
+                                                              Container(
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .centerLeft,
+                                                                  margin: EdgeInsets
+                                                                      .only(
+                                                                          top:
+                                                                              5),
+                                                                  child: Text(
+                                                                      StringUtils.checkedString(
+                                                                          _data[APIConstants
+                                                                              .actor_name]),
+                                                                      style: CustomStyles
+                                                                          .dark20TextStyle()))
+                                                            ]))))
+                                            : Center(
+                                                child: Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                            .size
+                                                            .width,
+                                                    child: GestureDetector(
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                settings: RouteSettings(
+                                                                    name:
+                                                                        'AgencyActorProfile'),
+                                                                builder: (context) => AgencyActorProfile(
+                                                                    seq: _data[
+                                                                        APIConstants
+                                                                            .seq],
+                                                                    actorProfileSeq:
+                                                                        _data[APIConstants
+                                                                            .actorProfile_seq])),
+                                                          ).then((value) => {
+                                                                _tabIndex = 0,
+                                                                _total = 0,
+                                                                _actorList = [],
+                                                                requestActorListApi(
+                                                                    context)
+                                                              });
+                                                        },
+                                                        child: Column(
+                                                            children: <Widget>[
+                                                              Container(
+                                                                  decoration: BoxDecoration(
+                                                                      color: CustomColors
+                                                                          .colorBgGrey,
                                                                       borderRadius:
                                                                           CustomStyles
-                                                                              .circle7BorderRadius(),
-                                                                      child: CachedNetworkImage(
-                                                                          imageUrl:
-                                                                              _data[APIConstants.main_img_url],
-                                                                          fit: BoxFit.cover))
-                                                                  : null),
-                                                          Container(
-                                                              alignment: Alignment
-                                                                  .centerLeft,
-                                                              margin: EdgeInsets
-                                                                  .only(top: 5),
-                                                              child: Text(
-                                                                  StringUtils.checkedString(_data[
-                                                                      APIConstants
-                                                                          .actor_name]),
-                                                                  style: CustomStyles
-                                                                      .dark20TextStyle()))
-                                                        ]))));
-                                  }))
-                            ])
-                          : Container(
-                              margin: EdgeInsets.only(top: 30),
-                              child: Text('배우가 없습니다.',
-                                  style: CustomStyles.normal16TextStyle()))
-                    ])))));
+                                                                              .circle7BorderRadius()),
+                                                                  width: (MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width /
+                                                                      2),
+                                                                  height: (MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width /
+                                                                      2),
+                                                                  child: _data[APIConstants.main_img_url] !=
+                                                                          null
+                                                                      ? ClipRRect(
+                                                                          borderRadius:
+                                                                              CustomStyles.circle7BorderRadius(),
+                                                                          child: CachedNetworkImage(imageUrl: _data[APIConstants.main_img_url], fit: BoxFit.cover))
+                                                                      : null),
+                                                              Container(
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .centerLeft,
+                                                                  margin: EdgeInsets
+                                                                      .only(
+                                                                          top:
+                                                                              5),
+                                                                  child: Text(
+                                                                      StringUtils.checkedString(
+                                                                          _data[APIConstants
+                                                                              .actor_name]),
+                                                                      style: CustomStyles
+                                                                          .dark20TextStyle()))
+                                                            ]))));
+                                      }))
+                                ])
+                              : Container(
+                                  margin: EdgeInsets.only(top: 30),
+                                  child: Text('배우가 없습니다.',
+                                      style: CustomStyles.normal16TextStyle()))
+                        ]))),
+                Visibility(
+                  child: Container(
+                      color: Colors.black38,
+                      alignment: Alignment.center,
+                      child: CircularProgressIndicator()),
+                  visible: _isUpload,
+                )
+              ],
+            )));
   }
 }

@@ -27,6 +27,7 @@ class _AgencyProfile extends State<AgencyProfile>
     with SingleTickerProviderStateMixin, BaseUtilMixin {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
+  bool _isUpload = false;
   bool _kIsWeb;
 
   File _profileImgFile;
@@ -57,14 +58,9 @@ class _AgencyProfile extends State<AgencyProfile>
   * */
   void requestUpdateAgencyProfile(
       BuildContext context, File profileFile) async {
-    final dio = Dio();
-
-    /*final bytes = File(profileFile.path).readAsBytesSync();
-    String img64 = base64Encode(bytes);*/
-
-    // 매니지먼트 로고 이미지 수정 api 호출 시 보낼 파라미터
-    /*Map<String, dynamic> fileData = new Map();
-    fileData[APIConstants.base64string] = APIConstants.data_image + img64;*/
+    setState(() {
+      _isUpload = true;
+    });
 
     Map<String, dynamic> targetDatas = new Map();
     targetDatas[APIConstants.seq] =
@@ -80,13 +76,15 @@ class _AgencyProfile extends State<AgencyProfile>
         await MultipartFile.fromFile(profileFile.path, filename: fileName);
 
     // 매니지먼트 로고 이미지 수정 api 호출
-    RestClient(dio).postRequestMainControlFormData(params).then((value) async {
-      if (value == null) {
-        // 에러 - 데이터 널
-        showSnackBar(context, APIConstants.error_msg_server_not_response);
-      } else {
-        if (value[APIConstants.resultVal]) {
-          try {
+    RestClient(Dio())
+        .postRequestMainControlFormData(params)
+        .then((value) async {
+      try {
+        if (value == null) {
+          // 에러 - 데이터 널
+          showSnackBar(context, APIConstants.error_msg_server_not_response);
+        } else {
+          if (value[APIConstants.resultVal]) {
             // 매니지먼트 로고 이미지 수정 성공
             var _responseData = value[APIConstants.data];
             var _responseList = _responseData[APIConstants.list] as List;
@@ -104,13 +102,17 @@ class _AgencyProfile extends State<AgencyProfile>
                 }
               }
             });
-          } catch (e) {
+          } else {
+            // 매니지먼트 로고 이미지 수정 실패
             showSnackBar(context, APIConstants.error_msg_try_again);
           }
-        } else {
-          // 매니지먼트 로고 이미지 수정 실패
-          showSnackBar(context, APIConstants.error_msg_try_again);
         }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }
@@ -155,12 +157,14 @@ class _AgencyProfile extends State<AgencyProfile>
             appBar: CustomStyles.defaultAppBar('프로필 관리', () {
               Navigator.pop(context);
             }),
-            body: Container(
-              child: SingleChildScrollView(
-                child: Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
+            body: Stack(
+              children: [
+                Container(
+                    child: SingleChildScrollView(
+                        child: Container(
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
                       Container(
                           margin: EdgeInsets.only(top: 30, bottom: 15),
                           child: GestureDetector(
@@ -284,17 +288,21 @@ class _AgencyProfile extends State<AgencyProfile>
                                       .myInfo[APIConstants.management_email],
                               style: CustomStyles.dark14TextStyle())),
                       Container(
-                        margin: EdgeInsets.only(top: 30),
-                        child: Divider(
-                          height: 1,
-                          color: CustomColors.colorFontLightGrey,
-                        ),
-                      ),
+                          margin: EdgeInsets.only(top: 30),
+                          child: Divider(
+                            height: 1,
+                            color: CustomColors.colorFontLightGrey,
+                          ))
                       ////
-                    ],
-                  ),
-                ),
-              ),
+                    ])))),
+                Visibility(
+                  child: Container(
+                      color: Colors.black38,
+                      alignment: Alignment.center,
+                      child: CircularProgressIndicator()),
+                  visible: _isUpload,
+                )
+              ],
             )));
   }
 }

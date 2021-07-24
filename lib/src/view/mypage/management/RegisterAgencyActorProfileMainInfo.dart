@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../KCastingAppData.dart';
+import 'AgencyActorList.dart';
 
 /*
 * 보유 배우 프로필 추가 - 1
@@ -56,68 +57,6 @@ class _RegisterAgencyActorProfileMainInfo
     _gender = widget.gender;
 
     _txtFieldName.text = _name;
-
-    /*_txtFieldIntroduce.text = StringUtils.isEmpty(
-            KCastingAppData().myProfile[APIConstants.actor_Introduce])
-        ? ''
-        : KCastingAppData().myProfile[APIConstants.actor_Introduce];
-
-    _txtFieldDramaPay.text = StringUtils.isEmpty(
-            KCastingAppData().myProfile[APIConstants.actor_drama_pay])
-        ? ''
-        : KCastingAppData().myProfile[APIConstants.actor_drama_pay].toString();
-
-    _txtFieldMoviePay.text = StringUtils.isEmpty(
-            KCastingAppData().myProfile[APIConstants.actor_movie_pay])
-        ? ''
-        : KCastingAppData().myProfile[APIConstants.actor_movie_pay].toString();
-
-    _txtFieldTall.text = StringUtils.isEmpty(
-            KCastingAppData().myProfile[APIConstants.actor_tall])
-        ? ''
-        : KCastingAppData().myProfile[APIConstants.actor_tall].toString();
-
-    _txtFieldWeight.text = StringUtils.isEmpty(
-            KCastingAppData().myProfile[APIConstants.actor_weight])
-        ? ''
-        : KCastingAppData().myProfile[APIConstants.actor_weight].toString();
-
-    _birthDate = StringUtils.isEmpty(
-            KCastingAppData().myProfile[APIConstants.actor_birth])
-        ? '2000-01-01'
-        : KCastingAppData().myProfile[APIConstants.actor_birth];
-
-    List<String> _birthStrArr = _birthDate.split('-');
-    _birthY = _birthStrArr[0];
-    _birthM = _birthStrArr[1];
-    _birthD = _birthStrArr[2];
-
-    _major = StringUtils.isEmpty(
-            KCastingAppData().myProfile[APIConstants.actor_major_isAuth])
-        ? 0
-        : KCastingAppData().myProfile[APIConstants.actor_major_isAuth];
-
-    for (int i = 0; i < KCastingAppData().myEducation.length; i++) {
-      var data = KCastingAppData().myEducation[i];
-
-      UniqueKey _uKey = UniqueKey();
-      TextEditingController _txtFieldEducationName =
-          new TextEditingController();
-      TextEditingController _txtFieldMajorName = new TextEditingController();
-
-      _txtFieldEducationName.text = data[APIConstants.education_name];
-      _txtFieldMajorName.text = data[APIConstants.major_name];
-
-      Map<UniqueKey, EducationListModel> _eduItem = new Map();
-      _eduItem[_uKey] = new EducationListModel(
-          data[APIConstants.education_type],
-          _txtFieldEducationName,
-          _txtFieldMajorName);
-
-      _educationList.add(_eduItem);
-
-      _educationWidgets.add(educationHistory(_uKey));
-    }*/
   }
 
   Widget educationHistory(var uniqueKey) {
@@ -257,7 +196,7 @@ class _RegisterAgencyActorProfileMainInfo
       data: CustomStyles.defaultTheme(),
       child: Scaffold(
         appBar: CustomStyles.defaultAppBar('프로필 편집', () {
-          Navigator.pop(context);
+          addView(context, AgencyActorList());
         }),
         body: Container(
           child:

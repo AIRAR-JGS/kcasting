@@ -27,6 +27,8 @@ class AgencyMemberPage extends StatefulWidget {
 }
 
 class _AgencyMemberPage extends State<AgencyMemberPage> with BaseUtilMixin {
+  bool _isUpload = false;
+
   Map<String, dynamic> _stateData = new Map();
 
   @override
@@ -36,25 +38,32 @@ class _AgencyMemberPage extends State<AgencyMemberPage> with BaseUtilMixin {
     requestGetManagementState(context);
   }
 
+  void initData() {
+    setState(() {});
+  }
+
   /*
   * 매니지먼트 상태 조회
   * */
   void requestGetManagementState(BuildContext context) {
-    final dio = Dio();
+    setState(() {
+      _isUpload = true;
+    });
 
     // 매니지먼트 상태 조회 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
-    targetData[APIConstants.management_seq] = KCastingAppData().myInfo[APIConstants.management_seq];
+    targetData[APIConstants.management_seq] =
+        KCastingAppData().myInfo[APIConstants.management_seq];
 
     Map<String, dynamic> params = new Map();
     params[APIConstants.key] = APIConstants.SEL_MGM_PROFILESTATE;
     params[APIConstants.target] = targetData;
 
     // 매니지먼트 상태 조회 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
-      if (value != null) {
-        if (value[APIConstants.resultVal]) {
-          try {
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value != null) {
+          if (value[APIConstants.resultVal]) {
             // 매니지먼트 상태 조회 성공
             var _responseData = value[APIConstants.data];
             var _responseList = _responseData[APIConstants.list] as List;
@@ -64,14 +73,18 @@ class _AgencyMemberPage extends State<AgencyMemberPage> with BaseUtilMixin {
                 _stateData = _responseList[0];
               }
             });
-          } catch (e) {
+          } else {
             showSnackBar(context, APIConstants.error_msg_try_again);
           }
         } else {
-          showSnackBar(context, APIConstants.error_msg_try_again);
+          showSnackBar(context, APIConstants.error_msg_server_not_response);
         }
-      } else {
-        showSnackBar(context, APIConstants.error_msg_server_not_response);
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }
@@ -213,88 +226,105 @@ class _AgencyMemberPage extends State<AgencyMemberPage> with BaseUtilMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Container(
-      alignment: Alignment.center,
-      child: ListView.separated(
-        scrollDirection: Axis.vertical,
-        itemCount: 8,
-        itemBuilder: (context, index) {
-          return (index == 0)
-              ? _headerView()
-              : GestureDetector(
-                  onTap: () {
-                    print('메뉴 ' + index.toString());
-                    switch (index) {
-                      // 프로필 관리
-                      case 1:
-                        // 프로필 관리 페이지 이동
-                        addView(context, AgencyProfile());
-                        break;
+        body: Stack(
+      children: [
+        Container(
+          alignment: Alignment.center,
+          child: ListView.separated(
+            scrollDirection: Axis.vertical,
+            itemCount: 8,
+            itemBuilder: (context, index) {
+              return (index == 0)
+                  ? _headerView()
+                  : GestureDetector(
+                      onTap: () {
+                        print('메뉴 ' + index.toString());
+                        switch (index) {
+                          // 프로필 관리
+                          case 1:
+                            // 프로필 관리 페이지 이동
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => AgencyProfile()))
+                                .then((value) => {initData()});
 
-                      // 보유 배우
-                      case 2:
-                        // 보유 배우 페이지 이동
-                        addView(context, AgencyActorList());
-                        break;
+                            //addView(context, AgencyProfile());
+                            break;
 
-                      // 지원 현황
-                      case 3:
-                        // 지원 현황 페이지 이동
-                        addView(context, AgencyActorAuditionApplyList());
-                        break;
+                          // 보유 배우
+                          case 2:
+                            // 보유 배우 페이지 이동
+                            addView(context, AgencyActorList());
+                            break;
 
-                      // 받은 제안
-                      case 4:
-                        // 받은 제안 페이지 이동
-                        addView(context, AgencyActorOfferedAuditionList());
-                        break;
+                          // 지원 현황
+                          case 3:
+                            // 지원 현황 페이지 이동
+                            addView(context, AgencyActorAuditionApplyList());
+                            break;
 
-                      // 마이스크랩
-                      case 5:
-                        // 마이스크랩 페이지 이동
-                        addView(context, BookmarkedAgencyAuditionList());
-                        break;
+                          // 받은 제안
+                          case 4:
+                            // 받은 제안 페이지 이동
+                            addView(context, AgencyActorOfferedAuditionList());
+                            break;
 
-                      // 개인정보 관리
-                      case 6:
-                        // 개인정보 관리 페이지 이동
-                        addView(context, AgencyMemberInfo());
-                        break;
+                          // 마이스크랩
+                          case 5:
+                            // 마이스크랩 페이지 이동
+                            addView(context, BookmarkedAgencyAuditionList());
+                            break;
 
-                      // 로그아웃
-                      case 7:
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) =>
-                              DialogMemberLogoutConfirm(
-                            onClickedAgree: () async {
-                              KCastingAppData().clearData();
+                          // 개인정보 관리
+                          case 6:
+                            // 개인정보 관리 페이지 이동
+                            addView(context, AgencyMemberInfo());
+                            break;
 
-                              final SharedPreferences prefs =
-                                  await SharedPreferences.getInstance();
-                              prefs.remove(APIConstants.autoLogin);
-                              prefs.remove(APIConstants.id);
-                              prefs.remove(APIConstants.pwd);
+                          // 로그아웃
+                          case 7:
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) =>
+                                  DialogMemberLogoutConfirm(
+                                onClickedAgree: () async {
+                                  KCastingAppData().clearData();
 
-                              // 로그인 페이지 이동
-                              replaceView(context, Login());
-                            },
-                          ),
-                        );
+                                  final SharedPreferences prefs =
+                                      await SharedPreferences.getInstance();
+                                  prefs.remove(APIConstants.autoLogin);
+                                  prefs.remove(APIConstants.id);
+                                  prefs.remove(APIConstants.pwd);
 
-                        break;
+                                  // 로그인 페이지 이동
+                                  replaceView(context, Login());
+                                },
+                              ),
+                            );
 
-                      default:
-                        break;
-                    }
-                  },
-                  child: _listItemView(index),
-                );
-        },
-        separatorBuilder: (context, index) {
-          return Divider();
-        },
-      ),
+                            break;
+
+                          default:
+                            break;
+                        }
+                      },
+                      child: _listItemView(index),
+                    );
+            },
+            separatorBuilder: (context, index) {
+              return Divider();
+            },
+          ),
+        ),
+        Visibility(
+          child: Container(
+              color: Colors.black38,
+              alignment: Alignment.center,
+              child: CircularProgressIndicator()),
+          visible: _isUpload,
+        )
+      ],
     ));
   }
 }

@@ -10,14 +10,17 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../KCastingAppData.dart';
+import 'RegisteredAuditionList.dart';
 
 /*
 * 오디션 배역 추가 - 다수 배역
 * */
 class RegisterSubRoleAudition extends StatefulWidget {
   final int projectSeq;
+  final String projectName;
 
-  const RegisterSubRoleAudition({Key key, this.projectSeq}) : super(key: key);
+  const RegisterSubRoleAudition({Key key, this.projectSeq, this.projectName})
+      : super(key: key);
 
   @override
   _RegisterSubRoleAudition createState() => _RegisterSubRoleAudition();
@@ -27,7 +30,9 @@ class _RegisterSubRoleAudition extends State<RegisterSubRoleAudition>
     with SingleTickerProviderStateMixin, BaseUtilMixin {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
+  bool _isUpload = false;
   int _projectSeq;
+  String _projectName;
 
   int _isPayLimit = 0;
 
@@ -44,6 +49,7 @@ class _RegisterSubRoleAudition extends State<RegisterSubRoleAudition>
     super.initState();
 
     _projectSeq = widget.projectSeq;
+    _projectName = widget.projectName;
 
     var now = new DateTime.now();
     var formatter = new DateFormat('yyyy-MM-dd');
@@ -62,160 +68,177 @@ class _RegisterSubRoleAudition extends State<RegisterSubRoleAudition>
       child: Scaffold(
           key: _scaffoldKey,
           appBar: CustomStyles.defaultAppBar('배역 추가', () {
-            Navigator.pop(context);
+            replaceView(
+                context,
+                RegisteredAuditionList(
+                  projectSeq: _projectSeq,
+                  projectName: _projectName,
+                ));
           }),
           body: Builder(
             builder: (context) {
-              return Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                        flex: 1,
-                        child: SingleChildScrollView(
-                            child: Container(
-                                padding: EdgeInsets.only(top: 30, bottom: 30),
-                                child: Column(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                          padding: EdgeInsets.only(
-                                              left: 15, right: 15),
-                                          margin: EdgeInsets.only(top: 15),
-                                          alignment: Alignment.centerLeft,
-                                          child: Text('오디션 기간',
-                                              style: CustomStyles
-                                                  .bold14TextStyle())),
-                                      Container(
-                                        padding: EdgeInsets.only(
-                                            left: 15, right: 15),
-                                        margin: EdgeInsets.only(top: 5),
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                                child: GestureDetector(
-                                              onTap: () {
-                                                showDatePickerForDday(context,
-                                                    (date) {
-                                                  setState(() {
-                                                    var _birthY =
-                                                        date.year.toString();
-                                                    var _birthM = date.month
-                                                        .toString()
-                                                        .padLeft(2, '0');
-                                                    var _birthD = date.day
-                                                        .toString()
-                                                        .padLeft(2, '0');
-
-                                                    _startDate = _birthY +
-                                                        '-' +
-                                                        _birthM +
-                                                        '-' +
-                                                        _birthD;
-                                                  });
-                                                });
-                                              },
-                                              child: Container(
-                                                  height: 48,
-                                                  margin:
-                                                      EdgeInsets.only(right: 5),
-                                                  padding: EdgeInsets.all(5),
-                                                  decoration: BoxDecoration(
-                                                      borderRadius: CustomStyles
-                                                          .circle7BorderRadius(),
-                                                      border: Border.all(
-                                                          width: 1,
-                                                          color: CustomColors
-                                                              .colorFontGrey)),
-                                                  child: Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.max,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    children: [
-                                                      Container(
-                                                        margin: EdgeInsets.only(
-                                                            right: 10),
-                                                        child: Icon(
-                                                            Icons.date_range,
-                                                            color: CustomColors
-                                                                .colorFontTitle),
-                                                      ),
-                                                      Text(_startDate,
-                                                          style: CustomStyles
-                                                              .bold14TextStyle()),
-                                                    ],
-                                                  )),
-                                            )),
-                                            Container(
-                                              margin: EdgeInsets.only(
-                                                  left: 10, right: 10),
-                                              child: Text('-',
+              return Stack(
+                children: [
+                  Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                            flex: 1,
+                            child: SingleChildScrollView(
+                                child: Container(
+                                    padding:
+                                        EdgeInsets.only(top: 30, bottom: 30),
+                                    child: Column(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                              padding: EdgeInsets.only(
+                                                  left: 15, right: 15),
+                                              margin: EdgeInsets.only(top: 15),
+                                              alignment: Alignment.centerLeft,
+                                              child: Text('오디션 기간',
                                                   style: CustomStyles
-                                                      .normal16TextStyle()),
-                                            ),
-                                            Expanded(
-                                                child: GestureDetector(
-                                              onTap: () {
-                                                showDatePickerForDday(context,
-                                                    (date) {
-                                                  setState(() {
-                                                    var _birthY =
-                                                        date.year.toString();
-                                                    var _birthM = date.month
-                                                        .toString()
-                                                        .padLeft(2, '0');
-                                                    var _birthD = date.day
-                                                        .toString()
-                                                        .padLeft(2, '0');
+                                                      .bold14TextStyle())),
+                                          Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            margin: EdgeInsets.only(top: 5),
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                    child: GestureDetector(
+                                                  onTap: () {
+                                                    showDatePickerForDday(
+                                                        context, (date) {
+                                                      setState(() {
+                                                        var _birthY = date.year
+                                                            .toString();
+                                                        var _birthM = date.month
+                                                            .toString()
+                                                            .padLeft(2, '0');
+                                                        var _birthD = date.day
+                                                            .toString()
+                                                            .padLeft(2, '0');
 
-                                                    _endDate = _birthY +
-                                                        '-' +
-                                                        _birthM +
-                                                        '-' +
-                                                        _birthD;
-                                                  });
-                                                });
-                                              },
-                                              child: Container(
-                                                  height: 48,
-                                                  margin:
-                                                      EdgeInsets.only(right: 5),
-                                                  padding: EdgeInsets.all(5),
-                                                  decoration: BoxDecoration(
-                                                      borderRadius: CustomStyles
-                                                          .circle7BorderRadius(),
-                                                      border: Border.all(
-                                                          width: 1,
-                                                          color: CustomColors
-                                                              .colorFontGrey)),
-                                                  child: Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.max,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    children: [
-                                                      Container(
-                                                        margin: EdgeInsets.only(
-                                                            right: 10),
-                                                        child: Icon(
-                                                            Icons.date_range,
-                                                            color: CustomColors
-                                                                .colorFontTitle),
-                                                      ),
-                                                      Text(_endDate,
-                                                          style: CustomStyles
-                                                              .bold14TextStyle()),
-                                                    ],
-                                                  )),
-                                            )),
-                                          ],
-                                        ),
-                                      ),
-                                      /*Container(
+                                                        _startDate = _birthY +
+                                                            '-' +
+                                                            _birthM +
+                                                            '-' +
+                                                            _birthD;
+                                                      });
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                      height: 48,
+                                                      margin: EdgeInsets.only(
+                                                          right: 5),
+                                                      padding:
+                                                          EdgeInsets.all(5),
+                                                      decoration: BoxDecoration(
+                                                          borderRadius: CustomStyles
+                                                              .circle7BorderRadius(),
+                                                          border: Border.all(
+                                                              width: 1,
+                                                              color: CustomColors
+                                                                  .colorFontGrey)),
+                                                      child: Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.max,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Container(
+                                                            margin:
+                                                                EdgeInsets.only(
+                                                                    right: 10),
+                                                            child: Icon(
+                                                                Icons
+                                                                    .date_range,
+                                                                color: CustomColors
+                                                                    .colorFontTitle),
+                                                          ),
+                                                          Text(_startDate,
+                                                              style: CustomStyles
+                                                                  .bold14TextStyle()),
+                                                        ],
+                                                      )),
+                                                )),
+                                                Container(
+                                                  margin: EdgeInsets.only(
+                                                      left: 10, right: 10),
+                                                  child: Text('-',
+                                                      style: CustomStyles
+                                                          .normal16TextStyle()),
+                                                ),
+                                                Expanded(
+                                                    child: GestureDetector(
+                                                  onTap: () {
+                                                    showDatePickerForDday(
+                                                        context, (date) {
+                                                      setState(() {
+                                                        var _birthY = date.year
+                                                            .toString();
+                                                        var _birthM = date.month
+                                                            .toString()
+                                                            .padLeft(2, '0');
+                                                        var _birthD = date.day
+                                                            .toString()
+                                                            .padLeft(2, '0');
+
+                                                        _endDate = _birthY +
+                                                            '-' +
+                                                            _birthM +
+                                                            '-' +
+                                                            _birthD;
+                                                      });
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                      height: 48,
+                                                      margin: EdgeInsets.only(
+                                                          right: 5),
+                                                      padding:
+                                                          EdgeInsets.all(5),
+                                                      decoration: BoxDecoration(
+                                                          borderRadius: CustomStyles
+                                                              .circle7BorderRadius(),
+                                                          border: Border.all(
+                                                              width: 1,
+                                                              color: CustomColors
+                                                                  .colorFontGrey)),
+                                                      child: Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.max,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Container(
+                                                            margin:
+                                                                EdgeInsets.only(
+                                                                    right: 10),
+                                                            child: Icon(
+                                                                Icons
+                                                                    .date_range,
+                                                                color: CustomColors
+                                                                    .colorFontTitle),
+                                                          ),
+                                                          Text(_endDate,
+                                                              style: CustomStyles
+                                                                  .bold14TextStyle()),
+                                                        ],
+                                                      )),
+                                                )),
+                                              ],
+                                            ),
+                                          ),
+                                          /*Container(
                                     margin: EdgeInsets.only(top: 0),
                                     padding:
                                         EdgeInsets.only(left: 15, right: 15),
@@ -247,149 +270,160 @@ class _RegisterSubRoleAudition extends State<RegisterSubRoleAudition>
                                               style: CustomStyles
                                                   .normal14TextStyle())
                                         ])),*/
-                                      Container(
-                                          padding: EdgeInsets.only(
-                                              left: 15, right: 15),
-                                          margin: EdgeInsets.only(top: 15),
-                                          alignment: Alignment.centerLeft,
-                                          child: Text('배역 이름',
-                                              style: CustomStyles
-                                                  .bold14TextStyle())),
-                                      Container(
-                                          padding: EdgeInsets.only(
-                                              left: 15, right: 15),
-                                          margin: EdgeInsets.only(top: 5),
-                                          child: CustomStyles
-                                              .greyBorderRound7TextField(
-                                                  _txtFieldCastingName, '')),
-                                      Container(
-                                          padding: EdgeInsets.only(
-                                              left: 15, right: 15),
-                                          alignment: Alignment.centerLeft,
-                                          margin: EdgeInsets.only(top: 15),
-                                          child: Text('배역설명',
-                                              style: CustomStyles
-                                                  .bold14TextStyle())),
-                                      Container(
-                                        margin: EdgeInsets.only(top: 5),
-                                        padding: EdgeInsets.only(
-                                            left: 15, right: 15),
-                                        child: TextField(
-                                          maxLines: 8,
-                                          controller: _txtFieldCastingIntroduce,
-                                          decoration: InputDecoration(
-                                            isDense: true,
-                                            contentPadding:
-                                                EdgeInsets.symmetric(
-                                                    vertical: 10,
-                                                    horizontal: 10),
-                                            hintText:
-                                                "단역과 엑스트라로 들어갈 배우들 모집합니다.",
-                                            hintStyle:
-                                                CustomStyles.light14TextStyle(),
-                                            border: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: CustomColors
-                                                        .colorFontLightGrey,
-                                                    width: 1.0),
-                                                borderRadius: CustomStyles
-                                                    .circle7BorderRadius()),
-                                            focusedBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: CustomColors
-                                                        .colorFontLightGrey,
-                                                    width: 1.0),
-                                                borderRadius: CustomStyles
-                                                    .circle7BorderRadius()),
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                          padding: EdgeInsets.only(
-                                              left: 15, right: 15),
-                                          margin: EdgeInsets.only(top: 15),
-                                          alignment: Alignment.centerLeft,
-                                          child: Text('배역수',
-                                              style: CustomStyles
-                                                  .bold14TextStyle())),
-                                      Container(
-                                          padding: EdgeInsets.only(
-                                              left: 15, right: 15),
-                                          margin: EdgeInsets.only(top: 5),
-                                          child: CustomStyles
-                                              .greyBorderRound7TextFieldWithOption(
-                                                  _txtFieldCastingCnt,
-                                                  TextInputType.number,
-                                                  '')),
-                                      Container(
-                                          padding: EdgeInsets.only(
-                                              left: 15, right: 15),
-                                          alignment: Alignment.centerLeft,
-                                          margin: EdgeInsets.only(top: 15),
-                                          child: Text('페이',
-                                              style: CustomStyles
-                                                  .bold14TextStyle())),
-                                      Container(
-                                          padding: EdgeInsets.only(
-                                              left: 15, right: 15),
-                                          margin: EdgeInsets.only(top: 5),
-                                          child: CustomStyles
-                                              .greyBorderRound7TextFieldWithOption(
-                                                  _txtFieldCastingPay,
-                                                  TextInputType.number,
-                                                  '만원 단위로 입력해 주세요.')),
-                                      Container(
-                                        padding: EdgeInsets.only(
-                                            left: 15, right: 15),
-                                        margin: EdgeInsets.only(top: 5),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            SizedBox(
-                                              width: 24,
-                                              height: 24,
-                                              child: Radio<int>(
-                                                value: _isPayLimit,
-                                                groupValue: 1,
-                                                toggleable: true,
-                                                onChanged: (_) {
-                                                  setState(() {
-                                                    if (_isPayLimit == 0) {
-                                                      _isPayLimit = 1;
-                                                    } else {
-                                                      _isPayLimit = 0;
-                                                    }
-                                                  });
-                                                },
-                                                materialTapTargetSize:
-                                                    MaterialTapTargetSize
-                                                        .shrinkWrap,
+                                          Container(
+                                              padding: EdgeInsets.only(
+                                                  left: 15, right: 15),
+                                              margin: EdgeInsets.only(top: 15),
+                                              alignment: Alignment.centerLeft,
+                                              child: Text('배역 이름',
+                                                  style: CustomStyles
+                                                      .bold14TextStyle())),
+                                          Container(
+                                              padding: EdgeInsets.only(
+                                                  left: 15, right: 15),
+                                              margin: EdgeInsets.only(top: 5),
+                                              child: CustomStyles
+                                                  .greyBorderRound7TextField(
+                                                      _txtFieldCastingName,
+                                                      '')),
+                                          Container(
+                                              padding: EdgeInsets.only(
+                                                  left: 15, right: 15),
+                                              alignment: Alignment.centerLeft,
+                                              margin: EdgeInsets.only(top: 15),
+                                              child: Text('배역설명',
+                                                  style: CustomStyles
+                                                      .bold14TextStyle())),
+                                          Container(
+                                            margin: EdgeInsets.only(top: 5),
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            child: TextField(
+                                              maxLines: 8,
+                                              controller:
+                                                  _txtFieldCastingIntroduce,
+                                              decoration: InputDecoration(
+                                                isDense: true,
+                                                contentPadding:
+                                                    EdgeInsets.symmetric(
+                                                        vertical: 10,
+                                                        horizontal: 10),
+                                                hintText:
+                                                    "단역과 엑스트라로 들어갈 배우들 모집합니다.",
+                                                hintStyle: CustomStyles
+                                                    .light14TextStyle(),
+                                                border: OutlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color: CustomColors
+                                                            .colorFontLightGrey,
+                                                        width: 1.0),
+                                                    borderRadius: CustomStyles
+                                                        .circle7BorderRadius()),
+                                                focusedBorder: OutlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color: CustomColors
+                                                            .colorFontLightGrey,
+                                                        width: 1.0),
+                                                    borderRadius: CustomStyles
+                                                        .circle7BorderRadius()),
                                               ),
                                             ),
-                                            Text('협의 후 결정',
-                                                style: CustomStyles
-                                                    .dark16TextStyle())
-                                          ],
-                                        ),
-                                      )
-                                    ])))),
-                    Container(
-                        width: double.infinity,
-                        height: 55,
-                        color: Colors.grey,
-                        child: Container(
-                            width: MediaQuery.of(context).size.width,
+                                          ),
+                                          Container(
+                                              padding: EdgeInsets.only(
+                                                  left: 15, right: 15),
+                                              margin: EdgeInsets.only(top: 15),
+                                              alignment: Alignment.centerLeft,
+                                              child: Text('배역수',
+                                                  style: CustomStyles
+                                                      .bold14TextStyle())),
+                                          Container(
+                                              padding: EdgeInsets.only(
+                                                  left: 15, right: 15),
+                                              margin: EdgeInsets.only(top: 5),
+                                              child: CustomStyles
+                                                  .greyBorderRound7TextFieldWithOption(
+                                                      _txtFieldCastingCnt,
+                                                      TextInputType.number,
+                                                      '')),
+                                          Container(
+                                              padding: EdgeInsets.only(
+                                                  left: 15, right: 15),
+                                              alignment: Alignment.centerLeft,
+                                              margin: EdgeInsets.only(top: 15),
+                                              child: Text('페이',
+                                                  style: CustomStyles
+                                                      .bold14TextStyle())),
+                                          Container(
+                                              padding: EdgeInsets.only(
+                                                  left: 15, right: 15),
+                                              margin: EdgeInsets.only(top: 5),
+                                              child: CustomStyles
+                                                  .greyBorderRound7TextFieldWithOption(
+                                                      _txtFieldCastingPay,
+                                                      TextInputType.number,
+                                                      '만원 단위로 입력해 주세요.')),
+                                          Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            margin: EdgeInsets.only(top: 5),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.max,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                SizedBox(
+                                                  width: 24,
+                                                  height: 24,
+                                                  child: Radio<int>(
+                                                    value: _isPayLimit,
+                                                    groupValue: 1,
+                                                    toggleable: true,
+                                                    onChanged: (_) {
+                                                      setState(() {
+                                                        if (_isPayLimit == 0) {
+                                                          _isPayLimit = 1;
+                                                        } else {
+                                                          _isPayLimit = 0;
+                                                        }
+                                                      });
+                                                    },
+                                                    materialTapTargetSize:
+                                                        MaterialTapTargetSize
+                                                            .shrinkWrap,
+                                                  ),
+                                                ),
+                                                Text('협의 후 결정',
+                                                    style: CustomStyles
+                                                        .dark16TextStyle())
+                                              ],
+                                            ),
+                                          )
+                                        ])))),
+                        Container(
+                            width: double.infinity,
                             height: 55,
-                            child: CustomStyles.blueBGSquareButtonStyle('배역 추가',
-                                () {
-                              if (checkValidate(context)) {
-                                requestAddFilmographyApi(context);
-                              }
-                            })))
-                  ],
-                ),
+                            color: Colors.grey,
+                            child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                height: 55,
+                                child: CustomStyles.blueBGSquareButtonStyle(
+                                    '배역 추가', () {
+                                  if (checkValidate(context)) {
+                                    requestAddFilmographyApi(context);
+                                  }
+                                })))
+                      ],
+                    ),
+                  ),
+                  Visibility(
+                    child: Container(
+                        color: Colors.black38,
+                        alignment: Alignment.center,
+                        child: CircularProgressIndicator()),
+                    visible: _isUpload,
+                  )
+                ],
               );
             },
           )),
@@ -429,7 +463,9 @@ class _RegisterSubRoleAudition extends State<RegisterSubRoleAudition>
   * 캐스팅 추가
   * */
   void requestAddFilmographyApi(BuildContext context) {
-    final dio = Dio();
+    setState(() {
+      _isUpload = true;
+    });
 
     // 캐스팅 추가 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
@@ -479,24 +515,34 @@ class _RegisterSubRoleAudition extends State<RegisterSubRoleAudition>
     _params[APIConstants.target] = targetData;
 
     // 캐스팅 추가 api 호출
-    RestClient(dio).postRequestMainControl(_params).then((value) async {
-      if (value == null) {
-        // 에러 - 데이터 널
-        showSnackBar(context, APIConstants.error_msg_server_not_response);
-      } else {
-        if (value[APIConstants.resultVal]) {
-          try {
+    RestClient(Dio()).postRequestMainControl(_params).then((value) async {
+      try {
+        if (value == null) {
+          // 에러 - 데이터 널
+          showSnackBar(context, APIConstants.error_msg_server_not_response);
+        } else {
+          if (value[APIConstants.resultVal]) {
             // 캐스팅 추가 성공
             //var _responseList = value[APIConstants.data];
             showSnackBar(context, "배역이 추가되었습니다.");
-            Navigator.pop(context);
-          } catch (e) {
+
+            replaceView(
+                context,
+                RegisteredAuditionList(
+                  projectSeq: _projectSeq,
+                  projectName: _projectName,
+                ));
+          } else {
+            // 캐스팅 추가 실패
             showSnackBar(context, APIConstants.error_msg_try_again);
           }
-        } else {
-          // 캐스팅 추가 실패
-          showSnackBar(context, APIConstants.error_msg_try_again);
         }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }

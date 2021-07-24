@@ -18,6 +18,8 @@ class BookmarkedAuditionList extends StatefulWidget {
 
 class _BookmarkedAuditionList extends State<BookmarkedAuditionList>
     with SingleTickerProviderStateMixin, BaseUtilMixin {
+  bool _isUpload = false;
+
   // 캐스팅보드 리스트 관련 변수
   ScrollController _scrollController;
 
@@ -63,11 +65,14 @@ class _BookmarkedAuditionList extends State<BookmarkedAuditionList>
   * 배우 북마크 목록
   * */
   void requestCastingListApi(BuildContext context) {
-    final dio = Dio();
+    setState(() {
+      _isUpload = true;
+    });
 
     // 배우 북마크 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetDate = new Map();
-    targetDate[APIConstants.actor_seq] = KCastingAppData().myInfo[APIConstants.seq];
+    targetDate[APIConstants.actor_seq] =
+        KCastingAppData().myInfo[APIConstants.seq];
 
     Map<String, dynamic> paging = new Map();
     paging[APIConstants.offset] = _castingBoardList.length;
@@ -79,10 +84,10 @@ class _BookmarkedAuditionList extends State<BookmarkedAuditionList>
     params[APIConstants.paging] = paging;
 
     // 배우 북마크 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
-      if (value != null) {
-        if (value[APIConstants.resultVal]) {
-          try {
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value != null) {
+          if (value[APIConstants.resultVal]) {
             // 배우 북마크 성공
             setState(() {
               var _responseData = value[APIConstants.data];
@@ -97,8 +102,14 @@ class _BookmarkedAuditionList extends State<BookmarkedAuditionList>
 
               _isLoading = false;
             });
-          } catch (e) {}
+          }
         }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }
@@ -114,53 +125,64 @@ class _BookmarkedAuditionList extends State<BookmarkedAuditionList>
             appBar: CustomStyles.defaultAppBar('마이 스크랩', () {
               Navigator.pop(context);
             }),
-            body: Container(
-                child: SingleChildScrollView(
-                    child: Column(
+            body: Stack(
               children: [
                 Container(
-                    margin: EdgeInsets.only(top: 15),
-                    padding: EdgeInsets.all(15),
-                    alignment: Alignment.topLeft,
-                    child: Text('마이 스크랩',
-                        style: CustomStyles.normal24TextStyle())),
-                Container(
-                  padding: EdgeInsets.only(left: 15, right: 15, bottom: 15),
-                  alignment: Alignment.topLeft,
-                  child: RichText(
-                      text: new TextSpan(
-                    style: CustomStyles.dark16TextStyle(),
-                    children: <TextSpan>[
-                      new TextSpan(text: '내 스크랩 '),
-                      new TextSpan(
-                          text: _castingBoardList.length.toString(),
-                          style: CustomStyles.red16TextStyle()),
-                      new TextSpan(text: '개'),
-                    ],
-                  )),
-                ),
-                _castingBoardList.length > 0
-                    ? (Wrap(children: [
-                        ListView.builder(
-                            padding: EdgeInsets.only(bottom: 50),
-                            controller: _scrollController,
-                            physics: NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: _castingBoardList.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Container(
-                                  margin: EdgeInsets.only(bottom: 10),
-                                  alignment: Alignment.center,
-                                  child: AuditionListItem(
-                                    castingItem: _castingBoardList[index],
-                                  ));
-                            })
-                      ]))
-                    : Container(
-                        margin: EdgeInsets.only(top: 30),
-                        child: Text('캐스팅이 없습니다.',
-                            style: CustomStyles.normal16TextStyle()))
+                    child: SingleChildScrollView(
+                        child: Column(
+                  children: [
+                    Container(
+                        margin: EdgeInsets.only(top: 15),
+                        padding: EdgeInsets.all(15),
+                        alignment: Alignment.topLeft,
+                        child: Text('마이 스크랩',
+                            style: CustomStyles.normal24TextStyle())),
+                    Container(
+                      padding: EdgeInsets.only(left: 15, right: 15, bottom: 15),
+                      alignment: Alignment.topLeft,
+                      child: RichText(
+                          text: new TextSpan(
+                        style: CustomStyles.dark16TextStyle(),
+                        children: <TextSpan>[
+                          new TextSpan(text: '내 스크랩 '),
+                          new TextSpan(
+                              text: _castingBoardList.length.toString(),
+                              style: CustomStyles.red16TextStyle()),
+                          new TextSpan(text: '개'),
+                        ],
+                      )),
+                    ),
+                    _castingBoardList.length > 0
+                        ? (Wrap(children: [
+                            ListView.builder(
+                                padding: EdgeInsets.only(bottom: 50),
+                                controller: _scrollController,
+                                physics: NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: _castingBoardList.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Container(
+                                      margin: EdgeInsets.only(bottom: 10),
+                                      alignment: Alignment.center,
+                                      child: AuditionListItem(
+                                        castingItem: _castingBoardList[index],
+                                      ));
+                                })
+                          ]))
+                        : Container(
+                            margin: EdgeInsets.only(top: 30),
+                            child: Text('캐스팅이 없습니다.',
+                                style: CustomStyles.normal16TextStyle()))
+                  ],
+                ))),
+                Visibility(
+                  child: Container(
+                      color: Colors.black38,
+                      alignment: Alignment.center,
+                      child: CircularProgressIndicator()),
+                  visible: _isUpload,
+                )
               ],
-            )))));
+            )));
   }
 }

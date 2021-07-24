@@ -32,6 +32,7 @@ class RegisteredAuditionList extends StatefulWidget {
 class _RegisteredAuditionList extends State<RegisteredAuditionList>
     with SingleTickerProviderStateMixin, BaseUtilMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  bool _isUpload = false;
 
   int _projectSeq;
   String _projectName;
@@ -61,20 +62,13 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
     _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(_handleTabSelection);
 
-    //requestCastingStateList(context);
-
-    _scrollController = new ScrollController(initialScrollOffset: 5.0)
-      ..addListener(_scrollListener);
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
     _total = 0;
     _castingStateList = [];
 
     requestCastingStateList(context);
+
+    _scrollController = new ScrollController(initialScrollOffset: 5.0)
+      ..addListener(_scrollListener);
   }
 
   _handleTabSelection() {
@@ -131,7 +125,9 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
   캐스팅 진행 현황 조회
   * */
   void requestCastingStateList(BuildContext context) {
-    final dio = Dio();
+    setState(() {
+      _isUpload = true;
+    });
 
     // 캐스팅 진행 현황 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
@@ -150,27 +146,35 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
     params[APIConstants.paging] = paging;
 
     // 캐스팅 진행 현황 조회 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
-      if (value == null) {
-        // 에러 - 데이터 널
-        showSnackBar(context, '다시 시도해 주세요.');
-      } else {
-        if (value[APIConstants.resultVal]) {
-          // 캐스팅 진행 현황 조회 성공
-          var _responseList = value[APIConstants.data];
-
-          var _pagingData = _responseList[APIConstants.paging];
-          setState(() {
-            _total = _pagingData[APIConstants.total];
-
-            _castingStateList.addAll(_responseList[APIConstants.list]);
-
-            _isLoading = false;
-          });
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value == null) {
+          // 에러 - 데이터 널
+          showSnackBar(context, '다시 시도해 주세요.');
         } else {
-          // 캐스팅 진행 현황 조회 실패
-          showSnackBar(context, value[APIConstants.resultMsg]);
+          if (value[APIConstants.resultVal]) {
+            // 캐스팅 진행 현황 조회 성공
+            var _responseList = value[APIConstants.data];
+
+            var _pagingData = _responseList[APIConstants.paging];
+            setState(() {
+              _total = _pagingData[APIConstants.total];
+
+              _castingStateList.addAll(_responseList[APIConstants.list]);
+
+              _isLoading = false;
+            });
+          } else {
+            // 캐스팅 진행 현황 조회 실패
+            showSnackBar(context, value[APIConstants.resultMsg]);
+          }
         }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }
@@ -827,12 +831,14 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
             appBar: CustomStyles.defaultAppBar('', () {
               Navigator.pop(context);
             }),
-            body: Container(
-              child: SingleChildScrollView(
-                child: Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+            body: Stack(
+              children: [
+                Container(
+                    child: SingleChildScrollView(
+                        child: Container(
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
                       Container(
                         margin: EdgeInsets.only(top: 30.0, bottom: 10),
                         padding: EdgeInsets.only(left: 16, right: 16),
@@ -849,16 +855,20 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
                               builder: (BuildContext context) =>
                                   DialogRegisterAuditionRole(
                                       onClickedAddCertainRole: () {
+                                        Navigator.pop(context);
                                 replaceView(
                                     context,
                                     RegisterMainRoleAudition(
                                       projectSeq: _projectSeq,
+                                      projectName: _projectName,
                                     ));
                               }, onClickedAddLargeRole: () {
+                                    Navigator.pop(context);
                                 replaceView(
                                     context,
                                     RegisterSubRoleAudition(
                                       projectSeq: _projectSeq,
+                                      projectName: _projectName,
                                     ));
                               }),
                             );
@@ -956,10 +966,15 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
                             ),
                           ),
                           visible: _castingStateList.length > 0 ? false : true),
-                    ],
-                  ),
-                ),
-              ),
+                    ])))),
+                Visibility(
+                  child: Container(
+                      color: Colors.black38,
+                      alignment: Alignment.center,
+                      child: CircularProgressIndicator()),
+                  visible: _isUpload,
+                )
+              ],
             )));
   }
 }

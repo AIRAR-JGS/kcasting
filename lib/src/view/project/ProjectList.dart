@@ -23,6 +23,8 @@ class _ProjectList extends State<ProjectList>
     with SingleTickerProviderStateMixin, BaseUtilMixin {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
+  bool _isUpload = false;
+
   final _txtFieldSearch = TextEditingController();
 
   TabController _tabController;
@@ -100,7 +102,9 @@ class _ProjectList extends State<ProjectList>
   * 프로젝트목록조회
   * */
   void requestProjectListApi(BuildContext context) {
-    final dio = Dio();
+    setState(() {
+      _isUpload = true;
+    });
 
     // 프로젝트목록조회 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetDatas = new Map();
@@ -124,13 +128,13 @@ class _ProjectList extends State<ProjectList>
     params[APIConstants.paging] = paging;
 
     // 프로젝트목록조회 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
-      if (value == null) {
-        // 에러 - 데이터 널
-        showSnackBar(context, APIConstants.error_msg_server_not_response);
-      } else {
-        if (value[APIConstants.resultVal]) {
-          try {
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value == null) {
+          // 에러 - 데이터 널
+          showSnackBar(context, APIConstants.error_msg_server_not_response);
+        } else {
+          if (value[APIConstants.resultVal]) {
             // 프로젝트목록조회 성공
             var _responseList = value[APIConstants.data];
 
@@ -146,13 +150,17 @@ class _ProjectList extends State<ProjectList>
 
               _isLoading = false;
             });
-          } catch (e) {
+          } else {
+            // 프로젝트목록조회 실패
             showSnackBar(context, APIConstants.error_msg_try_again);
           }
-        } else {
-          // 프로젝트목록조회 실패
-          showSnackBar(context, APIConstants.error_msg_try_again);
         }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }
@@ -242,12 +250,14 @@ class _ProjectList extends State<ProjectList>
             appBar: CustomStyles.defaultAppBar('오디션 관리', () {
               Navigator.pop(context);
             }),
-            body: Container(
-              child: SingleChildScrollView(
-                child: Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+            body: Stack(
+              children: [
+                Container(
+                    child: SingleChildScrollView(
+                        child: Container(
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
                       Container(
                         margin: EdgeInsets.only(top: 30.0, bottom: 10),
                         padding: EdgeInsets.only(left: 16, right: 16),
@@ -342,11 +352,16 @@ class _ProjectList extends State<ProjectList>
                       Expanded(
                         flex: 0,
                         child: [tabProjectList(), tabProjectList()][_tabIndex],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+                      )
+                    ])))),
+                Visibility(
+                  child: Container(
+                      color: Colors.black38,
+                      alignment: Alignment.center,
+                      child: CircularProgressIndicator()),
+                  visible: _isUpload,
+                )
+              ],
             )));
   }
 }

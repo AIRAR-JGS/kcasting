@@ -212,12 +212,13 @@ class _ActorProfile extends State<ActorProfile>
   * */
   Future<void> requestUpdateActorProfile(
       BuildContext context, File profileFile) async {
-    final dio = Dio();
+    setState(() {
+      _isUpload = true;
+    });
 
     Map<String, dynamic> targetData = new Map();
     targetData[APIConstants.seq] =
         KCastingAppData().myInfo[APIConstants.actorProfile_seq];
-    //targetData[APIConstants.file] = fileData;
 
     Map<String, dynamic> params = new Map();
     params[APIConstants.key] = APIConstants.UPD_APR_MAINIMG_FORMDATA;
@@ -229,31 +230,41 @@ class _ActorProfile extends State<ActorProfile>
         await MultipartFile.fromFile(profileFile.path, filename: fileName);
 
     // 배우프로필 이미지 수정 api 호출
-    RestClient(dio).postRequestMainControlFormData(params).then((value) async {
-      if (value == null) {
-        // 에러 - 데이터 널
-        showSnackBar(context, APIConstants.error_msg_server_not_response);
-      } else {
-        if (value[APIConstants.resultVal]) {
-          // 배우프로필 이미지 수정 성공
-          var _responseData = value[APIConstants.data];
-          var _responseList = _responseData[APIConstants.list];
-
-          setState(() {
-            // 수정된 회원정보 전역변수에 저장
-            if (_responseList.length > 0) {
-              var newProfileData = _responseList[0];
-
-              if (newProfileData[APIConstants.main_img_url] != null) {
-                KCastingAppData().myProfile[APIConstants.main_img_url] =
-                    newProfileData[APIConstants.main_img_url];
-              }
-            }
-          });
+    RestClient(Dio())
+        .postRequestMainControlFormData(params)
+        .then((value) async {
+      try {
+        if (value == null) {
+          // 에러 - 데이터 널
+          showSnackBar(context, APIConstants.error_msg_server_not_response);
         } else {
-          // 배우프로필 이미지  수정 실패
-          showSnackBar(context, APIConstants.error_msg_try_again);
+          if (value[APIConstants.resultVal]) {
+            // 배우프로필 이미지 수정 성공
+            var _responseData = value[APIConstants.data];
+            var _responseList = _responseData[APIConstants.list];
+
+            setState(() {
+              // 수정된 회원정보 전역변수에 저장
+              if (_responseList.length > 0) {
+                var newProfileData = _responseList[0];
+
+                if (newProfileData[APIConstants.main_img_url] != null) {
+                  KCastingAppData().myProfile[APIConstants.main_img_url] =
+                      newProfileData[APIConstants.main_img_url];
+                }
+              }
+            });
+          } else {
+            // 배우프로필 이미지  수정 실패
+            showSnackBar(context, APIConstants.error_msg_try_again);
+          }
         }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }
@@ -262,7 +273,9 @@ class _ActorProfile extends State<ActorProfile>
   *배우 필모그래피 삭제
   * */
   void requestActorFilmorgraphyDeleteApi(BuildContext context) {
-    final dio = Dio();
+    setState(() {
+      _isUpload = true;
+    });
 
     // 배우 필모그래피 삭제 api 호출 시 보낼 파라미터
     Map<String, dynamic> callbackDatas = new Map();
@@ -278,10 +291,10 @@ class _ActorProfile extends State<ActorProfile>
     params[APIConstants.target] = targetDatas;
 
     // 배우 필모그래피 삭제 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
-      if (value != null) {
-        if (value[APIConstants.resultVal]) {
-          try {
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value != null) {
+          if (value[APIConstants.resultVal]) {
             // 배우 필모그래피 삭제 성공
             var _responseData = value[APIConstants.data];
             var _responseList = _responseData[APIConstants.list] as List;
@@ -292,15 +305,19 @@ class _ActorProfile extends State<ActorProfile>
                 _originalFilmorgraphyList = _responseList;
               }
             });
-          } catch (e) {
+          } else {
             showSnackBar(context, APIConstants.error_msg_try_again);
           }
         } else {
-          showSnackBar(context, APIConstants.error_msg_try_again);
+          // 에러 - 데이터 널 - 서버가 응답하지 않습니다. 다시 시도해 주세요
+          showSnackBar(context, APIConstants.error_msg_server_not_response);
         }
-      } else {
-        // 에러 - 데이터 널 - 서버가 응답하지 않습니다. 다시 시도해 주세요
-        showSnackBar(context, APIConstants.error_msg_server_not_response);
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }
@@ -310,6 +327,10 @@ class _ActorProfile extends State<ActorProfile>
   * */
   Future<void> requestAddActorImage(
       BuildContext context, File profileFile) async {
+    setState(() {
+      _isUpload = true;
+    });
+
     // 배우 이미지 추가 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
     targetData[APIConstants.actor_seq] =
@@ -330,28 +351,36 @@ class _ActorProfile extends State<ActorProfile>
     RestClient(Dio())
         .postRequestMainControlFormData(params)
         .then((value) async {
-      if (value == null) {
-        // 에러 - 데이터 널
-        showSnackBar(context, APIConstants.error_msg_server_not_response);
-      } else {
-        if (value[APIConstants.resultVal]) {
-          // 배우 이미지 추가 성공
-          var _responseData = value[APIConstants.data];
-          var _responseList = _responseData[APIConstants.list];
-
-          setState(() {
-            // 수정된 회원정보 전역변수에 저장
-            if (_responseList.length > 0) {
-              KCastingAppData().myImage = _responseList;
-
-              _myPhotos = _responseList;
-              _originalMyPhotos = _responseList;
-            }
-          });
+      try {
+        if (value == null) {
+          // 에러 - 데이터 널
+          showSnackBar(context, APIConstants.error_msg_server_not_response);
         } else {
-          // 배우 이미지 추가 실패
-          showSnackBar(context, APIConstants.error_msg_try_again);
+          if (value[APIConstants.resultVal]) {
+            // 배우 이미지 추가 성공
+            var _responseData = value[APIConstants.data];
+            var _responseList = _responseData[APIConstants.list];
+
+            setState(() {
+              // 수정된 회원정보 전역변수에 저장
+              if (_responseList.length > 0) {
+                KCastingAppData().myImage = _responseList;
+
+                _myPhotos = _responseList;
+                _originalMyPhotos = _responseList;
+              }
+            });
+          } else {
+            // 배우 이미지 추가 실패
+            showSnackBar(context, APIConstants.error_msg_try_again);
+          }
         }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }
@@ -360,7 +389,9 @@ class _ActorProfile extends State<ActorProfile>
   *배우 이미지 삭제
   * */
   void requestActorImageDeleteApi(BuildContext context) {
-    final dio = Dio();
+    setState(() {
+      _isUpload = true;
+    });
 
     // 배우 이미지 삭제 api 호출 시 보낼 파라미터
     Map<String, dynamic> callbackDatas = new Map();
@@ -376,10 +407,10 @@ class _ActorProfile extends State<ActorProfile>
     params[APIConstants.target] = targetDatas;
 
     // 배우 이미지 삭제 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
-      if (value != null) {
-        if (value[APIConstants.resultVal]) {
-          try {
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value != null) {
+          if (value[APIConstants.resultVal]) {
             var _responseData = value[APIConstants.data];
             var _responseList = _responseData[APIConstants.list];
 
@@ -392,15 +423,19 @@ class _ActorProfile extends State<ActorProfile>
                 _originalMyPhotos = _responseList;
               }
             });
-          } catch (e) {
+          } else {
             showSnackBar(context, APIConstants.error_msg_try_again);
           }
         } else {
-          showSnackBar(context, APIConstants.error_msg_try_again);
+          // 에러 - 데이터 널 - 서버가 응답하지 않습니다. 다시 시도해 주세요
+          showSnackBar(context, APIConstants.error_msg_server_not_response);
         }
-      } else {
-        // 에러 - 데이터 널 - 서버가 응답하지 않습니다. 다시 시도해 주세요
-        showSnackBar(context, APIConstants.error_msg_server_not_response);
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }
@@ -414,36 +449,33 @@ class _ActorProfile extends State<ActorProfile>
       _isUpload = true;
     });
 
-    try {
-      final dio = Dio();
+    // 배우 비디오 추가 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetData = new Map();
+    targetData[APIConstants.actor_seq] =
+        KCastingAppData().myInfo[APIConstants.seq];
 
-      // 배우 비디오 추가 api 호출 시 보낼 파라미터
-      Map<String, dynamic> targetData = new Map();
-      targetData[APIConstants.actor_seq] =
-          KCastingAppData().myInfo[APIConstants.seq];
+    var files = [];
+    var temp = videoFile.path.split('/');
+    String fileName = temp[temp.length - 1];
+    files.add(await MultipartFile.fromFile(videoFile.path, filename: fileName));
 
-      var files = [];
-      var temp = videoFile.path.split('/');
-      String fileName = temp[temp.length - 1];
-      files.add(
-          await MultipartFile.fromFile(videoFile.path, filename: fileName));
+    var thums = [];
+    var tempImg = thumbFilePath.split('/');
+    String thumbFileName = tempImg[tempImg.length - 1];
+    thums.add(
+        await MultipartFile.fromFile(thumbFilePath, filename: thumbFileName));
 
-      var thums = [];
-      var tempImg = thumbFilePath.split('/');
-      String thumbFileName = tempImg[tempImg.length - 1];
-      thums.add(
-          await MultipartFile.fromFile(thumbFilePath, filename: thumbFileName));
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.INS_AVD_LIST_FORMDATA;
+    params[APIConstants.target] = targetData;
+    params[APIConstants.target_files_array] = files;
+    params[APIConstants.target_files_thumb_array] = thums;
 
-      Map<String, dynamic> params = new Map();
-      params[APIConstants.key] = APIConstants.INS_AVD_LIST_FORMDATA;
-      params[APIConstants.target] = targetData;
-      params[APIConstants.target_files_array] = files;
-      params[APIConstants.target_files_thumb_array] = thums;
-
-      // 배우 비디오 추가 api 호출
-      RestClient(dio)
-          .postRequestMainControlFormData(params)
-          .then((value) async {
+    // 배우 비디오 추가 api 호출
+    RestClient(Dio())
+        .postRequestMainControlFormData(params)
+        .then((value) async {
+      try {
         if (value == null) {
           // 에러 - 데이터 널
           showSnackBar(context, APIConstants.error_msg_server_not_response);
@@ -469,20 +501,23 @@ class _ActorProfile extends State<ActorProfile>
             showSnackBar(context, APIConstants.error_msg_try_again);
           }
         }
-      });
-    } catch (e) {
-      showSnackBar(context, APIConstants.error_msg_try_again);
-      setState(() {
-        _isUpload = false;
-      });
-    }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
+      }
+    });
   }
 
   /*
   *배우 비디오 삭제
   * */
   void requestActorVideoDeleteApi(BuildContext context) {
-    final dio = Dio();
+    setState(() {
+      _isUpload = true;
+    });
 
     // 배우 필모그래피 삭제 api 호출 시 보낼 파라미터
     Map<String, dynamic> callbackDatas = new Map();
@@ -498,10 +533,10 @@ class _ActorProfile extends State<ActorProfile>
     params[APIConstants.target] = targetDatas;
 
     // 배우 필모그래피 삭제 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
-      if (value != null) {
-        if (value[APIConstants.resultVal]) {
-          try {
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value != null) {
+          if (value[APIConstants.resultVal]) {
             var _responseData = value[APIConstants.data];
             var _responseList = _responseData[APIConstants.list];
 
@@ -512,15 +547,19 @@ class _ActorProfile extends State<ActorProfile>
               _myVideos = _responseList;
               _originalMyVideos = _responseList;
             });
-          } catch (e) {
+          } else {
             showSnackBar(context, APIConstants.error_msg_try_again);
           }
         } else {
-          showSnackBar(context, APIConstants.error_msg_try_again);
+          // 에러 - 데이터 널 - 서버가 응답하지 않습니다. 다시 시도해 주세요
+          showSnackBar(context, APIConstants.error_msg_server_not_response);
         }
-      } else {
-        // 에러 - 데이터 널 - 서버가 응답하지 않습니다. 다시 시도해 주세요
-        showSnackBar(context, APIConstants.error_msg_server_not_response);
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }
@@ -946,7 +985,7 @@ class _ActorProfile extends State<ActorProfile>
                                                   Expanded(
                                                       flex: 1,
                                                       child: Text(
-                                                          '최대 2개(각 25MB 미만)',
+                                                          '최대 2개(각 100MB 미만)',
                                                           style: CustomStyles
                                                               .normal14TextStyle())),
                                                   Expanded(
@@ -1039,7 +1078,7 @@ class _ActorProfile extends State<ActorProfile>
                                                   Expanded(
                                                       flex: 1,
                                                       child: Text(
-                                                          '최대 2개(각 25MB 미만)',
+                                                          '최대 2개(각 100MB 미만)',
                                                           style: CustomStyles
                                                               .normal14TextStyle())),
                                                   Expanded(

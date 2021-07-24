@@ -26,6 +26,7 @@ class _ProductionProfile extends State<ProductionProfile>
     with SingleTickerProviderStateMixin, BaseUtilMixin {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
+  bool _isUpload = false;
   bool _kIsWeb;
 
   File _profileImgFile;
@@ -42,6 +43,8 @@ class _ProductionProfile extends State<ProductionProfile>
   void initState() {
     super.initState();
 
+    requestProductionFilmorgraphyListApi(context);
+
     try {
       if (Platform.isAndroid || Platform.isIOS) {
         _kIsWeb = false;
@@ -53,108 +56,14 @@ class _ProductionProfile extends State<ProductionProfile>
     }
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    _filmorgraphyList = [];
-    _originalFilmorgraphyList = [];
-    _isFlimorgraphyListEditMode = false;
-
-    _deletedFilmorgraphyList = [];
-
-    requestProductionFilmorgraphyListApi(context);
-  }
-
-  /*
-  *제작사 필모그래피 조회
-  * */
-  void requestProductionFilmorgraphyListApi(BuildContext context) {
-    final dio = Dio();
-
-    // 제작사 필모그래피 조회 api 호출 시 보낼 파라미터
-    Map<String, dynamic> targetDatas = new Map();
-    targetDatas[APIConstants.production_seq] =
-        KCastingAppData().myInfo[APIConstants.seq];
-
-    Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.SEL_PFM_LIST;
-    params[APIConstants.target] = targetDatas;
-
-    // 제작사 필모그래피 조회 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
-      if (value != null) {
-        if (value[APIConstants.resultVal]) {
-          try {
-            // 제작사 필모그래피 조회 성공
-            setState(() {
-              var _responseData = value[APIConstants.data];
-              var _responseList = _responseData[APIConstants.list] as List;
-
-              if (_responseList != null && _responseList.length > 0) {
-                _filmorgraphyList.addAll(_responseList);
-                _originalFilmorgraphyList.addAll(_responseList);
-              }
-            });
-          } catch (e) {}
-        }
-      }
-    });
-  }
-
-  /*
-  *제작사 필모그래피 삭제
-  * */
-  void requestProductionFilmorgraphyDeleteApi(BuildContext context) {
-    final dio = Dio();
-
-    // 제작사 필모그래피 삭제 api 호출 시 보낼 파라미터
-    Map<String, dynamic> callbackDatas = new Map();
-    callbackDatas[APIConstants.production_seq] =
-        KCastingAppData().myInfo[APIConstants.seq];
-
-    Map<String, dynamic> targetDatas = new Map();
-    targetDatas[APIConstants.seq] = _deletedFilmorgraphyList;
-    targetDatas[APIConstants.callback] = callbackDatas;
-
-    Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.DEA_PFM_LIST;
-    params[APIConstants.target] = targetDatas;
-
-    // 제작사 필모그래피 삭제 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
-      if (value != null) {
-        if (value[APIConstants.resultVal]) {
-          try {
-            // 제작사 필모그래피 삭제 성공
-            setState(() {
-              var _responseData = value[APIConstants.data];
-              var _responseList = _responseData[APIConstants.list] as List;
-
-              if (_responseList != null && _responseList.length > 0) {
-                _filmorgraphyList = _responseList;
-                _originalFilmorgraphyList = _responseList;
-              }
-            });
-          } catch (e) {
-            showSnackBar(context, APIConstants.error_msg_try_again);
-          }
-        } else {
-          showSnackBar(context, APIConstants.error_msg_try_again);
-        }
-      } else {
-        // 에러 - 데이터 널 - 서버가 응답하지 않습니다. 다시 시도해 주세요
-        showSnackBar(context, APIConstants.error_msg_server_not_response);
-      }
-    });
-  }
-
   /*
   * 제작사 로고 이미지 수정
   * */
   Future<void> requestUpdateProductionProfile(
       BuildContext context, File profileFile) async {
-    final dio = Dio();
+    setState(() {
+      _isUpload = true;
+    });
 
     // 제작사 로고 이미지 수정 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetDatas = new Map();
@@ -166,17 +75,19 @@ class _ProductionProfile extends State<ProductionProfile>
 
     var temp = profileFile.path.split('/');
     String fileName = temp[temp.length - 1];
-    params[APIConstants.target_files] =
+    params[APIConstants.target_files_array] =
         await MultipartFile.fromFile(profileFile.path, filename: fileName);
 
     // 제작사 로고 이미지 수정 api 호출
-    RestClient(dio).postRequestMainControlFormData(params).then((value) async {
-      if (value == null) {
-        // 에러 - 데이터 널
-        showSnackBar(context, APIConstants.error_msg_server_not_response);
-      } else {
-        if (value[APIConstants.resultVal]) {
-          try {
+    RestClient(Dio())
+        .postRequestMainControlFormData(params)
+        .then((value) async {
+      try {
+        if (value == null) {
+          // 에러 - 데이터 널
+          showSnackBar(context, APIConstants.error_msg_server_not_response);
+        } else {
+          if (value[APIConstants.resultVal]) {
             // 제작사 로고 이미지 수정 성공
             var _responseData = value[APIConstants.data];
             var _responseList = _responseData[APIConstants.list] as List;
@@ -192,13 +103,114 @@ class _ProductionProfile extends State<ProductionProfile>
                 }
               }
             });
-          } catch (e) {
+          } else {
+            // 제작사 로고 이미지 수정 실패
+            showSnackBar(context, APIConstants.error_msg_try_again);
+          }
+        }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
+      }
+    });
+  }
+
+  /*
+  *제작사 필모그래피 조회
+  * */
+  void requestProductionFilmorgraphyListApi(BuildContext context) {
+    setState(() {
+      _isUpload = true;
+    });
+
+    // 제작사 필모그래피 조회 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetDatas = new Map();
+    targetDatas[APIConstants.production_seq] =
+        KCastingAppData().myInfo[APIConstants.seq];
+
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.SEL_PFM_LIST;
+    params[APIConstants.target] = targetDatas;
+
+    // 제작사 필모그래피 조회 api 호출
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value != null) {
+          if (value[APIConstants.resultVal]) {
+            // 제작사 필모그래피 조회 성공
+            setState(() {
+              var _responseData = value[APIConstants.data];
+              var _responseList = _responseData[APIConstants.list] as List;
+
+              if (_responseList != null && _responseList.length > 0) {
+                _filmorgraphyList.addAll(_responseList);
+                _originalFilmorgraphyList.addAll(_responseList);
+              }
+            });
+          }
+        }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
+      }
+    });
+  }
+
+  /*
+  *제작사 필모그래피 삭제
+  * */
+  void requestProductionFilmorgraphyDeleteApi(BuildContext context) {
+    setState(() {
+      _isUpload = true;
+    });
+
+    // 제작사 필모그래피 삭제 api 호출 시 보낼 파라미터
+    Map<String, dynamic> callbackDatas = new Map();
+    callbackDatas[APIConstants.production_seq] =
+        KCastingAppData().myInfo[APIConstants.seq];
+
+    Map<String, dynamic> targetDatas = new Map();
+    targetDatas[APIConstants.seq] = _deletedFilmorgraphyList;
+    targetDatas[APIConstants.callback] = callbackDatas;
+
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.DEA_PFM_LIST;
+    params[APIConstants.target] = targetDatas;
+
+    // 제작사 필모그래피 삭제 api 호출
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value != null) {
+          if (value[APIConstants.resultVal]) {
+            // 제작사 필모그래피 삭제 성공
+            setState(() {
+              var _responseData = value[APIConstants.data];
+              var _responseList = _responseData[APIConstants.list] as List;
+
+              if (_responseList != null && _responseList.length > 0) {
+                _filmorgraphyList = _responseList;
+                _originalFilmorgraphyList = _responseList;
+              }
+            });
+          } else {
             showSnackBar(context, APIConstants.error_msg_try_again);
           }
         } else {
-          // 제작사 로고 이미지 수정 실패
-          showSnackBar(context, APIConstants.error_msg_try_again);
+          // 에러 - 데이터 널 - 서버가 응답하지 않습니다. 다시 시도해 주세요
+          showSnackBar(context, APIConstants.error_msg_server_not_response);
         }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }
@@ -231,9 +243,9 @@ class _ProductionProfile extends State<ProductionProfile>
     }
   }
 
-  // =========================================================================================
-  // 필모그래피 추가
-  // =========================================================================================
+  /*
+  * 필모그래피 추가
+  * */
   Widget tabFilmography() {
     return Container(
         margin: EdgeInsets.only(bottom: 30),
@@ -399,9 +411,9 @@ class _ProductionProfile extends State<ProductionProfile>
         ));
   }
 
-  //========================================================================================================================
-  // 메인 위젯
-  //========================================================================================================================
+  /*
+  * 메인 위젯
+  * */
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -411,12 +423,14 @@ class _ProductionProfile extends State<ProductionProfile>
             appBar: CustomStyles.defaultAppBar('프로필 관리', () {
               Navigator.pop(context);
             }),
-            body: Container(
-              child: SingleChildScrollView(
-                child: Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
+            body: Stack(
+              children: [
+                Container(
+                    child: SingleChildScrollView(
+                        child: Container(
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
                       Container(
                           margin: EdgeInsets.only(top: 30, bottom: 15),
                           child: GestureDetector(
@@ -522,18 +536,6 @@ class _ProductionProfile extends State<ProductionProfile>
                                   : KCastingAppData()
                                       .myInfo[APIConstants.production_email],
                               style: CustomStyles.dark14TextStyle())),
-                      /*Container(
-                          height: 50,
-                          margin: EdgeInsets.only(left: 15, right: 15, top: 30),
-                          width: double.infinity,
-                          child: CustomStyles.greyBorderRound7ButtonStyle(
-                              '프로필 편집', () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => MyProfileModify1()),
-                            );
-                          })),*/
                       Container(
                         margin: EdgeInsets.only(top: 30),
                         child: Divider(
@@ -556,10 +558,15 @@ class _ProductionProfile extends State<ProductionProfile>
                         ),
                       ),
                       Expanded(flex: 0, child: tabFilmography()),
-                    ],
-                  ),
-                ),
-              ),
+                    ])))),
+                Visibility(
+                  child: Container(
+                      color: Colors.black38,
+                      alignment: Alignment.center,
+                      child: CircularProgressIndicator()),
+                  visible: _isUpload,
+                )
+              ],
             )));
   }
 }

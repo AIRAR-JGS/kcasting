@@ -27,6 +27,10 @@ class _ProductionMemberPage extends State<ProductionMemberPage>
     super.initState();
   }
 
+  void initData() {
+    setState(() {});
+  }
+
   Widget _headerView() {
     return Container(
       child: Column(
@@ -109,7 +113,13 @@ class _ProductionMemberPage extends State<ProductionMemberPage>
                       // 프로필 관리
                       case 1:
                         // 프로필 관리 페이지 이동
-                        addView(context, ProductionProfile());
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ProductionProfile()))
+                            .then((value) => {initData()});
+
+                        //addView(context, ProductionProfile());
                         break;
 
                       // 오디션 관리

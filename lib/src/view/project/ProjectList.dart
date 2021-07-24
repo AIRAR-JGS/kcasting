@@ -54,19 +54,6 @@ class _ProjectList extends State<ProjectList>
       ..addListener(_scrollListener);
   }
 
-  /*@override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    setState(() {
-      _total = 0;
-      _projectDramaList.clear();
-      _projectMovieList.clear();
-
-      requestProjectListApi(context);
-    });
-  }*/
-
   _handleTabSelection() {
     if (_tabController.indexIsChanging) {
       setState(() {

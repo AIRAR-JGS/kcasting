@@ -13,6 +13,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
@@ -107,8 +108,10 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
   }
 
   getVideoThumbnail(String filePath) async {
-    Uint8List bytes = await VideoThumbnail.thumbnailData(
-        video: filePath, imageFormat: ImageFormat.JPEG);
+    final fileName = await VideoThumbnail.thumbnailFile(
+        video: filePath,
+        thumbnailPath: (await getTemporaryDirectory()).path,
+        imageFormat: ImageFormat.JPEG);
 
     var _videoFile = File(filePath);
     final size = _videoFile.readAsBytesSync().lengthInBytes;
@@ -118,7 +121,7 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
     if (mb > 100) {
       showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
     } else {
-      requestAddActorVideo(context, _videoFile, bytes);
+      requestAddActorVideo(context, _videoFile, fileName);
     }
   }
 
@@ -220,40 +223,55 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
   /*
   * 배우 비디오 추가
   * */
-  void requestAddActorVideo(
-      BuildContext context, File videoFile, Uint8List bytes) {
+  Future<void> requestAddActorVideo(
+      BuildContext context, File videoFile, String thumbFilePath) async {
     setState(() {
       _isUpload = true;
     });
 
     try {
-      final dio = Dio();
-
-      final videoFileBytes = File(videoFile.path).readAsBytesSync();
-      String videoFile64 = base64Encode(videoFileBytes);
-
-      //final bytes = File(thumbnailFile.path).readAsBytesSync();
-      String thumbnailFile62 = base64Encode(bytes);
+      // final dio = Dio();
+      //
+      // final videoFileBytes = File(videoFile.path).readAsBytesSync();
+      // String videoFile64 = base64Encode(videoFileBytes);
+      //
+      // //final bytes = File(thumbnailFile.path).readAsBytesSync();
+      // String thumbnailFile62 = base64Encode(bytes);
 
       // 배우 비디오 추가 api 호출 시 보낼 파라미터
       Map<String, dynamic> targetData = new Map();
-      targetData[APIConstants.seq] =
+      targetData[APIConstants.secondAuditionTarget_seq] =
           _auditionState[APIConstants.secondAuditionTarget_seq];
 
-      Map<String, dynamic> fileData = new Map();
-      fileData[APIConstants.base64string] =
-          APIConstants.data_file + videoFile64;
-      fileData[APIConstants.base64string_thumb] =
-          APIConstants.data_image + thumbnailFile62;
-
-      targetData[APIConstants.file] = fileData;
+      // Map<String, dynamic> fileData = new Map();
+      // fileData[APIConstants.base64string] =
+      //     APIConstants.data_file + videoFile64;
+      // fileData[APIConstants.base64string_thumb] =
+      //     APIConstants.data_image + thumbnailFile62;
+      //
+      // targetData[APIConstants.file] = fileData;
 
       Map<String, dynamic> params = new Map();
-      params[APIConstants.key] = APIConstants.UPD_SAT_SUBMIT;
+      params[APIConstants.key] = APIConstants.UPD_FAT_SUBMITVIDEO;
       params[APIConstants.target] = targetData;
 
+      var files = [];
+      var temp = videoFile.path.split('/');
+      String fileName = temp[temp.length - 1];
+      files.add(
+          await MultipartFile.fromFile(videoFile.path, filename: fileName));
+
+    var thums = [];
+    var tempImg = thumbFilePath.split('/');
+    String thumbFileName = tempImg[tempImg.length - 1];
+    thums.add(
+    await MultipartFile.fromFile(thumbFilePath, filename: thumbFileName));
+
+      params[APIConstants.target_video] = files;
+      params[APIConstants.target_video_thumb] = thums;
+
       // 배우 비디오 추가 api 호출
-      RestClient(dio).postRequestMainControl(params).then((value) async {
+      RestClient(Dio()).postRequestMainControlFormData(params).then((value) async {
         if (value == null) {
           // 에러 - 데이터 널
           showSnackBar(context, '다시 시도해 주세요.');
@@ -1016,7 +1034,7 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                               })),
                           visible: (_tabIndex == 0 &&
                                   _auditionState[
-                                          APIConstants.second_audition_seq] !=
+                                          APIConstants.secondAudition_seq] !=
                                       null &&
                                   !_isSubmitVideo)
                               ? true

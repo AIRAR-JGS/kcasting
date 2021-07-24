@@ -1,4 +1,5 @@
 import 'package:casting_call/BaseWidget.dart';
+import 'package:casting_call/KCastingAppData.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/net/RestClientInterface.dart';
@@ -59,30 +60,30 @@ class _BookmarkedAuditionList extends State<BookmarkedAuditionList>
   }
 
   /*
-  * 캐스팅 목록
+  * 배우 북마크 목록
   * */
   void requestCastingListApi(BuildContext context) {
     final dio = Dio();
 
-    // 캐스팅 목록 api 호출 시 보낼 파라미터
+    // 배우 북마크 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetDate = new Map();
-    targetDate[APIConstants.order_type] = APIConstants.order_type_new;
+    targetDate[APIConstants.actor_seq] = KCastingAppData().myInfo[APIConstants.seq];
 
     Map<String, dynamic> paging = new Map();
     paging[APIConstants.offset] = _castingBoardList.length;
     paging[APIConstants.limit] = _limit;
 
     Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.SEL_PCT_LIST;
+    params[APIConstants.key] = APIConstants.SEL_ACS_LIST;
     params[APIConstants.target] = targetDate;
     params[APIConstants.paging] = paging;
 
-    // 캐스팅 목록 api 호출
+    // 배우 북마크 api 호출
     RestClient(dio).postRequestMainControl(params).then((value) async {
       if (value != null) {
         if (value[APIConstants.resultVal]) {
           try {
-            // 캐스팅 목록 성공
+            // 배우 북마크 성공
             setState(() {
               var _responseData = value[APIConstants.data];
               var _responseList = _responseData[APIConstants.list] as List;

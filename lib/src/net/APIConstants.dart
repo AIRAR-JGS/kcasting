@@ -47,7 +47,8 @@ class APIConstants {
   static const String DEL_AAA_INFO = "DEL_AAA_INFO";                              // 배우 오디션 지원 취소
   static const String SAR_AAP_INFO = "SAR_AAP_INFO";                              // 배우 오디션 제출 프로필 조회
   static const String SEL_AAA_STATE = "SEL_AAA_STATE";                            // 배우 오디션 지원 상태 조회
-  static const String UPD_SAT_SUBMIT = "UPD_SAT_SUBMIT";                          // 배우 비디오 등록 및 연락처 공개 동의
+  //static const String UPD_SAT_SUBMIT = "UPD_SAT_SUBMIT";                          // 배우 비디오 등록 및 연락처 공개 동의
+  static const String UPD_FAT_SUBMITVIDEO = "UPD_FAT_SUBMITVIDEO";                // 배우 비디오 등록 및 연락처 공개 동의
   static const String SEL_APP_ACTORSLIST = "SEL_APP_ACTORSLIST";                  // 배우 제안 받은 목록 조회
   static const String SEL_APP_ACTORSDETAILS = "SEL_APP_ACTORSDETAILS";            // 보유 배우 받은 제안 상세
   static const String UPD_APP_ANSWER = "UPD_APP_ANSWER";                          // 배우 제안 거절 or 수락
@@ -55,6 +56,9 @@ class APIConstants {
   static const String SEL_MKW_LIST = "SEL_MKW_LIST";                              // 메인 : 여배우 외모 특징 목록 조회
   static const String SEL_ACT_STATE = "SEL_ACT_STATE";                            // 배우 상태 조회
   static const String DEL_ACT_INFO = "DEL_ACT_INFO";                              // 배우 회원 탈퇴
+  static const String SEL_ACS_LIST = "SEL_ACS_LIST";                              // 배우 캐스팅 스크랩 목록 조회
+  static const String INS_ACS_INFO = "INS_ACS_INFO";                              // 배우 캐스팅 스크랩 추가
+  static const String DEA_ACS_INFO = "DEA_ACS_INFO";                              // 배우 캐스팅 스크랩 삭제
 
   // 제작사 회원
   static const String INS_PRD_JOIN = "INS_PRD_JOIN";                              // 제작사 회원가입
@@ -79,12 +83,16 @@ class APIConstants {
   static const String SAR_SAD_STATE = "SAR_SAD_STATE";                            // 2차 오디션 진행 현황 조회
   static const String SAR_TAD_STATE = "SAR_TAD_STATE";                            // 3차 오디션 진행 현황 조회
   static const String SAR_TAD_FINSTATE = "SAR_TAD_FINSTATE";                      // 최종 오디션 진행 현황 조회
-  static const String INS_SAD_INFO = "INS_SAD_INFO";                              // 2차 오디션 오픈
+  //static const String INS_SAD_INFO = "INS_SAD_INFO";                              // 2차 오디션 오픈
+  static const String INS_SAD_INFO_FormData = "INS_SAD_INFO_FormData";            // 2차 오디션 오픈
   static const String INS_TAD_INFO = "INS_TAD_INFO";                              // 3차 오디션 오픈
   static const String UPD_FAT_INFO = "UPD_FAT_INFO";                              // 오디션 대상자 단일 수정(합격, 불합격) - 1차
   static const String UPD_SAT_INFO = "UPD_SAT_INFO";                              // 오디션 대상자 단일 수정(합격, 불합격) - 2차
   static const String UPD_TAT_INFO = "UPD_TAT_INFO";                              // 오디션 대상자 단일 수정(합격, 불합격) - 3차
   static const String DEL_PRD_INFO = "DEL_PRD_INFO";                              // 제작사 회원 탈퇴
+  static const String SEL_PAS_LIST = "SEL_PAS_LIST";                              // 제작사 회원 스크랩 목록 조회
+  static const String INS_PAS_INFO = "INS_PAS_INFO";                              // 제작사 회원 스크랩 추가
+  static const String DEA_PAS_INFO = "DEA_PAS_INFO";                              // 제작사 회원 스크랩 삭제
 
   // 매니지먼트 회원
   static const String INS_MGM_JOIN = "INS_MGM_JOIN";                              // 매니지먼트 회원가입
@@ -103,6 +111,9 @@ class APIConstants {
   static const String SEL_MGM_ACTORAUDITION_BODY = "SEL_MGM_ACTORAUDITION_BODY";  // 보유 배우 지원 현황 상세 조회 아랫부분
   static const String SEL_MGM_PROFILESTATE = "SEL_MGM_PROFILESTATE";              // 매니지먼트 프로필 상태 조회
   static const String SEL_MGM_ACTOPROPOSALLIST = "SEL_MGM_ACTOPROPOSALLIST";      // 매니지먼트 보유 배우 받은 제안 목록
+  static const String SEL_MCS_LIST = "SEL_MCS_LIST";                              // 매니지먼트 회원 스크랩 목록 조회
+  static const String INS_MCS_INFO = "INS_MCS_INFO";                              // 매니지먼트 회원 스크랩 추가
+  static const String DEA_MCS_INFO = "DEA_MCS_INFO";                              // 매니지먼트 회원 스크랩 삭제
 
   // 공통 - request, response
   static const String key = "key";
@@ -192,6 +203,8 @@ class APIConstants {
   static const String iReturnCode = "iReturnCode";
 
   // 파일 전송 관련
+  static const String target_video = "target_video";
+  static const String target_video_thumb = "target_video_thumb";
   static const String target_files = "target_files";
   static const String target_files_array = "target_files[]";
   static const String target_files_thumb_array = "target_files_thumb[]";

@@ -28,6 +28,7 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   int _castingSeq;
+  bool _isBookmarked = false;
 
   Map<String, dynamic> _castingBoardData = new Map();
   String _ageStr = "";
@@ -46,6 +47,15 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
     super.initState();
 
     _castingSeq = widget.castingSeq;
+
+    for (int i = 0; i < KCastingAppData().myBookmark.length; i++) {
+      if (KCastingAppData().myBookmark[i][APIConstants.casting_seq] ==
+          _castingSeq) {
+        _isBookmarked = true;
+
+        break;
+      }
+    }
 
     requestCastingDetailApi(context);
   }
@@ -263,6 +273,102 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
         } else {
           // 캐스팅보드 상세 조회 실패
           showSnackBar(context, APIConstants.error_msg_try_again);
+        }
+      }
+    });
+  }
+
+  /*
+  * 배우 북마크 목록
+  * */
+  void requestActorBookmarkEditApi(BuildContext context) {
+    final dio = Dio();
+
+    // 배우 북마크 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetDate = new Map();
+    targetDate[APIConstants.actor_seq] = KCastingAppData().myInfo[APIConstants.seq];
+    targetDate[APIConstants.casting_seq] = _castingSeq;
+
+    Map<String, dynamic> params = new Map();
+    if(_isBookmarked) {
+      params[APIConstants.key] = APIConstants.DEA_ACS_INFO;
+    } else {
+      params[APIConstants.key] = APIConstants.INS_ACS_INFO;
+    }
+
+    params[APIConstants.target] = targetDate;
+
+    // 배우 북마크 api 호출
+    RestClient(dio).postRequestMainControl(params).then((value) async {
+      if (value != null) {
+        if (value[APIConstants.resultVal]) {
+          try {
+            // 배우 북마크 성공
+            setState(() {
+              //var _responseData = value[APIConstants.data];
+              //var _responseList = _responseData[APIConstants.list] as List;
+
+              setState(() {
+                if(_isBookmarked) {
+                  _isBookmarked = false;
+                } else {
+                  _isBookmarked = true;
+                }
+              });
+
+             // KCastingAppData().myBookmark.addAll(_responseList);
+
+
+            });
+          } catch (e) {}
+        }
+      }
+    });
+  }
+
+  /*
+  * 매니지먼트 북마크 목록
+  * */
+  void requestManagementBookmarkEditApi(BuildContext context) {
+    final dio = Dio();
+
+    // 매니지먼트 북마크 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetDate = new Map();
+    targetDate[APIConstants.management_seq] = KCastingAppData().myInfo[APIConstants.seq];
+    targetDate[APIConstants.casting_seq] = _castingSeq;
+
+    Map<String, dynamic> params = new Map();
+    if(_isBookmarked) {
+      params[APIConstants.key] = APIConstants.DEA_MCS_INFO;
+    } else {
+      params[APIConstants.key] = APIConstants.INS_MCS_INFO;
+    }
+
+    params[APIConstants.target] = targetDate;
+
+    // 매니지먼트 북마크 api 호출
+    RestClient(dio).postRequestMainControl(params).then((value) async {
+      if (value != null) {
+        if (value[APIConstants.resultVal]) {
+          try {
+            // 매니지먼트 북마크 성공
+            setState(() {
+              //var _responseData = value[APIConstants.data];
+              //var _responseList = _responseData[APIConstants.list] as List;
+
+              setState(() {
+                if(_isBookmarked) {
+                  _isBookmarked = false;
+                } else {
+                  _isBookmarked = true;
+                }
+              });
+
+              // KCastingAppData().myBookmark.addAll(_responseList);
+
+
+            });
+          } catch (e) {}
         }
       }
     });
@@ -882,43 +988,72 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
                                 height: 55,
                                 child: CustomStyles.blueBGSquareButtonStyle(
                                     '지원하기 D-56', () {
-                                      if( KCastingAppData().myInfo[APIConstants.member_type] == APIConstants.member_type_actor) {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    AuditionApplyUploadImage(
-                                                      castingSeq: _castingSeq,
-                                                      projectName: _castingBoardData[
-                                                      APIConstants.project_name],
-                                                      castingName: _castingBoardData[
-                                                      APIConstants.casting_name],
-                                                    )));
-
-                                      }
-                                      //else if(KCastingAppData().myInfo[APIConstants.member_type] == APIConstants.member_type_management) {
-                                      else {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    AgencyActorAuditionApply(
-                                                      castingSeq: _castingSeq,
-                                                      projectName: _castingBoardData[
-                                                      APIConstants.project_name],
-                                                      castingName: _castingBoardData[
-                                                      APIConstants.casting_name],
-                                                    )));
-                                      }
+                                  if (KCastingAppData()
+                                          .myInfo[APIConstants.member_type] ==
+                                      APIConstants.member_type_actor) {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                AuditionApplyUploadImage(
+                                                  castingSeq: _castingSeq,
+                                                  projectName:
+                                                      _castingBoardData[
+                                                          APIConstants
+                                                              .project_name],
+                                                  castingName:
+                                                      _castingBoardData[
+                                                          APIConstants
+                                                              .casting_name],
+                                                )));
+                                  }
+                                  //else if(KCastingAppData().myInfo[APIConstants.member_type] == APIConstants.member_type_management) {
+                                  else {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                AgencyActorAuditionApply(
+                                                  castingSeq: _castingSeq,
+                                                  projectName:
+                                                      _castingBoardData[
+                                                          APIConstants
+                                                              .project_name],
+                                                  castingName:
+                                                      _castingBoardData[
+                                                          APIConstants
+                                                              .casting_name],
+                                                )));
+                                  }
                                 }))),
-                        Container(
-                            height: 55,
-                            width: 55,
-                            padding: EdgeInsets.only(left: 15, right: 15),
-                            alignment: Alignment.center,
-                            child: Image.asset(
-                                'assets/images/toggle_like_off.png',
-                                width: 20))
+                        GestureDetector(
+                          onTap: (){
+                            if(KCastingAppData().myInfo[APIConstants.member_type] == APIConstants.member_type_actor) {
+  requestActorBookmarkEditApi(context);
+                            } else {
+                              requestManagementBookmarkEditApi(context);
+                            }
+
+                          },
+                          child: Visibility(
+                              child: Container(
+                                  height: 55,
+                                  width: 55,
+                                  padding: EdgeInsets.only(left: 15, right: 15),
+                                  alignment: Alignment.center,
+                                  child: _isBookmarked
+                                      ? Image.asset(
+                                      'assets/images/toggle_like_on.png',
+                                      width: 20)
+                                      : Image.asset(
+                                      'assets/images/toggle_like_off.png',
+                                      width: 20)),
+                              visible: (KCastingAppData()
+                                  .myInfo[APIConstants.member_type]) ==
+                                  APIConstants.member_type_product
+                                  ? false
+                                  : true)
+                        )
                       ])),
                   visible: KCastingAppData().myInfo[APIConstants.member_type] ==
                           APIConstants.member_type_product

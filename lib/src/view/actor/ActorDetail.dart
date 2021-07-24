@@ -28,6 +28,7 @@ class _ActorDetail extends State<ActorDetail>
     with SingleTickerProviderStateMixin, BaseUtilMixin {
   int _seq;
   int _actorProfileSeq;
+  bool _isBookmarked = false;
 
   Map<String, dynamic> _actorProfile = new Map();
   List<dynamic> _actorFilmorgraphy = [];
@@ -53,6 +54,15 @@ class _ActorDetail extends State<ActorDetail>
 
     _seq = widget.seq;
     _actorProfileSeq = widget.actorProfileSeq;
+
+    for (int i = 0; i < KCastingAppData().myBookmark.length; i++) {
+      if (KCastingAppData().myBookmark[i][APIConstants.actor_seq] ==
+          _seq) {
+        _isBookmarked = true;
+
+        break;
+      }
+    }
 
     // 배우 프로필 조회 api 호출
     requestActorProfileApi(context);
@@ -313,6 +323,54 @@ class _ActorDetail extends State<ActorDetail>
   }
 
   /*
+  * 배우 북마크 목록
+  * */
+  void requestActorBookmarkEditApi(BuildContext context) {
+    final dio = Dio();
+
+    // 배우 북마크 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetDate = new Map();
+    targetDate[APIConstants.production_seq] = KCastingAppData().myInfo[APIConstants.seq];
+    targetDate[APIConstants.actor_seq] = _seq;
+
+    Map<String, dynamic> params = new Map();
+    if(_isBookmarked) {
+      params[APIConstants.key] = APIConstants.DEA_PAS_INFO;
+    } else {
+      params[APIConstants.key] = APIConstants.INS_PAS_INFO;
+    }
+
+    params[APIConstants.target] = targetDate;
+
+    // 배우 북마크 api 호출
+    RestClient(dio).postRequestMainControl(params).then((value) async {
+      if (value != null) {
+        if (value[APIConstants.resultVal]) {
+          try {
+            // 배우 북마크 성공
+            setState(() {
+              //var _responseData = value[APIConstants.data];
+              //var _responseList = _responseData[APIConstants.list] as List;
+
+              setState(() {
+                if(_isBookmarked) {
+                  _isBookmarked = false;
+                } else {
+                  _isBookmarked = true;
+                }
+              });
+
+              // KCastingAppData().myBookmark.addAll(_responseList);
+
+
+            });
+          } catch (e) {}
+        }
+      }
+    });
+  }
+
+  /*
   * 메인 위젯
   * */
   @override
@@ -404,15 +462,29 @@ class _ActorDetail extends State<ActorDetail>
                                         actorImgUrl: _actorProfile[
                                             APIConstants.main_img_url]));
                               }))),
-                      Container(
-                          height: 55,
-                          width: 55,
-                          padding: EdgeInsets.only(left: 15, right: 15),
-                          alignment: Alignment.center,
-                          child: Image.asset(
+                      GestureDetector(
+                        onTap: () {
+                          requestActorBookmarkEditApi(context);
+                        },
+                        child: Visibility(
+                          child: Container(
+                              height: 55,
+                              width: 55,
+                              padding: EdgeInsets.only(left: 15, right: 15),
+                              alignment: Alignment.center,
+                              child: _isBookmarked ? Image.asset(
+                                'assets/images/toggle_like_on.png',
+                                width: 20,
+                              ) : Image.asset(
                             'assets/images/toggle_like_off.png',
                             width: 20,
-                          ))
+                          )),
+                          visible:  KCastingAppData().myInfo[APIConstants.member_type] ==
+                              APIConstants.member_type_product
+                              ? true
+                              : false
+                        )
+                      )
                     ])),
                 visible: KCastingAppData().myInfo[APIConstants.member_type] ==
                         APIConstants.member_type_product

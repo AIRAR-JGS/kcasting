@@ -8,6 +8,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+import '../../../../KCastingAppData.dart';
+
 /*
 * 매니지먼트 마이스크랩*/
 class BookmarkedAgencyAuditionList extends StatefulWidget {
@@ -66,14 +68,14 @@ class _BookmarkedAgencyAuditionList extends State<BookmarkedAgencyAuditionList>
 
     // 캐스팅 목록 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetDate = new Map();
-    targetDate[APIConstants.order_type] = APIConstants.order_type_new;
+    targetDate[APIConstants.management_seq] = KCastingAppData().myInfo[APIConstants.seq];
 
     Map<String, dynamic> paging = new Map();
     paging[APIConstants.offset] = _castingBoardList.length;
     paging[APIConstants.limit] = _limit;
 
     Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.SEL_PCT_LIST;
+    params[APIConstants.key] = APIConstants.SEL_MCS_LIST;
     params[APIConstants.target] = targetDate;
     params[APIConstants.paging] = paging;
 

@@ -801,8 +801,7 @@ class _JoinProduction extends State<JoinProduction> with BaseUtilMixin {
             prefs.setInt(
                 APIConstants.seq, KCastingAppData().myInfo[APIConstants.seq]);
 
-            // 메인 페이지 이동
-            replaceView(context, Home(prevPage: APIConstants.INS_PRD_JOIN));
+            requestProductionBookMarkListApi(context);
 
           } else {
             // 회원가입 실패
@@ -827,5 +826,42 @@ class _JoinProduction extends State<JoinProduction> with BaseUtilMixin {
         });
       }
     });
+  }
+
+  /*
+  * 제작사 북마크 목록
+  * */
+  void requestProductionBookMarkListApi(BuildContext context) {
+    final dio = Dio();
+
+    // 제작사 북마크 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetDate = new Map();
+    targetDate[APIConstants.production_seq] = KCastingAppData().myInfo[APIConstants.seq];
+
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.SEL_PAS_LIST;
+    params[APIConstants.target] = targetDate;
+
+    // 제작사 북마크 api 호출
+    RestClient(dio).postRequestMainControl(params).then((value) async {
+      if (value != null) {
+        if (value[APIConstants.resultVal]) {
+          try {
+            // 제작사 북마크 성공
+            setState(() {
+              var _responseData = value[APIConstants.data];
+              var _responseList = _responseData[APIConstants.list] as List;
+
+              KCastingAppData().myBookmark.addAll(_responseList);
+
+
+            });
+          } catch (e) {}
+        }
+      }
+    });
+
+    // 메인 페이지 이동
+    replaceView(context, Home(prevPage: APIConstants.INS_PRD_JOIN));
   }
 }

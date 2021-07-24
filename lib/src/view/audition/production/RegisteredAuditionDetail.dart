@@ -32,6 +32,8 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
     with SingleTickerProviderStateMixin, BaseUtilMixin {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
+  bool _isUpload = false;
+
   int _castingSeq;
   String _apiKey = APIConstants.SAR_FAD_STATE;
 
@@ -1166,30 +1168,31 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
   /*
   * 2차 오디션 오픈
   * */
-  void requestOpenSecondAudition(BuildContext context) {
-    final dio = Dio();
-
+  Future<void> requestOpenSecondAudition(BuildContext context) async {
     // 2차 오디션 오픈 api 호출 시 보낼 파라미터
-    final bytes = File(_profileImgFile.path).readAsBytesSync();
+    /*final bytes = File(_profileImgFile.path).readAsBytesSync();
     String img64 = base64Encode(bytes);
 
     Map<String, dynamic> fileData = new Map();
-    fileData[APIConstants.base64string] = APIConstants.data_image + img64;
+    fileData[APIConstants.base64string] = APIConstants.data_image + img64;*/
 
     Map<String, dynamic> targetData = new Map();
     targetData[APIConstants.casting_seq] = _castingSeq;
-    targetData[APIConstants.secondAudition_startDate] =
-        DateTileUtils.getToday();
-    targetData[APIConstants.secondAudition_endDate] =
-        DateTileUtils.stringToDateTime2(_endDate);
-    targetData[APIConstants.file] = fileData;
+    targetData[APIConstants.secondAudition_startDate] = DateTileUtils.getToday();
+    targetData[APIConstants.secondAudition_endDate] = DateTileUtils.stringToDateTime2(_endDate);
+    //targetData[APIConstants.file] = fileData;
 
     Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.INS_SAD_INFO;
+    params[APIConstants.key] = APIConstants.INS_SAD_INFO_FormData;
     params[APIConstants.target] = targetData;
 
+    var temp = _profileImgFile.path.split('/');
+    String fileName = temp[temp.length - 1];
+    params[APIConstants.target_files] =
+        await MultipartFile.fromFile(_profileImgFile.path, filename: fileName);
+
     // 2차 오디션 오픈 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
+    RestClient(Dio()).postRequestMainControlFormData(params).then((value) async {
       if (value == null) {
         // 에러 - 데이터 널
         showSnackBar(context, '다시 시도해 주세요.');

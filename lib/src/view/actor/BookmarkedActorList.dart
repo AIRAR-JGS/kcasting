@@ -8,6 +8,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+import '../../../KCastingAppData.dart';
+
 /*
 * 제작사 - 마이스크랩
 * */
@@ -72,13 +74,14 @@ class _BookmarkedActorList extends State<BookmarkedActorList>
 
     // 배우목록조회 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
+    targetData[APIConstants.production_seq] = KCastingAppData().myInfo[APIConstants.seq];
 
     Map<String, dynamic> paging = new Map();
     paging[APIConstants.offset] = _actorList.length;
     paging[APIConstants.limit] = _limit;
 
     Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.SEL_ACT_LIST;
+    params[APIConstants.key] = APIConstants.SEL_PAS_LIST;
     params[APIConstants.target] = targetData;
     params[APIConstants.paging] = paging;
 

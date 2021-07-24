@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:casting_call/BaseWidget.dart';
+import 'package:casting_call/KCastingAppData.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
@@ -316,17 +317,17 @@ class AuditionListItem extends StatelessWidget with BaseUtilMixin {
                                                       castingItem[APIConstants
                                                           .casting_uniqueness]))
                                             ])))),
-                            VerticalDivider(
+                            /*VerticalDivider(
                                 color: CustomColors.colorFontLightGrey,
                                 width: 0.1,
                                 thickness: 0.5),
-                            Container(
+                            Visibility(child: Container(
                                 width: 30,
                                 margin: EdgeInsets.only(left: 10),
                                 alignment: Alignment.center,
-                                child: Image.asset(
+                                child:  Image.asset(
                                     'assets/images/toggle_like_off.png',
-                                    width: 20))
+                                    width: 20)),visible: (KCastingAppData().myInfo[APIConstants.member_type] == APIConstants.member_type_actor) ? true : false)*/
                           ]))
                     ]))
           ]),

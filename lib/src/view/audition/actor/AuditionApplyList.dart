@@ -329,7 +329,7 @@ class _AuditionApplyList extends State<AuditionApplyList>
                                                                 _auditionList[
                                                                         index][
                                                                     APIConstants
-                                                                        .audition_apply_seq]);
+                                                                        .auditionApply_seq]);
                                                           },
                                                         ),
                                                       );

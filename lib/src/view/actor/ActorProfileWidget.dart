@@ -476,8 +476,13 @@ class ActorProfileWidget {
                               ? ClipRRect(
                                   borderRadius:
                                       CustomStyles.circle4BorderRadius(),
-                                  child: Image.network(actorImageList[index]
-                                      [APIConstants.actor_img_url]))
+                                  child: CachedNetworkImage(
+                                      imageUrl: actorImageList[index]
+                                      [APIConstants.actor_img_url],
+                                      fit: BoxFit.cover,
+                                      errorWidget: (context, url, error) => ClipRRect(
+                                          borderRadius:
+                                          CustomStyles.circle4BorderRadius())))
                               : ClipRRect(
                                   borderRadius:
                                       CustomStyles.circle4BorderRadius()),
@@ -518,8 +523,13 @@ class ActorProfileWidget {
                             ? ClipRRect(
                                 borderRadius:
                                     CustomStyles.circle4BorderRadius(),
-                                child: Image.network(actorImageList[index]
-                                    [APIConstants.actor_img_url]))
+                                child: CachedNetworkImage(
+                                    imageUrl: actorImageList[index]
+                                    [APIConstants.actor_img_url],
+                                    fit: BoxFit.cover,
+                                    errorWidget: (context, url, error) => ClipRRect(
+                                        borderRadius:
+                                        CustomStyles.circle4BorderRadius())))
                             : ClipRRect(
                                 borderRadius:
                                     CustomStyles.circle4BorderRadius()),
@@ -559,11 +569,13 @@ class ActorProfileWidget {
                               child: ClipRRect(
                                   borderRadius:
                                       CustomStyles.circle7BorderRadius(),
-                                  child: Image.network(
-                                    actorVideoList[index]
-                                        [APIConstants.actor_video_url_thumb],
-                                    fit: BoxFit.cover,
-                                  )),
+                                  child: CachedNetworkImage(
+                  imageUrl: actorVideoList[index]
+                  [APIConstants.actor_video_url_thumb],
+                  fit: BoxFit.cover,
+                  errorWidget: (context, url, error) => ClipRRect(
+                  borderRadius:
+                  CustomStyles.circle4BorderRadius()))),
                             ),
                             GestureDetector(
                                 onTap: () {
@@ -595,11 +607,13 @@ class ActorProfileWidget {
                               child: ClipRRect(
                                   borderRadius:
                                       CustomStyles.circle7BorderRadius(),
-                                  child: Image.network(
-                                    actorVideoList[index]
-                                        [APIConstants.actor_video_url_thumb],
-                                    fit: BoxFit.cover,
-                                  )),
+                                  child: CachedNetworkImage(
+                                      imageUrl: actorVideoList[index]
+                                      [APIConstants.actor_video_url_thumb],
+                                      fit: BoxFit.cover,
+                                      errorWidget: (context, url, error) => ClipRRect(
+                                          borderRadius:
+                                          CustomStyles.circle4BorderRadius()))),
                             ),
                             GestureDetector(
                               onTap: () {

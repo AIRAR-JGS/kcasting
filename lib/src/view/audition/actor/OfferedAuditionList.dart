@@ -30,6 +30,7 @@ class _OfferedAuditionList extends State<OfferedAuditionList>
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   int _actorSeq;
+  bool _isUpload = false;
 
   TabController _tabController;
   int _tabIndex = 0;
@@ -103,7 +104,9 @@ class _OfferedAuditionList extends State<OfferedAuditionList>
   * 배우 제안 받은 목록 조회
   * */
   void requestMyApplyListApi(BuildContext context) {
-    final dio = Dio();
+    setState(() {
+      _isUpload = true;
+    });
 
     // 배우 제안 받은 목록 조회 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
@@ -126,10 +129,10 @@ class _OfferedAuditionList extends State<OfferedAuditionList>
     params[APIConstants.paging] = paging;
 
     // 배우 제안 받은 목록 조회 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
-      if (value != null) {
-        if (value[APIConstants.resultVal]) {
-          try {
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value != null) {
+          if (value[APIConstants.resultVal]) {
             // 배우 제안 받은 목록 조회 성공
             var _responseList = value[APIConstants.data];
 
@@ -141,14 +144,18 @@ class _OfferedAuditionList extends State<OfferedAuditionList>
 
               _isLoading = false;
             });
-          } catch (e) {
+          } else {
             showSnackBar(context, APIConstants.error_msg_try_again);
           }
         } else {
-          showSnackBar(context, APIConstants.error_msg_try_again);
+          showSnackBar(context, APIConstants.error_msg_server_not_response);
         }
-      } else {
-        showSnackBar(context, APIConstants.error_msg_server_not_response);
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }
@@ -170,11 +177,17 @@ class _OfferedAuditionList extends State<OfferedAuditionList>
                     alignment: Alignment.center,
                     child: GestureDetector(
                       onTap: () {
-                        addView(
-                            context,
-                            OfferedAuditionDetail(
-                                seq: _scoutList[index]
-                                    [APIConstants.auditionProposal_seq]));
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => OfferedAuditionDetail(
+                                  seq: _scoutList[index]
+                                      [APIConstants.auditionProposal_seq])),
+                        ).then((value) => {
+                              _total = 0,
+                              _scoutList = [],
+                              requestMyApplyListApi(context)
+                            });
                       },
                       child: Container(
                           alignment: Alignment.center,
@@ -197,6 +210,8 @@ class _OfferedAuditionList extends State<OfferedAuditionList>
                                           alignment: Alignment.topCenter,
                                           child: ClipOval(
                                             child: CachedNetworkImage(
+                                              width: 30,
+                                              height: 30,
                                               imageUrl: _scoutList[index][
                                                   APIConstants
                                                       .production_img_url],
@@ -205,12 +220,18 @@ class _OfferedAuditionList extends State<OfferedAuditionList>
                                                   Image.asset(
                                                       'assets/images/btn_mypage.png',
                                                       fit: BoxFit.contain,
-                                                      width: 30,
                                                       color: CustomColors
                                                           .colorBgGrey),
-                                              height: 30,
                                             ),
-                                          )),
+                                          ),
+                                        decoration: BoxDecoration(
+                                          color: CustomColors.colorWhite,
+                                          borderRadius: BorderRadius.all( Radius.circular(50.0)),
+                                          border: Border.all(
+                                            color: CustomColors.colorAccent,
+                                            width: 1.0,
+                                          ),
+                                        )),
                                     ),
                                     Expanded(
                                         flex: 1,
@@ -325,67 +346,78 @@ class _OfferedAuditionList extends State<OfferedAuditionList>
             appBar: CustomStyles.defaultAppBar('받은 제안', () {
               Navigator.pop(context);
             }),
-            body: Container(
-              child: SingleChildScrollView(
-                child: Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(top: 30.0, bottom: 10),
-                        padding: EdgeInsets.only(left: 16, right: 16),
-                        child: Text('받은 제안',
-                            style: CustomStyles.normal24TextStyle()),
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width * 0.7,
-                        color: CustomColors.colorWhite,
-                        child: TabBar(
-                          indicatorSize: TabBarIndicatorSize.label,
-                          controller: _tabController,
-                          indicatorPadding: EdgeInsets.zero,
-                          labelStyle: CustomStyles.bold14TextStyle(),
-                          unselectedLabelStyle:
-                              CustomStyles.normal14TextStyle(),
-                          tabs: [
-                            Tab(text: '전체'),
-                            Tab(text: '수락'),
-                            Tab(text: '거절'),
-                            Tab(text: '대기')
-                          ],
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 10),
-                        child: Divider(
-                          height: 0.1,
-                          color: CustomColors.colorFontLightGrey,
-                        ),
-                      ),
-                      Expanded(
-                        flex: 0,
-                        child: [
-                          tabItem(),
-                          tabItem(),
-                          tabItem(),
-                          tabItem()
-                        ][_tabIndex],
-                      ),
-                      Visibility(
-                          child: Container(
-                            alignment: Alignment.center,
-                            margin: EdgeInsets.only(top: 50),
-                            child: Text(
-                              '목록이 없습니다.',
-                              style: CustomStyles.normal16TextStyle(),
-                              textAlign: TextAlign.center,
+            body: Stack(
+              children: [
+                Container(
+                  child: SingleChildScrollView(
+                    child: Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(top: 30.0, bottom: 10),
+                            padding: EdgeInsets.only(left: 16, right: 16),
+                            child: Text('받은 제안',
+                                style: CustomStyles.normal24TextStyle()),
+                          ),
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.7,
+                            color: CustomColors.colorWhite,
+                            child: TabBar(
+                              indicatorSize: TabBarIndicatorSize.label,
+                              controller: _tabController,
+                              indicatorPadding: EdgeInsets.zero,
+                              labelStyle: CustomStyles.bold14TextStyle(),
+                              unselectedLabelStyle:
+                                  CustomStyles.normal14TextStyle(),
+                              tabs: [
+                                Tab(text: '전체'),
+                                Tab(text: '수락'),
+                                Tab(text: '거절'),
+                                Tab(text: '대기')
+                              ],
                             ),
                           ),
-                          visible: _scoutList.length > 0 ? false : true),
-                    ],
+                          Container(
+                            margin: EdgeInsets.only(top: 10),
+                            child: Divider(
+                              height: 0.1,
+                              color: CustomColors.colorFontLightGrey,
+                            ),
+                          ),
+                          Expanded(
+                            flex: 0,
+                            child: [
+                              tabItem(),
+                              tabItem(),
+                              tabItem(),
+                              tabItem()
+                            ][_tabIndex],
+                          ),
+                          Visibility(
+                              child: Container(
+                                alignment: Alignment.center,
+                                margin: EdgeInsets.only(top: 50),
+                                child: Text(
+                                  '목록이 없습니다.',
+                                  style: CustomStyles.normal16TextStyle(),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              visible: _scoutList.length > 0 ? false : true),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                Visibility(
+                  child: Container(
+                      color: Colors.black38,
+                      alignment: Alignment.center,
+                      child: CircularProgressIndicator()),
+                  visible: _isUpload,
+                )
+              ],
             )));
   }
 }

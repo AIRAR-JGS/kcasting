@@ -230,26 +230,10 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
     });
 
     try {
-      // final dio = Dio();
-      //
-      // final videoFileBytes = File(videoFile.path).readAsBytesSync();
-      // String videoFile64 = base64Encode(videoFileBytes);
-      //
-      // //final bytes = File(thumbnailFile.path).readAsBytesSync();
-      // String thumbnailFile62 = base64Encode(bytes);
-
       // 배우 비디오 추가 api 호출 시 보낼 파라미터
       Map<String, dynamic> targetData = new Map();
       targetData[APIConstants.secondAuditionTarget_seq] =
           _auditionState[APIConstants.secondAuditionTarget_seq];
-
-      // Map<String, dynamic> fileData = new Map();
-      // fileData[APIConstants.base64string] =
-      //     APIConstants.data_file + videoFile64;
-      // fileData[APIConstants.base64string_thumb] =
-      //     APIConstants.data_image + thumbnailFile62;
-      //
-      // targetData[APIConstants.file] = fileData;
 
       Map<String, dynamic> params = new Map();
       params[APIConstants.key] = APIConstants.UPD_FAT_SUBMITVIDEO;
@@ -261,17 +245,19 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
       files.add(
           await MultipartFile.fromFile(videoFile.path, filename: fileName));
 
-    var thums = [];
-    var tempImg = thumbFilePath.split('/');
-    String thumbFileName = tempImg[tempImg.length - 1];
-    thums.add(
-    await MultipartFile.fromFile(thumbFilePath, filename: thumbFileName));
+      var thums = [];
+      var tempImg = thumbFilePath.split('/');
+      String thumbFileName = tempImg[tempImg.length - 1];
+      thums.add(
+          await MultipartFile.fromFile(thumbFilePath, filename: thumbFileName));
 
       params[APIConstants.target_video] = files;
       params[APIConstants.target_video_thumb] = thums;
 
       // 배우 비디오 추가 api 호출
-      RestClient(Dio()).postRequestMainControlFormData(params).then((value) async {
+      RestClient(Dio())
+          .postRequestMainControlFormData(params)
+          .then((value) async {
         if (value == null) {
           // 에러 - 데이터 널
           showSnackBar(context, '다시 시도해 주세요.');
@@ -321,21 +307,18 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
             // 배우 실명인증 성공
             var _responseData = value[APIConstants.data];
 
-            if(_responseData != null) {
+            if (_responseData != null) {
               var returnCode = _responseData[APIConstants.iReturnCode];
-              switch(returnCode) {
+              switch (returnCode) {
                 case "1":
                   // 성공
                   break;
 
                 default:
-                // 실패
+                  // 실패
                   break;
-
-                
               }
             }
-            
           } catch (e) {
             showSnackBar(context, APIConstants.error_msg_try_again);
           }
@@ -387,9 +370,9 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                               style: CustomStyles.dark16TextStyle())),
                       Container(
                           margin: EdgeInsets.only(top: 30),
-                          child: Text('서약',
+                          child: Text(_agreeTerms == 0 ? '서약' : '비밀 유지 서약에 동의하셨습니다.',
                               style: CustomStyles.darkBold16TextStyle())),
-                      Container(
+                      Visibility(child: Container(
                         margin: EdgeInsets.only(top: 10),
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
@@ -415,35 +398,40 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                                       });
                                     },
                                     materialTapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap)),
+                                    MaterialTapTargetSize.shrinkWrap)),
                             Container(
                                 child: Text('대본 비밀 유지 서약에 대해 동의합니다.',
                                     style: CustomStyles.dark14TextStyle()))
                           ],
                         ),
-                      ),
-                      Container(
-                          margin: EdgeInsets.only(top: 30),
-                          child: Text('대본',
-                              style: CustomStyles.darkBold16TextStyle())),
-                      Container(
-                        margin: EdgeInsets.only(top: 15),
-                        padding: EdgeInsets.only(
-                            left: 10, right: 10, top: 12, bottom: 12),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('첨부파일 : 모집요강 안내.pdf',
-                                style: CustomStyles.dark14TextStyle()),
-                            CustomStyles.darkBold14TextButtonStyle(
-                                '다운로드', () {})
-                          ],
-                        ),
-                      ),
+                      ),visible: _agreeTerms == 1 ? false : true),
+                      Visibility(child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                              margin: EdgeInsets.only(top: 30),
+                              child: Text('대본',
+                                  style: CustomStyles.darkBold16TextStyle())),
+                          Container(
+                            margin: EdgeInsets.only(top: 15),
+                            padding: EdgeInsets.only(
+                                left: 10, right: 10, top: 12, bottom: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[200],
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('첨부파일 : 모집요강 안내.pdf',
+                                    style: CustomStyles.dark14TextStyle()),
+                                CustomStyles.darkBold14TextButtonStyle(
+                                    '다운로드', () {})
+                              ],
+                            ),
+                          )
+                        ],
+                      ), visible: _agreeTerms == 0 ? false : true),
                       Container(
                           margin: EdgeInsets.only(top: 30),
                           child: Text('기간',

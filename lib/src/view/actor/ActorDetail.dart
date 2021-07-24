@@ -184,7 +184,7 @@ class _ActorDetail extends State<ActorDetail>
 
                     for (int i = 0; i < _actorDialect.length; i++) {
                       var _lanData = _actorDialect[i];
-                      _actordialectStr += _lanData[APIConstants.language_type];
+                      _actordialectStr += _lanData[APIConstants.dialect_type];
 
                       if (i != _actorDialect.length - 1)
                         _actordialectStr += ",\t";

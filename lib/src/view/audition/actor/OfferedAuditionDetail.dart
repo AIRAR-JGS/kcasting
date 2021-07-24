@@ -29,6 +29,7 @@ class _OfferedAuditionDetail extends State<OfferedAuditionDetail>
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   int _seq;
+  bool _isUpload = false;
 
   Map<String, dynamic> _scoutData = new Map();
 
@@ -45,7 +46,9 @@ class _OfferedAuditionDetail extends State<OfferedAuditionDetail>
   * 제안 상세
   * */
   void requestReplyProposalDetail(BuildContext context) {
-    final dio = Dio();
+    setState(() {
+      _isUpload = true;
+    });
 
     // 제안 상세 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
@@ -56,25 +59,29 @@ class _OfferedAuditionDetail extends State<OfferedAuditionDetail>
     params[APIConstants.target] = targetData;
 
     // 제안 상세 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
       if (value == null) {
         // 에러 - 데이터 널
         showSnackBar(context, APIConstants.error_msg_server_not_response);
       } else {
         if (value[APIConstants.resultVal]) {
-          try {
             // 제안 상세 성공
             setState(() {
               var _responseData = value[APIConstants.data];
               _scoutData = _responseData[APIConstants.list][0];
             });
-          } catch (e) {
-            showSnackBar(context, APIConstants.error_msg_try_again);
-          }
         } else {
           // 수락 거절 실패
           showSnackBar(context, APIConstants.error_msg_try_again);
         }
+      }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }
@@ -83,7 +90,9 @@ class _OfferedAuditionDetail extends State<OfferedAuditionDetail>
   * 수락 거절
   * */
   void requestReplyProposal(BuildContext context, String type, String msg) {
-    final dio = Dio();
+    setState(() {
+      _isUpload = true;
+    });
 
     // 수락 거절 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
@@ -97,13 +106,14 @@ class _OfferedAuditionDetail extends State<OfferedAuditionDetail>
     params[APIConstants.target] = targetData;
 
     // 수락 거절 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
       if (value == null) {
         // 에러 - 데이터 널
         showSnackBar(context, APIConstants.error_msg_server_not_response);
       } else {
         if (value[APIConstants.resultVal]) {
-          try {
+
             // 수락 거절 성공
             setState(() {
               if (type == "수락") {
@@ -116,13 +126,18 @@ class _OfferedAuditionDetail extends State<OfferedAuditionDetail>
                 Navigator.pop(context);
               }
             });
-          } catch (e) {
-            showSnackBar(context, APIConstants.error_msg_try_again);
-          }
+
         } else {
           // 수락 거절 실패
           showSnackBar(context, APIConstants.error_msg_try_again);
         }
+      }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      }finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }
@@ -174,6 +189,7 @@ class _OfferedAuditionDetail extends State<OfferedAuditionDetail>
                                                 width: 67,
                                                 color:
                                                     CustomColors.colorBgGrey),
+                                        width: 67,
                                         height: 67,
                                       ) : Image.asset(
                                           'assets/images/btn_mypage.png',
@@ -181,7 +197,15 @@ class _OfferedAuditionDetail extends State<OfferedAuditionDetail>
                                           width: 67,
                                           color:
                                           CustomColors.colorBgGrey),
-                                    )),
+                                    ),
+                                  decoration: BoxDecoration(
+                                    color: CustomColors.colorWhite,
+                                    borderRadius: BorderRadius.all( Radius.circular(50.0)),
+                                    border: Border.all(
+                                      color: CustomColors.colorAccent,
+                                      width: 2.0,
+                                    ),
+                                  ),)
                               ),
                               Expanded(
                                   flex: 1,

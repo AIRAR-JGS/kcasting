@@ -271,7 +271,9 @@ class _ActorMemberInfoModify extends State<ActorMemberInfoModify>
   * 기존 비밀번호 체크
   * */
   void requestComparePwdApi(BuildContext context) async {
-    final dio = Dio();
+    setState(() {
+      _isUpload = true;
+    });
 
     // 비밀번호 암호화
     final publicPem =
@@ -295,25 +297,33 @@ class _ActorMemberInfoModify extends State<ActorMemberInfoModify>
     params[APIConstants.target] = targetDatas;
 
     // 기존 비밀번호 체크 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
-      if (value == null) {
-        // 에러 - 데이터 널
-        showSnackBar(context, '다시 시도해 주세요.');
-      } else {
-        if (value[APIConstants.resultVal]) {
-          // 기존 비밀번호 체크 성공
-          var _responseData = value[APIConstants.data];
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value == null) {
+          // 에러 - 데이터 널
+          showSnackBar(context, '다시 시도해 주세요.');
+        } else {
+          if (value[APIConstants.resultVal]) {
+            // 기존 비밀번호 체크 성공
+            var _responseData = value[APIConstants.data];
 
-          if (_responseData != null &&
-              _responseData[APIConstants.isCorrectPassword]) {
-            requestUpdateApi(context);
+            if (_responseData != null &&
+                _responseData[APIConstants.isCorrectPassword]) {
+              requestUpdateApi(context);
+            } else {
+              showSnackBar(context, value[APIConstants.resultMsg]);
+            }
           } else {
+            // 기존 비밀번호 체크 실패
             showSnackBar(context, value[APIConstants.resultMsg]);
           }
-        } else {
-          // 기존 비밀번호 체크 실패
-          showSnackBar(context, value[APIConstants.resultMsg]);
         }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }

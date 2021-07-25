@@ -28,6 +28,7 @@ class _AuditionApplyList extends State<AuditionApplyList>
     with SingleTickerProviderStateMixin, BaseUtilMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
+  bool _isUpload = false;
   int _actorSeq;
 
   TabController _tabController;
@@ -122,7 +123,9 @@ class _AuditionApplyList extends State<AuditionApplyList>
   * 지원현황 윗부분 조회
   * */
   void requestMyApplyListHeadApi(BuildContext _context) {
-    final dio = Dio();
+    setState(() {
+      _isUpload = true;
+    });
 
     // 지원현황 윗부분 조회 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
@@ -133,34 +136,42 @@ class _AuditionApplyList extends State<AuditionApplyList>
     params[APIConstants.target] = targetData;
 
     // 지원현황 윗부분 조회 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
-      if (value != null) {
-        if (value[APIConstants.resultVal]) {
-          // 지원현황 윗부분 조회 성공
-          var _responseData = value[APIConstants.data];
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value != null) {
+          if (value[APIConstants.resultVal]) {
+            // 지원현황 윗부분 조회 성공
+            var _responseData = value[APIConstants.data];
 
-          if (_responseData == null) {
-            return;
-          }
-
-          setState(() {
-            List<dynamic> _responseList = _responseData[APIConstants.list];
-
-            if (_responseList != null && _responseList.length > 0) {
-              Map<String, dynamic> headerData = _responseList[0];
-
-              if (headerData != null) {
-                applyIngCnt = headerData[APIConstants.applyIngCnt];
-                applyCompleteCnt = headerData[APIConstants.applyCompleteCnt];
-                applyFailCnt = headerData[APIConstants.applyFailCnt];
-              }
+            if (_responseData == null) {
+              return;
             }
-          });
+
+            setState(() {
+              List<dynamic> _responseList = _responseData[APIConstants.list];
+
+              if (_responseList != null && _responseList.length > 0) {
+                Map<String, dynamic> headerData = _responseList[0];
+
+                if (headerData != null) {
+                  applyIngCnt = headerData[APIConstants.applyIngCnt];
+                  applyCompleteCnt = headerData[APIConstants.applyCompleteCnt];
+                  applyFailCnt = headerData[APIConstants.applyFailCnt];
+                }
+              }
+            });
+          } else {
+            showSnackBar(context, value[APIConstants.resultMsg]);
+          }
         } else {
-          showSnackBar(context, value[APIConstants.resultMsg]);
+          showSnackBar(context, '다시 시도해 주세요.');
         }
-      } else {
-        showSnackBar(context, '다시 시도해 주세요.');
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }
@@ -169,7 +180,9 @@ class _AuditionApplyList extends State<AuditionApplyList>
   * 지원현황 조회
   * */
   void requestMyApplyListApi(BuildContext _context, String stateType) {
-    final dio = Dio();
+    setState(() {
+      _isUpload = true;
+    });
 
     // 지원현황 조회 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
@@ -186,25 +199,33 @@ class _AuditionApplyList extends State<AuditionApplyList>
     params[APIConstants.paging] = paging;
 
     // 지원현황 조회 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
-      if (value != null) {
-        if (value[APIConstants.resultVal]) {
-          // 지원현황 조회 성공
-          var _responseList = value[APIConstants.data];
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value != null) {
+          if (value[APIConstants.resultVal]) {
+            // 지원현황 조회 성공
+            var _responseList = value[APIConstants.data];
 
-          var _pagingData = _responseList[APIConstants.paging];
-          setState(() {
-            _total = _pagingData[APIConstants.total];
+            var _pagingData = _responseList[APIConstants.paging];
+            setState(() {
+              _total = _pagingData[APIConstants.total];
 
-            _auditionList.addAll(_responseList[APIConstants.list]);
+              _auditionList.addAll(_responseList[APIConstants.list]);
 
-            _isLoading = false;
-          });
+              _isLoading = false;
+            });
+          } else {
+            showSnackBar(context, value[APIConstants.resultMsg]);
+          }
         } else {
-          showSnackBar(context, value[APIConstants.resultMsg]);
+          showSnackBar(context, '다시 시도해 주세요.');
         }
-      } else {
-        showSnackBar(context, '다시 시도해 주세요.');
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }
@@ -214,7 +235,9 @@ class _AuditionApplyList extends State<AuditionApplyList>
   * */
   void requestCancelApplyAuditionApi(
       BuildContext _context, int _auditionApplySeq) {
-    final dio = Dio();
+    setState(() {
+      _isUpload = true;
+    });
 
     // 지원현황 조회 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
@@ -225,23 +248,31 @@ class _AuditionApplyList extends State<AuditionApplyList>
     params[APIConstants.target] = targetData;
 
     // 지원현황 조회 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
-      if (value != null) {
-        if (value[APIConstants.resultVal]) {
-          // 지원현황 조회 성공
-          showSnackBar(context, "지원을 취소했습니다.");
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value != null) {
+          if (value[APIConstants.resultVal]) {
+            // 지원현황 조회 성공
+            showSnackBar(context, "지원을 취소했습니다.");
 
-          _tabIndex = 0;
+            _tabIndex = 0;
 
-          _total = 0;
-          _auditionList = [];
+            _total = 0;
+            _auditionList = [];
 
-          requestMyApplyListApi(context, "진행중");
+            requestMyApplyListApi(context, "진행중");
+          } else {
+            showSnackBar(context, value[APIConstants.resultMsg]);
+          }
         } else {
-          showSnackBar(context, value[APIConstants.resultMsg]);
+          showSnackBar(context, '다시 시도해 주세요.');
         }
-      } else {
-        showSnackBar(context, '다시 시도해 주세요.');
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }
@@ -397,61 +428,70 @@ class _AuditionApplyList extends State<AuditionApplyList>
               Navigator.pop(context);
             }),
             body: Builder(builder: (BuildContext context) {
-              return Container(
-                  child: SingleChildScrollView(
-                      child: Container(
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                    Container(
-                      margin: EdgeInsets.only(top: 30.0, bottom: 10),
-                      padding: EdgeInsets.only(left: 16, right: 16),
-                      child: Text('지원 현황',
-                          style: CustomStyles.normal24TextStyle()),
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      color: CustomColors.colorWhite,
-                      child: TabBar(
-                        controller: _tabController,
-                        indicatorSize: TabBarIndicatorSize.label,
-                        indicatorPadding: EdgeInsets.zero,
-                        labelStyle: CustomStyles.bold14TextStyle(),
-                        unselectedLabelStyle: CustomStyles.normal14TextStyle(),
-                        tabs: [
-                          Tab(text: '진행중($applyIngCnt)'),
-                          Tab(text: '계약완료($applyCompleteCnt)'),
-                          Tab(text: '불합격($applyFailCnt)'),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: 10),
-                      child: Divider(
-                        height: 0.1,
-                        color: CustomColors.colorFontLightGrey,
-                      ),
-                    ),
-                    Expanded(
-                      flex: 0,
-                      child: [
-                        tabMyApplyStatus(),
-                        tabMyApplyStatus(),
-                        tabMyApplyStatus()
-                      ][_tabIndex],
-                    ),
-                    Visibility(
-                        child: Container(
-                          alignment: Alignment.center,
-                          margin: EdgeInsets.only(top: 50),
-                          child: Text(
-                            '지원현황이 없습니다.',
-                            style: CustomStyles.normal16TextStyle(),
-                            textAlign: TextAlign.center,
+              return Stack(
+                children: [
+                  Container(
+                      child: SingleChildScrollView(
+                          child: Container(
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                        Container(
+                          margin: EdgeInsets.only(top: 30.0, bottom: 10),
+                          padding: EdgeInsets.only(left: 16, right: 16),
+                          child: Text('지원 현황',
+                              style: CustomStyles.normal24TextStyle()),
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          color: CustomColors.colorWhite,
+                          child: TabBar(
+                            controller: _tabController,
+                            indicatorSize: TabBarIndicatorSize.label,
+                            indicatorPadding: EdgeInsets.zero,
+                            labelStyle: CustomStyles.bold14TextStyle(),
+                            unselectedLabelStyle:
+                                CustomStyles.normal14TextStyle(),
+                            tabs: [
+                              Tab(text: '진행중($applyIngCnt)'),
+                              Tab(text: '계약완료($applyCompleteCnt)'),
+                              Tab(text: '불합격($applyFailCnt)'),
+                            ],
                           ),
                         ),
-                        visible: _auditionList.length > 0 ? false : true)
-                  ]))));
+                        Container(
+                          margin: EdgeInsets.only(top: 10),
+                          child: Divider(
+                            height: 0.1,
+                            color: CustomColors.colorFontLightGrey,
+                          ),
+                        ),
+                        Expanded(
+                          flex: 0,
+                          child: [
+                            tabMyApplyStatus(),
+                            tabMyApplyStatus(),
+                            tabMyApplyStatus()
+                          ][_tabIndex],
+                        ),
+                        Visibility(
+                            child: Container(
+                                alignment: Alignment.center,
+                                margin: EdgeInsets.only(top: 50),
+                                child: Text('지원현황이 없습니다.',
+                                    style: CustomStyles.normal16TextStyle(),
+                                    textAlign: TextAlign.center)),
+                            visible: _auditionList.length > 0 ? false : true)
+                      ])))),
+                  Visibility(
+                    child: Container(
+                        color: Colors.black38,
+                        alignment: Alignment.center,
+                        child: CircularProgressIndicator()),
+                    visible: _isUpload,
+                  )
+                ],
+              );
             })));
   }
 }

@@ -24,7 +24,6 @@ class _ProjectList extends State<ProjectList>
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   bool _isUpload = false;
-
   final _txtFieldSearch = TextEditingController();
 
   TabController _tabController;

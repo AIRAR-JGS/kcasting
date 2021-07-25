@@ -28,11 +28,15 @@ class _AgencyActorAuditionApplyList extends State<AgencyActorAuditionApplyList>
     with BaseUtilMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
+  bool _isUpload = false;
+  String actorName;
+  final _txtFieldSearch = TextEditingController();
+
   // 배우 리스트 관련 변수
   ScrollController _scrollController;
 
   int _total = 0;
-  int _limit = 4;
+  int _limit = 20;
 
   List<dynamic> _actorList = [];
   bool _isLoading = true;
@@ -46,10 +50,6 @@ class _AgencyActorAuditionApplyList extends State<AgencyActorAuditionApplyList>
 
     // 배우 목록 api 조회
     requestActorListApi(context);
-
-    /* // 리스트뷰 스크롤 컨트롤러
-    _scrollController = new ScrollController(initialScrollOffset: 0.5)
-      ..addListener(_scrollListener);*/
   }
 
   // 리스트뷰 스크롤 컨트롤러 이벤트 리스너
@@ -82,12 +82,16 @@ class _AgencyActorAuditionApplyList extends State<AgencyActorAuditionApplyList>
   * 배우목록조회 api 호출
   * */
   void requestActorListApi(BuildContext context) {
-    final dio = Dio();
+    setState(() {
+      _isUpload = true;
+    });
 
     // 배우목록조회 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
-    targetData[APIConstants.management_seq] =
-        KCastingAppData().myInfo[APIConstants.management_seq];
+    targetData[APIConstants.management_seq] = KCastingAppData().myInfo[APIConstants.management_seq];
+    if(actorName != null) {
+      targetData[APIConstants.actor_name] = actorName;
+    }
 
     Map<String, dynamic> paging = new Map();
     paging[APIConstants.offset] = _actorList.length;
@@ -99,10 +103,10 @@ class _AgencyActorAuditionApplyList extends State<AgencyActorAuditionApplyList>
     params[APIConstants.paging] = paging;
 
     // 배우목록조회 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
-      if (value != null) {
-        if (value[APIConstants.resultVal]) {
-          try {
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value != null) {
+          if (value[APIConstants.resultVal]) {
             // 배우목록조회 성공
             setState(() {
               var _responseList = value[APIConstants.data];
@@ -116,9 +120,14 @@ class _AgencyActorAuditionApplyList extends State<AgencyActorAuditionApplyList>
 
               _isLoading = false;
             });
-          } catch (e) {
           }
         }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }
@@ -249,67 +258,86 @@ class _AgencyActorAuditionApplyList extends State<AgencyActorAuditionApplyList>
             Navigator.pop(context);
           }),
           body: NotificationListener<ScrollNotification>(
-            child: SingleChildScrollView(
-                controller: _scrollController,
-                physics: AlwaysScrollableScrollPhysics(),
-                key: ObjectKey(_actorList.length > 0 ? _actorList[0] : ""),
-                child: Column(
-                  children: [
-                    Container(
-                        margin: EdgeInsets.only(
-                            top: 30, left: 15, right: 15, bottom: 20),
-                        padding: EdgeInsets.only(left: 10, right: 10),
-                        height: 50,
-                        decoration: BoxDecoration(
-                            borderRadius: CustomStyles.circle7BorderRadius(),
-                            border: Border.all(
-                                width: 1,
-                                color: CustomColors.colorFontLightGrey)),
-                        child: Row(children: [
-                          Flexible(
-                              child: TextField(
-                                  decoration: InputDecoration(
-                                      isDense: true,
-                                      border: InputBorder.none,
-                                      contentPadding: EdgeInsets.symmetric(
-                                          vertical: 0, horizontal: 0),
-                                      hintText: "배역을 검색해보세요",
-                                      hintStyle:
-                                          CustomStyles.normal16TextStyle()),
-                                  style: CustomStyles.dark16TextStyle())),
-                          Padding(
-                              padding: EdgeInsets.only(left: 10),
-                              child: GestureDetector(
-                                  onTap: () {},
-                                  child: Image.asset(
-                                      'assets/images/btn_search.png',
-                                      width: 20,
-                                      fit: BoxFit.contain)))
-                        ])),
-                    Divider(),
-                    _actorList.length > 0
-                        ? Container(
-                            child: ListView.separated(
-                                primary: false,
-                                physics: NeverScrollableScrollPhysics(),
-                                padding: EdgeInsets.only(
-                                    left: 15, right: 15, bottom: 30),
-                                shrinkWrap: true,
-                                itemCount: _actorList.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  Map<String, dynamic> _data =
-                                      _actorList[index];
-                                  return listItem(_data);
-                                },
-                                separatorBuilder: (context, index) {
-                                  return Divider();
-                                }))
-                        : Container(
-                            margin: EdgeInsets.only(top: 30),
-                            child: Text('보유배우의 지원현황이 없습니다.',
-                                style: CustomStyles.normal16TextStyle()))
-                  ],
-                )),
+            child: Stack(
+              children: [
+                SingleChildScrollView(
+                    controller: _scrollController,
+                    physics: AlwaysScrollableScrollPhysics(),
+                    key: ObjectKey(_actorList.length > 0 ? _actorList[0] : ""),
+                    child: Column(
+                      children: [
+                        Container(
+                            margin: EdgeInsets.only(
+                                top: 30, left: 15, right: 15, bottom: 20),
+                            padding: EdgeInsets.only(left: 10, right: 10),
+                            height: 50,
+                            decoration: BoxDecoration(
+                                borderRadius:
+                                    CustomStyles.circle7BorderRadius(),
+                                border: Border.all(
+                                    width: 1,
+                                    color: CustomColors.colorFontLightGrey)),
+                            child: Row(children: [
+                              Flexible(
+                                  child: TextField(
+                                    controller: _txtFieldSearch,
+                                      decoration: InputDecoration(
+                                          isDense: true,
+                                          border: InputBorder.none,
+                                          contentPadding: EdgeInsets.symmetric(
+                                              vertical: 0, horizontal: 0),
+                                          hintText: "배우를 검색해보세요",
+                                          hintStyle:
+                                              CustomStyles.normal16TextStyle()),
+                                      style: CustomStyles.dark16TextStyle())),
+                              Padding(
+                                  padding: EdgeInsets.only(left: 10),
+                                  child: GestureDetector(
+                                      onTap: () {
+                                        _actorList.clear();
+
+                                        actorName = _txtFieldSearch.text;
+                                        requestActorListApi(context);
+                                      },
+                                      child: Image.asset(
+                                          'assets/images/btn_search.png',
+                                          width: 20,
+                                          fit: BoxFit.contain)))
+                            ])),
+                        Divider(),
+                        _actorList.length > 0
+                            ? Container(
+                                child: ListView.separated(
+                                    primary: false,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    padding: EdgeInsets.only(
+                                        left: 15, right: 15, bottom: 30),
+                                    shrinkWrap: true,
+                                    itemCount: _actorList.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      Map<String, dynamic> _data =
+                                          _actorList[index];
+                                      return listItem(_data);
+                                    },
+                                    separatorBuilder: (context, index) {
+                                      return Divider();
+                                    }))
+                            : Container(
+                                margin: EdgeInsets.only(top: 30),
+                                child: Text('보유배우의 지원현황이 없습니다.',
+                                    style: CustomStyles.normal16TextStyle()))
+                      ],
+                    )),
+                Visibility(
+                  child: Container(
+                      color: Colors.black38,
+                      alignment: Alignment.center,
+                      child: CircularProgressIndicator()),
+                  visible: _isUpload,
+                )
+              ],
+            ),
             onNotification: (ScrollNotification scrollInfo) {
               if (scrollInfo is ScrollStartNotification) {
                 if (scrollInfo.metrics.pixels ==

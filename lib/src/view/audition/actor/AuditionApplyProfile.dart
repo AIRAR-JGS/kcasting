@@ -28,6 +28,7 @@ class _AuditionApplyProfile extends State<AuditionApplyProfile>
     with SingleTickerProviderStateMixin, BaseUtilMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
+  bool _isUpload = false;
   int _applySeq;
 
   bool _isProduction = false;
@@ -70,7 +71,9 @@ class _AuditionApplyProfile extends State<AuditionApplyProfile>
   * 배우 오디션 제출 프로필 조회
   * */
   void requestActorProfileApi(BuildContext context) {
-    final dio = Dio();
+    setState(() {
+      _isUpload = true;
+    });
 
     // 배우 오디션 제출 프로필 조회 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
@@ -84,87 +87,96 @@ class _AuditionApplyProfile extends State<AuditionApplyProfile>
     params[APIConstants.target] = targetData;
 
     // 배우 오디션 제출 프로필 조회 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
-      if (value == null) {
-        // 에러 - 데이터 널
-        showSnackBar(context, APIConstants.error_msg_server_not_response);
-      } else {
-        if (value[APIConstants.resultVal]) {
-          // 배우 오디션 제출 프로필 조회 성공
-          var _responseList = value[APIConstants.data] as List;
-
-          setState(() {
-            for (int i = 0; i < _responseList.length; i++) {
-              var _data = _responseList[i];
-
-              switch (_data[APIConstants.table]) {
-                // 배우 프로필
-                case APIConstants.table_audition_apply_profile:
-                  {
-                    var _listData = _data[APIConstants.data];
-                    if (_listData != null) {
-                      List<dynamic> _actorProfileList =
-                          _listData[APIConstants.list] as List;
-                      if (_actorProfileList != null) {
-                        _actorProfile = _actorProfileList.length > 0
-                            ? _actorProfileList[0]
-                            : null;
-                      }
-                    }
-
-                    // 키워드
-                    if (_actorProfile[APIConstants.actor_kwd] != null) {
-                      String actorKwd = _actorProfile[APIConstants.actor_kwd];
-                      List<String> actorKwdArr = actorKwd.split(',');
-                      for (int i = 0; i < actorKwdArr.length; i++) {
-                        _actorKwdList.add(actorKwdArr[i]);
-                      }
-                    }
-                    break;
-                  }
-
-                // 배우 필모그래피
-                case APIConstants.table_audition_apply_filmography:
-                  {
-                    var _listData = _data[APIConstants.data];
-                    if (_listData != null) {
-                      _actorFilmorgraphy = _listData[APIConstants.list] as List;
-                    } else {
-                      _actorFilmorgraphy = [];
-                    }
-                    break;
-                  }
-
-                // 배우 이미지
-                case APIConstants.table_audition_apply_image:
-                  {
-                    var _listData = _data[APIConstants.data];
-                    if (_listData != null) {
-                      _actorImage = _listData[APIConstants.list] as List;
-                    } else {
-                      _actorImage = [];
-                    }
-                    break;
-                  }
-
-                // 배우 비디오
-                case APIConstants.table_audition_apply_video:
-                  {
-                    var _listData = _data[APIConstants.data];
-                    if (_listData != null) {
-                      _actorVideo = _listData[APIConstants.list] as List;
-                    } else {
-                      _actorVideo = [];
-                    }
-                    break;
-                  }
-              }
-            }
-          });
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value == null) {
+          // 에러 - 데이터 널
+          showSnackBar(context, APIConstants.error_msg_server_not_response);
         } else {
-          // 배우 오디션 제출 프로필 조회 실패
-          showSnackBar(context, APIConstants.error_msg_try_again);
+          if (value[APIConstants.resultVal]) {
+            // 배우 오디션 제출 프로필 조회 성공
+            var _responseList = value[APIConstants.data] as List;
+
+            setState(() {
+              for (int i = 0; i < _responseList.length; i++) {
+                var _data = _responseList[i];
+
+                switch (_data[APIConstants.table]) {
+                  // 배우 프로필
+                  case APIConstants.table_audition_apply_profile:
+                    {
+                      var _listData = _data[APIConstants.data];
+                      if (_listData != null) {
+                        List<dynamic> _actorProfileList =
+                            _listData[APIConstants.list] as List;
+                        if (_actorProfileList != null) {
+                          _actorProfile = _actorProfileList.length > 0
+                              ? _actorProfileList[0]
+                              : null;
+                        }
+                      }
+
+                      // 키워드
+                      if (_actorProfile[APIConstants.actor_kwd] != null) {
+                        String actorKwd = _actorProfile[APIConstants.actor_kwd];
+                        List<String> actorKwdArr = actorKwd.split(',');
+                        for (int i = 0; i < actorKwdArr.length; i++) {
+                          _actorKwdList.add(actorKwdArr[i]);
+                        }
+                      }
+                      break;
+                    }
+
+                  // 배우 필모그래피
+                  case APIConstants.table_audition_apply_filmography:
+                    {
+                      var _listData = _data[APIConstants.data];
+                      if (_listData != null) {
+                        _actorFilmorgraphy =
+                            _listData[APIConstants.list] as List;
+                      } else {
+                        _actorFilmorgraphy = [];
+                      }
+                      break;
+                    }
+
+                  // 배우 이미지
+                  case APIConstants.table_audition_apply_image:
+                    {
+                      var _listData = _data[APIConstants.data];
+                      if (_listData != null) {
+                        _actorImage = _listData[APIConstants.list] as List;
+                      } else {
+                        _actorImage = [];
+                      }
+                      break;
+                    }
+
+                  // 배우 비디오
+                  case APIConstants.table_audition_apply_video:
+                    {
+                      var _listData = _data[APIConstants.data];
+                      if (_listData != null) {
+                        _actorVideo = _listData[APIConstants.list] as List;
+                      } else {
+                        _actorVideo = [];
+                      }
+                      break;
+                    }
+                }
+              }
+            });
+          } else {
+            // 배우 오디션 제출 프로필 조회 실패
+            showSnackBar(context, APIConstants.error_msg_try_again);
+          }
         }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }
@@ -181,75 +193,81 @@ class _AuditionApplyProfile extends State<AuditionApplyProfile>
             appBar: CustomStyles.defaultAppBar('프로필 관리', () {
               Navigator.pop(context);
             }),
-            body: Container(
-                child: Column(children: [
-              Expanded(
-                flex: 1,
-                child: SingleChildScrollView(
-                  child: Container(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ActorProfileWidget.mainImageWidget(
-                            context, false, _actorProfile, null),
-                        ActorProfileWidget.profileWidget(
-                            context,
-                            _myKeywordTagStateKey,
-                            _actorProfile,
-                            "",
-                            StringUtils.checkedString(
-                                _actorProfile[APIConstants.actor_education]),
-                            StringUtils.checkedString(
-                                _actorProfile[APIConstants.actor_languge]),
-                            StringUtils.checkedString(
-                                _actorProfile[APIConstants.actor_dialect]),
-                            StringUtils.checkedString(
-                                _actorProfile[APIConstants.actor_ability]),
-                            _actorKwdList),
-                        Container(
-                          margin: EdgeInsets.only(top: 20),
-                          child: Divider(
-                            height: 1,
-                            color: CustomColors.colorFontLightGrey,
+            body: Stack(children: [
+              Container(
+                  child: Column(children: [
+                Expanded(
+                    flex: 1,
+                    child: SingleChildScrollView(
+                        child: Container(
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                          ActorProfileWidget.mainImageWidget(
+                              context, false, _actorProfile, null),
+                          ActorProfileWidget.profileWidget(
+                              context,
+                              _myKeywordTagStateKey,
+                              _actorProfile,
+                              "",
+                              StringUtils.checkedString(
+                                  _actorProfile[APIConstants.actor_education]),
+                              StringUtils.checkedString(
+                                  _actorProfile[APIConstants.actor_languge]),
+                              StringUtils.checkedString(
+                                  _actorProfile[APIConstants.actor_dialect]),
+                              StringUtils.checkedString(
+                                  _actorProfile[APIConstants.actor_ability]),
+                              _actorKwdList),
+                          Container(
+                            margin: EdgeInsets.only(top: 20),
+                            child: Divider(
+                              height: 1,
+                              color: CustomColors.colorFontLightGrey,
+                            ),
                           ),
-                        ),
-                        ActorProfileWidget.profileTabBarWidget(_tabController),
-                        Expanded(
-                          flex: 0,
-                          child: [
-                            Container(
-                                margin: EdgeInsets.only(bottom: 30),
-                                child: Column(children: [
-                                  Container(
-                                      padding: EdgeInsets.only(
-                                          top: 20,
-                                          left: 20,
-                                          right: 20,
-                                          bottom: 15),
-                                      child: Row(children: [
-                                        Expanded(
-                                            flex: 1,
-                                            child: Text(
-                                                '출연 작품: ' +
-                                                    _actorFilmorgraphy.length
-                                                        .toString(),
-                                                style: CustomStyles
-                                                    .normal14TextStyle()))
-                                      ])),
-                                  ActorProfileWidget.filmorgraphyListWidget(
-                                      false, _actorFilmorgraphy, (index) {})
-                                ])),
-                            ActorProfileWidget.imageTabItemWidget(
-                                false, _actorImage, null),
-                            ActorProfileWidget.videoTabItemWidget(
-                                false, _actorVideo, null)
-                          ][_tabIndex],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                          ActorProfileWidget.profileTabBarWidget(
+                              _tabController),
+                          Expanded(
+                            flex: 0,
+                            child: [
+                              Container(
+                                  margin: EdgeInsets.only(bottom: 30),
+                                  child: Column(children: [
+                                    Container(
+                                        padding: EdgeInsets.only(
+                                            top: 20,
+                                            left: 20,
+                                            right: 20,
+                                            bottom: 15),
+                                        child: Row(children: [
+                                          Expanded(
+                                              flex: 1,
+                                              child: Text(
+                                                  '출연 작품: ' +
+                                                      _actorFilmorgraphy.length
+                                                          .toString(),
+                                                  style: CustomStyles
+                                                      .normal14TextStyle()))
+                                        ])),
+                                    ActorProfileWidget.filmorgraphyListWidget(
+                                        false, _actorFilmorgraphy, (index) {})
+                                  ])),
+                              ActorProfileWidget.imageTabItemWidget(
+                                  false, _actorImage, null),
+                              ActorProfileWidget.videoTabItemWidget(
+                                  false, _actorVideo, null)
+                            ][_tabIndex],
+                          )
+                        ]))))
+              ])),
+              Visibility(
+                child: Container(
+                    color: Colors.black38,
+                    alignment: Alignment.center,
+                    child: CircularProgressIndicator()),
+                visible: _isUpload,
               )
-            ]))));
+            ])));
   }
 }

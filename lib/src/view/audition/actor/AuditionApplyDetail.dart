@@ -47,6 +47,8 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
   Map<String, dynamic> _auditionState = new Map();
 
   bool _isSubmitVideo = false;
+  bool _isSubmitContract = false;
+  bool _isAgreeOpenContact = false;
   bool _isUpload = false;
 
   @override
@@ -55,7 +57,7 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
 
     _applySeq = widget.applySeq;
 
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
     _tabController.addListener(_handleTabSelection);
 
     requestMyApplyDetailApi(context);
@@ -78,6 +80,19 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
     if (_tabController.index == 2) {
       // 3차 오디션
       if (_auditionState[APIConstants.thirdAudition_state_type] == null) {
+        int index = _tabController.previousIndex;
+        setState(() {
+          _tabController.index = index;
+          _tabIndex = index;
+        });
+        return;
+      }
+    }
+
+    if (_tabController.index == 3) {
+      // 3차 오디션
+      if (_auditionState[APIConstants.thirdAuditionTarget_result_type] ==
+          null) {
         int index = _tabController.previousIndex;
         setState(() {
           _tabController.index = index;
@@ -129,7 +144,9 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
   * 지원현황 조회
   * */
   void requestMyApplyDetailApi(BuildContext context) {
-    final dio = Dio();
+    setState(() {
+      _isUpload = true;
+    });
 
     // 지원현황 조회 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
@@ -140,10 +157,10 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
     params[APIConstants.target] = targetData;
 
     // 지원현황 조회 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
-      if (value != null) {
-        if (value[APIConstants.resultVal]) {
-          try {
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value != null) {
+          if (value[APIConstants.resultVal]) {
             // 지원현황 조회 성공
             var _responseData = value[APIConstants.data];
 
@@ -160,14 +177,18 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                 }
               }
             });
-          } catch (e) {
+          } else {
             showSnackBar(context, APIConstants.error_msg_try_again);
           }
         } else {
-          showSnackBar(context, APIConstants.error_msg_try_again);
+          showSnackBar(context, APIConstants.error_msg_server_not_response);
         }
-      } else {
-        showSnackBar(context, APIConstants.error_msg_server_not_response);
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }
@@ -176,7 +197,9 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
   * 배우 비디오 등록 및 연락처 공개 동의
   * */
   void requestUploadVideoResume(BuildContext context) {
-    final dio = Dio();
+    setState(() {
+      _isUpload = true;
+    });
 
     // 지원현황 조회 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
@@ -188,10 +211,10 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
     params[APIConstants.target] = targetData;
 
     // 지원현황 조회 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
-      if (value != null) {
-        if (value[APIConstants.resultVal]) {
-          try {
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value != null) {
+          if (value[APIConstants.resultVal]) {
             // 지원현황 조회 성공
             var _responseData = value[APIConstants.data];
 
@@ -208,14 +231,18 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                 }
               }
             });
-          } catch (e) {
+          } else {
             showSnackBar(context, APIConstants.error_msg_try_again);
           }
         } else {
-          showSnackBar(context, APIConstants.error_msg_try_again);
+          showSnackBar(context, APIConstants.error_msg_server_not_response);
         }
-      } else {
-        showSnackBar(context, APIConstants.error_msg_server_not_response);
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }
@@ -287,7 +314,9 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
   * 배우 실명인증
   * */
   void requestCheckRealName(BuildContext context) {
-    final dio = Dio();
+    setState(() {
+      _isUpload = true;
+    });
 
     // 배우 실명인증 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
@@ -300,10 +329,10 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
     params[APIConstants.target] = targetData;
 
     // 배우 실명인증 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
-      if (value != null) {
-        if (value[APIConstants.resultVal]) {
-          try {
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value != null) {
+          if (value[APIConstants.resultVal]) {
             // 배우 실명인증 성공
             var _responseData = value[APIConstants.data];
 
@@ -319,14 +348,18 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                   break;
               }
             }
-          } catch (e) {
+          } else {
             showSnackBar(context, APIConstants.error_msg_try_again);
           }
         } else {
-          showSnackBar(context, APIConstants.error_msg_try_again);
+          showSnackBar(context, APIConstants.error_msg_server_not_response);
         }
-      } else {
-        showSnackBar(context, APIConstants.error_msg_server_not_response);
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }
@@ -370,68 +403,75 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                               style: CustomStyles.dark16TextStyle())),
                       Container(
                           margin: EdgeInsets.only(top: 30),
-                          child: Text(_agreeTerms == 0 ? '서약' : '비밀 유지 서약에 동의하셨습니다.',
+                          child: Text(
+                              _agreeTerms == 0 ? '서약' : '비밀 유지 서약에 동의하셨습니다.',
                               style: CustomStyles.darkBold16TextStyle())),
-                      Visibility(child: Container(
-                        margin: EdgeInsets.only(top: 10),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: Radio<int>(
-                                    value: _agreeTerms,
-                                    visualDensity: VisualDensity.compact,
-                                    groupValue: 1,
-                                    toggleable: true,
-                                    onChanged: (_) {
-                                      setState(() {
-                                        if (_agreeTerms == 0) {
-                                          // 동의
-                                          _agreeTerms = 1;
-                                        } else {
-                                          // 비동의
-                                          _agreeTerms = 0;
-                                        }
-                                      });
-                                    },
-                                    materialTapTargetSize:
-                                    MaterialTapTargetSize.shrinkWrap)),
-                            Container(
-                                child: Text('대본 비밀 유지 서약에 대해 동의합니다.',
-                                    style: CustomStyles.dark14TextStyle()))
-                          ],
-                        ),
-                      ),visible: _agreeTerms == 1 ? false : true),
-                      Visibility(child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                              margin: EdgeInsets.only(top: 30),
-                              child: Text('대본',
-                                  style: CustomStyles.darkBold16TextStyle())),
-                          Container(
-                            margin: EdgeInsets.only(top: 15),
-                            padding: EdgeInsets.only(
-                                left: 10, right: 10, top: 12, bottom: 12),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                            ),
+                      Visibility(
+                          child: Container(
+                            margin: EdgeInsets.only(top: 10),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                Text('첨부파일 : 모집요강 안내.pdf',
-                                    style: CustomStyles.dark14TextStyle()),
-                                CustomStyles.darkBold14TextButtonStyle(
-                                    '다운로드', () {})
+                                SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: Radio<int>(
+                                        value: _agreeTerms,
+                                        visualDensity: VisualDensity.compact,
+                                        groupValue: 1,
+                                        toggleable: true,
+                                        onChanged: (_) {
+                                          setState(() {
+                                            if (_agreeTerms == 0) {
+                                              // 동의
+                                              _agreeTerms = 1;
+                                            } else {
+                                              // 비동의
+                                              _agreeTerms = 0;
+                                            }
+                                          });
+                                        },
+                                        materialTapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap)),
+                                Container(
+                                    child: Text('대본 비밀 유지 서약에 대해 동의합니다.',
+                                        style: CustomStyles.dark14TextStyle()))
                               ],
                             ),
-                          )
-                        ],
-                      ), visible: _agreeTerms == 0 ? false : true),
+                          ),
+                          visible: _agreeTerms == 1 ? false : true),
+                      Visibility(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                  margin: EdgeInsets.only(top: 30),
+                                  child: Text('대본',
+                                      style:
+                                          CustomStyles.darkBold16TextStyle())),
+                              Container(
+                                margin: EdgeInsets.only(top: 15),
+                                padding: EdgeInsets.only(
+                                    left: 10, right: 10, top: 12, bottom: 12),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text('첨부파일 : 모집요강 안내.pdf',
+                                        style: CustomStyles.dark14TextStyle()),
+                                    CustomStyles.darkBold14TextButtonStyle(
+                                        '다운로드', () {})
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                          visible: _agreeTerms == 0 ? false : true),
                       Container(
                           margin: EdgeInsets.only(top: 30),
                           child: Text('기간',
@@ -579,14 +619,14 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                         margin: EdgeInsets.only(bottom: 15, top: 15),
                         child: Text('최종합격',
                             style: CustomStyles.dark20TextStyle())),
-                    Container(
-                        child: Text('서배우님! 최종합격을 축하드립니다.',
-                            style: CustomStyles.dark16TextStyle())),
                     /*Container(
+                        child: Text('서배우님! 최종합격을 축하드립니다.',
+                            style: CustomStyles.dark16TextStyle())),*/
+                    Container(
                         child: Text(
                             '서배우님! 최종합격을 축하드립니다.\n출연 확정을 위해 본인 명의의 주민등록번호와\n입금받을 계좌를 확인 후 아래의 계약서를\n작성해주세요.',
-                            style: CustomStyles.dark16TextStyle())),*/
-                    /*Container(
+                            style: CustomStyles.dark16TextStyle())),
+                    Container(
                         margin: EdgeInsets.only(top: 30),
                         child: Text('출연료',
                             style: CustomStyles.darkBold16TextStyle())),
@@ -612,8 +652,8 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                             Expanded(
                               flex: 3,
                               child: Container(
-                                  child: CustomStyles.greyBorderRound7TextField(TextEditingController(),
-                                      '')),
+                                  child: CustomStyles.greyBorderRound7TextField(
+                                      TextEditingController(), '')),
                             ),
                             Expanded(
                               flex: 0,
@@ -629,8 +669,8 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                             Expanded(
                               flex: 3,
                               child: Container(
-                                  child: CustomStyles.greyBorderRound7TextField(TextEditingController(),
-                                      '')),
+                                  child: CustomStyles.greyBorderRound7TextField(
+                                      TextEditingController(), '')),
                             ),
                             Expanded(
                                 flex: 3,
@@ -698,8 +738,8 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                                   style: CustomStyles.dark16TextStyle())),
                         ],
                       ),
-                    ),*/
-                    /*Visibility(
+                    ),
+                    Visibility(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -713,8 +753,8 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                                   style: CustomStyles.dark16TextStyle()))
                         ],
                       ),
-                      visible: isSubmitContract ? true : false,
-                    )*/
+                      visible: _isSubmitContract ? true : false,
+                    )
                   ],
                 ),
               )
@@ -735,7 +775,7 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                     ])));
   }
 
-  /*Widget tabPassAudition(int resultVal) {
+  Widget tabPassAudition(int resultVal) {
     return (resultVal == 0)
         // 최종합격
         ? Container(
@@ -803,7 +843,7 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
               ],
             ),
           );
-  }*/
+  }
 
   /*
   * 메인 위젯
@@ -924,7 +964,7 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                                       Tab(text: '1차 오디션'),
                                       Tab(text: '2차 오디션'),
                                       Tab(text: '3차 오디션'),
-                                      //Tab(text: '최종합격'),
+                                      Tab(text: '최종합격'),
                                     ],
                                   ),
                                 ),
@@ -1028,33 +1068,34 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                               ? true
                               : false,
                         ),
-                        /* Visibility(
-                      child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: 55,
-                          child: CustomStyles.blueBGSquareButtonStyle(
-                              '연락처 공개 동의', () {})),
-                      visible: (_tabIndex == 1 && !isAgreeOpenContact)
-                          ? true
-                          : false,
-                    ),
-                    Visibility(
-                      child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: 55,
-                          child: CustomStyles.blueBGSquareButtonStyle(
-                              '계약서 작성하기', () {})),
-                      visible:
-                          (_tabIndex == 2 && !isSubmitContract) ? true : false,
-                    ),
-                    Visibility(
-                      child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: 55,
-                          child: CustomStyles.blueBGSquareButtonStyle(
-                              '계약서 보기', () {})),
-                      visible: (_tabIndex == 3) ? true : false,
-                    ),*/
+                        Visibility(
+                          child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: 55,
+                              child: CustomStyles.blueBGSquareButtonStyle(
+                                  '연락처 공개 동의', () {})),
+                          visible: (_tabIndex == 1 && !_isAgreeOpenContact)
+                              ? true
+                              : false,
+                        ),
+                        Visibility(
+                          child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: 55,
+                              child: CustomStyles.blueBGSquareButtonStyle(
+                                  '계약서 작성하기', () {})),
+                          visible: (_tabIndex == 2 && !_isSubmitContract)
+                              ? true
+                              : false,
+                        ),
+                        Visibility(
+                          child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: 55,
+                              child: CustomStyles.blueBGSquareButtonStyle(
+                                  '계약서 보기', () {})),
+                          visible: (_tabIndex == 3) ? true : false,
+                        ),
                       ],
                     ),
                   ),

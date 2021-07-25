@@ -290,7 +290,7 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
   * 배우 북마크 목록
   * */
   void requestActorBookmarkEditApi(
-      BuildContext context, Map<String, dynamic> castingData) {
+      BuildContext context) {
     final dio = Dio();
 
     // 배우 북마크 api 호출 시 보낼 파라미터
@@ -300,7 +300,7 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
     targetDate[APIConstants.casting_seq] = _castingSeq;
 
     Map<String, dynamic> params = new Map();
-    if (castingData[_isBookmarkedKey]) {
+    if (_castingBoardData[_isBookmarkedKey] == 1) {
       params[APIConstants.key] = APIConstants.DEA_ACS_INFO;
     } else {
       params[APIConstants.key] = APIConstants.INS_ACS_INFO;
@@ -318,7 +318,13 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
               //var _responseData = value[APIConstants.data];
               //var _responseList = _responseData[APIConstants.list] as List;
 
-              setState(() {});
+              setState(() {
+                if (_castingBoardData[_isBookmarkedKey] == 1) {
+                  _castingBoardData[_isBookmarkedKey] = 0;
+                } else {
+                  _castingBoardData[_isBookmarkedKey] = 1;
+                }
+              });
 
               // KCastingAppData().myBookmark.addAll(_responseList);
             });
@@ -332,7 +338,7 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
   * 매니지먼트 북마크 목록
   * */
   void requestManagementBookmarkEditApi(
-      BuildContext context, Map<String, dynamic> castingData) {
+      BuildContext context) {
     final dio = Dio();
 
     // 매니지먼트 북마크 api 호출 시 보낼 파라미터
@@ -342,7 +348,7 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
     targetDate[APIConstants.casting_seq] = _castingSeq;
 
     Map<String, dynamic> params = new Map();
-    if (castingData[_isBookmarkedKey]) {
+    if (_castingBoardData[_isBookmarkedKey] == 1) {
       params[APIConstants.key] = APIConstants.DEA_MCS_INFO;
     } else {
       params[APIConstants.key] = APIConstants.INS_MCS_INFO;
@@ -360,7 +366,13 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
               //var _responseData = value[APIConstants.data];
               //var _responseList = _responseData[APIConstants.list] as List;
 
-              setState(() {});
+              setState(() {
+                if (_castingBoardData[_isBookmarkedKey] == 1) {
+                  _castingBoardData[_isBookmarkedKey] = 0;
+                } else {
+                  _castingBoardData[_isBookmarkedKey] = 1;
+                }
+              });
 
               // KCastingAppData().myBookmark.addAll(_responseList);
             });
@@ -1028,10 +1040,10 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
                                       .myInfo[APIConstants.member_type] ==
                                   APIConstants.member_type_actor) {
                                 requestActorBookmarkEditApi(
-                                    context, _castingBoardData);
+                                    context);
                               } else {
                                 requestManagementBookmarkEditApi(
-                                    context, _castingBoardData);
+                                    context);
                               }
                             },
                             child: Visibility(

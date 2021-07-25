@@ -172,7 +172,13 @@ class _BookmarkedActorList extends State<BookmarkedActorList>
                                 childAspectRatio: (0.76),
                                 children:
                                     List.generate(_actorList.length, (index) {
-                                  return ActorListItem(data: _actorList[index]);
+                                  return ActorListItem(data: _actorList[index],
+                                  onClickedBookmark: (){
+                                    _total = 0;
+                                    _actorList = [];
+
+                                    requestActorListApi(context);
+                                  });
                                 }))
                           ])
                         : Container(

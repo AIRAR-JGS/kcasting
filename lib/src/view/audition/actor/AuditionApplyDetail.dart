@@ -248,6 +248,60 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
   }
 
   /*
+  * 배우 연락처 공개 동의
+  * */
+  void requestAcceptContact(BuildContext context) {
+    setState(() {
+      _isUpload = true;
+    });
+
+    // 지원현황 조회 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetData = new Map();
+    targetData[APIConstants.thirdAuditionTarget_seq] = _auditionState[APIConstants.thirdAuditionTarget_seq];
+
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.UPD_SAT_ACCEPTCONTACT;
+    params[APIConstants.target] = targetData;
+
+    // 지원현황 조회 api 호출
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value != null) {
+          if (value[APIConstants.resultVal]) {
+            // 지원현황 조회 성공
+            var _responseData = value[APIConstants.data];
+
+            setState(() {
+              var _responseList = _responseData[APIConstants.list] as List;
+
+              if (_responseList != null && _responseList.length > 0) {
+                _auditionState = _responseList[0];
+
+                if (_auditionState[APIConstants.thirdAudition_phone_use_isAgree] == 0) {
+                  _isAgreeOpenContact = false;
+                } else {
+                  _isAgreeOpenContact = true;
+                }
+                requestMyApplyDetailApi(context);
+              }
+            });
+          } else {
+            showSnackBar(context, APIConstants.error_msg_try_again);
+          }
+        } else {
+          showSnackBar(context, APIConstants.error_msg_server_not_response);
+        }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
+      }
+    });
+  }
+
+  /*
   * 배우 비디오 추가
   * */
   Future<void> requestAddActorVideo(
@@ -1073,7 +1127,9 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                               width: MediaQuery.of(context).size.width,
                               height: 55,
                               child: CustomStyles.blueBGSquareButtonStyle(
-                                  '연락처 공개 동의', () {})),
+                                  '연락처 공개 동의', () {
+                                requestAcceptContact(context);
+                              })),
                           visible: (_tabIndex == 1 && !_isAgreeOpenContact)
                               ? true
                               : false,

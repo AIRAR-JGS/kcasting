@@ -59,6 +59,7 @@ class APIConstants {
   static const String SEL_ACS_LIST = "SEL_ACS_LIST";                              // 배우 캐스팅 스크랩 목록 조회
   static const String INS_ACS_INFO = "INS_ACS_INFO";                              // 배우 캐스팅 스크랩 추가
   static const String DEA_ACS_INFO = "DEA_ACS_INFO";                              // 배우 캐스팅 스크랩 삭제
+  static const String UPD_SAT_ACCEPTCONTACT = "UPD_SAT_ACCEPTCONTACT";            // 배우 2차 합격 연락처 공개
 
   // 제작사 회원
   static const String INS_PRD_JOIN = "INS_PRD_JOIN";                              // 제작사 회원가입
@@ -267,6 +268,7 @@ class APIConstants {
   static const String firstAuditionTarget_seq = "firstAuditionTarget_seq";
   static const String secondAuditionTarget_seq = "secondAuditionTarget_seq";
   static const String thirdAuditionTarget_seq = "thirdAuditionTarget_seq";
+  static const String thirdAudition_phone_use_isAgree = "thirdAudition_phone_use_isAgree";
   static const String info_target = "info_target";
   static const String profile_target = "profile_target";
   static const String education_target = "education_target";
@@ -346,6 +348,7 @@ class APIConstants {
   static const String new_videos = "new_videos[]";
   static const String new_videos_thumb = "new_videos_thumb[]";
   static const String isNotPayment = "isNotPayment";
+  static const String isProductionActorScrap = "isProductionActorScrap";
 
   // 소속사 회원 관련
   static const String management_seq = "management_seq";

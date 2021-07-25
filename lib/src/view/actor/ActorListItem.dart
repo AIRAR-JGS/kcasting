@@ -12,8 +12,10 @@ import 'package:flutter/material.dart';
 * */
 class ActorListItem extends StatefulWidget {
   final Map<String, dynamic> data;
+  final VoidCallback onClickedBookmark;
 
-  const ActorListItem({Key key, this.data}) : super(key: key);
+  const ActorListItem({Key key, this.data, this.onClickedBookmark})
+      : super(key: key);
 
   @override
   _ActorListItem createState() => _ActorListItem();
@@ -21,12 +23,14 @@ class ActorListItem extends StatefulWidget {
 
 class _ActorListItem extends State<ActorListItem> with BaseUtilMixin {
   Map<String, dynamic> _data;
+  VoidCallback _onClickedBookmark;
 
   @override
   void initState() {
     super.initState();
 
     _data = widget.data;
+    _onClickedBookmark = widget.onClickedBookmark;
   }
 
   @override
@@ -36,12 +40,22 @@ class _ActorListItem extends State<ActorListItem> with BaseUtilMixin {
             width: MediaQuery.of(context).size.width,
             child: GestureDetector(
                 onTap: () {
-                  addView(
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ActorDetail(
+                            seq: _data[APIConstants.actor_seq],
+                            actorProfileSeq:
+                                _data[APIConstants.actorProfile_seq])),
+                  ).then((value) =>
+                      {if (_onClickedBookmark != null) _onClickedBookmark()});
+
+                  /*addView(
                       context,
                       ActorDetail(
                           seq: _data[APIConstants.actor_seq],
                           actorProfileSeq:
-                              _data[APIConstants.actorProfile_seq]));
+                              _data[APIConstants.actorProfile_seq]));*/
                 },
                 child: Column(children: <Widget>[
                   Container(

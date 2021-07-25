@@ -28,7 +28,6 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   int _castingSeq;
-  bool _isBookmarked = false;
 
   Map<String, dynamic> _castingBoardData = new Map();
   String _ageStr = "";
@@ -42,19 +41,22 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
   String _castingAbilityStr = "";
   String _castingStateStr = "";
 
+  String _isBookmarkedKey;
+
   @override
   void initState() {
     super.initState();
 
     _castingSeq = widget.castingSeq;
 
-    for (int i = 0; i < KCastingAppData().myBookmark.length; i++) {
-      if (KCastingAppData().myBookmark[i][APIConstants.casting_seq] ==
-          _castingSeq) {
-        _isBookmarked = true;
+    if (KCastingAppData().myInfo[APIConstants.member_type] ==
+        APIConstants.member_type_actor) {
+      _isBookmarkedKey = APIConstants.isActorCastringScrap;
+    }
 
-        break;
-      }
+    if (KCastingAppData().myInfo[APIConstants.member_type] ==
+        APIConstants.member_type_management) {
+      _isBookmarkedKey = APIConstants.isManagementCastringScrap;
     }
 
     requestCastingDetailApi(context);
@@ -72,6 +74,12 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
     if (KCastingAppData().myInfo[APIConstants.member_type] ==
         APIConstants.member_type_actor) {
       targetData[APIConstants.actor_seq] =
+          KCastingAppData().myInfo[APIConstants.seq];
+    }
+
+    if (KCastingAppData().myInfo[APIConstants.member_type] ==
+        APIConstants.member_type_management) {
+      targetData[APIConstants.management_seq] =
           KCastingAppData().myInfo[APIConstants.seq];
     }
 
@@ -281,16 +289,18 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
   /*
   * 배우 북마크 목록
   * */
-  void requestActorBookmarkEditApi(BuildContext context) {
+  void requestActorBookmarkEditApi(
+      BuildContext context, Map<String, dynamic> castingData) {
     final dio = Dio();
 
     // 배우 북마크 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetDate = new Map();
-    targetDate[APIConstants.actor_seq] = KCastingAppData().myInfo[APIConstants.seq];
+    targetDate[APIConstants.actor_seq] =
+        KCastingAppData().myInfo[APIConstants.seq];
     targetDate[APIConstants.casting_seq] = _castingSeq;
 
     Map<String, dynamic> params = new Map();
-    if(_isBookmarked) {
+    if (castingData[_isBookmarkedKey]) {
       params[APIConstants.key] = APIConstants.DEA_ACS_INFO;
     } else {
       params[APIConstants.key] = APIConstants.INS_ACS_INFO;
@@ -308,17 +318,9 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
               //var _responseData = value[APIConstants.data];
               //var _responseList = _responseData[APIConstants.list] as List;
 
-              setState(() {
-                if(_isBookmarked) {
-                  _isBookmarked = false;
-                } else {
-                  _isBookmarked = true;
-                }
-              });
+              setState(() {});
 
-             // KCastingAppData().myBookmark.addAll(_responseList);
-
-
+              // KCastingAppData().myBookmark.addAll(_responseList);
             });
           } catch (e) {}
         }
@@ -329,16 +331,18 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
   /*
   * 매니지먼트 북마크 목록
   * */
-  void requestManagementBookmarkEditApi(BuildContext context) {
+  void requestManagementBookmarkEditApi(
+      BuildContext context, Map<String, dynamic> castingData) {
     final dio = Dio();
 
     // 매니지먼트 북마크 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetDate = new Map();
-    targetDate[APIConstants.management_seq] = KCastingAppData().myInfo[APIConstants.seq];
+    targetDate[APIConstants.management_seq] =
+        KCastingAppData().myInfo[APIConstants.seq];
     targetDate[APIConstants.casting_seq] = _castingSeq;
 
     Map<String, dynamic> params = new Map();
-    if(_isBookmarked) {
+    if (castingData[_isBookmarkedKey]) {
       params[APIConstants.key] = APIConstants.DEA_MCS_INFO;
     } else {
       params[APIConstants.key] = APIConstants.INS_MCS_INFO;
@@ -356,17 +360,9 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
               //var _responseData = value[APIConstants.data];
               //var _responseList = _responseData[APIConstants.list] as List;
 
-              setState(() {
-                if(_isBookmarked) {
-                  _isBookmarked = false;
-                } else {
-                  _isBookmarked = true;
-                }
-              });
+              setState(() {});
 
               // KCastingAppData().myBookmark.addAll(_responseList);
-
-
             });
           } catch (e) {}
         }
@@ -1027,33 +1023,38 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
                                   }
                                 }))),
                         GestureDetector(
-                          onTap: (){
-                            if(KCastingAppData().myInfo[APIConstants.member_type] == APIConstants.member_type_actor) {
-  requestActorBookmarkEditApi(context);
-                            } else {
-                              requestManagementBookmarkEditApi(context);
-                            }
-
-                          },
-                          child: Visibility(
-                              child: Container(
-                                  height: 55,
-                                  width: 55,
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  alignment: Alignment.center,
-                                  child: _isBookmarked
-                                      ? Image.asset(
-                                      'assets/images/toggle_like_on.png',
-                                      width: 20)
-                                      : Image.asset(
-                                      'assets/images/toggle_like_off.png',
-                                      width: 20)),
-                              visible: (KCastingAppData()
-                                  .myInfo[APIConstants.member_type]) ==
-                                  APIConstants.member_type_product
-                                  ? false
-                                  : true)
-                        )
+                            onTap: () {
+                              if (KCastingAppData()
+                                      .myInfo[APIConstants.member_type] ==
+                                  APIConstants.member_type_actor) {
+                                requestActorBookmarkEditApi(
+                                    context, _castingBoardData);
+                              } else {
+                                requestManagementBookmarkEditApi(
+                                    context, _castingBoardData);
+                              }
+                            },
+                            child: Visibility(
+                                child: Container(
+                                    height: 55,
+                                    width: 55,
+                                    padding:
+                                        EdgeInsets.only(left: 15, right: 15),
+                                    alignment: Alignment.center,
+                                    child:  (
+                                        (_castingBoardData[_isBookmarkedKey] == 1)
+                                            ? Image.asset(
+                                            'assets/images/toggle_like_on.png',
+                                            width: 20)
+                                            : Image.asset(
+                                            'assets/images/toggle_like_off.png',
+                                            width: 20)
+                                    )),
+                                visible: (KCastingAppData().myInfo[
+                                            APIConstants.member_type]) ==
+                                        APIConstants.member_type_product
+                                    ? false
+                                    : true))
                       ])),
                   visible: KCastingAppData().myInfo[APIConstants.member_type] ==
                           APIConstants.member_type_product

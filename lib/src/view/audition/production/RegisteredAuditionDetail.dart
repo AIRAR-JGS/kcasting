@@ -5,6 +5,7 @@ import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
+import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/net/RestClientInterface.dart';
 import 'package:casting_call/src/util/DateTileUtils.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
@@ -13,6 +14,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_document_picker/flutter_document_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -61,7 +63,7 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
 
   bool _isLoading = true;
 
-  File _profileImgFile;
+  File _scriptFile;
   final picker = ImagePicker();
 
   @override
@@ -164,7 +166,7 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
         showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
       } else {
         setState(() {
-          _profileImgFile = file;
+          _scriptFile = file;
         });
       }
     } else {
@@ -172,11 +174,54 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
     }
   }
 
+  _pickDocument() async {
+    String result;
+    try {
+      FlutterDocumentPickerParams params = FlutterDocumentPickerParams(
+        allowedFileExtensions: ['pdf', 'docx'],
+        allowedUtiTypes: [
+          'com.airar.castingCall.pdf',
+          'com.airar.castingCall.pdf'
+        ],
+        allowedMimeTypes: ['application/pdf', 'application/pdf'],
+        invalidFileNameSymbols: ['/'],
+      );
+
+      result = await FlutterDocumentPicker.openDocument(params: params);
+
+      if (result != null) {
+        File file = File(result);
+
+        final size = file.readAsBytesSync().lengthInBytes;
+        final kb = size / 1024;
+        final mb = kb / 1024;
+
+        if (mb > 100) {
+          showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
+        } else {
+          setState(() {
+            _scriptFile = file;
+          });
+        }
+      } else {
+        showSnackBar(context, "선택된 파일이 없습니다.");
+      }
+
+      print('result: $result');
+    } catch (e) {
+      print(e);
+      result = 'Error: $e';
+      showSnackBar(context, APIConstants.error_msg_try_again);
+    } finally {}
+  }
+
   /*
   오디션 진행 현황 조회
   * */
   void requestCastingStateList(BuildContext context) {
-    final dio = Dio();
+    setState(() {
+      _isUpload = true;
+    });
 
     // 1차 오디션 진행 현황 조회 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
@@ -192,13 +237,13 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
     params[APIConstants.paging] = paging;
 
     // 오디션 진행 현황 조회 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
-      if (value == null) {
-        // 에러 - 데이터 널
-        showSnackBar(context, '다시 시도해 주세요.');
-      } else {
-        if (value[APIConstants.resultVal]) {
-          try {
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value == null) {
+          // 에러 - 데이터 널
+          showSnackBar(context, '다시 시도해 주세요.');
+        } else {
+          if (value[APIConstants.resultVal]) {
             setState(() {
               // 오디션 진행 현황 조회 성공
               if (_apiKey != APIConstants.SAR_TAD_FINSTATE) {
@@ -321,13 +366,17 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                 }
               }
             });
-          } catch (e) {
+          } else {
+            // 오디션 진행 현황 조회 실패
             showSnackBar(context, value[APIConstants.resultMsg]);
           }
-        } else {
-          // 오디션 진행 현황 조회 실패
-          showSnackBar(context, value[APIConstants.resultMsg]);
         }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }
@@ -573,11 +622,108 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('이미지', style: CustomStyles.dark16TextStyle()),
+                Text('첨부파일 또는 이미지', style: CustomStyles.dark16TextStyle()),
                 GestureDetector(
                   onTap: () async {
+                    showModalBottomSheet(
+                        elevation: 5,
+                        context: context,
+                        builder: (context) {
+                          return Wrap(
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: [
+                                ListTile(
+                                  title: Text(
+                                    '대본이미지 선택',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  onTap: () async {
+                                    //
+                                    var status = Platform.isAndroid
+                                        ? await Permission.storage.request()
+                                        : await Permission.photos.request();
+                                    if (status.isGranted) {
+                                      getImageFromGallery();
+                                      Navigator.pop(context);
+                                    } else {
+                                      showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) =>
+                                              CupertinoAlertDialog(
+                                                title: Text('저장공간 접근권한'),
+                                                content: Text(
+                                                    '사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
+                                                actions: <Widget>[
+                                                  CupertinoDialogAction(
+                                                    child: Text('거부'),
+                                                    onPressed: () =>
+                                                        Navigator.of(context)
+                                                            .pop(),
+                                                  ),
+                                                  CupertinoDialogAction(
+                                                    child: Text('허용'),
+                                                    onPressed: () =>
+                                                        openAppSettings(),
+                                                  ),
+                                                ],
+                                              ));
+                                    }
+                                    //
+                                  },
+                                ),
+                                Divider(),
+                                ListTile(
+                                  title: Text(
+                                    '대본파일 선택',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  onTap: () async {
+                                    //
+                                    var status = Platform.isAndroid
+                                        ? await Permission.storage.request()
+                                        : await Permission.photos.request();
+                                    if (status.isGranted) {
+                                      _pickDocument();
+                                      Navigator.pop(context);
+                                    } else {
+                                      showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) =>
+                                              CupertinoAlertDialog(
+                                                title: Text('저장공간 접근권한'),
+                                                content: Text(
+                                                    '사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
+                                                actions: <Widget>[
+                                                  CupertinoDialogAction(
+                                                    child: Text('거부'),
+                                                    onPressed: () =>
+                                                        Navigator.of(context)
+                                                            .pop(),
+                                                  ),
+                                                  CupertinoDialogAction(
+                                                    child: Text('허용'),
+                                                    onPressed: () =>
+                                                        openAppSettings(),
+                                                  ),
+                                                ],
+                                              ));
+                                    }
+                                    //
+                                  },
+                                ),
+                                Divider(),
+                                ListTile(
+                                    title: Text(
+                                      '취소',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    })
+                              ]);
+                        });
                     //
-                    var status = Platform.isAndroid
+                    /*var status = Platform.isAndroid
                         ? await Permission.storage.request()
                         : await Permission.photos.request();
                     if (status.isGranted) {
@@ -602,7 +748,7 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                                   ),
                                 ],
                               ));
-                    }
+                    }*/
                     //
                   },
                   child: Text('업로드', style: CustomStyles.blue16TextStyle()),
@@ -614,12 +760,11 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
               child: Container(
                   margin: EdgeInsets.only(top: 15),
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.width * 0.625,
-                  decoration: BoxDecoration(color: CustomColors.colorBgGrey),
-                  child: (_profileImgFile == null
+                  decoration: BoxDecoration(color: CustomColors.colorWhite),
+                  child: (_scriptFile == null
                       ? null
-                      : Image.file(_profileImgFile, fit: BoxFit.cover))),
-              visible: _profileImgFile == null ? false : true),
+                      : Text(_scriptFile.path))),
+              visible: _scriptFile == null ? false : true),
           Container(
               margin: EdgeInsets.only(top: 30),
               alignment: Alignment.centerLeft,
@@ -864,11 +1009,12 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                       EdgeInsets.only(left: 16, right: 0, top: 10, bottom: 10),
                   child: GestureDetector(
                       onTap: () {
-                        addView(context, AuditionApplyProfile(
-                          applySeq:
-                          _data[APIConstants.auditionApply_seq],
-                          isProduction: true,
-                        ));
+                        addView(
+                            context,
+                            AuditionApplyProfile(
+                              applySeq: _data[APIConstants.auditionApply_seq],
+                              isProduction: true,
+                            ));
                       },
                       child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1023,53 +1169,58 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
               Navigator.pop(context);
             }),
             body: Builder(builder: (context) {
-              return Container(
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                    Expanded(
-                        flex: 1,
-                        child: SingleChildScrollView(
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                              Container(
-                                  margin:
-                                      EdgeInsets.only(top: 30.0, bottom: 10),
-                                  padding: EdgeInsets.only(
-                                      left: 16, right: 16, bottom: 15),
-                                  child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
+              return Stack(
+                children: [
+                  Container(
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                        Expanded(
+                            flex: 1,
+                            child: SingleChildScrollView(
+                                child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Expanded(
-                                        flex: 1,
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                                child: Text(
-                                                    StringUtils.checkedString(
-                                                        _firstAuditionInfo[
-                                                            APIConstants
-                                                                .project_name]),
-                                                    style: CustomStyles
-                                                        .darkBold10TextStyle())),
-                                            Container(
-                                                margin: EdgeInsets.only(top: 5),
-                                                child: Text(
-                                                    StringUtils.checkedString(
-                                                        _firstAuditionInfo[
-                                                            APIConstants
-                                                                .casting_name]),
-                                                    style: CustomStyles
-                                                        .dark20TextStyle()))
-                                          ],
-                                        ),
-                                      ),
-                                      /*Expanded(
+                                  Container(
+                                      margin: EdgeInsets.only(
+                                          top: 30.0, bottom: 10),
+                                      padding: EdgeInsets.only(
+                                          left: 16, right: 16, bottom: 15),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          Expanded(
+                                            flex: 1,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                    child: Text(
+                                                        StringUtils.checkedString(
+                                                            _firstAuditionInfo[
+                                                                APIConstants
+                                                                    .project_name]),
+                                                        style: CustomStyles
+                                                            .darkBold10TextStyle())),
+                                                Container(
+                                                    margin:
+                                                        EdgeInsets.only(top: 5),
+                                                    child: Text(
+                                                        StringUtils.checkedString(
+                                                            _firstAuditionInfo[
+                                                                APIConstants
+                                                                    .casting_name]),
+                                                        style: CustomStyles
+                                                            .dark20TextStyle()))
+                                              ],
+                                            ),
+                                          ),
+                                          /*Expanded(
                                       flex: 0,
                                       child: Column(
                                         crossAxisAlignment:
@@ -1087,64 +1238,75 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                                         ],
                                       ),
                                     )*/
-                                    ],
-                                  )),
-                              Container(
-                                  color: CustomColors.colorWhite,
-                                  child: TabBar(
-                                      controller: _tabController,
-                                      indicatorPadding: EdgeInsets.zero,
-                                      labelStyle:
-                                          CustomStyles.bold14TextStyle(),
-                                      unselectedLabelStyle:
-                                          CustomStyles.normal14TextStyle(),
-                                      tabs: [
-                                        Tab(text: '1차 오디션'),
-                                        Tab(text: '2차 오디션'),
-                                        Tab(text: '3차 오디션'),
-                                        Tab(text: '최종합격')
-                                      ])),
-                              Expanded(
-                                flex: 0,
-                                child: [
-                                  tabAuditionApplyList(),
-                                  tabAuditionApplyList(),
-                                  tabAuditionApplyList(),
-                                  tabAuditionApplyList()
-                                ][_tabIndex],
-                              )
-                            ]))),
-                    Visibility(
-                      child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: 55,
-                          child: CustomStyles.blueBGSquareButtonStyle(
-                              '2차 오디션 오픈하기', () {
-                            setState(() {
-                              if (checkValidate(context)) {
-                                requestOpenSecondAudition(context);
-                              }
-                            });
-                          })),
-                      visible: (_tabIndex == 1 && _secondAuditionInfo == null)
-                          ? true
-                          : false,
-                    ),
-                    Visibility(
-                      child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: 55,
-                          child: CustomStyles.blueBGSquareButtonStyle(
-                              '3차 오디션 오픈하기', () {
-                            setState(() {
-                              requestOpenThirdAudition(context);
-                            });
-                          })),
-                      visible: (_tabIndex == 2 && _thirdAuditionInfo == null)
-                          ? true
-                          : false,
-                    )
-                  ]));
+                                        ],
+                                      )),
+                                  Container(
+                                      color: CustomColors.colorWhite,
+                                      child: TabBar(
+                                          controller: _tabController,
+                                          indicatorPadding: EdgeInsets.zero,
+                                          labelStyle:
+                                              CustomStyles.bold14TextStyle(),
+                                          unselectedLabelStyle:
+                                              CustomStyles.normal14TextStyle(),
+                                          tabs: [
+                                            Tab(text: '1차 오디션'),
+                                            Tab(text: '2차 오디션'),
+                                            Tab(text: '3차 오디션'),
+                                            Tab(text: '최종합격')
+                                          ])),
+                                  Expanded(
+                                    flex: 0,
+                                    child: [
+                                      tabAuditionApplyList(),
+                                      tabAuditionApplyList(),
+                                      tabAuditionApplyList(),
+                                      tabAuditionApplyList()
+                                    ][_tabIndex],
+                                  )
+                                ]))),
+                        Visibility(
+                          child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: 55,
+                              child: CustomStyles.blueBGSquareButtonStyle(
+                                  '2차 오디션 오픈하기', () {
+                                setState(() {
+                                  if (checkValidate(context)) {
+                                    requestOpenSecondAudition(context);
+                                  }
+                                });
+                              })),
+                          visible:
+                              (_tabIndex == 1 && _secondAuditionInfo == null)
+                                  ? true
+                                  : false,
+                        ),
+                        Visibility(
+                          child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: 55,
+                              child: CustomStyles.blueBGSquareButtonStyle(
+                                  '3차 오디션 오픈하기', () {
+                                setState(() {
+                                  requestOpenThirdAudition(context);
+                                });
+                              })),
+                          visible:
+                              (_tabIndex == 2 && _thirdAuditionInfo == null)
+                                  ? true
+                                  : false,
+                        )
+                      ])),
+                  Visibility(
+                    child: Container(
+                        color: Colors.black38,
+                        alignment: Alignment.center,
+                        child: CircularProgressIndicator()),
+                    visible: _isUpload,
+                  )
+                ],
+              );
             })));
   }
 
@@ -1152,7 +1314,7 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
   * 입력 데이터 유효성 검사
   * */
   bool checkValidate(BuildContext context) {
-    if (_profileImgFile == null) {
+    if (_scriptFile == null) {
       showSnackBar(context, "대본이미지를 업로드해주세요.");
       return false;
     }
@@ -1169,37 +1331,47 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
   * 2차 오디션 오픈
   * */
   Future<void> requestOpenSecondAudition(BuildContext context) async {
+    setState(() {
+      _isUpload = true;
+    });
+
     // 2차 오디션 오픈 api 호출 시 보낼 파라미터
-    /*final bytes = File(_profileImgFile.path).readAsBytesSync();
-    String img64 = base64Encode(bytes);
-
-    Map<String, dynamic> fileData = new Map();
-    fileData[APIConstants.base64string] = APIConstants.data_image + img64;*/
-
     Map<String, dynamic> targetData = new Map();
     targetData[APIConstants.casting_seq] = _castingSeq;
-    targetData[APIConstants.secondAudition_startDate] = DateTileUtils.getToday();
-    targetData[APIConstants.secondAudition_endDate] = DateTileUtils.stringToDateTime2(_endDate);
-    //targetData[APIConstants.file] = fileData;
+    targetData[APIConstants.secondAudition_startDate] =
+        DateTileUtils.getToday();
+    targetData[APIConstants.secondAudition_endDate] =
+        DateTileUtils.stringToDateTime2(_endDate);
 
     Map<String, dynamic> params = new Map();
     params[APIConstants.key] = APIConstants.INS_SAD_INFO_FormData;
     params[APIConstants.target] = targetData;
 
-    var temp = _profileImgFile.path.split('/');
+    var temp = _scriptFile.path.split('/');
     String fileName = temp[temp.length - 1];
     params[APIConstants.target_files] =
-        await MultipartFile.fromFile(_profileImgFile.path, filename: fileName);
+        await MultipartFile.fromFile(_scriptFile.path, filename: fileName);
 
     // 2차 오디션 오픈 api 호출
-    RestClient(Dio()).postRequestMainControlFormData(params).then((value) async {
-      if (value == null) {
-        // 에러 - 데이터 널
-        showSnackBar(context, '다시 시도해 주세요.');
-      } else {
-        if (value[APIConstants.resultVal]) {
-          try {
-            setState(() {
+    RestClient(Dio())
+        .postRequestMainControlFormData(params)
+        .then((value) async {
+      try {
+        if (value == null) {
+          // 에러 - 데이터 널
+          showSnackBar(context, '다시 시도해 주세요.');
+        } else {
+          if (value[APIConstants.resultVal]) {
+            showSnackBar(context, "2차 오디션을 오픈하였습니다.");
+
+            _tabIndex = 1;
+            _total = 0;
+            _secondAuditionApplyList = [];
+            _apiKey = APIConstants.SAR_SAD_STATE;
+
+            requestCastingStateList(context);
+
+            /*setState(() {
               var _responseList = value[APIConstants.data] as List;
               if (_responseList != null && _responseList.length > 0) {
                 for (int i = 0; i < _responseList.length; i++) {
@@ -1241,21 +1413,25 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                   }
                 }
               }
-            });
-          } catch (e) {
-            showSnackBar(context, value[APIConstants.resultMsg]);
-          }
-        } else {
-          // 2차 오디션 오픈 실패
-          switch (value[APIConstants.resultMsg]) {
-            case APIConstants.server_error_not_FirstAuditionTarget:
-              showSnackBar(context, "1차 오디션 합격자를 선택해 주세요.");
-              break;
-            default:
-              showSnackBar(context, APIConstants.error_msg_try_again);
-              break;
+            });*/
+          } else {
+            // 2차 오디션 오픈 실패
+            switch (value[APIConstants.resultMsg]) {
+              case APIConstants.server_error_not_FirstAuditionTarget:
+                showSnackBar(context, "1차 오디션 합격자를 선택해 주세요.");
+                break;
+              default:
+                showSnackBar(context, APIConstants.error_msg_try_again);
+                break;
+            }
           }
         }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }
@@ -1264,7 +1440,9 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
   * 3차 오디션 오픈
   * */
   void requestOpenThirdAudition(BuildContext context) {
-    final dio = Dio();
+    setState(() {
+      _isUpload = true;
+    });
 
     // 3차 오디션 오픈 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
@@ -1275,14 +1453,23 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
     params[APIConstants.target] = targetData;
 
     // 3차 오디션 오픈 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
-      if (value == null) {
-        // 에러 - 데이터 널
-        showSnackBar(context, '다시 시도해 주세요.');
-      } else {
-        if (value[APIConstants.resultVal]) {
-          try {
-            setState(() {
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value == null) {
+          // 에러 - 데이터 널
+          showSnackBar(context, '다시 시도해 주세요.');
+        } else {
+          if (value[APIConstants.resultVal]) {
+            showSnackBar(context, "3차 오디션을 오픈하였습니다.");
+
+            _tabIndex = 2;
+
+            _total = 0;
+            _thirdAuditionApplyList = [];
+            _apiKey = APIConstants.SAR_TAD_STATE;
+
+            requestCastingStateList(context);
+            /*setState(() {
               var _responseList = value[APIConstants.data] as List;
 
               if (_responseList != null && _responseList.length > 0) {
@@ -1325,21 +1512,25 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                   }
                 }
               }
-            });
-          } catch (e) {
-            showSnackBar(context, value[APIConstants.resultMsg]);
-          }
-        } else {
-          // 3차 오디션 오픈 실패
-          switch (value[APIConstants.resultMsg]) {
-            case APIConstants.server_error_not_SecondAuditionTarget:
-              showSnackBar(context, "2차 오디션 합격자를 선택해 주세요.");
-              break;
-            default:
-              showSnackBar(context, APIConstants.error_msg_try_again);
-              break;
+            });*/
+          } else {
+            // 3차 오디션 오픈 실패
+            switch (value[APIConstants.resultMsg]) {
+              case APIConstants.server_error_not_SecondAuditionTarget:
+                showSnackBar(context, "2차 오디션 합격자를 선택해 주세요.");
+                break;
+              default:
+                showSnackBar(context, APIConstants.error_msg_try_again);
+                break;
+            }
           }
         }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }
@@ -1349,7 +1540,9 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
   * */
   void requestUpdateAuditionResult(BuildContext context, int applyIdx,
       String key, int targetSeq, String resultType) {
-    final dio = Dio();
+    setState(() {
+      _isUpload = true;
+    });
 
     // 오디션 대상자 단일 수정 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
@@ -1361,13 +1554,13 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
     params[APIConstants.target] = targetData;
 
     // 오디션 대상자 단일 수정 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
-      if (value == null) {
-        // 에러 - 데이터 널
-        showSnackBar(context, '다시 시도해 주세요.');
-      } else {
-        if (value[APIConstants.resultVal]) {
-          try {
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value == null) {
+          // 에러 - 데이터 널
+          showSnackBar(context, '다시 시도해 주세요.');
+        } else {
+          if (value[APIConstants.resultVal]) {
             setState(() {
               //var _responseData = value[APIConstants.data];
 
@@ -1388,13 +1581,17 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
 
               showSnackBar(context, "수정 완료");
             });
-          } catch (e) {
-            showSnackBar(context, value[APIConstants.resultMsg]);
+          } else {
+            // 오디션 대상자 단일 수정 실패
+            showSnackBar(context, APIConstants.error_msg_try_again);
           }
-        } else {
-          // 오디션 대상자 단일 수정 실패
-          showSnackBar(context, APIConstants.error_msg_try_again);
         }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }

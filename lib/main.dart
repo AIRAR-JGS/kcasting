@@ -199,7 +199,7 @@ class _MyHomePageState extends State<MyHomePage> with BaseUtilMixin {
                       requestProductionBookMarkListApi(context);
                       break;
                     case APIConstants.member_type_management:
-                      requestManagementBookMarkListApi(context);
+                      replaceView(context, Home());
                       break;
                   }
 
@@ -389,45 +389,8 @@ class _MyHomePageState extends State<MyHomePage> with BaseUtilMixin {
         }
       }
 
-      requestActorBookMarkListApi(context);
-
+      replaceView(context, Home());
     });
-  }
-
-  /*
-  * 배우 북마크 목록
-  * */
-  void requestActorBookMarkListApi(BuildContext context) {
-    final dio = Dio();
-
-    // 배우 북마크 api 호출 시 보낼 파라미터
-    Map<String, dynamic> targetDate = new Map();
-    targetDate[APIConstants.actor_seq] = KCastingAppData().myInfo[APIConstants.seq];
-
-    Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.SEL_ACS_LIST;
-    params[APIConstants.target] = targetDate;
-
-    // 배우 북마크 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
-      if (value != null) {
-        if (value[APIConstants.resultVal]) {
-          try {
-            // 배우 북마크 성공
-            setState(() {
-              var _responseData = value[APIConstants.data];
-              var _responseList = _responseData[APIConstants.list] as List;
-
-              KCastingAppData().myBookmark.addAll(_responseList);
-
-
-            });
-          } catch (e) {}
-        }
-      }
-    });
-
-    replaceView(context, Home());
   }
 
   /*
@@ -450,42 +413,6 @@ class _MyHomePageState extends State<MyHomePage> with BaseUtilMixin {
         if (value[APIConstants.resultVal]) {
           try {
             // 제작사 북마크 성공
-            setState(() {
-              var _responseData = value[APIConstants.data];
-              var _responseList = _responseData[APIConstants.list] as List;
-
-              KCastingAppData().myBookmark.addAll(_responseList);
-
-
-            });
-          } catch (e) {}
-        }
-      }
-    });
-
-    replaceView(context, Home());
-  }
-
-  /*
-  * 매니지먼트 북마크 목록
-  * */
-  void requestManagementBookMarkListApi(BuildContext context) {
-    final dio = Dio();
-
-    // 매니지먼트 북마크 api 호출 시 보낼 파라미터
-    Map<String, dynamic> targetDate = new Map();
-    targetDate[APIConstants.management_seq] = KCastingAppData().myInfo[APIConstants.seq];
-
-    Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.SEL_MCS_LIST;
-    params[APIConstants.target] = targetDate;
-
-    // 매니지먼트 북마크 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
-      if (value != null) {
-        if (value[APIConstants.resultVal]) {
-          try {
-            // 매니지먼트 북마크 성공
             setState(() {
               var _responseData = value[APIConstants.data];
               var _responseList = _responseData[APIConstants.list] as List;

@@ -636,7 +636,8 @@ class _JoinAgency extends State<JoinAgency> with BaseUtilMixin {
             prefs.setInt(
                 APIConstants.seq, KCastingAppData().myInfo[APIConstants.seq]);
 
-            requestManagementBookMarkListApi(context);
+            // 메인 페이지 이동
+            replaceView(context, Home(prevPage: APIConstants.INS_MGM_JOIN));
           } else {
             // 회원가입 실패
             switch (StringUtils.checkedString(value[APIConstants.resultMsg])) {
@@ -661,42 +662,5 @@ class _JoinAgency extends State<JoinAgency> with BaseUtilMixin {
         });
       }
     });
-  }
-
-  /*
-  * 매니지먼트 북마크 목록
-  * */
-  void requestManagementBookMarkListApi(BuildContext context) {
-    final dio = Dio();
-
-    // 매니지먼트 북마크 api 호출 시 보낼 파라미터
-    Map<String, dynamic> targetDate = new Map();
-    targetDate[APIConstants.management_seq] = KCastingAppData().myInfo[APIConstants.seq];
-
-    Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.SEL_MCS_LIST;
-    params[APIConstants.target] = targetDate;
-
-    // 매니지먼트 북마크 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
-      if (value != null) {
-        if (value[APIConstants.resultVal]) {
-          try {
-            // 매니지먼트 북마크 성공
-            setState(() {
-              var _responseData = value[APIConstants.data];
-              var _responseList = _responseData[APIConstants.list] as List;
-
-              KCastingAppData().myBookmark.addAll(_responseList);
-
-
-            });
-          } catch (e) {}
-        }
-      }
-    });
-
-    // 메인 페이지 이동
-    replaceView(context, Home(prevPage: APIConstants.INS_MGM_JOIN));
   }
 }

@@ -14,8 +14,10 @@ import 'AuditionDetail.dart';
 * */
 class AuditionListItem extends StatelessWidget with BaseUtilMixin {
   final Map<String, dynamic> castingItem;
+  final bool isMyScrapList;
+  final VoidCallback onClickedBookmark;
 
-  AuditionListItem({Key key, this.castingItem}) : super(key: key);
+  AuditionListItem({Key key, this.castingItem, this.isMyScrapList, this.onClickedBookmark}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -317,17 +319,39 @@ class AuditionListItem extends StatelessWidget with BaseUtilMixin {
                                                       castingItem[APIConstants
                                                           .casting_uniqueness]))
                                             ])))),
-                            /*VerticalDivider(
+                            VerticalDivider(
                                 color: CustomColors.colorFontLightGrey,
                                 width: 0.1,
                                 thickness: 0.5),
-                            Visibility(child: Container(
-                                width: 30,
-                                margin: EdgeInsets.only(left: 10),
-                                alignment: Alignment.center,
-                                child:  Image.asset(
-                                    'assets/images/toggle_like_off.png',
-                                    width: 20)),visible: (KCastingAppData().myInfo[APIConstants.member_type] == APIConstants.member_type_actor) ? true : false)*/
+                            GestureDetector(
+                                onTap: () {
+                                  onClickedBookmark();
+                                },
+                                child: Visibility(
+                                    child: Container(
+                                        width: 30,
+                                        margin: EdgeInsets.only(left: 10),
+                                        alignment: Alignment.center,
+                                        child: isMyScrapList ? (Image.asset(
+                                            'assets/images/toggle_like_on.png',
+                                            width: 20)) :(KCastingAppData().myInfo[APIConstants.member_type] ==
+                                            APIConstants.member_type_actor)
+                                            ? ((castingItem[APIConstants.isActorCastringScrap] == 1)
+                                            ? Image.asset('assets/images/toggle_like_on.png',
+                                            width: 20)
+                                            : Image.asset('assets/images/toggle_like_off.png',
+                                            width: 20))
+                                            : ((castingItem[APIConstants.isManagementCastringScrap] == 1)
+                                            ? Image.asset(
+                                            'assets/images/toggle_like_on.png',
+                                            width: 20)
+                                            : Image.asset(
+                                            'assets/images/toggle_like_off.png',
+                                            width: 20))  ),
+                                    visible: (KCastingAppData().myInfo[APIConstants.member_type]) ==
+                                            APIConstants.member_type_product
+                                        ? false
+                                        : true))
                           ]))
                     ]))
           ]),

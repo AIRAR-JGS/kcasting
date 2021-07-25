@@ -68,7 +68,8 @@ class APIConstants {
   static const String INS_PFM_INFO = "INS_PFM_INFO";                              // 제작사 필모그래피 추가
   static const String DEA_PFM_LIST = "DEA_PFM_LIST";                              // 제작사 필모그래피 삭제
   static const String SEL_PFM_LIST = "SEL_PFM_LIST";                              // 제작사 필모그래피 목록 조회
-  static const String INS_PPJ_INFO = "INS_PPJ_INFO";                              // 제작사 작품 등록
+  //static const String INS_PPJ_INFO = "INS_PPJ_INFO";                              // 제작사 작품 등록
+  static const String INS_PPJ_INFO_FormData = "INS_PPJ_INFO_FormData";            // 제작사 작품 등록
   static const String SEL_PPJ_LIST = "SEL_PPJ_LIST";                              // 제작사 작품 목록 조회
   static const String IPC_PCT_INFO = "IPC_PCT_INFO";                              // 캐스팅 등록(배역 추가) - 특정 배역 추가, 다수 배역 추가
   static const String SAR_PCT_INFO = "SAR_PCT_INFO";                              // 캐스팅 단일 조회
@@ -149,7 +150,7 @@ class APIConstants {
   static const String server_error_already_exist = "already exists data";
   static const String server_error_not_joined = "This id not joind";
   static const String server_error_not_valid_pwd = "It not a valid password";
-  static const String server_error_not_FirstAuditionTarget = "check table FirstAuditionTarget result_type.";
+  static const String server_error_not_FirstAuditionTarget = "No one passed First Audition.";
   static const String server_error_not_SecondAuditionTarget = "check table SecondAuditionTarget result_type.";
   static const String error_msg_try_again = " 다시 시도해 주세요.";
   static const String error_msg_server_not_response = "서버가 응답하지 않습니다. 다시 시도해 주세요.";
@@ -308,6 +309,7 @@ class APIConstants {
   static const String actor_video = "actor_video";
   static const String actor_video_url_thumb = "actor_video_url_thumb";
   static const String actor_age = "actor_age";
+  static const String isActorCastringScrap = "isActorCastringScrap";
 
   // 제작사 회원 관련
   static const String table_production_casting = "ProductionCasting";
@@ -358,6 +360,7 @@ class APIConstants {
   static const String management_logo_img_url = "management_logo_img_url";
   static const String resultCorpName = "resultCorpName";
   static const String resultCEOName = "resultCEOName";
+  static const String isManagementCastringScrap = "isManagementCastringScrap";
 
   // 오디션 관련
   static const String casting_seq = "casting_seq";

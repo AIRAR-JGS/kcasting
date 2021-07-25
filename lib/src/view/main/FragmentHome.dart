@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:casting_call/BaseWidget.dart';
+import 'package:casting_call/KCastingAppData.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
@@ -69,6 +70,13 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
     // 캐스팅 목록 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetDate = new Map();
     targetDate[APIConstants.order_type] = APIConstants.order_type_new;
+    if(KCastingAppData().myInfo[APIConstants.member_type] == APIConstants.member_type_actor) {
+      targetDate[APIConstants.actor_seq] = KCastingAppData().myInfo[APIConstants.seq];
+    }
+
+    if(KCastingAppData().myInfo[APIConstants.member_type] == APIConstants.member_type_management) {
+      targetDate[APIConstants.management_seq] = KCastingAppData().myInfo[APIConstants.seq];
+    }
 
     Map<String, dynamic> paging = new Map();
     paging[APIConstants.offset] = 0;
@@ -106,6 +114,13 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
     // 마감임박 캐스팅 목록 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetDate = new Map();
     targetDate[APIConstants.order_type] = APIConstants.order_type_fin;
+    if(KCastingAppData().myInfo[APIConstants.member_type] == APIConstants.member_type_actor) {
+      targetDate[APIConstants.actor_seq] = KCastingAppData().myInfo[APIConstants.seq];
+    }
+
+    if(KCastingAppData().myInfo[APIConstants.member_type] == APIConstants.member_type_management) {
+      targetDate[APIConstants.management_seq] = KCastingAppData().myInfo[APIConstants.seq];
+    }
 
     Map<String, dynamic> paging = new Map();
     paging[APIConstants.offset] = 0;
@@ -287,7 +302,21 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
                         return Container(
                             margin: EdgeInsets.only(right: 10),
                             child: AuditionListItem(
-                                castingItem: _newCastingList[index]));
+                                castingItem: _newCastingList[index],
+                            isMyScrapList: false,
+                            onClickedBookmark: (){
+                              if (KCastingAppData()
+                                  .myInfo[APIConstants.member_type] ==
+                                  APIConstants.member_type_actor) {
+                                requestActorBookmarkEditApi(context, index, true);
+                              } else if (KCastingAppData()
+                                  .myInfo[APIConstants.member_type] ==
+                                  APIConstants.member_type_management) {
+                                requestManagementBookmarkEditApi(
+                                    context, index, true);
+                              }
+
+                            }));
                       })),
               visible: _newCastingList.length > 0 ? true : false),
 
@@ -312,7 +341,20 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
                         return Container(
                             margin: EdgeInsets.only(right: 10),
                             child: AuditionListItem(
-                                castingItem: _oldCastingList[index]));
+                                castingItem: _oldCastingList[index],
+                            isMyScrapList: false,
+                            onClickedBookmark: (){
+                              if (KCastingAppData()
+                                  .myInfo[APIConstants.member_type] ==
+                                  APIConstants.member_type_actor) {
+                                requestActorBookmarkEditApi(context, index, false);
+                              } else if (KCastingAppData()
+                                  .myInfo[APIConstants.member_type] ==
+                                  APIConstants.member_type_management) {
+                                requestManagementBookmarkEditApi(
+                                    context, index, false);
+                              }
+                            }));
                       })),
               visible: _oldCastingList.length > 0 ? true : false),
 
@@ -490,5 +532,100 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
                     }))
               ]))
         ]));
+  }
+
+  /*
+  * 배우 북마크 목록
+  * */
+  void requestActorBookmarkEditApi(
+      BuildContext context, int idx, bool isNew) {
+    final dio = Dio();
+
+    // 배우 북마크 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetDate = new Map();
+    targetDate[APIConstants.actor_seq] =
+    KCastingAppData().myInfo[APIConstants.seq];
+    if(isNew) {
+      targetDate[APIConstants.casting_seq] = _newCastingList[idx][APIConstants.casting_seq];
+    } else {
+      targetDate[APIConstants.casting_seq] = _oldCastingList[idx][APIConstants.casting_seq];
+    }
+
+    Map<String, dynamic> params = new Map();
+    if(isNew) {
+      if (_newCastingList[idx][APIConstants.isActorCastringScrap] == 1) {
+        params[APIConstants.key] = APIConstants.DEA_ACS_INFO;
+      } else {
+        params[APIConstants.key] = APIConstants.INS_ACS_INFO;
+      }
+    } else {
+      if (_oldCastingList[idx][APIConstants.isActorCastringScrap] == 1) {
+        params[APIConstants.key] = APIConstants.DEA_ACS_INFO;
+      } else {
+        params[APIConstants.key] = APIConstants.INS_ACS_INFO;
+      }
+    }
+
+    params[APIConstants.target] = targetDate;
+
+    // 배우 북마크 api 호출
+    RestClient(dio).postRequestMainControl(params).then((value) async {
+      if (value != null) {
+        if (value[APIConstants.resultVal]) {
+          _newCastingList = [];
+          _oldCastingList = [];
+
+          requestNewCastingListApi(context);
+          requestOldCastingListApi(context);
+        }
+      }
+    });
+  }
+
+  /*
+  * 매니지먼트 북마크 목록
+  * */
+  void requestManagementBookmarkEditApi(
+      BuildContext context, int idx, bool isNew) {
+    final dio = Dio();
+
+    // 매니지먼트 북마크 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetDate = new Map();
+    targetDate[APIConstants.management_seq] =KCastingAppData().myInfo[APIConstants.seq];
+    if(isNew) {
+      targetDate[APIConstants.casting_seq] = _newCastingList[idx][APIConstants.casting_seq];
+    } else {
+      targetDate[APIConstants.casting_seq] = _oldCastingList[idx][APIConstants.casting_seq];
+    }
+
+    Map<String, dynamic> params = new Map();
+    if(isNew) {
+      if (_newCastingList[idx][APIConstants.isActorCastringScrap] == 1) {
+        params[APIConstants.key] = APIConstants.DEA_MCS_INFO;
+      } else {
+        params[APIConstants.key] = APIConstants.INS_MCS_INFO;
+      }
+    } else {
+      if (_oldCastingList[idx][APIConstants.isActorCastringScrap] == 1) {
+        params[APIConstants.key] = APIConstants.DEA_MCS_INFO;
+      } else {
+        params[APIConstants.key] = APIConstants.INS_MCS_INFO;
+      }
+    }
+
+    params[APIConstants.target] = targetDate;
+
+    // 매니지먼트 북마크 api 호출
+    RestClient(dio).postRequestMainControl(params).then((value) async {
+      if (value != null) {
+        if (value[APIConstants.resultVal]) {
+          _newCastingList = [];
+          _oldCastingList = [];
+
+          requestNewCastingListApi(context);
+          requestOldCastingListApi(context);
+        }
+      }
+    });
   }
 }

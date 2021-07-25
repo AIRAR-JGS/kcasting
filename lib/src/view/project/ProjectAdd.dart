@@ -614,7 +614,7 @@ class _ProjectAdd extends State<ProjectAdd> with BaseUtilMixin {
   /*
   * 제작사 필모그래피 추가
   * */
-  void requestAddProjectApi(BuildContext context) {
+  Future<void> requestAddProjectApi(BuildContext context) async {
     setState(() {
       _isUpload = true;
     });
@@ -632,21 +632,16 @@ class _ProjectAdd extends State<ProjectAdd> with BaseUtilMixin {
     targetDatas[APIConstants.shooting_endDate] = _endDate;
 
     Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.INS_PPJ_INFO;
+    params[APIConstants.key] = APIConstants.INS_PPJ_INFO_FormData;
     params[APIConstants.target] = targetDatas;
 
-    if (_profileImgFile != null) {
-      final bytes = File(_profileImgFile.path).readAsBytesSync();
-      String img64 = base64Encode(bytes);
-
-      Map<String, dynamic> fileData = new Map();
-      fileData[APIConstants.base64string] = APIConstants.data_image + img64;
-
-      params[APIConstants.file] = fileData;
-    }
+    var temp = _profileImgFile.path.split('/');
+    String fileName = temp[temp.length - 1];
+    params[APIConstants.target_files_array] =
+        await MultipartFile.fromFile(_profileImgFile.path, filename: fileName);
 
     // 제작사 필모그래피 추가 api 호출
-    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+    RestClient(Dio()).postRequestMainControlFormData(params).then((value) async {
       try {
         if (value == null) {
           // 에러 - 데이터 널

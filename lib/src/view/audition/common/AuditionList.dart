@@ -10,6 +10,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags/flutter_tags.dart';
 
+import '../../../../KCastingAppData.dart';
 import 'AuditionListItem.dart';
 
 /*
@@ -132,6 +133,17 @@ class _AuditionList extends State<AuditionList> with BaseUtilMixin {
     // 캐스팅 목록 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetDate = new Map();
     targetDate[APIConstants.order_type] = _castingListOrderType;
+    if (KCastingAppData().myInfo[APIConstants.member_type] ==
+        APIConstants.member_type_actor) {
+      targetDate[APIConstants.actor_seq] =
+          KCastingAppData().myInfo[APIConstants.seq];
+    }
+
+    if (KCastingAppData().myInfo[APIConstants.member_type] ==
+        APIConstants.member_type_management) {
+      targetDate[APIConstants.management_seq] =
+          KCastingAppData().myInfo[APIConstants.seq];
+    }
 
     // 배역
     String castingTypeStr;
@@ -754,6 +766,20 @@ class _AuditionList extends State<AuditionList> with BaseUtilMixin {
                                 alignment: Alignment.center,
                                 child: AuditionListItem(
                                   castingItem: _castingBoardList[index],
+                                  isMyScrapList: false,
+                                  onClickedBookmark: () {
+                                    if (KCastingAppData()
+                                            .myInfo[APIConstants.member_type] ==
+                                        APIConstants.member_type_actor) {
+                                      requestActorBookmarkEditApi(
+                                          context, index);
+                                    } else if (KCastingAppData()
+                                            .myInfo[APIConstants.member_type] ==
+                                        APIConstants.member_type_management) {
+                                      requestManagementBookmarkEditApi(
+                                          context, index);
+                                    }
+                                  },
                                 ));
                           })
                     ]))
@@ -762,5 +788,75 @@ class _AuditionList extends State<AuditionList> with BaseUtilMixin {
                       child: Text('캐스팅이 없습니다.',
                           style: CustomStyles.normal16TextStyle()))
             ]))));
+  }
+
+  /*
+  * 배우 북마크 목록
+  * */
+  void requestActorBookmarkEditApi(BuildContext context, int idx) {
+    final dio = Dio();
+
+    // 배우 북마크 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetDate = new Map();
+    targetDate[APIConstants.actor_seq] =
+        KCastingAppData().myInfo[APIConstants.seq];
+    targetDate[APIConstants.casting_seq] =
+        _castingBoardList[idx][APIConstants.casting_seq];
+
+    Map<String, dynamic> params = new Map();
+    if (_castingBoardList[idx][APIConstants.isActorCastringScrap] == 1) {
+      params[APIConstants.key] = APIConstants.DEA_ACS_INFO;
+    } else {
+      params[APIConstants.key] = APIConstants.INS_ACS_INFO;
+    }
+
+    params[APIConstants.target] = targetDate;
+
+    // 배우 북마크 api 호출
+    RestClient(dio).postRequestMainControl(params).then((value) async {
+      if (value != null) {
+        if (value[APIConstants.resultVal]) {
+          _total = 0;
+          _castingBoardList = [];
+
+          requestCastingListApi(context);
+        }
+      }
+    });
+  }
+
+  /*
+  * 매니지먼트 북마크 목록
+  * */
+  void requestManagementBookmarkEditApi(BuildContext context, int idx) {
+    final dio = Dio();
+
+    // 매니지먼트 북마크 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetDate = new Map();
+    targetDate[APIConstants.management_seq] =
+        KCastingAppData().myInfo[APIConstants.seq];
+    targetDate[APIConstants.casting_seq] =
+        _castingBoardList[idx][APIConstants.casting_seq];
+
+    Map<String, dynamic> params = new Map();
+    if (_castingBoardList[idx][APIConstants.isActorCastringScrap] == 1) {
+      params[APIConstants.key] = APIConstants.DEA_MCS_INFO;
+    } else {
+      params[APIConstants.key] = APIConstants.INS_MCS_INFO;
+    }
+
+    params[APIConstants.target] = targetDate;
+
+    // 매니지먼트 북마크 api 호출
+    RestClient(dio).postRequestMainControl(params).then((value) async {
+      if (value != null) {
+        if (value[APIConstants.resultVal]) {
+          _total = 0;
+          _castingBoardList = [];
+
+          requestCastingListApi(context);
+        }
+      }
+    });
   }
 }

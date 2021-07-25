@@ -1125,43 +1125,7 @@ class _JoinActorAdult extends State<JoinActorAdult> with BaseUtilMixin {
         _isUpload = false;
       });
 
-      requestActorBookMarkListApi(context);
+      replaceView(context, Home(prevPage: APIConstants.INS_ACT_JOIN));
     });
-  }
-
-  /*
-  * 배우 북마크 목록
-  * */
-  void requestActorBookMarkListApi(BuildContext context) {
-    final dio = Dio();
-
-    // 배우 북마크 api 호출 시 보낼 파라미터
-    Map<String, dynamic> targetDate = new Map();
-    targetDate[APIConstants.actor_seq] = KCastingAppData().myInfo[APIConstants.seq];
-
-    Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.SEL_ACS_LIST;
-    params[APIConstants.target] = targetDate;
-
-    // 배우 북마크 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
-      if (value != null) {
-        if (value[APIConstants.resultVal]) {
-          try {
-            // 배우 북마크 성공
-            setState(() {
-              var _responseData = value[APIConstants.data];
-              var _responseList = _responseData[APIConstants.list] as List;
-
-              KCastingAppData().myBookmark.addAll(_responseList);
-
-
-            });
-          } catch (e) {}
-        }
-      }
-    });
-
-    replaceView(context, Home(prevPage: APIConstants.INS_PRD_JOIN));
   }
 }

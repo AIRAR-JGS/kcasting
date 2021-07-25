@@ -168,6 +168,10 @@ class _BookmarkedAgencyAuditionList extends State<BookmarkedAgencyAuditionList>
                                       alignment: Alignment.center,
                                       child: AuditionListItem(
                                         castingItem: _castingBoardList[index],
+                                        isMyScrapList: true,
+                                        onClickedBookmark: () {
+                                          requestManagementBookmarkEditApi(context, index);
+                                        },
                                       ));
                                 })
                           ]))
@@ -186,5 +190,34 @@ class _BookmarkedAgencyAuditionList extends State<BookmarkedAgencyAuditionList>
                 )
               ],
             )));
+  }
+
+  /*
+  * 매니지먼트 북마크 목록
+  * */
+  void requestManagementBookmarkEditApi(
+      BuildContext context, int idx) {
+    final dio = Dio();
+
+    // 매니지먼트 북마크 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetDate = new Map();
+    targetDate[APIConstants.management_seq] = KCastingAppData().myInfo[APIConstants.seq];
+    targetDate[APIConstants.casting_seq] = _castingBoardList[idx][APIConstants.casting_seq];
+
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.DEA_MCS_INFO;
+    params[APIConstants.target] = targetDate;
+
+    // 매니지먼트 북마크 api 호출
+    RestClient(dio).postRequestMainControl(params).then((value) async {
+      if (value != null) {
+        if (value[APIConstants.resultVal]) {
+          _total = 0;
+          _castingBoardList = [];
+
+          requestCastingListApi(context);
+        }
+      }
+    });
   }
 }

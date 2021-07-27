@@ -1,9 +1,12 @@
-import 'dart:math';
-
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
+import 'package:casting_call/src/net/APIConstants.dart';
+import 'package:casting_call/src/net/RestClientInterface.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+
+import '../../../KCastingAppData.dart';
 
 class PushNotification extends StatefulWidget {
   @override
@@ -12,49 +15,114 @@ class PushNotification extends StatefulWidget {
 
 class _PushNotification extends State<PushNotification> with BaseUtilMixin {
   // 알림 리스트 관련 변수
-  final _count = 12;
-  final _itemsPerPage = 10;
-  int _currentPage = 0;
+  bool _isUpload = false;
+  ScrollController _scrollController;
 
-  final _pushList = <String>[];
+  int _total = 0;
+  int _limit = 20;
+
+  List<dynamic> _noticeList = [];
   bool _isLoading = true;
-  bool _hasMore = true;
-
-  Future<List<String>> fetch() async {
-    final list = <String>[];
-    final n = min(_itemsPerPage, _count - _currentPage * _itemsPerPage);
-    await Future.delayed(Duration(seconds: 1), () {
-      for (int i = 0; i < n; i++) {
-        int realIdx = _pushList.length + i;
-
-        list.add('알림이 있습니다. 오디션 제안이 있습니다.' + realIdx.toString());
-      }
-    });
-    _currentPage++;
-    return list;
-  }
 
   @override
   void initState() {
+    _scrollController = ScrollController(initialScrollOffset: 50.0);
+    _scrollController.addListener(_scrollListener);
+
     super.initState();
 
-    _isLoading = true;
-    _hasMore = true;
-    _loadMore();
+    // 알림 목록 api 조회
+    requestNoticeListApi(context);
   }
 
-  void _loadMore() {
-    _isLoading = true;
-    fetch().then((List<String> fetchedList) {
-      if (fetchedList.isEmpty) {
+  // 리스트뷰 스크롤 컨트롤러 이벤트 리스너
+  _scrollListener() {
+    print(_scrollController.position.extentAfter);
+    print(_scrollController.offset);
+
+    if (_total == 0 || _noticeList.length >= _total) return;
+
+    if (_scrollController.offset >=
+            _scrollController.position.maxScrollExtent &&
+        !_scrollController.position.outOfRange) {
+      setState(() {
+        _isLoading = true;
+
+        if (_isLoading) {
+          requestNoticeListApi(context);
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  /*
+  * 알림목록조회 api 호출
+  * */
+  void requestNoticeListApi(BuildContext context) {
+    setState(() {
+      _isUpload = true;
+    });
+
+    // 알림목록조회 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetData = new Map();
+    targetData[APIConstants.member_type] =
+        KCastingAppData().myInfo[APIConstants.member_type];
+
+    switch (KCastingAppData().myInfo[APIConstants.member_type]) {
+      case APIConstants.member_type_actor:
+        targetData[APIConstants.actor_seq] =
+            KCastingAppData().myInfo[APIConstants.seq];
+        break;
+      case APIConstants.member_type_product:
+        targetData[APIConstants.production_seq] =
+            KCastingAppData().myInfo[APIConstants.seq];
+        break;
+      case APIConstants.member_type_management:
+        targetData[APIConstants.management_seq] =
+            KCastingAppData().myInfo[APIConstants.seq];
+        break;
+    }
+
+    Map<String, dynamic> paging = new Map();
+    paging[APIConstants.offset] = _noticeList.length;
+    paging[APIConstants.limit] = _limit;
+
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.SEL_TOT_ALERTLIST;
+    params[APIConstants.target] = targetData;
+    params[APIConstants.paging] = paging;
+
+    // 알림목록조회 api 호출
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value != null) {
+          if (value[APIConstants.resultVal]) {
+            // 알림목록조회 성공
+            setState(() {
+              var _responseList = value[APIConstants.data];
+              var _pagingData = _responseList[APIConstants.paging];
+
+              _total = _pagingData[APIConstants.total];
+
+              if (_responseList != null && _responseList.length > 0) {
+                _noticeList.addAll(_responseList[APIConstants.list]);
+              }
+
+              _isLoading = false;
+            });
+          }
+        }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
         setState(() {
-          _isLoading = false;
-          _hasMore = false;
-        });
-      } else {
-        setState(() {
-          _isLoading = false;
-          _pushList.addAll(fetchedList);
+          _isUpload = false;
         });
       }
     });
@@ -71,57 +139,78 @@ class _PushNotification extends State<PushNotification> with BaseUtilMixin {
             appBar: CustomStyles.defaultAppBar('', () {
               Navigator.pop(context);
             }),
-            body: Container(
-                child: ListView.separated(
-                    itemCount:
-                        _hasMore ? _pushList.length + 1 : _pushList.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      if (index >= _pushList.length) {
-                        if (!_isLoading) {
-                          _loadMore();
-                        }
-                        return Center(
-                          child: SizedBox(
-                            child: CircularProgressIndicator(),
-                            height: 24,
-                            width: 24,
-                          ),
-                        );
-                      }
-                      return Container(
-                          alignment: Alignment.centerLeft,
-                          child: GestureDetector(
-                              onTap: () {
-                                /*Navigator.push(
+            body: Stack(children: [
+              SingleChildScrollView(
+                  controller: _scrollController,
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: Column(children: [
+                    Container(
+                        child: (_noticeList.length > 0
+                            ? ListView.separated(
+                                primary: false,
+                                physics: NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: _noticeList.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  Map<String, dynamic> _data =
+                                      _noticeList[index];
+
+                                  return Container(
+                                      alignment: Alignment.centerLeft,
+                                      child: GestureDetector(
+                                          onTap: () {
+                                            /*Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => MyApplyDetail()),
                                     );*/
-                              },
-                              child: Container(
-                                  alignment: Alignment.centerLeft,
-                                  padding: EdgeInsets.only(
-                                      left: 15, right: 15, top: 20, bottom: 20),
-                                  child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                            margin: EdgeInsets.only(bottom: 5),
-                                            child: Text(_pushList[index],
-                                                style: CustomStyles
-                                                    .normal16TextStyle())),
-                                        Container(
-                                            child: Text('2021.03.17 14:00',
-                                                style: CustomStyles
-                                                    .normal14TextStyle()))
-                                      ]))));
-                    },
-                    separatorBuilder: (context, index) {
-                      return Divider(
-                        height: 0.1,
-                        color: CustomColors.colorFontLightGrey,
-                      );
-                    }))));
+                                          },
+                                          child: Container(
+                                              alignment: Alignment.centerLeft,
+                                              padding: EdgeInsets.only(
+                                                  left: 15,
+                                                  right: 15,
+                                                  top: 20,
+                                                  bottom: 20),
+                                              child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Container(
+                                                        margin: EdgeInsets.only(
+                                                            bottom: 5),
+                                                        child: Text(
+                                                            _data[APIConstants
+                                                                .alert_contents],
+                                                            style: CustomStyles
+                                                                .normal16TextStyle())),
+                                                    Container(
+                                                        child: Text(
+                                                            _data[APIConstants
+                                                                .addDate],
+                                                            style: CustomStyles
+                                                                .normal14TextStyle()))
+                                                  ]))));
+                                },
+                                separatorBuilder: (context, index) {
+                                  return Divider(
+                                    height: 0.1,
+                                    color: CustomColors.colorFontLightGrey,
+                                  );
+                                })
+                            : Container(
+                                alignment: Alignment.center,
+                                child: Text('알림이 없습니다.',
+                                    style: CustomStyles.normal16TextStyle())))),
+                    Divider()
+                  ])),
+              Visibility(
+                child: Container(
+                    color: Colors.black38,
+                    alignment: Alignment.center,
+                    child: CircularProgressIndicator()),
+                visible: _isUpload,
+              )
+            ])));
   }
 }

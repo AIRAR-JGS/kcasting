@@ -27,6 +27,9 @@ class APIConstants {
   static const String CHK_TOT_REALCORPNAME = "CHK_TOT_REALCORPNAME";              // 기업 실명확인
   static const String CHK_TOT_ACCOUNT = "CHK_TOT_ACCOUNT";                        // 계좌 소유주 확인
   static const String CHK_TOT_REALNAME = "CHK_TOT_REALNAME";                      // 실명 확인
+  static const String SEL_TOT_ALERTLIST = "SEL_TOT_ALERTLIST";                    // 알림 목록 조회
+  static const String SEL_TOT_USELIST = "SEL_TOT_USELIST";                        // 이용안내 목록보기
+  static const String SEL_TOT_USEDETAILS = "SEL_TOT_USEDETAILS";                  // 이용안내 상세보기
   
   // 배우 회원
   static const String INS_ACT_JOIN = "INS_ACT_JOIN";                              // 배우 회원가입
@@ -214,6 +217,14 @@ class APIConstants {
   static const String base64string_thumb = "base64string_thumb";
   static const String data_image = "data:image/png;base64,";
   static const String data_file = "data:@file/mp4;base64,";
+
+  // 게시판(알림, 이용안내) 관련
+  static const String alert_contents = "alert_contents";
+  static const String infomation_type = "infomation_type";
+  static const String useInfo_seq = "useInfo_seq";
+  static const String use_infomation_name = "use_infomation_name";
+  static const String use_infomation_contents = "use_infomation_contents";
+  static const String use_infomation_viewCount = "use_infomation_viewCount";
 
   // 배우 회원 관련
   static const String table_actor_profile = "ActorProfile";

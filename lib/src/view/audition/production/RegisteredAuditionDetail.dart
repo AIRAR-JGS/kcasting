@@ -1,10 +1,9 @@
-import 'dart:convert';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
-import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/net/RestClientInterface.dart';
 import 'package:casting_call/src/util/DateTileUtils.dart';
@@ -75,10 +74,10 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
     _tabController = TabController(length: 4, vsync: this);
     _tabController.addListener(_handleTabSelection);
 
-    requestCastingStateList(context);
-
     _scrollController = new ScrollController(initialScrollOffset: 5.0)
       ..addListener(_scrollListener);
+
+    requestCastingStateList(context);
   }
 
   _handleTabSelection() {
@@ -124,6 +123,9 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
         break;
       case 2:
         cnt = _thirdAuditionApplyList.length;
+        break;
+      case 3:
+        cnt = _auditionResultList.length;
         break;
     }
 
@@ -382,618 +384,101 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
   }
 
   /*
+  * 탭 아이템 위젯
+  * */
+  Widget tabAuditionApplyList() {
+    switch (_tabIndex) {
+      case 0:
+        return firstAuditionApplyList();
+        break;
+      case 1:
+        if (_firstAuditionInfo[APIConstants.isOpenSecondAudition] == 1) {
+          return secondAuditionApplyList();
+        } else {
+          return openSecondAudition();
+        }
+        break;
+      case 2:
+        if (_firstAuditionInfo[APIConstants.isOpenThirdAudition] == 1) {
+          return thirdAuditionApplyList();
+        } else {
+          return openThirdAudition();
+        }
+        break;
+      case 3:
+        return auditionResultList();
+        break;
+    }
+  }
+
+  /*
   * 1차 오디션 지원자 현황
   * */
   Widget firstAuditionStatus() {
     return Container(
-      margin: EdgeInsets.only(top: 20, left: 15, right: 15),
-      padding: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
-      decoration: BoxDecoration(
-        color: CustomColors.colorBgGrey,
-        borderRadius: CustomStyles.circle7BorderRadius(),
-        border: Border.all(width: 1, color: CustomColors.colorFontLightGrey),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+        margin: EdgeInsets.only(top: 20, left: 15, right: 15),
+        padding: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
+        decoration: BoxDecoration(
+          color: CustomColors.colorBgGrey,
+          borderRadius: CustomStyles.circle7BorderRadius(),
+          border: Border.all(width: 1, color: CustomColors.colorFontLightGrey),
+        ),
+        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           Container(
               margin: EdgeInsets.only(right: 15),
-              child: Column(
-                children: [
-                  Text('지원자', style: CustomStyles.dark14TextStyle()),
-                  Container(
+              child: Column(children: [
+                Text('지원자', style: CustomStyles.dark14TextStyle()),
+                Container(
                     margin: EdgeInsets.only(top: 5),
                     child: Text(
                         StringUtils.checkedString(_firstAuditionInfo[
                             APIConstants.firstAuditionTarget_cnt]),
-                        style: CustomStyles.dark14TextStyle()),
-                  )
-                ],
-              )),
+                        style: CustomStyles.dark14TextStyle()))
+              ])),
           Container(
               margin: EdgeInsets.only(right: 15),
-              child: Column(
-                children: [
-                  Text('합격', style: CustomStyles.dark14TextStyle()),
-                  Container(
+              child: Column(children: [
+                Text('합격', style: CustomStyles.dark14TextStyle()),
+                Container(
                     margin: EdgeInsets.only(top: 5),
                     child: Text(
                         StringUtils.checkedString(_firstAuditionInfo[
                             APIConstants.firstAuditionTarget_pass_cnt]),
-                        style: CustomStyles.dark14TextStyle()),
-                  )
-                ],
-              )),
+                        style: CustomStyles.dark14TextStyle()))
+              ])),
           Container(
-              child: Column(
-            children: [
-              Text('불합격', style: CustomStyles.dark14TextStyle()),
-              Container(
+              child: Column(children: [
+            Text('불합격', style: CustomStyles.dark14TextStyle()),
+            Container(
                 margin: EdgeInsets.only(top: 5),
                 child: Text(
                     StringUtils.checkedString(_firstAuditionInfo[
                         APIConstants.firstAuditionTarget_fail_cnt]),
-                    style: CustomStyles.dark14TextStyle()),
-              )
-            ],
-          ))
-        ],
-      ),
-    );
-  }
-
-  /*
-  * 1차 오디션 지원자 현황
-  * */
-  Widget secondAuditionStatus() {
-    return Container(
-      margin: EdgeInsets.only(top: 20, left: 15, right: 15),
-      padding: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
-      decoration: BoxDecoration(
-        color: CustomColors.colorBgGrey,
-        borderRadius: CustomStyles.circle7BorderRadius(),
-        border: Border.all(width: 1, color: CustomColors.colorFontLightGrey),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-              margin: EdgeInsets.only(right: 15),
-              child: Column(
-                children: [
-                  Text('1차 합격자', style: CustomStyles.dark14TextStyle()),
-                  Container(
-                    margin: EdgeInsets.only(top: 5),
-                    child: Text(
-                        StringUtils.checkedString(_secondAuditionInfo[
-                            APIConstants.secondAuditionTarget_cnt]),
-                        style: CustomStyles.dark14TextStyle()),
-                  )
-                ],
-              )),
-          Container(
-              margin: EdgeInsets.only(right: 15),
-              child: Column(
-                children: [
-                  Text('제출', style: CustomStyles.dark14TextStyle()),
-                  Container(
-                    margin: EdgeInsets.only(top: 5),
-                    child: Text(
-                        StringUtils.checkedString(_secondAuditionInfo[
-                            APIConstants.secondAuditionTarget_isSubmit_cnt]),
-                        style: CustomStyles.dark14TextStyle()),
-                  )
-                ],
-              )),
-          Container(
-              margin: EdgeInsets.only(right: 15),
-              child: Column(
-                children: [
-                  Text('미제출', style: CustomStyles.dark14TextStyle()),
-                  Container(
-                    margin: EdgeInsets.only(top: 5),
-                    child: Text(
-                        StringUtils.checkedString(_secondAuditionInfo[
-                            APIConstants.secondAuditionTarget_isNotSubmit_cnt]),
-                        style: CustomStyles.dark14TextStyle()),
-                  )
-                ],
-              )),
-          Container(
-              child: Column(
-            children: [
-              Text('합격', style: CustomStyles.dark14TextStyle()),
-              Container(
-                margin: EdgeInsets.only(top: 5),
-                child: Text(
-                    StringUtils.checkedString(_secondAuditionInfo[
-                        APIConstants.secondAuditionTarget_pass_cnt]),
-                    style: CustomStyles.dark14TextStyle()),
-              )
-            ],
-          ))
-        ],
-      ),
-    );
-  }
-
-  /*
-  * 3차 오디션 지원자 현황
-  * */
-  Widget thirdAuditionStatus() {
-    return Container(
-      margin: EdgeInsets.only(top: 20, left: 15, right: 15),
-      padding: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
-      decoration: BoxDecoration(
-        color: CustomColors.colorBgGrey,
-        borderRadius: CustomStyles.circle7BorderRadius(),
-        border: Border.all(width: 1, color: CustomColors.colorFontLightGrey),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-              margin: EdgeInsets.only(right: 15),
-              child: Column(
-                children: [
-                  Text('2차 합격자', style: CustomStyles.dark14TextStyle()),
-                  Container(
-                    margin: EdgeInsets.only(top: 5),
-                    child: Text(
-                        StringUtils.checkedString(_thirdAuditionInfo[
-                            APIConstants.thirdAuditionTarget_cnt]),
-                        style: CustomStyles.dark14TextStyle()),
-                  )
-                ],
-              )),
-          Container(
-              margin: EdgeInsets.only(right: 15),
-              child: Column(
-                children: [
-                  Text('면접완료', style: CustomStyles.dark14TextStyle()),
-                  Container(
-                    margin: EdgeInsets.only(top: 5),
-                    child: Text(
-                        StringUtils.checkedString(_thirdAuditionInfo[
-                            APIConstants
-                                .thirdAuditionTarget_interviewComplete]),
-                        style: CustomStyles.dark14TextStyle()),
-                  )
-                ],
-              )),
-          Container(
-              margin: EdgeInsets.only(right: 15),
-              child: Column(
-                children: [
-                  Text('면접대기', style: CustomStyles.dark14TextStyle()),
-                  Container(
-                    margin: EdgeInsets.only(top: 5),
-                    child: Text(
-                        StringUtils.checkedString(_thirdAuditionInfo[
-                            APIConstants.thirdAuditionTarget_standby]),
-                        style: CustomStyles.dark14TextStyle()),
-                  )
-                ],
-              )),
-          Container(
-              child: Column(
-            children: [
-              Text('합격', style: CustomStyles.dark14TextStyle()),
-              Container(
-                margin: EdgeInsets.only(top: 5),
-                child: Text(
-                    StringUtils.checkedString(_thirdAuditionInfo[
-                        APIConstants.thirdAuditionTarget_finalComplete]),
-                    style: CustomStyles.dark14TextStyle()),
-              )
-            ],
-          ))
-        ],
-      ),
-    );
-  }
-
-  /*
-  * 2차 오디션 오픈하기
-  * */
-  Widget openSecondAudition() {
-    return Container(
-        padding: EdgeInsets.all(15),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Container(
-              margin: EdgeInsets.only(bottom: 15, top: 15),
-              child: Text('2차 오디션 오픈', style: CustomStyles.dark20TextStyle())),
-          Container(
-              child: Text(
-                  '2차 오디션은 대본리딩으로 진행되는 오디션입니다.\n1차 합격자에게 전달할 대본을 등록해 주세요.\n\n합격 시, 3차 오디션을 위한 배우들의 연락처가 공개됩니다.\n오디션 내용 외 부적절한 연락 시 회원탈퇴 처리와 법적인 책임을 질 수 있습니다.',
-                  style: CustomStyles.dark16TextStyle())),
-          Container(
-              margin: EdgeInsets.only(top: 30),
-              alignment: Alignment.centerLeft,
-              child: Text('대본등록', style: CustomStyles.darkBold14TextStyle())),
-          Container(
-            margin: EdgeInsets.only(top: 10),
-            padding: EdgeInsets.only(left: 15, right: 15, top: 12, bottom: 12),
-            decoration: BoxDecoration(
-              borderRadius: CustomStyles.circle7BorderRadius(),
-              color: CustomColors.colorBgGrey,
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('첨부파일 또는 이미지', style: CustomStyles.dark16TextStyle()),
-                GestureDetector(
-                  onTap: () async {
-                    showModalBottomSheet(
-                        elevation: 5,
-                        context: context,
-                        builder: (context) {
-                          return Wrap(
-                              crossAxisAlignment: WrapCrossAlignment.center,
-                              children: [
-                                ListTile(
-                                  title: Text(
-                                    '대본이미지 선택',
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  onTap: () async {
-                                    //
-                                    var status = Platform.isAndroid
-                                        ? await Permission.storage.request()
-                                        : await Permission.photos.request();
-                                    if (status.isGranted) {
-                                      getImageFromGallery();
-                                      Navigator.pop(context);
-                                    } else {
-                                      showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) =>
-                                              CupertinoAlertDialog(
-                                                title: Text('저장공간 접근권한'),
-                                                content: Text(
-                                                    '사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
-                                                actions: <Widget>[
-                                                  CupertinoDialogAction(
-                                                    child: Text('거부'),
-                                                    onPressed: () =>
-                                                        Navigator.of(context)
-                                                            .pop(),
-                                                  ),
-                                                  CupertinoDialogAction(
-                                                    child: Text('허용'),
-                                                    onPressed: () =>
-                                                        openAppSettings(),
-                                                  ),
-                                                ],
-                                              ));
-                                    }
-                                    //
-                                  },
-                                ),
-                                Divider(),
-                                ListTile(
-                                  title: Text(
-                                    '대본파일 선택',
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  onTap: () async {
-                                    //
-                                    var status = Platform.isAndroid
-                                        ? await Permission.storage.request()
-                                        : await Permission.photos.request();
-                                    if (status.isGranted) {
-                                      _pickDocument();
-                                      Navigator.pop(context);
-                                    } else {
-                                      showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) =>
-                                              CupertinoAlertDialog(
-                                                title: Text('저장공간 접근권한'),
-                                                content: Text(
-                                                    '사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
-                                                actions: <Widget>[
-                                                  CupertinoDialogAction(
-                                                    child: Text('거부'),
-                                                    onPressed: () =>
-                                                        Navigator.of(context)
-                                                            .pop(),
-                                                  ),
-                                                  CupertinoDialogAction(
-                                                    child: Text('허용'),
-                                                    onPressed: () =>
-                                                        openAppSettings(),
-                                                  ),
-                                                ],
-                                              ));
-                                    }
-                                    //
-                                  },
-                                ),
-                                Divider(),
-                                ListTile(
-                                    title: Text(
-                                      '취소',
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                    })
-                              ]);
-                        });
-                    //
-                    /*var status = Platform.isAndroid
-                        ? await Permission.storage.request()
-                        : await Permission.photos.request();
-                    if (status.isGranted) {
-                      getImageFromGallery();
-                    } else {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) =>
-                              CupertinoAlertDialog(
-                                title: Text('저장공간 접근권한'),
-                                content: Text(
-                                    '사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
-                                actions: <Widget>[
-                                  CupertinoDialogAction(
-                                    child: Text('거부'),
-                                    onPressed: () =>
-                                        Navigator.of(context).pop(),
-                                  ),
-                                  CupertinoDialogAction(
-                                    child: Text('허용'),
-                                    onPressed: () => openAppSettings(),
-                                  ),
-                                ],
-                              ));
-                    }*/
-                    //
-                  },
-                  child: Text('업로드', style: CustomStyles.blue16TextStyle()),
-                )
-              ],
-            ),
-          ),
-          Visibility(
-              child: Container(
-                  margin: EdgeInsets.only(top: 15),
-                  width: MediaQuery.of(context).size.width,
-                  decoration: BoxDecoration(color: CustomColors.colorWhite),
-                  child: (_scriptFile == null
-                      ? null
-                      : Text(_scriptFile.path))),
-              visible: _scriptFile == null ? false : true),
-          Container(
-              margin: EdgeInsets.only(top: 30),
-              alignment: Alignment.centerLeft,
-              child: Text('마감날짜', style: CustomStyles.darkBold14TextStyle())),
-          GestureDetector(
-            onTap: () {
-              showDatePickerForDday(context, (date) {
-                setState(() {
-                  var _birthY = date.year.toString();
-                  var _birthM = date.month.toString().padLeft(2, '0');
-                  var _birthD = date.day.toString().padLeft(2, '0');
-
-                  _endDate = _birthY + '-' + _birthM + '-' + _birthD;
-                });
-              });
-            },
-            child: Container(
-                height: 48,
-                margin: EdgeInsets.only(top: 10),
-                padding: EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                    borderRadius: CustomStyles.circle7BorderRadius(),
-                    border: Border.all(
-                        width: 1, color: CustomColors.colorFontGrey)),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(right: 10),
-                      child: Icon(Icons.date_range,
-                          color: CustomColors.colorFontTitle),
-                    ),
-                    Text(_endDate, style: CustomStyles.bold14TextStyle()),
-                  ],
-                )),
-          )
+                    style: CustomStyles.dark14TextStyle()))
+          ]))
         ]));
   }
 
   /*
-  * 3차 오디션 오픈하기
+  * 1차 오디션 지원자 리스트
   * */
-  Widget openThirdAudition() {
-    return Container(
-        padding: EdgeInsets.all(15),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Container(
-              margin: EdgeInsets.only(bottom: 15, top: 15),
-              child: Text('3차 오디션 오픈', style: CustomStyles.dark20TextStyle())),
-          Container(
-              child: Text('3차 오디션은 대면 오디션입니다.',
-                  style: CustomStyles.dark16TextStyle()))
-        ]));
-  }
-
-  /*
-  * 1차 오디션 지원자 상태 변경
-  * */
-  Widget updateFirstAuditionApplyState(Map<String, dynamic> _data, int index) {
-    return Container(
-        width: MediaQuery.of(context).size.width / 5,
-        alignment: Alignment.center,
-        child: PopupMenuButton<String>(
-          itemBuilder: (context) {
-            return <String>['대기', '합격', '불합격'].map((value) {
-              return PopupMenuItem(
-                value: value,
-                child: Text(value, style: CustomStyles.dark12TextStyle()),
-              );
-            }).toList();
-          },
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(_data[APIConstants.result_type],
-                  style: CustomStyles.dark12TextStyle()),
-              Icon(Icons.arrow_drop_down),
-            ],
-          ),
-          onSelected: (v) {
-            setState(() {
-              print(v);
-              requestUpdateAuditionResult(
-                  context,
-                  index,
-                  APIConstants.UPD_FAT_INFO,
-                  _data[APIConstants.firstAuditionTarget_seq],
-                  v);
-            });
-          },
-        ));
-  }
-
-  /*
-  * 2차 오디션 지원자 상태 변경
-  * */
-  Widget updateSecondAuditionApplyState(Map<String, dynamic> _data, int index) {
-    return Container(
-        width: MediaQuery.of(context).size.width / 5,
-        alignment: Alignment.center,
-        child: PopupMenuButton<String>(
-          itemBuilder: (context) {
-            return <String>['대기', '합격', '불합격'].map((value) {
-              return PopupMenuItem(
-                value: value,
-                child: Text(value, style: CustomStyles.dark12TextStyle()),
-              );
-            }).toList();
-          },
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(_data[APIConstants.result_type],
-                  style: CustomStyles.dark12TextStyle()),
-              Icon(Icons.arrow_drop_down),
-            ],
-          ),
-          onSelected: (v) {
-            setState(() {
-              print(v);
-              requestUpdateAuditionResult(
-                  context,
-                  index,
-                  APIConstants.UPD_SAT_INFO,
-                  _data[APIConstants.secondAuditionTarget_seq],
-                  v);
-            });
-          },
-        ));
-  }
-
-  /*
-  * 3차 오디션 지원자 상태 변경
-  * */
-  Widget updateThirdAuditionApplyState(Map<String, dynamic> _data, int index) {
-    return Container(
-        width: MediaQuery.of(context).size.width / 5,
-        alignment: Alignment.center,
-        child: PopupMenuButton<String>(
-          itemBuilder: (context) {
-            return <String>['대기', '면접완료', '합격', '불합격'].map((value) {
-              return PopupMenuItem(
-                value: value,
-                child: Text(value, style: CustomStyles.dark12TextStyle()),
-              );
-            }).toList();
-          },
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(_data[APIConstants.result_type],
-                  style: CustomStyles.dark12TextStyle()),
-              Icon(Icons.arrow_drop_down),
-            ],
-          ),
-          onSelected: (v) {
-            setState(() {
-              print(v);
-              requestUpdateAuditionResult(
-                  context,
-                  index,
-                  APIConstants.UPD_TAT_INFO,
-                  _data[APIConstants.thirdAuditionTarget_seq],
-                  v);
-            });
-          },
-        ));
-  }
-
-  /*
-  * 오디션 지원자 리스트
-  * */
-  Widget auditionApplyList() {
-    int _dataCnt = 0;
-
-    switch (_tabIndex) {
-      case 0:
-        _dataCnt = _firstAuditionApplyList.length;
-        break;
-      case 1:
-        _dataCnt = _secondAuditionApplyList.length;
-        break;
-      case 2:
-        _dataCnt = _thirdAuditionApplyList.length;
-        break;
-      case 3:
-        _dataCnt = _auditionResultList.length;
-        break;
-    }
-
+  Widget firstAuditionApplyList() {
     return Container(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      (_tabIndex == 0)
-          ? firstAuditionStatus()
-          : (_tabIndex == 1
-              ? secondAuditionStatus()
-              : (_tabIndex == 2 ? thirdAuditionStatus() : Container())),
+      firstAuditionStatus(),
       Container(
-        margin: EdgeInsets.only(top: 15),
-        child: Divider(
-          color: CustomColors.colorFontGrey,
-          height: 1,
-          thickness: 0.5,
-        ),
-      ),
+          margin: EdgeInsets.only(top: 15),
+          child: Divider(
+              color: CustomColors.colorFontGrey, height: 1, thickness: 0.5)),
       Wrap(children: [
         ListView.separated(
             physics: NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             controller: _scrollController,
-            itemCount: _dataCnt,
+            itemCount: _firstAuditionApplyList.length,
             itemBuilder: (BuildContext context, int index) {
-              Map<String, dynamic> _data = new Map();
-
-              switch (_tabIndex) {
-                case 0:
-                  _data = _firstAuditionApplyList[index];
-                  break;
-                case 1:
-                  _data = _secondAuditionApplyList[index];
-                  break;
-                case 2:
-                  _data = _thirdAuditionApplyList[index];
-                  break;
-                case 3:
-                  _data = _auditionResultList[index];
-                  break;
-              }
+              Map<String, dynamic> _data = _firstAuditionApplyList[index];
+              ;
 
               List<String> _imgUrlArr;
               if (_data[APIConstants.actor_imgs] != null) {
@@ -1039,10 +524,19 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                                               ? ClipRRect(
                                                   borderRadius: CustomStyles
                                                       .circle7BorderRadius(),
-                                                  child: Image.network(
-                                                    _imgUrlArr[0],
-                                                    fit: BoxFit.cover,
-                                                  ))
+                                                  child: CachedNetworkImage(
+                                                      imageUrl: _imgUrlArr[0],
+                                                      fit: BoxFit.cover,
+                                                      errorWidget: (context,
+                                                              url, error) =>
+                                                          ClipRRect(
+                                                              borderRadius:
+                                                                  CustomStyles
+                                                                      .circle7BorderRadius(),
+                                                              child: Container(
+                                                                color: CustomColors
+                                                                    .colorBgGrey,
+                                                              ))))
                                               : ClipRRect(
                                                   borderRadius: CustomStyles
                                                       .circle7BorderRadius()),
@@ -1060,55 +554,105 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                                               ? ClipRRect(
                                                   borderRadius: CustomStyles
                                                       .circle7BorderRadius(),
-                                                  child: Image.network(
-                                                      _imgUrlArr[1],
-                                                      fit: BoxFit.cover))
+                                                  child: CachedNetworkImage(
+                                                      imageUrl: _imgUrlArr[1],
+                                                      fit: BoxFit.cover,
+                                                      errorWidget: (context,
+                                                              url, error) =>
+                                                          ClipRRect(
+                                                              borderRadius:
+                                                                  CustomStyles
+                                                                      .circle7BorderRadius(),
+                                                              child: Container(
+                                                                color: CustomColors
+                                                                    .colorBgGrey,
+                                                              ))))
                                               : ClipRRect(
                                                   borderRadius: CustomStyles
                                                       .circle7BorderRadius()),
                                         ),
                                         Container(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              5,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              5,
-                                          child: (_imgUrlArr.length > 2)
-                                              ? ClipRRect(
-                                                  borderRadius: CustomStyles
-                                                      .circle7BorderRadius(),
-                                                  child: Image.network(
-                                                      _imgUrlArr[2],
-                                                      fit: BoxFit.cover))
-                                              : ClipRRect(
-                                                  borderRadius: CustomStyles
-                                                      .circle7BorderRadius()),
-                                        ),
-                                        _tabIndex == 0
-                                            ? updateFirstAuditionApplyState(
-                                                _data, index)
-                                            : (_tabIndex == 1
-                                                ? updateSecondAuditionApplyState(
-                                                    _data, index)
-                                                : (_tabIndex == 2
-                                                    ? updateThirdAuditionApplyState(
-                                                        _data, index)
-                                                    : Container(
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width /
-                                                            5,
-                                                        alignment:
-                                                            Alignment.center,
-                                                        child: Text(
-                                                          "최종합격",
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                5,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                5,
+                                            child: (_imgUrlArr.length > 2)
+                                                ? ClipRRect(
+                                                    borderRadius: CustomStyles
+                                                        .circle7BorderRadius(),
+                                                    child: CachedNetworkImage(
+                                                        imageUrl: _imgUrlArr[2],
+                                                        fit: BoxFit.cover,
+                                                        errorWidget: (context,
+                                                                url, error) =>
+                                                            ClipRRect(
+                                                                borderRadius:
+                                                                    CustomStyles
+                                                                        .circle7BorderRadius(),
+                                                                child:
+                                                                    Container(
+                                                                  color: CustomColors
+                                                                      .colorBgGrey,
+                                                                ))))
+                                                : ClipRRect(
+                                                    borderRadius: CustomStyles
+                                                        .circle7BorderRadius())),
+                                        Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                5,
+                                            alignment: Alignment.center,
+                                            child: PopupMenuButton<String>(
+                                                itemBuilder: (context) {
+                                                  return <String>[
+                                                    '대기',
+                                                    '합격',
+                                                    '불합격'
+                                                  ].map((value) {
+                                                    return PopupMenuItem(
+                                                        value: value,
+                                                        child: Text(value,
+                                                            style: CustomStyles
+                                                                .dark12TextStyle()));
+                                                  }).toList();
+                                                },
+                                                child: Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: <Widget>[
+                                                      Text(
+                                                          _data[APIConstants
+                                                              .result_type],
                                                           style: CustomStyles
-                                                              .normal16TextStyle(),
-                                                        ))))
+                                                              .dark12TextStyle()),
+                                                      Icon(
+                                                          Icons.arrow_drop_down)
+                                                    ]),
+                                                onSelected: (v) {
+                                                  setState(() {
+                                                    if (_firstAuditionInfo[
+                                                            APIConstants
+                                                                .isOpenSecondAudition] ==
+                                                        0) {
+                                                      requestUpdateAuditionResult(
+                                                          context,
+                                                          index,
+                                                          APIConstants
+                                                              .UPD_FAT_INFO,
+                                                          _data[APIConstants
+                                                              .firstAuditionTarget_seq],
+                                                          v);
+                                                    } else {
+                                                      showSnackBar(context,
+                                                          '2차 오디션이 오픈된 상태에서는 1차 오디션 상태 수정이 불가능합니다.');
+                                                    }
+                                                  });
+                                                }))
                                       ]),
                                   Container(
                                       margin: EdgeInsets.only(top: 10, left: 5),
@@ -1127,33 +671,977 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                 color: CustomColors.colorFontLightGrey,
               );
             })
-      ])
+      ]),
+      Divider()
     ]));
   }
 
-  Widget tabAuditionApplyList() {
-    switch (_tabIndex) {
-      case 0:
-        return auditionApplyList();
-        break;
-      case 1:
-        if (_secondAuditionInfo != null) {
-          return auditionApplyList();
-        } else {
-          return openSecondAudition();
-        }
-        break;
-      case 2:
-        if (_thirdAuditionInfo != null) {
-          return auditionApplyList();
-        } else {
-          return openThirdAudition();
-        }
-        break;
-      case 3:
-        return auditionApplyList();
-        break;
-    }
+  /*
+  * 2차 오디션 오픈하기
+  * */
+  Widget openSecondAudition() {
+    return Container(
+        padding: EdgeInsets.all(15),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Container(
+              margin: EdgeInsets.only(bottom: 15, top: 15),
+              child: Text('2차 오디션 오픈', style: CustomStyles.dark20TextStyle())),
+          Container(
+              child: Text(
+                  '2차 오디션은 대본리딩으로 진행되는 오디션입니다.\n1차 합격자에게 전달할 대본을 등록해 주세요.\n\n합격 시, 3차 오디션을 위한 배우들의 연락처가 공개됩니다.\n오디션 내용 외 부적절한 연락 시 회원탈퇴 처리와 법적인 책임을 질 수 있습니다.',
+                  style: CustomStyles.dark16TextStyle())),
+          Container(
+              margin: EdgeInsets.only(top: 30),
+              alignment: Alignment.centerLeft,
+              child: Text('대본등록', style: CustomStyles.darkBold14TextStyle())),
+          Container(
+              margin: EdgeInsets.only(top: 10),
+              padding:
+                  EdgeInsets.only(left: 15, right: 15, top: 12, bottom: 12),
+              decoration: BoxDecoration(
+                borderRadius: CustomStyles.circle7BorderRadius(),
+                color: CustomColors.colorBgGrey,
+              ),
+              child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('첨부파일 또는 이미지', style: CustomStyles.dark16TextStyle()),
+                    GestureDetector(
+                        onTap: () async {
+                          showModalBottomSheet(
+                              elevation: 5,
+                              context: context,
+                              builder: (context) {
+                                return Wrap(
+                                    crossAxisAlignment:
+                                        WrapCrossAlignment.center,
+                                    children: [
+                                      ListTile(
+                                          title: Text(
+                                            '대본이미지 선택',
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          onTap: () async {
+                                            var status = Platform.isAndroid
+                                                ? await Permission.storage
+                                                    .request()
+                                                : await Permission.photos
+                                                    .request();
+                                            if (status.isGranted) {
+                                              getImageFromGallery();
+                                              Navigator.pop(context);
+                                            } else {
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (BuildContext
+                                                          context) =>
+                                                      CupertinoAlertDialog(
+                                                          title:
+                                                              Text('저장공간 접근권한'),
+                                                          content: Text(
+                                                              '사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
+                                                          actions: <Widget>[
+                                                            CupertinoDialogAction(
+                                                              child: Text('거부'),
+                                                              onPressed: () =>
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .pop(),
+                                                            ),
+                                                            CupertinoDialogAction(
+                                                                child:
+                                                                    Text('허용'),
+                                                                onPressed: () =>
+                                                                    openAppSettings())
+                                                          ]));
+                                            }
+                                          }),
+                                      Divider(),
+                                      ListTile(
+                                          title: Text(
+                                            '대본파일 선택',
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          onTap: () async {
+                                            var status = Platform.isAndroid
+                                                ? await Permission.storage
+                                                    .request()
+                                                : await Permission.photos
+                                                    .request();
+                                            if (status.isGranted) {
+                                              _pickDocument();
+                                              Navigator.pop(context);
+                                            } else {
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (BuildContext
+                                                          context) =>
+                                                      CupertinoAlertDialog(
+                                                        title:
+                                                            Text('저장공간 접근권한'),
+                                                        content: Text(
+                                                            '사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
+                                                        actions: <Widget>[
+                                                          CupertinoDialogAction(
+                                                            child: Text('거부'),
+                                                            onPressed: () =>
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop(),
+                                                          ),
+                                                          CupertinoDialogAction(
+                                                            child: Text('허용'),
+                                                            onPressed: () =>
+                                                                openAppSettings(),
+                                                          ),
+                                                        ],
+                                                      ));
+                                            }
+                                          }),
+                                      Divider(),
+                                      ListTile(
+                                          title: Text(
+                                            '취소',
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                          })
+                                    ]);
+                              });
+                        },
+                        child:
+                            Text('업로드', style: CustomStyles.blue16TextStyle()))
+                  ])),
+          Visibility(
+              child: Container(
+                  margin: EdgeInsets.only(top: 15),
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(color: CustomColors.colorWhite),
+                  child: (_scriptFile == null ? null : Text(_scriptFile.path))),
+              visible: _scriptFile == null ? false : true),
+          Container(
+              margin: EdgeInsets.only(top: 30),
+              alignment: Alignment.centerLeft,
+              child: Text('마감날짜', style: CustomStyles.darkBold14TextStyle())),
+          GestureDetector(
+            onTap: () {
+              showDatePickerForDday(context, (date) {
+                setState(() {
+                  var _birthY = date.year.toString();
+                  var _birthM = date.month.toString().padLeft(2, '0');
+                  var _birthD = date.day.toString().padLeft(2, '0');
+
+                  _endDate = _birthY + '-' + _birthM + '-' + _birthD;
+                });
+              });
+            },
+            child: Container(
+                height: 48,
+                margin: EdgeInsets.only(top: 10),
+                padding: EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                    borderRadius: CustomStyles.circle7BorderRadius(),
+                    border: Border.all(
+                        width: 1, color: CustomColors.colorFontGrey)),
+                child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(right: 10),
+                        child: Icon(Icons.date_range,
+                            color: CustomColors.colorFontTitle),
+                      ),
+                      Text(_endDate, style: CustomStyles.bold14TextStyle())
+                    ])),
+          )
+        ]));
+  }
+
+  /*
+  * 2차 오디션 지원자 현황
+  * */
+  Widget secondAuditionStatus() {
+    return Container(
+        margin: EdgeInsets.only(top: 20, left: 15, right: 15),
+        padding: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
+        decoration: BoxDecoration(
+            color: CustomColors.colorBgGrey,
+            borderRadius: CustomStyles.circle7BorderRadius(),
+            border:
+                Border.all(width: 1, color: CustomColors.colorFontLightGrey)),
+        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Container(
+              margin: EdgeInsets.only(right: 15),
+              child: Column(children: [
+                Text('1차 합격자', style: CustomStyles.dark14TextStyle()),
+                Container(
+                    margin: EdgeInsets.only(top: 5),
+                    child: Text(
+                        StringUtils.checkedString(_secondAuditionInfo[
+                            APIConstants.secondAuditionTarget_cnt]),
+                        style: CustomStyles.dark14TextStyle()))
+              ])),
+          Container(
+              margin: EdgeInsets.only(right: 15),
+              child: Column(children: [
+                Text('제출', style: CustomStyles.dark14TextStyle()),
+                Container(
+                    margin: EdgeInsets.only(top: 5),
+                    child: Text(
+                        StringUtils.checkedString(_secondAuditionInfo[
+                            APIConstants.secondAuditionTarget_isSubmit_cnt]),
+                        style: CustomStyles.dark14TextStyle()))
+              ])),
+          Container(
+              margin: EdgeInsets.only(right: 15),
+              child: Column(children: [
+                Text('미제출', style: CustomStyles.dark14TextStyle()),
+                Container(
+                    margin: EdgeInsets.only(top: 5),
+                    child: Text(
+                        StringUtils.checkedString(_secondAuditionInfo[
+                            APIConstants.secondAuditionTarget_isNotSubmit_cnt]),
+                        style: CustomStyles.dark14TextStyle()))
+              ])),
+          Container(
+              child: Column(children: [
+            Text('합격', style: CustomStyles.dark14TextStyle()),
+            Container(
+                margin: EdgeInsets.only(top: 5),
+                child: Text(
+                    StringUtils.checkedString(_secondAuditionInfo[
+                        APIConstants.secondAuditionTarget_pass_cnt]),
+                    style: CustomStyles.dark14TextStyle()))
+          ]))
+        ]));
+  }
+
+  /*
+  * 2차 오디션 지원자 리스트
+  * */
+  Widget secondAuditionApplyList() {
+    int _dataCnt = _secondAuditionApplyList.length;
+
+    return Container(
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      secondAuditionStatus(),
+      Container(
+          margin: EdgeInsets.only(top: 15),
+          child: Divider(
+              color: CustomColors.colorFontGrey, height: 1, thickness: 0.5)),
+      Wrap(children: [
+        ListView.separated(
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            controller: _scrollController,
+            itemCount: _dataCnt,
+            itemBuilder: (BuildContext context, int index) {
+              Map<String, dynamic> _data = _secondAuditionApplyList[index];
+
+              List<String> _imgUrlArr;
+              if (_data[APIConstants.actor_imgs] != null) {
+                _imgUrlArr =
+                    _data[APIConstants.actor_imgs].toString().split(',');
+              } else {
+                _imgUrlArr = [];
+              }
+
+              return Container(
+                  alignment: Alignment.center,
+                  padding:
+                      EdgeInsets.only(left: 16, right: 0, top: 10, bottom: 10),
+                  child: GestureDetector(
+                      onTap: () {
+                        addView(
+                            context,
+                            AuditionApplyProfile(
+                              applySeq: _data[APIConstants.auditionApply_seq],
+                              isProduction: true,
+                            ));
+                      },
+                      child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                                flex: 1,
+                                child: Column(children: [
+                                  Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              5,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              5,
+                                          child: (_imgUrlArr.length > 0)
+                                              ? ClipRRect(
+                                                  borderRadius: CustomStyles
+                                                      .circle7BorderRadius(),
+                                                  child: CachedNetworkImage(
+                                                      imageUrl: _imgUrlArr[0],
+                                                      fit: BoxFit.cover,
+                                                      errorWidget: (context,
+                                                              url, error) =>
+                                                          ClipRRect(
+                                                              borderRadius:
+                                                                  CustomStyles
+                                                                      .circle7BorderRadius(),
+                                                              child: Container(
+                                                                color: CustomColors
+                                                                    .colorBgGrey,
+                                                              ))))
+                                              : ClipRRect(
+                                                  borderRadius: CustomStyles
+                                                      .circle7BorderRadius()),
+                                        ),
+                                        Container(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              5,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              5,
+                                          child: (_imgUrlArr.length > 1)
+                                              ? ClipRRect(
+                                                  borderRadius: CustomStyles
+                                                      .circle7BorderRadius(),
+                                                  child: CachedNetworkImage(
+                                                      imageUrl: _imgUrlArr[1],
+                                                      fit: BoxFit.cover,
+                                                      errorWidget: (context,
+                                                              url, error) =>
+                                                          ClipRRect(
+                                                              borderRadius:
+                                                                  CustomStyles
+                                                                      .circle7BorderRadius(),
+                                                              child: Container(
+                                                                color: CustomColors
+                                                                    .colorBgGrey,
+                                                              ))))
+                                              : ClipRRect(
+                                                  borderRadius: CustomStyles
+                                                      .circle7BorderRadius()),
+                                        ),
+                                        Container(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                5,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                5,
+                                            child: (_imgUrlArr.length > 2)
+                                                ? ClipRRect(
+                                                    borderRadius: CustomStyles
+                                                        .circle7BorderRadius(),
+                                                    child: CachedNetworkImage(
+                                                        imageUrl: _imgUrlArr[2],
+                                                        fit: BoxFit.cover,
+                                                        errorWidget: (context,
+                                                                url, error) =>
+                                                            ClipRRect(
+                                                                borderRadius:
+                                                                    CustomStyles
+                                                                        .circle7BorderRadius(),
+                                                                child:
+                                                                    Container(
+                                                                  color: CustomColors
+                                                                      .colorBgGrey,
+                                                                ))))
+                                                : ClipRRect(
+                                                    borderRadius: CustomStyles
+                                                        .circle7BorderRadius())),
+                                        Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                5,
+                                            alignment: Alignment.center,
+                                            child: PopupMenuButton<String>(
+                                                itemBuilder: (context) {
+                                                  return <String>[
+                                                    '대기',
+                                                    '합격',
+                                                    '불합격'
+                                                  ].map((value) {
+                                                    return PopupMenuItem(
+                                                      value: value,
+                                                      child: Text(value,
+                                                          style: CustomStyles
+                                                              .dark12TextStyle()),
+                                                    );
+                                                  }).toList();
+                                                },
+                                                child: Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: <Widget>[
+                                                      Text(
+                                                          _data[APIConstants
+                                                              .result_type],
+                                                          style: CustomStyles
+                                                              .dark12TextStyle()),
+                                                      Icon(
+                                                          Icons.arrow_drop_down)
+                                                    ]),
+                                                onSelected: (v) {
+                                                  setState(() {
+                                                    if (_firstAuditionInfo[
+                                                            APIConstants
+                                                                .isOpenThirdAudition] ==
+                                                        0) {
+                                                      requestUpdateAuditionResult(
+                                                          context,
+                                                          index,
+                                                          APIConstants
+                                                              .UPD_SAT_INFO,
+                                                          _data[APIConstants
+                                                              .secondAuditionTarget_seq],
+                                                          v);
+                                                    } else {
+                                                      showSnackBar(context,
+                                                          '3차 오디션이 오픈된 상태에서는 2차 오디션 상태 수정이 불가능합니다.');
+                                                    }
+                                                  });
+                                                }))
+                                      ]),
+                                  Container(
+                                      margin: EdgeInsets.only(top: 10, left: 5),
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        StringUtils.checkedString(
+                                            _data[APIConstants.actor_name]),
+                                        style: CustomStyles.normal16TextStyle(),
+                                      ))
+                                ]))
+                          ])));
+            },
+            separatorBuilder: (context, index) {
+              return Divider(
+                height: 0.1,
+                color: CustomColors.colorFontLightGrey,
+              );
+            })
+      ]),
+      Divider()
+    ]));
+  }
+
+  /*
+  * 3차 오디션 오픈하기
+  * */
+  Widget openThirdAudition() {
+    return Container(
+        padding: EdgeInsets.all(15),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Container(
+              margin: EdgeInsets.only(bottom: 15, top: 15),
+              child: Text('3차 오디션 오픈', style: CustomStyles.dark20TextStyle())),
+          Container(
+              child: Text('3차 오디션은 대면 오디션입니다.',
+                  style: CustomStyles.dark16TextStyle()))
+        ]));
+  }
+
+  /*
+  * 3차 오디션 지원자 현황
+  * */
+  Widget thirdAuditionStatus() {
+    return Container(
+        margin: EdgeInsets.only(top: 20, left: 15, right: 15),
+        padding: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
+        decoration: BoxDecoration(
+          color: CustomColors.colorBgGrey,
+          borderRadius: CustomStyles.circle7BorderRadius(),
+          border: Border.all(width: 1, color: CustomColors.colorFontLightGrey),
+        ),
+        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Container(
+              margin: EdgeInsets.only(right: 15),
+              child: Column(children: [
+                Text('2차 합격자', style: CustomStyles.dark14TextStyle()),
+                Container(
+                    margin: EdgeInsets.only(top: 5),
+                    child: Text(
+                        StringUtils.checkedString(_thirdAuditionInfo[
+                            APIConstants.thirdAuditionTarget_cnt]),
+                        style: CustomStyles.dark14TextStyle()))
+              ])),
+          Container(
+              margin: EdgeInsets.only(right: 15),
+              child: Column(children: [
+                Text('면접완료', style: CustomStyles.dark14TextStyle()),
+                Container(
+                    margin: EdgeInsets.only(top: 5),
+                    child: Text(
+                        StringUtils.checkedString(_thirdAuditionInfo[
+                            APIConstants
+                                .thirdAuditionTarget_interviewComplete]),
+                        style: CustomStyles.dark14TextStyle()))
+              ])),
+          Container(
+              margin: EdgeInsets.only(right: 15),
+              child: Column(children: [
+                Text('면접대기', style: CustomStyles.dark14TextStyle()),
+                Container(
+                    margin: EdgeInsets.only(top: 5),
+                    child: Text(
+                        StringUtils.checkedString(_thirdAuditionInfo[
+                            APIConstants.thirdAuditionTarget_standby]),
+                        style: CustomStyles.dark14TextStyle()))
+              ])),
+          Container(
+              child: Column(children: [
+            Text('합격', style: CustomStyles.dark14TextStyle()),
+            Container(
+                margin: EdgeInsets.only(top: 5),
+                child: Text(
+                    StringUtils.checkedString(_thirdAuditionInfo[
+                        APIConstants.thirdAuditionTarget_finalComplete]),
+                    style: CustomStyles.dark14TextStyle()))
+          ]))
+        ]));
+  }
+
+  /*
+  * 3차 오디션 지원자 리스트
+  * */
+  Widget thirdAuditionApplyList() {
+    int _dataCnt = _thirdAuditionApplyList.length;
+
+    return Container(
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      thirdAuditionStatus(),
+      Container(
+          margin: EdgeInsets.only(top: 15),
+          child: Divider(
+              color: CustomColors.colorFontGrey, height: 1, thickness: 0.5)),
+      Wrap(children: [
+        ListView.separated(
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            controller: _scrollController,
+            itemCount: _dataCnt,
+            itemBuilder: (BuildContext context, int index) {
+              Map<String, dynamic> _data = _thirdAuditionApplyList[index];
+
+              List<String> _imgUrlArr;
+              if (_data[APIConstants.actor_imgs] != null) {
+                _imgUrlArr =
+                    _data[APIConstants.actor_imgs].toString().split(',');
+              } else {
+                _imgUrlArr = [];
+              }
+
+              return Container(
+                  alignment: Alignment.center,
+                  padding:
+                      EdgeInsets.only(left: 16, right: 0, top: 10, bottom: 10),
+                  child: GestureDetector(
+                      onTap: () {
+                        addView(
+                            context,
+                            AuditionApplyProfile(
+                              applySeq: _data[APIConstants.auditionApply_seq],
+                              isProduction: true,
+                            ));
+                      },
+                      child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                                flex: 1,
+                                child: Column(children: [
+                                  Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              5,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              5,
+                                          child: (_imgUrlArr.length > 0)
+                                              ? ClipRRect(
+                                                  borderRadius: CustomStyles
+                                                      .circle7BorderRadius(),
+                                                  child: CachedNetworkImage(
+                                                      imageUrl: _imgUrlArr[0],
+                                                      fit: BoxFit.cover,
+                                                      errorWidget: (context,
+                                                              url, error) =>
+                                                          ClipRRect(
+                                                              borderRadius:
+                                                                  CustomStyles
+                                                                      .circle7BorderRadius(),
+                                                              child: Container(
+                                                                color: CustomColors
+                                                                    .colorBgGrey,
+                                                              ))))
+                                              : ClipRRect(
+                                                  borderRadius: CustomStyles
+                                                      .circle7BorderRadius()),
+                                        ),
+                                        Container(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              5,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              5,
+                                          child: (_imgUrlArr.length > 1)
+                                              ? ClipRRect(
+                                                  borderRadius: CustomStyles
+                                                      .circle7BorderRadius(),
+                                                  child: CachedNetworkImage(
+                                                      imageUrl: _imgUrlArr[1],
+                                                      fit: BoxFit.cover,
+                                                      errorWidget: (context,
+                                                              url, error) =>
+                                                          ClipRRect(
+                                                              borderRadius:
+                                                                  CustomStyles
+                                                                      .circle7BorderRadius(),
+                                                              child: Container(
+                                                                color: CustomColors
+                                                                    .colorBgGrey,
+                                                              ))))
+                                              : ClipRRect(
+                                                  borderRadius: CustomStyles
+                                                      .circle7BorderRadius()),
+                                        ),
+                                        Container(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                5,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                5,
+                                            child: (_imgUrlArr.length > 2)
+                                                ? ClipRRect(
+                                                    borderRadius: CustomStyles
+                                                        .circle7BorderRadius(),
+                                                    child: CachedNetworkImage(
+                                                        imageUrl: _imgUrlArr[2],
+                                                        fit: BoxFit.cover,
+                                                        errorWidget: (context,
+                                                                url, error) =>
+                                                            ClipRRect(
+                                                                borderRadius:
+                                                                    CustomStyles
+                                                                        .circle7BorderRadius(),
+                                                                child:
+                                                                    Container(
+                                                                  color: CustomColors
+                                                                      .colorBgGrey,
+                                                                ))))
+                                                : ClipRRect(
+                                                    borderRadius: CustomStyles
+                                                        .circle7BorderRadius())),
+                                        Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                5,
+                                            alignment: Alignment.center,
+                                            child: PopupMenuButton<String>(
+                                                itemBuilder: (context) {
+                                                  return <String>[
+                                                    '대기',
+                                                    '면접완료',
+                                                    '합격',
+                                                    '불합격'
+                                                  ].map((value) {
+                                                    return PopupMenuItem(
+                                                      value: value,
+                                                      child: Text(value,
+                                                          style: CustomStyles
+                                                              .dark12TextStyle()),
+                                                    );
+                                                  }).toList();
+                                                },
+                                                child: Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: <Widget>[
+                                                      Text(
+                                                          _data[APIConstants
+                                                              .result_type],
+                                                          style: CustomStyles
+                                                              .dark12TextStyle()),
+                                                      Icon(
+                                                          Icons.arrow_drop_down)
+                                                    ]),
+                                                onSelected: (v) {
+                                                  setState(() {
+                                                    if (_firstAuditionInfo[
+                                                            APIConstants
+                                                                .isAuditionQuit] ==
+                                                        0) {
+                                                      requestUpdateAuditionResult(
+                                                          context,
+                                                          index,
+                                                          APIConstants
+                                                              .UPD_TAT_INFO,
+                                                          _data[APIConstants
+                                                              .thirdAuditionTarget_seq],
+                                                          v);
+                                                    } else {
+                                                      showSnackBar(context,
+                                                          '마감된 오디션은 수정할 수 없습니다.');
+                                                    }
+                                                  });
+                                                }))
+                                      ]),
+                                  Container(
+                                      margin: EdgeInsets.only(top: 10, left: 5),
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        StringUtils.checkedString(
+                                            _data[APIConstants.actor_name]),
+                                        style: CustomStyles.normal16TextStyle(),
+                                      ))
+                                ]))
+                          ])));
+            },
+            separatorBuilder: (context, index) {
+              return Divider(
+                height: 0.1,
+                color: CustomColors.colorFontLightGrey,
+              );
+            })
+      ]),
+      Divider()
+    ]));
+  }
+
+  /*
+  * 최종 합격자 리스트
+  * */
+  Widget auditionResultList() {
+    int _dataCnt = _auditionResultList.length;
+
+    return Container(
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Container(
+          margin: EdgeInsets.only(top: 15),
+          child: Divider(
+              color: CustomColors.colorFontGrey, height: 1, thickness: 0.5)),
+      Wrap(children: [
+        ListView.separated(
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            controller: _scrollController,
+            itemCount: _dataCnt,
+            itemBuilder: (BuildContext context, int index) {
+              Map<String, dynamic> _data = _auditionResultList[index];
+
+              List<String> _imgUrlArr;
+              if (_data[APIConstants.actor_imgs] != null) {
+                _imgUrlArr =
+                    _data[APIConstants.actor_imgs].toString().split(',');
+              } else {
+                _imgUrlArr = [];
+              }
+
+              return Container(
+                  alignment: Alignment.center,
+                  padding:
+                      EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 10),
+                  child: GestureDetector(
+                      onTap: () {
+                        addView(
+                            context,
+                            AuditionApplyProfile(
+                              applySeq: _data[APIConstants.auditionApply_seq],
+                              isProduction: true,
+                            ));
+                      },
+                      child: Column(children: [
+                        Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                  flex: 1,
+                                  child: Column(children: [
+                                    Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Container(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                5,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                5,
+                                            child: (_imgUrlArr.length > 0)
+                                                ? ClipRRect(
+                                                    borderRadius: CustomStyles
+                                                        .circle7BorderRadius(),
+                                                    child: CachedNetworkImage(
+                                                        imageUrl: _imgUrlArr[0],
+                                                        fit: BoxFit.cover,
+                                                        errorWidget: (context,
+                                                                url, error) =>
+                                                            ClipRRect(
+                                                                borderRadius:
+                                                                    CustomStyles
+                                                                        .circle7BorderRadius(),
+                                                                child:
+                                                                    Container(
+                                                                  color: CustomColors
+                                                                      .colorBgGrey,
+                                                                ))))
+                                                : ClipRRect(
+                                                    borderRadius: CustomStyles
+                                                        .circle7BorderRadius()),
+                                          ),
+                                          Container(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                5,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                5,
+                                            child: (_imgUrlArr.length > 1)
+                                                ? ClipRRect(
+                                                    borderRadius: CustomStyles
+                                                        .circle7BorderRadius(),
+                                                    child: CachedNetworkImage(
+                                                        imageUrl: _imgUrlArr[1],
+                                                        fit: BoxFit.cover,
+                                                        errorWidget: (context,
+                                                                url, error) =>
+                                                            ClipRRect(
+                                                                borderRadius:
+                                                                    CustomStyles
+                                                                        .circle7BorderRadius(),
+                                                                child:
+                                                                    Container(
+                                                                  color: CustomColors
+                                                                      .colorBgGrey,
+                                                                ))))
+                                                : ClipRRect(
+                                                    borderRadius: CustomStyles
+                                                        .circle7BorderRadius()),
+                                          ),
+                                          Container(
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  5,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  5,
+                                              child: (_imgUrlArr.length > 2)
+                                                  ? ClipRRect(
+                                                      borderRadius: CustomStyles
+                                                          .circle7BorderRadius(),
+                                                      child: CachedNetworkImage(
+                                                          imageUrl:
+                                                              _imgUrlArr[2],
+                                                          fit: BoxFit.cover,
+                                                          errorWidget: (context,
+                                                                  url, error) =>
+                                                              ClipRRect(
+                                                                  borderRadius:
+                                                                      CustomStyles
+                                                                          .circle7BorderRadius(),
+                                                                  child:
+                                                                      Container(
+                                                                    color: CustomColors
+                                                                        .colorBgGrey,
+                                                                  ))))
+                                                  : ClipRRect(
+                                                      borderRadius: CustomStyles
+                                                          .circle7BorderRadius())),
+                                          Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  5,
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                "계약대기",
+                                                style: CustomStyles
+                                                    .normal16TextStyle(),
+                                              ))
+                                        ]),
+                                    Container(
+                                        margin:
+                                            EdgeInsets.only(top: 10, left: 5),
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          StringUtils.checkedString(
+                                              _data[APIConstants.actor_name]),
+                                          style:
+                                              CustomStyles.normal16TextStyle(),
+                                        ))
+                                  ]))
+                            ]),
+                        Container(
+                            margin: EdgeInsets.only(top: 20),
+                            alignment: Alignment.centerLeft,
+                            child: Text('1회당 출연료',
+                                style: CustomStyles.normal14TextStyle())),
+                        Container(
+                            padding: EdgeInsets.only(top: 10, bottom: 10),
+                            child: Row(children: [
+                              Expanded(
+                                  flex: 7,
+                                  child: Container(
+                                      child: CustomStyles
+                                          .greyBorderRound7TextFieldWithOption(
+                                              new TextEditingController(),
+                                              TextInputType.number,
+                                              ''))),
+                              Expanded(
+                                  flex: 0,
+                                  child: Container(
+                                      height: 48,
+                                      margin: EdgeInsets.only(left: 5),
+                                      child:
+                                          CustomStyles.greyBGRound7ButtonStyle(
+                                              '저장', () {
+                                        // 인증번호 받기 버튼 클릭
+                                      })))
+                            ])),
+                      ])));
+            },
+            separatorBuilder: (context, index) {
+              return Divider(
+                height: 0.1,
+                color: CustomColors.colorFontLightGrey,
+              );
+            })
+      ]),
+      Divider()
+    ]));
   }
 
   /*
@@ -1169,120 +1657,126 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
               Navigator.pop(context);
             }),
             body: Builder(builder: (context) {
-              return Stack(
-                children: [
-                  Container(
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                        Expanded(
-                            flex: 1,
-                            child: SingleChildScrollView(
-                                child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                  Container(
-                                      margin: EdgeInsets.only(
-                                          top: 30.0, bottom: 10),
-                                      padding: EdgeInsets.only(
-                                          left: 16, right: 16, bottom: 15),
-                                      child: Row(
+              return Stack(children: [
+                Container(
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                      Expanded(
+                          flex: 1,
+                          child: SingleChildScrollView(
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                Container(
+                                    margin:
+                                        EdgeInsets.only(top: 30.0, bottom: 10),
+                                    padding: EdgeInsets.only(
+                                        left: 16, right: 16, bottom: 15),
+                                    child: Row(
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.end,
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Expanded(
-                                            flex: 1,
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              children: [
-                                                Container(
-                                                    child: Text(
-                                                        StringUtils.checkedString(
-                                                            _firstAuditionInfo[
-                                                                APIConstants
-                                                                    .project_name]),
-                                                        style: CustomStyles
-                                                            .darkBold10TextStyle())),
-                                                Container(
-                                                    margin:
-                                                        EdgeInsets.only(top: 5),
-                                                    child: Text(
-                                                        StringUtils.checkedString(
-                                                            _firstAuditionInfo[
-                                                                APIConstants
-                                                                    .casting_name]),
-                                                        style: CustomStyles
-                                                            .dark20TextStyle()))
-                                              ],
-                                            ),
-                                          ),
-                                          /*Expanded(
-                                      flex: 0,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Container(
-                                              child: Text('1차 오디션 진행중',
-                                                  style: CustomStyles
-                                                      .dark12TextStyle())),
-                                          Container(
-                                              margin: EdgeInsets.only(top: 5),
-                                              child: Text('D-32',
-                                                  style: CustomStyles
-                                                      .darkBold16TextStyle()))
-                                        ],
-                                      ),
-                                    )*/
-                                        ],
-                                      )),
-                                  Container(
-                                      color: CustomColors.colorWhite,
-                                      child: TabBar(
-                                          controller: _tabController,
-                                          indicatorPadding: EdgeInsets.zero,
-                                          labelStyle:
-                                              CustomStyles.bold14TextStyle(),
-                                          unselectedLabelStyle:
-                                              CustomStyles.normal14TextStyle(),
-                                          tabs: [
-                                            Tab(text: '1차 오디션'),
-                                            Tab(text: '2차 오디션'),
-                                            Tab(text: '3차 오디션'),
-                                            Tab(text: '최종합격')
-                                          ])),
-                                  Expanded(
-                                    flex: 0,
-                                    child: [
-                                      tabAuditionApplyList(),
-                                      tabAuditionApplyList(),
-                                      tabAuditionApplyList(),
-                                      tabAuditionApplyList()
-                                    ][_tabIndex],
-                                  )
-                                ]))),
-                        Visibility(
-                          child: Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: 55,
-                              child: CustomStyles.blueBGSquareButtonStyle(
-                                  '2차 오디션 오픈하기', () {
-                                setState(() {
-                                  if (checkValidate(context)) {
-                                    requestOpenSecondAudition(context);
-                                  }
-                                });
-                              })),
-                          visible:
-                              (_tabIndex == 1 && _secondAuditionInfo == null)
-                                  ? true
-                                  : false,
-                        ),
-                        Visibility(
+                                              flex: 1,
+                                              child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  children: [
+                                                    Container(
+                                                        child: Text(
+                                                            StringUtils.checkedString(
+                                                                _firstAuditionInfo[
+                                                                    APIConstants
+                                                                        .project_name]),
+                                                            style: CustomStyles
+                                                                .darkBold10TextStyle())),
+                                                    Container(
+                                                        margin: EdgeInsets.only(
+                                                            top: 5),
+                                                        child: Text(
+                                                            StringUtils.checkedString(
+                                                                _firstAuditionInfo[
+                                                                    APIConstants
+                                                                        .casting_name]),
+                                                            style: CustomStyles
+                                                                .dark20TextStyle()))
+                                                  ])),
+                                          Visibility(
+                                              child: Expanded(
+                                                  flex: 0,
+                                                  child: Container(
+                                                      child: CustomStyles
+                                                          .darkBold14TextButtonStyle(
+                                                              '오디션 마감하기',
+                                                              () {}))),
+                                              visible: _firstAuditionInfo[
+                                                          APIConstants
+                                                              .isAuditionQuit] ==
+                                                      0
+                                                  ? true
+                                                  : false),
+                                          Visibility(
+                                              child: Expanded(
+                                                  flex: 0,
+                                                  child: Container(
+                                                      child: Text('마감된 오디션입니다.',
+                                                          style: CustomStyles
+                                                              .dark14TextStyle()))),
+                                              visible: _firstAuditionInfo[
+                                                          APIConstants
+                                                              .isAuditionQuit] ==
+                                                      0
+                                                  ? false
+                                                  : true)
+                                        ])),
+                                Container(
+                                    color: CustomColors.colorWhite,
+                                    child: TabBar(
+                                        controller: _tabController,
+                                        indicatorPadding: EdgeInsets.zero,
+                                        labelStyle:
+                                            CustomStyles.bold14TextStyle(),
+                                        unselectedLabelStyle:
+                                            CustomStyles.normal14TextStyle(),
+                                        tabs: [
+                                          Tab(text: '1차 오디션'),
+                                          Tab(text: '2차 오디션'),
+                                          Tab(text: '3차 오디션'),
+                                          Tab(text: '최종합격')
+                                        ])),
+                                Expanded(
+                                  flex: 0,
+                                  child: [
+                                    tabAuditionApplyList(),
+                                    tabAuditionApplyList(),
+                                    tabAuditionApplyList(),
+                                    tabAuditionApplyList()
+                                  ][_tabIndex],
+                                )
+                              ]))),
+                      Visibility(
+                        child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: 55,
+                            child: CustomStyles.blueBGSquareButtonStyle(
+                                '2차 오디션 오픈하기', () {
+                              setState(() {
+                                if (checkValidate(context)) {
+                                  requestOpenSecondAudition(context);
+                                }
+                              });
+                            })),
+                        visible: (_tabIndex == 1 &&
+                                _firstAuditionInfo[
+                                        APIConstants.isOpenSecondAudition] ==
+                                    0)
+                            ? true
+                            : false,
+                      ),
+                      Visibility(
                           child: Container(
                               width: MediaQuery.of(context).size.width,
                               height: 55,
@@ -1292,21 +1786,20 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                                   requestOpenThirdAudition(context);
                                 });
                               })),
-                          visible:
-                              (_tabIndex == 2 && _thirdAuditionInfo == null)
-                                  ? true
-                                  : false,
-                        )
-                      ])),
-                  Visibility(
+                          visible: (_tabIndex == 2 &&
+                                  _firstAuditionInfo[
+                                          APIConstants.isOpenThirdAudition] ==
+                                      0)
+                              ? true
+                              : false)
+                    ])),
+                Visibility(
                     child: Container(
                         color: Colors.black38,
                         alignment: Alignment.center,
                         child: CircularProgressIndicator()),
-                    visible: _isUpload,
-                  )
-                ],
-              );
+                    visible: _isUpload)
+              ]);
             })));
   }
 
@@ -1370,50 +1863,6 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
             _apiKey = APIConstants.SAR_SAD_STATE;
 
             requestCastingStateList(context);
-
-            /*setState(() {
-              var _responseList = value[APIConstants.data] as List;
-              if (_responseList != null && _responseList.length > 0) {
-                for (int i = 0; i < _responseList.length; i++) {
-                  var _data = _responseList[i];
-
-                  switch (_data[APIConstants.table]) {
-                    case APIConstants.SecondAudition:
-                      {
-                        var _listData = _data[APIConstants.data];
-                        if (_listData != null) {
-                          List<dynamic> _auditionInfoList =
-                              _listData[APIConstants.list] as List;
-                          if (_auditionInfoList != null &&
-                              _auditionInfoList.length > 0) {
-                            _secondAuditionInfo = _auditionInfoList[0];
-                          }
-                        } else {
-                          _secondAuditionInfo = null;
-                        }
-                        break;
-                      }
-
-                    case APIConstants.SecondAuditionTarget:
-                      {
-                        var _listData = _data[APIConstants.data];
-                        if (_listData != null) {
-                          var paging = _listData[APIConstants.paging];
-                          _total = paging[APIConstants.total];
-
-                          List<dynamic> _auditionInfoList =
-                              _listData[APIConstants.list] as List;
-                          if (_auditionInfoList != null) {
-                            _secondAuditionApplyList.addAll(_auditionInfoList);
-                            _isLoading = false;
-                          }
-                        }
-                        break;
-                      }
-                  }
-                }
-              }
-            });*/
           } else {
             // 2차 오디션 오픈 실패
             switch (value[APIConstants.resultMsg]) {
@@ -1469,50 +1918,6 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
             _apiKey = APIConstants.SAR_TAD_STATE;
 
             requestCastingStateList(context);
-            /*setState(() {
-              var _responseList = value[APIConstants.data] as List;
-
-              if (_responseList != null && _responseList.length > 0) {
-                for (int i = 0; i < _responseList.length; i++) {
-                  var _data = _responseList[i];
-
-                  switch (_data[APIConstants.table]) {
-                    case APIConstants.ThirdAudition:
-                      {
-                        var _listData = _data[APIConstants.data];
-                        if (_listData != null) {
-                          List<dynamic> _auditionInfoList =
-                              _listData[APIConstants.list] as List;
-                          if (_auditionInfoList != null &&
-                              _auditionInfoList.length > 0) {
-                            _thirdAuditionInfo = _auditionInfoList[0];
-                          }
-                        } else {
-                          _thirdAuditionInfo = null;
-                        }
-                        break;
-                      }
-
-                    case APIConstants.ThirdAuditionTarget:
-                      {
-                        var _listData = _data[APIConstants.data];
-                        if (_listData != null) {
-                          var paging = _listData[APIConstants.paging];
-                          _total = paging[APIConstants.total];
-
-                          List<dynamic> _auditionInfoList =
-                              _listData[APIConstants.list] as List;
-                          if (_auditionInfoList != null) {
-                            _thirdAuditionApplyList.addAll(_auditionInfoList);
-                            _isLoading = false;
-                          }
-                        }
-                        break;
-                      }
-                  }
-                }
-              }
-            });*/
           } else {
             // 3차 오디션 오픈 실패
             switch (value[APIConstants.resultMsg]) {

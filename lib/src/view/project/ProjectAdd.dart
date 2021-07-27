@@ -635,10 +635,13 @@ class _ProjectAdd extends State<ProjectAdd> with BaseUtilMixin {
     params[APIConstants.key] = APIConstants.INS_PPJ_INFO_FormData;
     params[APIConstants.target] = targetDatas;
 
-    var temp = _profileImgFile.path.split('/');
-    String fileName = temp[temp.length - 1];
-    params[APIConstants.target_files_array] =
-        await MultipartFile.fromFile(_profileImgFile.path, filename: fileName);
+    if(_profileImgFile != null) {
+      var temp = _profileImgFile.path.split('/');
+      String fileName = temp[temp.length - 1];
+      params[APIConstants.target_files_array] =
+      await MultipartFile.fromFile(_profileImgFile.path, filename: fileName);
+    }
+
 
     // 제작사 필모그래피 추가 api 호출
     RestClient(Dio()).postRequestMainControlFormData(params).then((value) async {

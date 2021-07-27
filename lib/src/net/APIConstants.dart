@@ -28,6 +28,7 @@ class APIConstants {
   static const String CHK_TOT_ACCOUNT = "CHK_TOT_ACCOUNT";                        // 계좌 소유주 확인
   static const String CHK_TOT_REALNAME = "CHK_TOT_REALNAME";                      // 실명 확인
   static const String SEL_TOT_ALERTLIST = "SEL_TOT_ALERTLIST";                    // 알림 목록 조회
+  static const String CHK_TOT_ALERT = "CHK_TOT_ALERT";                            // 알림 체크 (열람 처리)
   static const String SEL_TOT_USELIST = "SEL_TOT_USELIST";                        // 이용안내 목록보기
   static const String SEL_TOT_USEDETAILS = "SEL_TOT_USEDETAILS";                  // 이용안내 상세보기
   
@@ -448,6 +449,11 @@ class APIConstants {
   static const String audition_prps_contents = "audition_prps_contents";
   static const String audition_prps_reply_contents = "audition_prps_reply_contents";
   static const String secondAudition_seq = "secondAudition_seq";
+  static const String script_securityPledge_isAgree = "script_securityPledge_isAgree";
+  static const String secondAudition_script_url = "secondAudition_script_url";
+  static const String isOpenSecondAudition = "isOpenSecondAudition";
+  static const String isOpenThirdAudition = "isOpenThirdAudition";
+  static const String isAuditionQuit = "isAuditionQuit";
 
 // 사용 안함
 /*static const String apply_image = "apply_image";

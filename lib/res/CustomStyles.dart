@@ -201,6 +201,31 @@ class CustomStyles {
     );
   }
 
+  // 테투리있는 텍스트필드 - 옵션
+  static TextField greyBorderRound7TextFieldWithOptionNoPadding(
+      TextEditingController controller, TextInputType type, String txtHint) {
+    return TextField(
+      controller: controller,
+      keyboardType: type,
+      decoration: InputDecoration(
+        isDense: true,
+        contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+        hintText: txtHint,
+        hintStyle:
+        TextStyle(fontSize: 16, color: CustomColors.colorFontLightGrey),
+        border: OutlineInputBorder(
+            borderSide:
+            BorderSide(color: CustomColors.colorFontGrey, width: 1.0),
+            borderRadius: circle7BorderRadius()),
+        focusedBorder: OutlineInputBorder(
+            borderSide:
+            BorderSide(color: CustomColors.colorFontGrey, width: 1.0),
+            borderRadius: circle7BorderRadius()),
+      ),
+      style: normal16TextStyle(),
+    );
+  }
+
   static TextField greyBorderRound7PWDTextField(
       TextEditingController controller, String txtHint) {
     return TextField(
@@ -220,6 +245,32 @@ class CustomStyles {
         focusedBorder: OutlineInputBorder(
             borderSide:
                 BorderSide(color: CustomColors.colorFontGrey, width: 1.0),
+            borderRadius: circle7BorderRadius()),
+      ),
+      style: normal16TextStyle(),
+    );
+  }
+
+  static TextField greyBorderRound7PWDTextFieldOnlyNumber(
+      TextEditingController controller, String txtHint) {
+    return TextField(
+      keyboardType: TextInputType.number,
+      controller: controller,
+      obscureText: true,
+      obscuringCharacter: "*",
+      decoration: InputDecoration(
+        isDense: true,
+        contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+        hintText: txtHint,
+        hintStyle:
+        TextStyle(fontSize: 16, color: CustomColors.colorFontLightGrey),
+        border: OutlineInputBorder(
+            borderSide:
+            BorderSide(color: CustomColors.colorFontGrey, width: 1.0),
+            borderRadius: circle7BorderRadius()),
+        focusedBorder: OutlineInputBorder(
+            borderSide:
+            BorderSide(color: CustomColors.colorFontGrey, width: 1.0),
             borderRadius: circle7BorderRadius()),
       ),
       style: normal16TextStyle(),
@@ -394,6 +445,24 @@ class CustomStyles {
         onClickEvent();
       },
       padding: EdgeInsets.all(10.0),
+      color: CustomColors.colorWhite,
+      textColor: CustomColors.colorFontGrey,
+      shape: RoundedRectangleBorder(
+          borderRadius: circle7BorderRadius(),
+          side: BorderSide(color: CustomColors.colorFontGrey)),
+      child: Text(txtButton, style: normal16TextStyle()),
+    );
+  }
+
+  static RaisedButton greyBorderRound7ButtonStyleNoPadding(
+      String txtButton, VoidCallback onClickEvent) {
+    return RaisedButton(
+      elevation: 0.0,
+      onPressed: () {
+        onClickEvent();
+      },
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      padding: EdgeInsets.all(0.0),
       color: CustomColors.colorWhite,
       textColor: CustomColors.colorFontGrey,
       shape: RoundedRectangleBorder(

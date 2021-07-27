@@ -129,6 +129,62 @@ class _PushNotification extends State<PushNotification> with BaseUtilMixin {
   }
 
   /*
+  * 알림읽음처리 api 호출
+  * */
+  void requestCheckNoticeApi(BuildContext context, int seq) {
+    setState(() {
+      _isUpload = true;
+    });
+
+    // 알림읽음처리 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetData = new Map();
+    targetData[APIConstants.seq] = seq;
+    targetData[APIConstants.member_type] =
+        KCastingAppData().myInfo[APIConstants.member_type];
+
+    switch (KCastingAppData().myInfo[APIConstants.member_type]) {
+      case APIConstants.member_type_actor:
+        targetData[APIConstants.actor_seq] =
+            KCastingAppData().myInfo[APIConstants.seq];
+        break;
+      case APIConstants.member_type_product:
+        targetData[APIConstants.production_seq] =
+            KCastingAppData().myInfo[APIConstants.seq];
+        break;
+      case APIConstants.member_type_management:
+        targetData[APIConstants.management_seq] =
+            KCastingAppData().myInfo[APIConstants.seq];
+        break;
+    }
+
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.CHK_TOT_ALERT;
+    params[APIConstants.target] = targetData;
+
+    // 알림읽음처리 api 호출
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value != null) {
+          if (value[APIConstants.resultVal]) {
+            // 알림읽음처리 성공
+            setState(() {
+              _total = 0;
+              _noticeList = [];
+              requestNoticeListApi(context);
+            });
+          }
+        }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
+      }
+    });
+  }
+
+  /*
   * 메인 위젯
   * */
   @override
@@ -159,11 +215,8 @@ class _PushNotification extends State<PushNotification> with BaseUtilMixin {
                                       alignment: Alignment.centerLeft,
                                       child: GestureDetector(
                                           onTap: () {
-                                            /*Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => MyApplyDetail()),
-                                    );*/
+                                            requestCheckNoticeApi(context,
+                                                _data[APIConstants.seq]);
                                           },
                                           child: Container(
                                               alignment: Alignment.centerLeft,

@@ -196,7 +196,7 @@ class _MyHomePageState extends State<MyHomePage> with BaseUtilMixin {
                       requestActorProfileApi(context);
                       break;
                     case APIConstants.member_type_product:
-                      requestProductionBookMarkListApi(context);
+                      replaceView(context, Home());
                       break;
                     case APIConstants.member_type_management:
                       replaceView(context, Home());
@@ -333,7 +333,6 @@ class _MyHomePageState extends State<MyHomePage> with BaseUtilMixin {
                     var _listData = _data[APIConstants.data];
 
                     if (_listData != null) {
-                      print("꺄아아아아아아");
                       KCastingAppData().myCastingKwd =
                           _listData[APIConstants.list] as List;
                     } else {
@@ -391,42 +390,6 @@ class _MyHomePageState extends State<MyHomePage> with BaseUtilMixin {
 
       replaceView(context, Home());
     });
-  }
-
-  /*
-  * 제작사 북마크 목록
-  * */
-  void requestProductionBookMarkListApi(BuildContext context) {
-    final dio = Dio();
-
-    // 제작사 북마크 api 호출 시 보낼 파라미터
-    Map<String, dynamic> targetDate = new Map();
-    targetDate[APIConstants.production_seq] = KCastingAppData().myInfo[APIConstants.seq];
-
-    Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.SEL_PAS_LIST;
-    params[APIConstants.target] = targetDate;
-
-    // 제작사 북마크 api 호출
-    RestClient(dio).postRequestMainControl(params).then((value) async {
-      if (value != null) {
-        if (value[APIConstants.resultVal]) {
-          try {
-            // 제작사 북마크 성공
-            setState(() {
-              var _responseData = value[APIConstants.data];
-              var _responseList = _responseData[APIConstants.list] as List;
-
-              KCastingAppData().myBookmark.addAll(_responseList);
-
-
-            });
-          } catch (e) {}
-        }
-      }
-    });
-
-    replaceView(context, Home());
   }
 
   //========================================================================================================================

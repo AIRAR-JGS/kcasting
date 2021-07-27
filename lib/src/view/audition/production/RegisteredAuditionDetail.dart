@@ -512,65 +512,47 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Container(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              5,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              5,
-                                          child: (_imgUrlArr.length > 0)
-                                              ? ClipRRect(
-                                                  borderRadius: CustomStyles
-                                                      .circle7BorderRadius(),
-                                                  child: CachedNetworkImage(
-                                                      imageUrl: _imgUrlArr[0],
-                                                      fit: BoxFit.cover,
-                                                      errorWidget: (context,
-                                                              url, error) =>
-                                                          ClipRRect(
-                                                              borderRadius:
-                                                                  CustomStyles
-                                                                      .circle7BorderRadius(),
-                                                              child: Container(
-                                                                color: CustomColors
-                                                                    .colorBgGrey,
-                                                              ))))
-                                              : ClipRRect(
-                                                  borderRadius: CustomStyles
-                                                      .circle7BorderRadius()),
-                                        ),
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                5,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                5,
+                                            child: (_imgUrlArr.length > 0)
+                                                ? ClipRRect(
+                                                    borderRadius: CustomStyles
+                                                        .circle7BorderRadius(),
+                                                    child: CachedNetworkImage(
+                                                        imageUrl: _imgUrlArr[0],
+                                                        fit: BoxFit.cover,
+                                                        errorWidget: (context,
+                                                                url, error) =>
+                                                            CustomStyles
+                                                                .defalutImg()))
+                                                : CustomStyles.defalutImg()),
                                         Container(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              5,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              5,
-                                          child: (_imgUrlArr.length > 1)
-                                              ? ClipRRect(
-                                                  borderRadius: CustomStyles
-                                                      .circle7BorderRadius(),
-                                                  child: CachedNetworkImage(
-                                                      imageUrl: _imgUrlArr[1],
-                                                      fit: BoxFit.cover,
-                                                      errorWidget: (context,
-                                                              url, error) =>
-                                                          ClipRRect(
-                                                              borderRadius:
-                                                                  CustomStyles
-                                                                      .circle7BorderRadius(),
-                                                              child: Container(
-                                                                color: CustomColors
-                                                                    .colorBgGrey,
-                                                              ))))
-                                              : ClipRRect(
-                                                  borderRadius: CustomStyles
-                                                      .circle7BorderRadius()),
-                                        ),
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                5,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                5,
+                                            child: (_imgUrlArr.length > 1)
+                                                ? ClipRRect(
+                                                    borderRadius: CustomStyles
+                                                        .circle7BorderRadius(),
+                                                    child: CachedNetworkImage(
+                                                        imageUrl: _imgUrlArr[1],
+                                                        fit: BoxFit.cover,
+                                                        errorWidget: (context,
+                                                                url, error) =>
+                                                            CustomStyles
+                                                                .defalutImg()))
+                                                : CustomStyles.defalutImg()),
                                         Container(
                                             height: MediaQuery.of(context)
                                                     .size
@@ -589,18 +571,9 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                                                         fit: BoxFit.cover,
                                                         errorWidget: (context,
                                                                 url, error) =>
-                                                            ClipRRect(
-                                                                borderRadius:
-                                                                    CustomStyles
-                                                                        .circle7BorderRadius(),
-                                                                child:
-                                                                    Container(
-                                                                  color: CustomColors
-                                                                      .colorBgGrey,
-                                                                ))))
-                                                : ClipRRect(
-                                                    borderRadius: CustomStyles
-                                                        .circle7BorderRadius())),
+                                                            CustomStyles
+                                                                .defalutImg()))
+                                                : CustomStyles.defalutImg()),
                                         Container(
                                             width: MediaQuery.of(context)
                                                     .size
@@ -963,7 +936,7 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                             ));
                       },
                       child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Expanded(
                                 flex: 1,
@@ -973,65 +946,47 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Container(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              5,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              5,
-                                          child: (_imgUrlArr.length > 0)
-                                              ? ClipRRect(
-                                                  borderRadius: CustomStyles
-                                                      .circle7BorderRadius(),
-                                                  child: CachedNetworkImage(
-                                                      imageUrl: _imgUrlArr[0],
-                                                      fit: BoxFit.cover,
-                                                      errorWidget: (context,
-                                                              url, error) =>
-                                                          ClipRRect(
-                                                              borderRadius:
-                                                                  CustomStyles
-                                                                      .circle7BorderRadius(),
-                                                              child: Container(
-                                                                color: CustomColors
-                                                                    .colorBgGrey,
-                                                              ))))
-                                              : ClipRRect(
-                                                  borderRadius: CustomStyles
-                                                      .circle7BorderRadius()),
-                                        ),
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                5,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                5,
+                                            child: (_imgUrlArr.length > 0)
+                                                ? ClipRRect(
+                                                    borderRadius: CustomStyles
+                                                        .circle7BorderRadius(),
+                                                    child: CachedNetworkImage(
+                                                        imageUrl: _imgUrlArr[0],
+                                                        fit: BoxFit.cover,
+                                                        errorWidget: (context,
+                                                                url, error) =>
+                                                            CustomStyles
+                                                                .defalutImg()))
+                                                : CustomStyles.defalutImg()),
                                         Container(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              5,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              5,
-                                          child: (_imgUrlArr.length > 1)
-                                              ? ClipRRect(
-                                                  borderRadius: CustomStyles
-                                                      .circle7BorderRadius(),
-                                                  child: CachedNetworkImage(
-                                                      imageUrl: _imgUrlArr[1],
-                                                      fit: BoxFit.cover,
-                                                      errorWidget: (context,
-                                                              url, error) =>
-                                                          ClipRRect(
-                                                              borderRadius:
-                                                                  CustomStyles
-                                                                      .circle7BorderRadius(),
-                                                              child: Container(
-                                                                color: CustomColors
-                                                                    .colorBgGrey,
-                                                              ))))
-                                              : ClipRRect(
-                                                  borderRadius: CustomStyles
-                                                      .circle7BorderRadius()),
-                                        ),
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                5,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                5,
+                                            child: (_imgUrlArr.length > 1)
+                                                ? ClipRRect(
+                                                    borderRadius: CustomStyles
+                                                        .circle7BorderRadius(),
+                                                    child: CachedNetworkImage(
+                                                        imageUrl: _imgUrlArr[1],
+                                                        fit: BoxFit.cover,
+                                                        errorWidget: (context,
+                                                                url, error) =>
+                                                            CustomStyles
+                                                                .defalutImg()))
+                                                : CustomStyles.defalutImg()),
                                         Container(
                                             height: MediaQuery.of(context)
                                                     .size
@@ -1050,81 +1005,79 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                                                         fit: BoxFit.cover,
                                                         errorWidget: (context,
                                                                 url, error) =>
-                                                            ClipRRect(
-                                                                borderRadius:
-                                                                    CustomStyles
-                                                                        .circle7BorderRadius(),
-                                                                child:
-                                                                    Container(
-                                                                  color: CustomColors
-                                                                      .colorBgGrey,
-                                                                ))))
-                                                : ClipRRect(
-                                                    borderRadius: CustomStyles
-                                                        .circle7BorderRadius())),
-                                        Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                5,
-                                            alignment: Alignment.center,
-                                            child: PopupMenuButton<String>(
-                                                itemBuilder: (context) {
-                                                  return <String>[
-                                                    '대기',
-                                                    '합격',
-                                                    '불합격'
-                                                  ].map((value) {
-                                                    return PopupMenuItem(
-                                                      value: value,
-                                                      child: Text(value,
-                                                          style: CustomStyles
-                                                              .dark12TextStyle()),
-                                                    );
-                                                  }).toList();
-                                                },
-                                                child: Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: <Widget>[
-                                                      Text(
-                                                          _data[APIConstants
-                                                              .result_type],
-                                                          style: CustomStyles
-                                                              .dark12TextStyle()),
-                                                      Icon(
-                                                          Icons.arrow_drop_down)
-                                                    ]),
-                                                onSelected: (v) {
-                                                  setState(() {
-                                                    if (_firstAuditionInfo[
-                                                            APIConstants
-                                                                .isOpenThirdAudition] ==
-                                                        0) {
-                                                      requestUpdateAuditionResult(
-                                                          context,
-                                                          index,
-                                                          APIConstants
-                                                              .UPD_SAT_INFO,
-                                                          _data[APIConstants
-                                                              .secondAuditionTarget_seq],
-                                                          v);
-                                                    } else {
-                                                      showSnackBar(context,
-                                                          '3차 오디션이 오픈된 상태에서는 2차 오디션 상태 수정이 불가능합니다.');
-                                                    }
-                                                  });
-                                                }))
+                                                            CustomStyles
+                                                                .defalutImg()))
+                                                : CustomStyles.defalutImg())
                                       ]),
-                                  Container(
-                                      margin: EdgeInsets.only(top: 10, left: 5),
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        StringUtils.checkedString(
-                                            _data[APIConstants.actor_name]),
-                                        style: CustomStyles.normal16TextStyle(),
-                                      ))
-                                ]))
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                          margin:
+                                              EdgeInsets.only(top: 10, left: 5),
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            StringUtils.checkedString(
+                                                _data[APIConstants.actor_name]),
+                                            style: CustomStyles
+                                                .normal16TextStyle(),
+                                          )),
+                                      Container(
+                                          margin:
+                                              EdgeInsets.only(top: 10, left: 5),
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            StringUtils.checkedString(
+                                                _data[APIConstants.isSubmit]),
+                                            style:
+                                                CustomStyles.blue16TextStyle(),
+                                          ))
+                                    ],
+                                  )
+                                ])),
+                            Container(
+                                margin: EdgeInsets.only(left: 16),
+                                width: MediaQuery.of(context).size.width / 5,
+                                alignment: Alignment.center,
+                                child: PopupMenuButton<String>(
+                                    itemBuilder: (context) {
+                                      return <String>['대기', '합격', '불합격']
+                                          .map((value) {
+                                        return PopupMenuItem(
+                                          value: value,
+                                          child: Text(value,
+                                              style: CustomStyles
+                                                  .dark12TextStyle()),
+                                        );
+                                      }).toList();
+                                    },
+                                    child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          Text(_data[APIConstants.result_type],
+                                              style: CustomStyles
+                                                  .dark12TextStyle()),
+                                          Icon(Icons.arrow_drop_down)
+                                        ]),
+                                    onSelected: (v) {
+                                      setState(() {
+                                        if (_firstAuditionInfo[APIConstants
+                                                .isOpenThirdAudition] ==
+                                            0) {
+                                          requestUpdateAuditionResult(
+                                              context,
+                                              index,
+                                              APIConstants.UPD_SAT_INFO,
+                                              _data[APIConstants
+                                                  .secondAuditionTarget_seq],
+                                              v);
+                                        } else {
+                                          showSnackBar(context,
+                                              '3차 오디션이 오픈된 상태에서는 2차 오디션 상태 수정이 불가능합니다.');
+                                        }
+                                      });
+                                    }))
                           ])));
             },
             separatorBuilder: (context, index) {
@@ -1258,7 +1211,7 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                             ));
                       },
                       child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Expanded(
                                 flex: 1,
@@ -1268,65 +1221,47 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Container(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              5,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              5,
-                                          child: (_imgUrlArr.length > 0)
-                                              ? ClipRRect(
-                                                  borderRadius: CustomStyles
-                                                      .circle7BorderRadius(),
-                                                  child: CachedNetworkImage(
-                                                      imageUrl: _imgUrlArr[0],
-                                                      fit: BoxFit.cover,
-                                                      errorWidget: (context,
-                                                              url, error) =>
-                                                          ClipRRect(
-                                                              borderRadius:
-                                                                  CustomStyles
-                                                                      .circle7BorderRadius(),
-                                                              child: Container(
-                                                                color: CustomColors
-                                                                    .colorBgGrey,
-                                                              ))))
-                                              : ClipRRect(
-                                                  borderRadius: CustomStyles
-                                                      .circle7BorderRadius()),
-                                        ),
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                5,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                5,
+                                            child: (_imgUrlArr.length > 0)
+                                                ? ClipRRect(
+                                                    borderRadius: CustomStyles
+                                                        .circle7BorderRadius(),
+                                                    child: CachedNetworkImage(
+                                                        imageUrl: _imgUrlArr[0],
+                                                        fit: BoxFit.cover,
+                                                        errorWidget: (context,
+                                                                url, error) =>
+                                                            CustomStyles
+                                                                .defalutImg()))
+                                                : CustomStyles.defalutImg()),
                                         Container(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              5,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              5,
-                                          child: (_imgUrlArr.length > 1)
-                                              ? ClipRRect(
-                                                  borderRadius: CustomStyles
-                                                      .circle7BorderRadius(),
-                                                  child: CachedNetworkImage(
-                                                      imageUrl: _imgUrlArr[1],
-                                                      fit: BoxFit.cover,
-                                                      errorWidget: (context,
-                                                              url, error) =>
-                                                          ClipRRect(
-                                                              borderRadius:
-                                                                  CustomStyles
-                                                                      .circle7BorderRadius(),
-                                                              child: Container(
-                                                                color: CustomColors
-                                                                    .colorBgGrey,
-                                                              ))))
-                                              : ClipRRect(
-                                                  borderRadius: CustomStyles
-                                                      .circle7BorderRadius()),
-                                        ),
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                5,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                5,
+                                            child: (_imgUrlArr.length > 1)
+                                                ? ClipRRect(
+                                                    borderRadius: CustomStyles
+                                                        .circle7BorderRadius(),
+                                                    child: CachedNetworkImage(
+                                                        imageUrl: _imgUrlArr[1],
+                                                        fit: BoxFit.cover,
+                                                        errorWidget: (context,
+                                                                url, error) =>
+                                                            CustomStyles
+                                                                .defalutImg()))
+                                                : CustomStyles.defalutImg()),
                                         Container(
                                             height: MediaQuery.of(context)
                                                     .size
@@ -1345,82 +1280,79 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                                                         fit: BoxFit.cover,
                                                         errorWidget: (context,
                                                                 url, error) =>
-                                                            ClipRRect(
-                                                                borderRadius:
-                                                                    CustomStyles
-                                                                        .circle7BorderRadius(),
-                                                                child:
-                                                                    Container(
-                                                                  color: CustomColors
-                                                                      .colorBgGrey,
-                                                                ))))
-                                                : ClipRRect(
-                                                    borderRadius: CustomStyles
-                                                        .circle7BorderRadius())),
-                                        Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                5,
-                                            alignment: Alignment.center,
-                                            child: PopupMenuButton<String>(
-                                                itemBuilder: (context) {
-                                                  return <String>[
-                                                    '대기',
-                                                    '면접완료',
-                                                    '합격',
-                                                    '불합격'
-                                                  ].map((value) {
-                                                    return PopupMenuItem(
-                                                      value: value,
-                                                      child: Text(value,
-                                                          style: CustomStyles
-                                                              .dark12TextStyle()),
-                                                    );
-                                                  }).toList();
-                                                },
-                                                child: Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: <Widget>[
-                                                      Text(
-                                                          _data[APIConstants
-                                                              .result_type],
-                                                          style: CustomStyles
-                                                              .dark12TextStyle()),
-                                                      Icon(
-                                                          Icons.arrow_drop_down)
-                                                    ]),
-                                                onSelected: (v) {
-                                                  setState(() {
-                                                    if (_firstAuditionInfo[
-                                                            APIConstants
-                                                                .isAuditionQuit] ==
-                                                        0) {
-                                                      requestUpdateAuditionResult(
-                                                          context,
-                                                          index,
-                                                          APIConstants
-                                                              .UPD_TAT_INFO,
-                                                          _data[APIConstants
-                                                              .thirdAuditionTarget_seq],
-                                                          v);
-                                                    } else {
-                                                      showSnackBar(context,
-                                                          '마감된 오디션은 수정할 수 없습니다.');
-                                                    }
-                                                  });
-                                                }))
+                                                            CustomStyles
+                                                                .defalutImg()))
+                                                : CustomStyles.defalutImg())
                                       ]),
-                                  Container(
-                                      margin: EdgeInsets.only(top: 10, left: 5),
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        StringUtils.checkedString(
-                                            _data[APIConstants.actor_name]),
-                                        style: CustomStyles.normal16TextStyle(),
-                                      ))
-                                ]))
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                          margin:
+                                              EdgeInsets.only(top: 10, left: 5),
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            StringUtils.checkedString(
+                                                _data[APIConstants.actor_name]),
+                                            style: CustomStyles
+                                                .normal16TextStyle(),
+                                          )),
+                                      Container(
+                                          margin:
+                                              EdgeInsets.only(top: 10, left: 5),
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            StringUtils.checkedString(_data[
+                                                APIConstants.actor_phone]),
+                                            style: CustomStyles
+                                                .normal16TextStyle(),
+                                          ))
+                                    ],
+                                  )
+                                ])),
+                            Container(
+                                margin: EdgeInsets.only(left: 16),
+                                width: MediaQuery.of(context).size.width / 5,
+                                alignment: Alignment.center,
+                                child: PopupMenuButton<String>(
+                                    itemBuilder: (context) {
+                                      return <String>['대기', '면접완료', '합격', '불합격']
+                                          .map((value) {
+                                        return PopupMenuItem(
+                                          value: value,
+                                          child: Text(value,
+                                              style: CustomStyles
+                                                  .dark12TextStyle()),
+                                        );
+                                      }).toList();
+                                    },
+                                    child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          Text(_data[APIConstants.result_type],
+                                              style: CustomStyles
+                                                  .dark12TextStyle()),
+                                          Icon(Icons.arrow_drop_down)
+                                        ]),
+                                    onSelected: (v) {
+                                      setState(() {
+                                        if (_firstAuditionInfo[
+                                                APIConstants.isAuditionQuit] ==
+                                            0) {
+                                          requestUpdateAuditionResult(
+                                              context,
+                                              index,
+                                              APIConstants.UPD_TAT_INFO,
+                                              _data[APIConstants
+                                                  .thirdAuditionTarget_seq],
+                                              v);
+                                        } else {
+                                          showSnackBar(
+                                              context, '마감된 오디션은 수정할 수 없습니다.');
+                                        }
+                                      });
+                                    }))
                           ])));
             },
             separatorBuilder: (context, index) {
@@ -1478,7 +1410,8 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                       },
                       child: Column(children: [
                         Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Expanded(
                                   flex: 1,
@@ -1488,67 +1421,49 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                5,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                5,
-                                            child: (_imgUrlArr.length > 0)
-                                                ? ClipRRect(
-                                                    borderRadius: CustomStyles
-                                                        .circle7BorderRadius(),
-                                                    child: CachedNetworkImage(
-                                                        imageUrl: _imgUrlArr[0],
-                                                        fit: BoxFit.cover,
-                                                        errorWidget: (context,
-                                                                url, error) =>
-                                                            ClipRRect(
-                                                                borderRadius:
-                                                                    CustomStyles
-                                                                        .circle7BorderRadius(),
-                                                                child:
-                                                                    Container(
-                                                                  color: CustomColors
-                                                                      .colorBgGrey,
-                                                                ))))
-                                                : ClipRRect(
-                                                    borderRadius: CustomStyles
-                                                        .circle7BorderRadius()),
-                                          ),
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  5,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  5,
+                                              child: (_imgUrlArr.length > 0)
+                                                  ? ClipRRect(
+                                                      borderRadius: CustomStyles
+                                                          .circle7BorderRadius(),
+                                                      child: CachedNetworkImage(
+                                                          imageUrl:
+                                                              _imgUrlArr[0],
+                                                          fit: BoxFit.cover,
+                                                          errorWidget: (context,
+                                                                  url, error) =>
+                                                              CustomStyles
+                                                                  .defalutImg()))
+                                                  : CustomStyles.defalutImg()),
                                           Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                5,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                5,
-                                            child: (_imgUrlArr.length > 1)
-                                                ? ClipRRect(
-                                                    borderRadius: CustomStyles
-                                                        .circle7BorderRadius(),
-                                                    child: CachedNetworkImage(
-                                                        imageUrl: _imgUrlArr[1],
-                                                        fit: BoxFit.cover,
-                                                        errorWidget: (context,
-                                                                url, error) =>
-                                                            ClipRRect(
-                                                                borderRadius:
-                                                                    CustomStyles
-                                                                        .circle7BorderRadius(),
-                                                                child:
-                                                                    Container(
-                                                                  color: CustomColors
-                                                                      .colorBgGrey,
-                                                                ))))
-                                                : ClipRRect(
-                                                    borderRadius: CustomStyles
-                                                        .circle7BorderRadius()),
-                                          ),
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  5,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  5,
+                                              child: (_imgUrlArr.length > 1)
+                                                  ? ClipRRect(
+                                                      borderRadius: CustomStyles
+                                                          .circle7BorderRadius(),
+                                                      child: CachedNetworkImage(
+                                                          imageUrl:
+                                                              _imgUrlArr[1],
+                                                          fit: BoxFit.cover,
+                                                          errorWidget: (context,
+                                                                  url, error) =>
+                                                              CustomStyles
+                                                                  .defalutImg()))
+                                                  : CustomStyles.defalutImg()),
                                           Container(
                                               height: MediaQuery.of(context)
                                                       .size
@@ -1568,41 +1483,45 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                                                           fit: BoxFit.cover,
                                                           errorWidget: (context,
                                                                   url, error) =>
-                                                              ClipRRect(
-                                                                  borderRadius:
-                                                                      CustomStyles
-                                                                          .circle7BorderRadius(),
-                                                                  child:
-                                                                      Container(
-                                                                    color: CustomColors
-                                                                        .colorBgGrey,
-                                                                  ))))
-                                                  : ClipRRect(
-                                                      borderRadius: CustomStyles
-                                                          .circle7BorderRadius())),
-                                          Container(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width /
-                                                  5,
-                                              alignment: Alignment.center,
-                                              child: Text(
-                                                "계약대기",
-                                                style: CustomStyles
-                                                    .normal16TextStyle(),
-                                              ))
+                                                              CustomStyles
+                                                                  .defalutImg()))
+                                                  : CustomStyles.defalutImg()),
                                         ]),
-                                    Container(
-                                        margin:
-                                            EdgeInsets.only(top: 10, left: 5),
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          StringUtils.checkedString(
-                                              _data[APIConstants.actor_name]),
-                                          style:
-                                              CustomStyles.normal16TextStyle(),
-                                        ))
-                                  ]))
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                            margin: EdgeInsets.only(
+                                                top: 10, left: 5),
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              StringUtils.checkedString(_data[
+                                                  APIConstants.actor_name]),
+                                              style: CustomStyles
+                                                  .normal16TextStyle(),
+                                            )),
+                                        Container(
+                                            margin: EdgeInsets.only(
+                                                top: 10, left: 5),
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              StringUtils.checkedString(_data[
+                                                  APIConstants.actor_phone]),
+                                              style: CustomStyles
+                                                  .normal16TextStyle(),
+                                            ))
+                                      ],
+                                    )
+                                  ])),
+                              Container(
+                                  margin: EdgeInsets.only(left: 16),
+                                  width: MediaQuery.of(context).size.width / 5,
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    "계약대기",
+                                    style: CustomStyles.normal16TextStyle(),
+                                  ))
                             ]),
                         Container(
                             margin: EdgeInsets.only(top: 20),

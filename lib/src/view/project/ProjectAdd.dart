@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:casting_call/BaseWidget.dart';
@@ -39,6 +38,7 @@ class _ProjectAdd extends State<ProjectAdd> with BaseUtilMixin {
 
   String _startDate;
   String _endDate;
+  String _openDate;
 
   //int _agreeTerms = 0;
 
@@ -54,6 +54,7 @@ class _ProjectAdd extends State<ProjectAdd> with BaseUtilMixin {
 
     _startDate = formatter.format(now);
     _endDate = formatter.format(DateTime(now.year + 1, now.month, now.day));
+    _openDate = formatter.format(DateTime(now.year + 1, now.month, now.day));
   }
 
   // 갤러리에서 이미지 가져오기
@@ -104,7 +105,7 @@ class _ProjectAdd extends State<ProjectAdd> with BaseUtilMixin {
                             child: SingleChildScrollView(
                                 child: Container(
                                     padding:
-                                        EdgeInsets.only(top: 30, bottom: 30),
+                                        EdgeInsets.only(top: 30, bottom: 80),
                                     child: Column(
                                         mainAxisSize: MainAxisSize.max,
                                         mainAxisAlignment:
@@ -505,38 +506,6 @@ class _ProjectAdd extends State<ProjectAdd> with BaseUtilMixin {
                                               ],
                                             ),
                                           ),
-                                          /* Container(
-                                        margin: EdgeInsets.only(top: 0),
-                                        padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                        child: Row(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                            children: [
-                                              Radio<int>(
-                                                value: _agreeTerms,
-                                                visualDensity:
-                                                VisualDensity.compact,
-                                                groupValue: 1,
-                                                toggleable: true,
-                                                onChanged: (_) {
-                                                  setState(() {
-                                                    if (_agreeTerms == 0) {
-                                                      _agreeTerms = 1;
-                                                    } else {
-                                                      _agreeTerms = 0;
-                                                    }
-                                                  });
-                                                },
-                                                materialTapTargetSize:
-                                                MaterialTapTargetSize
-                                                    .shrinkWrap,
-                                              ),
-                                              Text('협의 후 결정',
-                                                  style: CustomStyles
-                                                      .normal14TextStyle())
-                                            ])),*/
                                           Container(
                                               margin: EdgeInsets.only(top: 15),
                                               padding: EdgeInsets.only(
@@ -553,6 +522,74 @@ class _ProjectAdd extends State<ProjectAdd> with BaseUtilMixin {
                                                   .greyBorderRound7TextField(
                                                       _txtFieldShootingPlace,
                                                       '')),
+                                          Container(
+                                              margin: EdgeInsets.only(top: 15),
+                                              padding: EdgeInsets.only(
+                                                  left: 15, right: 15),
+                                              alignment: Alignment.centerLeft,
+                                              child: Text('작품 오픈 예정일',
+                                                  style: CustomStyles
+                                                      .bold14TextStyle())),
+                                          Container(
+                                              padding: EdgeInsets.only(
+                                                  left: 15, right: 15),
+                                              margin: EdgeInsets.only(top: 5),
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  showDatePickerForDday(context,
+                                                      (date) {
+                                                    setState(() {
+                                                      var _birthY =
+                                                          date.year.toString();
+                                                      var _birthM = date.month
+                                                          .toString()
+                                                          .padLeft(2, '0');
+                                                      var _birthD = date.day
+                                                          .toString()
+                                                          .padLeft(2, '0');
+
+                                                      _openDate = _birthY +
+                                                          '-' +
+                                                          _birthM +
+                                                          '-' +
+                                                          _birthD;
+                                                    });
+                                                  });
+                                                },
+                                                child: Container(
+                                                    height: 48,
+                                                    margin: EdgeInsets.only(
+                                                        right: 5),
+                                                    padding: EdgeInsets.all(5),
+                                                    decoration: BoxDecoration(
+                                                        borderRadius: CustomStyles
+                                                            .circle7BorderRadius(),
+                                                        border: Border.all(
+                                                            width: 1,
+                                                            color: CustomColors
+                                                                .colorFontGrey)),
+                                                    child: Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Container(
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  right: 10),
+                                                          child: Icon(
+                                                              Icons.date_range,
+                                                              color: CustomColors
+                                                                  .colorFontTitle),
+                                                        ),
+                                                        Text(_openDate,
+                                                            style: CustomStyles
+                                                                .bold14TextStyle()),
+                                                      ],
+                                                    )),
+                                              )),
                                         ])))),
                         Container(
                             width: double.infinity,
@@ -630,21 +667,24 @@ class _ProjectAdd extends State<ProjectAdd> with BaseUtilMixin {
     targetDatas[APIConstants.shooting_place] = _txtFieldShootingPlace.text;
     targetDatas[APIConstants.shooting_startDate] = _startDate;
     targetDatas[APIConstants.shooting_endDate] = _endDate;
+    //targetDatas[APIConstants.shooting_endDate] = _openDate;
 
     Map<String, dynamic> params = new Map();
     params[APIConstants.key] = APIConstants.INS_PPJ_INFO_FormData;
     params[APIConstants.target] = targetDatas;
 
-    if(_profileImgFile != null) {
+    if (_profileImgFile != null) {
       var temp = _profileImgFile.path.split('/');
       String fileName = temp[temp.length - 1];
-      params[APIConstants.target_files_array] =
-      await MultipartFile.fromFile(_profileImgFile.path, filename: fileName);
+      params[APIConstants.target_files_array] = await MultipartFile.fromFile(
+          _profileImgFile.path,
+          filename: fileName);
     }
 
-
     // 제작사 필모그래피 추가 api 호출
-    RestClient(Dio()).postRequestMainControlFormData(params).then((value) async {
+    RestClient(Dio())
+        .postRequestMainControlFormData(params)
+        .then((value) async {
       try {
         if (value == null) {
           // 에러 - 데이터 널

@@ -144,6 +144,7 @@ class APIConstants {
   static const String order_type_new = "NEW";
   static const String order_type_fin = "FIN";
   static const String look_kwd_seq = "look_kwd_seq";
+  static const String isSubmit = "isSubmit";
   static const String isSubmitVideo = "isSubmitVideo";
   static const String actorCnt = "actorCnt";
   static const String applyIngCnt = "applyIngCnt";

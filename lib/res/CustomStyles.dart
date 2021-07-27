@@ -112,14 +112,14 @@ class CustomStyles {
         contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
         hintText: txtHint,
         hintStyle:
-        TextStyle(fontSize: 16, color: CustomColors.colorFontLightGrey),
+            TextStyle(fontSize: 16, color: CustomColors.colorFontLightGrey),
         border: OutlineInputBorder(
             borderSide:
-            BorderSide(color: CustomColors.colorFontGrey, width: 1.0),
+                BorderSide(color: CustomColors.colorFontGrey, width: 1.0),
             borderRadius: circle7BorderRadius()),
         focusedBorder: OutlineInputBorder(
             borderSide:
-            BorderSide(color: CustomColors.colorFontGrey, width: 1.0),
+                BorderSide(color: CustomColors.colorFontGrey, width: 1.0),
             borderRadius: circle7BorderRadius()),
       ),
       style: normal16TextStyle(),
@@ -162,14 +162,14 @@ class CustomStyles {
         contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
         hintText: txtHint,
         hintStyle:
-        TextStyle(fontSize: 16, color: CustomColors.colorFontLightGrey),
+            TextStyle(fontSize: 16, color: CustomColors.colorFontLightGrey),
         border: OutlineInputBorder(
             borderSide:
-            BorderSide(color: CustomColors.colorFontGrey, width: 1.0),
+                BorderSide(color: CustomColors.colorFontGrey, width: 1.0),
             borderRadius: circle7BorderRadius()),
         focusedBorder: OutlineInputBorder(
             borderSide:
-            BorderSide(color: CustomColors.colorFontGrey, width: 1.0),
+                BorderSide(color: CustomColors.colorFontGrey, width: 1.0),
             borderRadius: circle7BorderRadius()),
       ),
       style: normal16TextStyle(),
@@ -212,14 +212,14 @@ class CustomStyles {
         contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
         hintText: txtHint,
         hintStyle:
-        TextStyle(fontSize: 16, color: CustomColors.colorFontLightGrey),
+            TextStyle(fontSize: 16, color: CustomColors.colorFontLightGrey),
         border: OutlineInputBorder(
             borderSide:
-            BorderSide(color: CustomColors.colorFontGrey, width: 1.0),
+                BorderSide(color: CustomColors.colorFontGrey, width: 1.0),
             borderRadius: circle7BorderRadius()),
         focusedBorder: OutlineInputBorder(
             borderSide:
-            BorderSide(color: CustomColors.colorFontGrey, width: 1.0),
+                BorderSide(color: CustomColors.colorFontGrey, width: 1.0),
             borderRadius: circle7BorderRadius()),
       ),
       style: normal16TextStyle(),
@@ -263,14 +263,14 @@ class CustomStyles {
         contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
         hintText: txtHint,
         hintStyle:
-        TextStyle(fontSize: 16, color: CustomColors.colorFontLightGrey),
+            TextStyle(fontSize: 16, color: CustomColors.colorFontLightGrey),
         border: OutlineInputBorder(
             borderSide:
-            BorderSide(color: CustomColors.colorFontGrey, width: 1.0),
+                BorderSide(color: CustomColors.colorFontGrey, width: 1.0),
             borderRadius: circle7BorderRadius()),
         focusedBorder: OutlineInputBorder(
             borderSide:
-            BorderSide(color: CustomColors.colorFontGrey, width: 1.0),
+                BorderSide(color: CustomColors.colorFontGrey, width: 1.0),
             borderRadius: circle7BorderRadius()),
       ),
       style: normal16TextStyle(),
@@ -540,6 +540,14 @@ class CustomStyles {
 
   static BorderRadius circle21BorderRadius() {
     return BorderRadius.circular(21.0);
+  }
+
+  static ClipRRect defalutImg() {
+    return ClipRRect(
+        borderRadius: circle7BorderRadius(),
+        child: Container(
+          color: CustomColors.colorBgGrey,
+        ));
   }
 
   //===========================================================================

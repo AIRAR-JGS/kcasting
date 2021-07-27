@@ -27,7 +27,7 @@ class KCastingAppData {
   var myImage = [];                                              // 배우 회원 이미지
   var myVideo = [];                                               // 배우 회원 비디오
 
-  var myBookmark = [];
+  //var myBookmark = [];
 
   // 모든 데이터 초기화
   void clearData() {
@@ -42,6 +42,6 @@ class KCastingAppData {
     myFilmorgraphy = [];
     myImage = [];
     myVideo = [];
-    myBookmark = [];
+   // myBookmark = [];
   }
 }

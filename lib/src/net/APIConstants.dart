@@ -230,7 +230,9 @@ class APIConstants {
   static const String alert_type = "alert_type";
   static const String type_seq = "type_seq";
   static const String ADD_ACT_PRP = "ADD_ACT_PRP";
-  static const String ADD_MNG_PRP  = "ADD_MNG_PRP";
+  static const String ADD_MNG_PRP = "ADD_MNG_PRP";
+  static const String UPD_ACT_AAS = "UPD_ACT_AAS";
+  static const String UPD_MNG_AAS = "UPD_MNG_AAS";
 
   // 배우 회원 관련
   static const String table_actor_profile = "ActorProfile";

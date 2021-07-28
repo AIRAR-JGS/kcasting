@@ -3,6 +3,7 @@ import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/net/RestClientInterface.dart';
+import 'package:casting_call/src/view/audition/actor/AuditionApplyDetail.dart';
 import 'package:casting_call/src/view/audition/actor/OfferedAuditionDetail.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -226,6 +227,18 @@ class _PushNotification extends State<PushNotification> with BaseUtilMixin {
                                             case APIConstants.ADD_MNG_PRP:
                                             // 매니지먼트 회원 오디션 제안 받음
                                               addView(context, OfferedAuditionDetail(seq: _data[APIConstants.type_seq]));
+
+                                              break;
+
+                                            case APIConstants.UPD_ACT_AAS:
+                                            // 배우 회원이 지원한 오디션 상태값 변경됨
+                                              addView(context, AuditionApplyDetail(applySeq: _data[APIConstants.type_seq]));
+
+                                              break;
+
+                                            case APIConstants.UPD_MNG_AAS:
+                                            // 매니지먼트 소속 배우 회원이 지원한 오디션 상태값 변경됨
+                                              addView(context, AuditionApplyDetail(applySeq: _data[APIConstants.type_seq]));
 
                                               break;
 

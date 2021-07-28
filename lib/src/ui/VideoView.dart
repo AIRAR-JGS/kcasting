@@ -1,6 +1,6 @@
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
-import 'package:chewie/chewie.dart';
+import 'package:flick_video_player/flick_video_player.dart';
 //import 'package:casting_call/src/ui/VimeoVideoPlayer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,9 +17,9 @@ class VideoView extends StatefulWidget {
 
 class _VideoView extends State<VideoView> {
   String _videoURL;
-
+  FlickManager flickManager;
   VideoPlayerController _controller;
-  ChewieController _chewieController;
+
   Future<void> initFuture;
 
   double videoHeight;
@@ -57,10 +57,8 @@ class _VideoView extends State<VideoView> {
               }
             }));
 
-    _chewieController = ChewieController(
-      videoPlayerController: _controller,
-      autoPlay: true,
-      looping: true,
+    flickManager = FlickManager(
+      videoPlayerController: _controller
     );
 
     /*_myVideos.add('525373676');
@@ -101,7 +99,7 @@ class _VideoView extends State<VideoView> {
   @override
   void dispose() {
     _controller.dispose();
-    _chewieController.dispose();
+    flickManager.dispose();
 
     super.dispose();
   }
@@ -137,9 +135,11 @@ class _VideoView extends State<VideoView> {
                           Container(
                             height: videoHeight,
                             width: videoWidth,
-                            child: Chewie(controller: _chewieController),
+                            child:  FlickVideoPlayer(
+                                flickManager: flickManager
+                            ),
                           ),
-                          Visibility(
+                          /*Visibility(
                             child: GestureDetector(
                               onTap: () async {
                                 await _controller.seekTo(Duration.zero);
@@ -152,7 +152,7 @@ class _VideoView extends State<VideoView> {
                                   width: 50),
                             ),
                             visible: !_isPlaying,
-                          )
+                          )*/
                         ],
                       );
                     } else {

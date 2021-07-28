@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
@@ -362,22 +363,18 @@ class _AuditionApplyUploadVideo extends State<AuditionApplyUploadVideo>
                                                   alignment: Alignment.center,
                                                   children: <Widget>[
                                                     Container(
-                                                        width: MediaQuery.of(
-                                                                context)
+                                                        width: MediaQuery.of(context)
                                                             .size
                                                             .width,
                                                         margin: EdgeInsets.only(
                                                             bottom: 10),
                                                         height: 200,
                                                         decoration: BoxDecoration(
-                                                            borderRadius:
-                                                                CustomStyles
-                                                                    .circle7BorderRadius(),
+                                                            borderRadius: CustomStyles
+                                                                .circle7BorderRadius(),
                                                             border: Border.all(
                                                                 width: 5,
-                                                                color: (_myVideos[
-                                                                            index]
-                                                                        .isSelected
+                                                                color: (_myVideos[index].isSelected
                                                                     ? CustomColors
                                                                         .colorAccent
                                                                     : CustomColors
@@ -390,14 +387,15 @@ class _AuditionApplyUploadVideo extends State<AuditionApplyUploadVideo>
                                                                 fit: BoxFit
                                                                     .cover,
                                                               )
-                                                            : Image.network(
-                                                                _myVideos[index]
-                                                                        .videoData[
-                                                                    APIConstants
-                                                                        .actor_video_url_thumb],
+                                                            : CachedNetworkImage(
+                                                                imageUrl: _myVideos[index].videoData[APIConstants
+                                                                    .actor_video_url_thumb],
                                                                 fit: BoxFit
                                                                     .cover,
-                                                              )),
+                                                                errorWidget: (context,
+                                                                        url,
+                                                                        error) =>
+                                                                    Container())),
                                                     Container(
                                                         width: MediaQuery.of(
                                                                 context)

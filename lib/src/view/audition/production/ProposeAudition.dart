@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
@@ -181,28 +182,36 @@ class _ProposeAudition extends State<ProposeAudition> with BaseUtilMixin {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                           children: [
-                                            Expanded(
-                                              flex: 0,
-                                              child: Container(
-                                                  margin:
-                                                      EdgeInsets.only(right: 5),
-                                                  alignment:
-                                                      Alignment.topCenter,
-                                                  child: _actorImgUrl != null
-                                                      ? ClipOval(
-                                                          child: Image.network(
-                                                              _actorImgUrl,
-                                                              fit: BoxFit.cover,
-                                                              width: 64.0,
-                                                              height: 64.0),
-                                                        )
-                                                      : Icon(
-                                                          Icons.account_circle,
-                                                          color: CustomColors
-                                                              .colorFontLightGrey,
-                                                          size: 64,
-                                                        )),
-                                            ),
+                                            Container(
+                                                margin:
+                                                    EdgeInsets.only(right: 5),
+                                                padding:
+                                                    const EdgeInsets.all(0.0),
+                                                width: 64,
+                                                height: 64,
+                                                child: _actorImgUrl != null
+                                                    ? ClipOval(
+                                                        child:
+                                                            CachedNetworkImage(
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                                imageUrl:
+                                                                    _actorImgUrl,
+                                                                errorWidget:
+                                                                    (context,
+                                                                            url,
+                                                                            error) =>
+                                                                        Icon(
+                                                                          Icons
+                                                                              .account_circle,
+                                                                          color:
+                                                                              CustomColors.colorFontLightGrey,
+                                                                        )))
+                                                    : Icon(
+                                                        Icons.account_circle,
+                                                        color: CustomColors
+                                                            .colorFontLightGrey,
+                                                      )),
                                             Expanded(
                                                 flex: 1,
                                                 child: Text(

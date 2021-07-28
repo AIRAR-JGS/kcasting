@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:flutter/cupertino.dart';
@@ -41,7 +42,9 @@ class _ImageView extends State<ImageView> {
                 alignment: Alignment.center,
                 color: CustomColors.colorWhite,
                 child: PinchZoom(
-                  image: Image.network(_imgURL),
+                  image: CachedNetworkImage(
+                      imageUrl: _imgURL,
+                      errorWidget: (context, url, error) => Container()),
                   zoomedBackgroundColor: Colors.black.withOpacity(0.5),
                   resetDuration: const Duration(milliseconds: 100),
                   maxScale: 2.5,

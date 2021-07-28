@@ -1,5 +1,6 @@
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
+import 'package:chewie/chewie.dart';
 //import 'package:casting_call/src/ui/VimeoVideoPlayer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ class _VideoView extends State<VideoView> {
   String _videoURL;
 
   VideoPlayerController _controller;
+  ChewieController _chewieController;
   Future<void> initFuture;
 
   double videoHeight;
@@ -54,6 +56,12 @@ class _VideoView extends State<VideoView> {
                 });
               }
             }));
+
+    _chewieController = ChewieController(
+      videoPlayerController: _controller,
+      autoPlay: true,
+      looping: true,
+    );
 
     /*_myVideos.add('525373676');
     _myVideos.add('525381181');
@@ -92,8 +100,10 @@ class _VideoView extends State<VideoView> {
 
   @override
   void dispose() {
-    super.dispose();
     _controller.dispose();
+    _chewieController.dispose();
+
+    super.dispose();
   }
 
   //========================================================================================================================
@@ -127,7 +137,7 @@ class _VideoView extends State<VideoView> {
                           Container(
                             height: videoHeight,
                             width: videoWidth,
-                            child: VideoPlayer(_controller),
+                            child: Chewie(controller: _chewieController),
                           ),
                           Visibility(
                             child: GestureDetector(

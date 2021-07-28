@@ -94,8 +94,10 @@ class ActorProfileWidget {
             height: MediaQuery.of(context).size.width * 0.625,
             decoration: BoxDecoration(color: CustomColors.colorBgGrey),
             child: actorProfile[APIConstants.main_img_url] != null
-                ? Image.network(actorProfile[APIConstants.main_img_url],
-                    fit: BoxFit.cover)
+                ? CachedNetworkImage(
+                    imageUrl: actorProfile[APIConstants.main_img_url],
+                    fit: BoxFit.cover,
+                    errorWidget: (context, url, error) => Container())
                 : null,
           );
   }
@@ -478,11 +480,12 @@ class ActorProfileWidget {
                                       CustomStyles.circle4BorderRadius(),
                                   child: CachedNetworkImage(
                                       imageUrl: actorImageList[index]
-                                      [APIConstants.actor_img_url],
+                                          [APIConstants.actor_img_url],
                                       fit: BoxFit.cover,
-                                      errorWidget: (context, url, error) => ClipRRect(
-                                          borderRadius:
-                                          CustomStyles.circle4BorderRadius())))
+                                      errorWidget: (context, url, error) =>
+                                          ClipRRect(
+                                              borderRadius: CustomStyles
+                                                  .circle4BorderRadius())))
                               : ClipRRect(
                                   borderRadius:
                                       CustomStyles.circle4BorderRadius()),
@@ -525,11 +528,12 @@ class ActorProfileWidget {
                                     CustomStyles.circle4BorderRadius(),
                                 child: CachedNetworkImage(
                                     imageUrl: actorImageList[index]
-                                    [APIConstants.actor_img_url],
+                                        [APIConstants.actor_img_url],
                                     fit: BoxFit.cover,
-                                    errorWidget: (context, url, error) => ClipRRect(
-                                        borderRadius:
-                                        CustomStyles.circle4BorderRadius())))
+                                    errorWidget: (context, url, error) =>
+                                        ClipRRect(
+                                            borderRadius: CustomStyles
+                                                .circle4BorderRadius())))
                             : ClipRRect(
                                 borderRadius:
                                     CustomStyles.circle4BorderRadius()),
@@ -570,12 +574,13 @@ class ActorProfileWidget {
                                   borderRadius:
                                       CustomStyles.circle7BorderRadius(),
                                   child: CachedNetworkImage(
-                  imageUrl: actorVideoList[index]
-                  [APIConstants.actor_video_url_thumb],
-                  fit: BoxFit.cover,
-                  errorWidget: (context, url, error) => ClipRRect(
-                  borderRadius:
-                  CustomStyles.circle4BorderRadius()))),
+                                      imageUrl: actorVideoList[index]
+                                          [APIConstants.actor_video_url_thumb],
+                                      fit: BoxFit.cover,
+                                      errorWidget: (context, url, error) =>
+                                          ClipRRect(
+                                              borderRadius: CustomStyles
+                                                  .circle4BorderRadius()))),
                             ),
                             GestureDetector(
                                 onTap: () {
@@ -609,11 +614,12 @@ class ActorProfileWidget {
                                       CustomStyles.circle7BorderRadius(),
                                   child: CachedNetworkImage(
                                       imageUrl: actorVideoList[index]
-                                      [APIConstants.actor_video_url_thumb],
+                                          [APIConstants.actor_video_url_thumb],
                                       fit: BoxFit.cover,
-                                      errorWidget: (context, url, error) => ClipRRect(
-                                          borderRadius:
-                                          CustomStyles.circle4BorderRadius()))),
+                                      errorWidget: (context, url, error) =>
+                                          ClipRRect(
+                                              borderRadius: CustomStyles
+                                                  .circle4BorderRadius()))),
                             ),
                             GestureDetector(
                               onTap: () {

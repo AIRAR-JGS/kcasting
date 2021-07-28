@@ -45,6 +45,7 @@ dependencies:
   # image_picker_web: ^2.0.3
   video_thumbnail: ^0.3.3
   video_player: ^2.1.6
+  chewie: ^1.0.0
   # 네트워크 관련
   retrofit: ^2.0.0
   dio: ^4.0.0

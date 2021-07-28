@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
@@ -290,8 +291,7 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
   /*
   * 배우 북마크 목록
   * */
-  void requestActorBookmarkEditApi(
-      BuildContext context) {
+  void requestActorBookmarkEditApi(BuildContext context) {
     final dio = Dio();
 
     // 배우 북마크 api 호출 시 보낼 파라미터
@@ -338,8 +338,7 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
   /*
   * 매니지먼트 북마크 목록
   * */
-  void requestManagementBookmarkEditApi(
-      BuildContext context) {
+  void requestManagementBookmarkEditApi(BuildContext context) {
     final dio = Dio();
 
     // 매니지먼트 북마크 api 호출 시 보낼 파라미터
@@ -527,20 +526,23 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
                                               Expanded(
                                                   flex: 1,
                                                   child: Text('첨부파일',
-                                                      style: CustomStyles.dark14TextStyle(),
-                                                      overflow: TextOverflow.clip)),
+                                                      style: CustomStyles
+                                                          .dark14TextStyle(),
+                                                      overflow:
+                                                          TextOverflow.clip)),
                                               Expanded(
                                                   flex: 0,
                                                   child: CustomStyles
-                                                      .darkBold14TextButtonStyle('다운로드',
-                                                          () async {
-                                                        String _url = _castingBoardData[
-                                                        APIConstants
-                                                            .project_file_url];
-                                                        await canLaunch(_url)
-                                                            ? await launch(_url)
-                                                            : throw '$_url을 열 수 없습니다.';
-                                                      }))
+                                                      .darkBold14TextButtonStyle(
+                                                          '다운로드', () async {
+                                                    String _url =
+                                                        _castingBoardData[
+                                                            APIConstants
+                                                                .project_file_url];
+                                                    await canLaunch(_url)
+                                                        ? await launch(_url)
+                                                        : throw '$_url을 열 수 없습니다.';
+                                                  }))
                                             ])),
                                     visible:
                                         _castingBoardData[APIConstants.isImg] ==
@@ -572,10 +574,14 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
                                       child: _castingBoardData[APIConstants
                                                   .project_file_url] !=
                                               null
-                                          ? (Image.network(
-                                              _castingBoardData[APIConstants
-                                                  .project_file_url],
-                                              fit: BoxFit.fitWidth))
+                                          ? CachedNetworkImage(
+                                              imageUrl: _castingBoardData[
+                                                  APIConstants
+                                                      .project_file_url],
+                                              fit: BoxFit.fitWidth,
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      Container())
                                           : null,
                                     ),
                                     visible:
@@ -1050,11 +1056,9 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
                               if (KCastingAppData()
                                       .myInfo[APIConstants.member_type] ==
                                   APIConstants.member_type_actor) {
-                                requestActorBookmarkEditApi(
-                                    context);
+                                requestActorBookmarkEditApi(context);
                               } else {
-                                requestManagementBookmarkEditApi(
-                                    context);
+                                requestManagementBookmarkEditApi(context);
                               }
                             },
                             child: Visibility(
@@ -1064,15 +1068,16 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
                                     padding:
                                         EdgeInsets.only(left: 15, right: 15),
                                     alignment: Alignment.center,
-                                    child:  (
-                                        (_castingBoardData[_isBookmarkedKey] == 1)
-                                            ? Image.asset(
+                                    child: ((_castingBoardData[
+                                                _isBookmarkedKey] ==
+                                            1)
+                                        ? Image.asset(
                                             'assets/images/toggle_like_on.png',
-                                            width: 20,color: CustomColors.colorAccent)
-                                            : Image.asset(
+                                            width: 20,
+                                            color: CustomColors.colorAccent)
+                                        : Image.asset(
                                             'assets/images/toggle_like_off.png',
-                                            width: 20)
-                                    )),
+                                            width: 20))),
                                 visible: (KCastingAppData().myInfo[
                                             APIConstants.member_type]) ==
                                         APIConstants.member_type_product

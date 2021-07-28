@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/KCastingAppData.dart';
 import 'package:casting_call/res/CustomColors.dart';
@@ -74,15 +75,16 @@ class _AuditionApplyUploadImage extends State<AuditionApplyUploadImage>
     _castingName = widget.castingName;
     _actor_seq = widget.actorSeq;
 
-    if (KCastingAppData().myInfo[APIConstants.member_type] == APIConstants.member_type_actor) {
+    if (KCastingAppData().myInfo[APIConstants.member_type] ==
+        APIConstants.member_type_actor) {
       actorImage = KCastingAppData().myImage;
 
       // 배우 이미지
       for (int i = 0; i < actorImage.length; i++) {
-        _myPhotos.add(
-            new ImageListModel(false, false, null, actorImage[i]));
+        _myPhotos.add(new ImageListModel(false, false, null, actorImage[i]));
       }
-    } else if (KCastingAppData().myInfo[APIConstants.member_type] == APIConstants.member_type_management) {
+    } else if (KCastingAppData().myInfo[APIConstants.member_type] ==
+        APIConstants.member_type_management) {
       // 매니지먼트 보유 배우 이미지 목록 api 호출
       requestActorListApi(context);
     }
@@ -225,7 +227,7 @@ class _AuditionApplyUploadImage extends State<AuditionApplyUploadImage>
                                   margin: EdgeInsets.only(top: 5),
                                   padding: EdgeInsets.only(left: 15, right: 15),
                                   child: Text(
-                                      '나를 잘 나타내는 이미지 4장을 선택 또는 업로드 해주세요.',
+                                      '나를 잘 나타내는 이미지 3장을 선택 또는 업로드 해주세요.',
                                       style: CustomStyles.normal14TextStyle())),
                               Container(
                                 margin: EdgeInsets.only(top: 15, bottom: 20),
@@ -322,15 +324,18 @@ class _AuditionApplyUploadImage extends State<AuditionApplyUploadImage>
                                                   borderRadius: CustomStyles
                                                       .circle4BorderRadius(),
                                                   child: _myPhotos[index].isFile
-                                                      ? Image.file(_myPhotos[index]
-                                                          .photoFile)
-                                                      : Image.network(
-                                                          _myPhotos[index].photoData[
+                                                      ? Image.file(
+                                                          _myPhotos[index]
+                                                              .photoFile)
+                                                      : CachedNetworkImage(
+                                                          imageUrl: _myPhotos[index]
+                                                                  .photoData[
                                                               APIConstants
-                                                                  .actor_img_url]))
-                                              : ClipRRect(
-                                                  borderRadius: CustomStyles
-                                                      .circle4BorderRadius()),
+                                                                  .actor_img_url],
+                                                          errorWidget: (context,
+                                                                  url, error) =>
+                                                              ClipRRect(borderRadius: CustomStyles.circle4BorderRadius())))
+                                              : ClipRRect(borderRadius: CustomStyles.circle4BorderRadius()),
                                         ),
                                         Container(
                                             margin: EdgeInsets.all(10),
@@ -413,8 +418,8 @@ class _AuditionApplyUploadImage extends State<AuditionApplyUploadImage>
       return;
     }
 
-    if (totalImgCnt > 4) {
-      showSnackBar(context, '이미지는 최대 4장까지만 업로드할 수 있습니다.');
+    if (totalImgCnt > 3) {
+      showSnackBar(context, '이미지는 최대 3장까지만 업로드할 수 있습니다.');
       return;
     }
 

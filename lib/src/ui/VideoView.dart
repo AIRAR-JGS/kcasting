@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:flick_video_player/flick_video_player.dart';
+
 //import 'package:casting_call/src/ui/VimeoVideoPlayer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +24,8 @@ class _VideoView extends State<VideoView> {
   VideoPlayerController _controller;
 
   Future<void> initFuture;
+  StreamController<Future<void>> _streamController =
+      StreamController<Future<void>>();
 
   double videoHeight;
   double videoWidth;
@@ -40,19 +45,26 @@ class _VideoView extends State<VideoView> {
 
     _controller = VideoPlayerController.network(_videoURL);
     _controller.setLooping(false);
-    initFuture =
+    initFuture = _controller.initialize();
+
+    flickManager = FlickManager(videoPlayerController: _controller);
+
+    _streamController.add(initFuture);
+
+    /*initFuture =
         _controller.initialize().then((value) => _controller.addListener(() {
               if (!_controller.value.isPlaying &&
                   _controller.value.isInitialized &&
                   (_controller.value.duration == _controller.value.position)) {
-                flickManager = FlickManager(
-                    videoPlayerController: _controller
-                );
+                setState(() {
+
+                  flickManager = FlickManager(
+                      videoPlayerController: _controller
+                  );
+                });
 
               }
-            }));
-
-
+            }));*/
 
     /*_myVideos.add('525373676');
     _myVideos.add('525381181');
@@ -111,47 +123,38 @@ class _VideoView extends State<VideoView> {
             body: Container(
               alignment: Alignment.center,
               color: CustomColors.colorBlack,
-              child: FutureBuilder(
-                  future: initFuture,
+              child: StreamBuilder(
+                  stream: _streamController.stream,
                   builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      //비디오 너비 및 높이 제어
-                      videoHeight = MediaQuery.of(context).size.width /
-                          _controller.value.aspectRatio;
-                      videoWidth = MediaQuery.of(context).size.width;
-                      videoMargin = 0;
+                    return FutureBuilder(
+                        future: initFuture,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            //비디오 너비 및 높이 제어
+                            videoHeight = MediaQuery.of(context).size.width /
+                                _controller.value.aspectRatio;
+                            videoWidth = MediaQuery.of(context).size.width;
+                            videoMargin = 0;
 
-                      //플레이어 요소 렌더링
-                      return Stack(
-                        alignment: Alignment.center,
-                        children: <Widget>[
-                          Container(
-                            height: videoHeight,
-                            width: videoWidth,
-                            child:  FlickVideoPlayer(
-                                flickManager: flickManager
-                            ),
-                          ),
-                          /*Visibility(
-                            child: GestureDetector(
-                              onTap: () async {
-                                await _controller.seekTo(Duration.zero);
-                                setState(() {
-                                  _isPlaying = true;
-                                  _controller.play();
-                                });
-                              },
-                              child: Image.asset('assets/images/btn_play.png',
-                                  width: 50),
-                            ),
-                            visible: !_isPlaying,
-                          )*/
-                        ],
-                      );
-                    } else {
-                      return Center(
-                          heightFactor: 6, child: CircularProgressIndicator());
-                    }
+                            //플레이어 요소 렌더링
+                            return Stack(
+                                alignment: Alignment.center,
+                                children: <Widget>[
+                                  Container(
+                                      height: videoHeight,
+                                      width: videoWidth,
+                                      child: (flickManager != null)
+                                          ? FlickVideoPlayer(
+                                              flickManager: flickManager)
+                                          : Container())
+                                ]);
+                          } else {
+                            return Center(
+                                heightFactor: 6,
+                                child: CircularProgressIndicator());
+                          }
+                        });
                   }),
             )));
   }

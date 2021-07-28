@@ -32,8 +32,6 @@ class _VideoView extends State<VideoView> {
   Map _qualityValues;
   String _qualityValue;
 
-  bool _isPlaying = false;
-
   @override
   void initState() {
     super.initState();
@@ -47,19 +45,14 @@ class _VideoView extends State<VideoView> {
               if (!_controller.value.isPlaying &&
                   _controller.value.isInitialized &&
                   (_controller.value.duration == _controller.value.position)) {
-                //checking the duration and position every time
-                //Video Completed//
-                setState(() {
-                  _isPlaying = false;
-                  /*_controller.pause();
-              _controller.seekTo(Duration.zero);*/
-                });
+                flickManager = FlickManager(
+                    videoPlayerController: _controller
+                );
+
               }
             }));
 
-    flickManager = FlickManager(
-      videoPlayerController: _controller
-    );
+
 
     /*_myVideos.add('525373676');
     _myVideos.add('525381181');

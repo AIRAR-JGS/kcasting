@@ -1346,6 +1346,11 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                                         // 인증번호 받기 버튼 클릭
                                       })))
                             ])),
+                        Container(
+                            margin: EdgeInsets.only(top: 10),
+                            alignment: Alignment.centerLeft,
+                            child: Text('* 1회당 출연료를 입력한 후 저장버튼을 누르는 즉시, 해당 배우가 계약서를 작성할 수 있습니다.',
+                                style: CustomStyles.normal14TextStyle())),
                       ])));
             },
             separatorBuilder: (context, index) {

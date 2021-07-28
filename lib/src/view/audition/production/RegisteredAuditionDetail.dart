@@ -181,12 +181,17 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
     String result;
     try {
       FlutterDocumentPickerParams params = FlutterDocumentPickerParams(
-        allowedFileExtensions: ['pdf', 'docx'],
+        allowedFileExtensions: ['doc', 'pdf', 'docx'],
         allowedUtiTypes: [
-          'com.airar.castingCall.pdf',
-          'com.airar.castingCall.pdf'
+          'com.adobe.pdf',
+          'com.microsoft.word.doc',
+          'org.openxmlformats.wordprocessingml.document'
         ],
-        allowedMimeTypes: ['application/pdf', 'application/pdf'],
+        allowedMimeTypes: [
+          'application/pdf',
+          'application/msword',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        ],
         invalidFileNameSymbols: ['/'],
       );
 

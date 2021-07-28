@@ -241,7 +241,6 @@ class _PushNotification extends State<PushNotification> with BaseUtilMixin {
                                               addView(context, AuditionApplyDetail(applySeq: _data[APIConstants.type_seq]));
 
                                               break;
-
                                           }
                                         }
 

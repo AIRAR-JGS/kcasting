@@ -1386,7 +1386,7 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                                                             top: 5),
                                                         child: CustomStyles
                                                             .underline14TextButtonStyle(
-                                                                '제출 프로필', () {
+                                                                StringUtils.checkedString(_auditionState[APIConstants.actor_name]) + ' 배우님의 제출 프로필', () {
                                                           Navigator.push(
                                                               context,
                                                               MaterialPageRoute(

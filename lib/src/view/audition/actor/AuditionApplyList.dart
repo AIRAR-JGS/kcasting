@@ -4,6 +4,7 @@ import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/dialog/DialogAuditionApplyCancel.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/net/RestClientInterface.dart';
+import 'package:casting_call/src/util/StringUtils.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -38,6 +39,7 @@ class _AuditionApplyList extends State<AuditionApplyList>
   List<dynamic> _auditionList = [];
 
   // 지원 현황 상세 조회 윗부분
+  String actorName = '';
   int applyIngCnt = 0;
   int applyCompleteCnt = 0;
   int applyFailCnt = 0;
@@ -143,6 +145,7 @@ class _AuditionApplyList extends State<AuditionApplyList>
                 Map<String, dynamic> headerData = _responseList[0];
 
                 if (headerData != null) {
+                  actorName = headerData[APIConstants.actor_name];
                   applyIngCnt = headerData[APIConstants.applyIngCnt];
                   applyCompleteCnt = headerData[APIConstants.applyCompleteCnt];
                   applyFailCnt = headerData[APIConstants.applyFailCnt];
@@ -428,7 +431,7 @@ class _AuditionApplyList extends State<AuditionApplyList>
                         Container(
                           margin: EdgeInsets.only(top: 30.0, bottom: 10),
                           padding: EdgeInsets.only(left: 16, right: 16),
-                          child: Text('지원 현황',
+                          child: Text('지원 현황($actorName)',
                               style: CustomStyles.normal24TextStyle()),
                         ),
                         Container(

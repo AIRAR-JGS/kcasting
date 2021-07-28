@@ -7,6 +7,7 @@ import 'package:flick_video_player/flick_video_player.dart';
 //import 'package:casting_call/src/ui/VimeoVideoPlayer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoView extends StatefulWidget {
@@ -126,29 +127,38 @@ class _VideoView extends State<VideoView> {
               child: StreamBuilder(
                   stream: _streamController.stream,
                   builder: (context, snapshot) {
+                    if (!snapshot.hasData)
+                      return Center(child: CircularProgressIndicator());
+
                     return FutureBuilder(
                         future: initFuture,
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.done) {
-                            //비디오 너비 및 높이 제어
-                            videoHeight = MediaQuery.of(context).size.width /
-                                _controller.value.aspectRatio;
-                            videoWidth = MediaQuery.of(context).size.width;
-                            videoMargin = 0;
-
                             //플레이어 요소 렌더링
-                            return Stack(
-                                alignment: Alignment.center,
-                                children: <Widget>[
-                                  Container(
-                                      height: videoHeight,
-                                      width: videoWidth,
-                                      child: (flickManager != null)
-                                          ? FlickVideoPlayer(
-                                              flickManager: flickManager)
-                                          : Container())
-                                ]);
+                            return AspectRatio(
+                                aspectRatio: _controller.value.aspectRatio,
+                                child: FlickVideoPlayer(
+                                    flickManager: flickManager,
+                                    preferredDeviceOrientationFullscreen: [
+                                      DeviceOrientation.portraitUp,
+                                      DeviceOrientation.landscapeLeft,
+                                      DeviceOrientation.landscapeRight,
+                                    ],
+                                    flickVideoWithControls:
+                                        FlickVideoWithControls(
+                                      controls: FlickPortraitControls(),
+                                    ),
+                                    flickVideoWithControlsFullscreen:
+                                        FlickVideoWithControls(
+                                      videoFit: BoxFit.fitWidth,
+                                      controls: FlickPortraitControls(),
+                                    ),
+                                    systemUIOverlayFullscreen: [
+                                      SystemUiOverlay.bottom
+                                    ],
+                                    wakelockEnabledFullscreen: true,
+                                    wakelockEnabled: true));
                           } else {
                             return Center(
                                 heightFactor: 6,

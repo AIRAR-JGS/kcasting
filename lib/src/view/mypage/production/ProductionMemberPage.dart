@@ -48,6 +48,9 @@ class _ProductionMemberPage extends State<ProductionMemberPage>
                           null
                       ? ClipOval(
                           child: CachedNetworkImage(
+                              placeholder: (context, url) => Container(
+                                  alignment: Alignment.center,
+                                  child: CircularProgressIndicator()),
                               imageUrl: KCastingAppData()
                                   .myInfo[APIConstants.production_img_url],
                               fit: BoxFit.cover,

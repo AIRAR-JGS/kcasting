@@ -178,6 +178,9 @@ class _ProposedAuditionList extends State<ProposedAuditionList>
                                                     ? ClipOval(
                                                         child:
                                                             CachedNetworkImage(
+                                                              placeholder: (context, url) => Container(
+                                                                  alignment: Alignment.center,
+                                                                  child: CircularProgressIndicator()),
                                                         fit: BoxFit.cover,
                                                         imageUrl: _proposalList[
                                                                 index][

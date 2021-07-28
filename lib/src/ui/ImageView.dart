@@ -43,6 +43,9 @@ class _ImageView extends State<ImageView> {
                 color: CustomColors.colorWhite,
                 child: PinchZoom(
                   image: CachedNetworkImage(
+                      placeholder: (context, url) => Container(
+                          alignment: Alignment.center,
+                          child: CircularProgressIndicator()),
                       imageUrl: _imgURL,
                       errorWidget: (context, url, error) => Container()),
                   zoomedBackgroundColor: Colors.black.withOpacity(0.5),

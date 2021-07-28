@@ -106,6 +106,9 @@ class _AgencyMemberPage extends State<AgencyMemberPage> with BaseUtilMixin {
                           null
                       ? ClipOval(
                           child: CachedNetworkImage(
+                              placeholder: (context, url) => Container(
+                                  alignment: Alignment.center,
+                                  child: CircularProgressIndicator()),
                               imageUrl: KCastingAppData()
                                   .myInfo[APIConstants.management_logo_img_url],
                               fit: BoxFit.cover,

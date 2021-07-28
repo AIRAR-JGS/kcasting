@@ -40,6 +40,9 @@ class ActorProfileWidget {
                             style: CustomStyles.dark20TextStyle()),
                       )
                     : CachedNetworkImage(
+                        placeholder: (context, url) => Container(
+                            alignment: Alignment.center,
+                            child: CircularProgressIndicator()),
                         imageUrl: actorProfile[APIConstants.main_img_url],
                         fit: BoxFit.cover,
                         errorWidget: (context, url, error) => Container(
@@ -95,6 +98,9 @@ class ActorProfileWidget {
             decoration: BoxDecoration(color: CustomColors.colorBgGrey),
             child: actorProfile[APIConstants.main_img_url] != null
                 ? CachedNetworkImage(
+                    placeholder: (context, url) => Container(
+                        alignment: Alignment.center,
+                        child: CircularProgressIndicator()),
                     imageUrl: actorProfile[APIConstants.main_img_url],
                     fit: BoxFit.cover,
                     errorWidget: (context, url, error) => Container())
@@ -479,6 +485,9 @@ class ActorProfileWidget {
                                   borderRadius:
                                       CustomStyles.circle4BorderRadius(),
                                   child: CachedNetworkImage(
+                                      placeholder: (context, url) => Container(
+                                          alignment: Alignment.center,
+                                          child: CircularProgressIndicator()),
                                       imageUrl: actorImageList[index]
                                           [APIConstants.actor_img_url],
                                       fit: BoxFit.cover,
@@ -527,6 +536,9 @@ class ActorProfileWidget {
                                 borderRadius:
                                     CustomStyles.circle4BorderRadius(),
                                 child: CachedNetworkImage(
+                                    placeholder: (context, url) => Container(
+                                        alignment: Alignment.center,
+                                        child: CircularProgressIndicator()),
                                     imageUrl: actorImageList[index]
                                         [APIConstants.actor_img_url],
                                     fit: BoxFit.cover,
@@ -574,6 +586,9 @@ class ActorProfileWidget {
                                   borderRadius:
                                       CustomStyles.circle7BorderRadius(),
                                   child: CachedNetworkImage(
+                                      placeholder: (context, url) => Container(
+                                          alignment: Alignment.center,
+                                          child: CircularProgressIndicator()),
                                       imageUrl: actorVideoList[index]
                                           [APIConstants.actor_video_url_thumb],
                                       fit: BoxFit.cover,
@@ -613,6 +628,9 @@ class ActorProfileWidget {
                                   borderRadius:
                                       CustomStyles.circle7BorderRadius(),
                                   child: CachedNetworkImage(
+                                      placeholder: (context, url) => Container(
+                                          alignment: Alignment.center,
+                                          child: CircularProgressIndicator()),
                                       imageUrl: actorVideoList[index]
                                           [APIConstants.actor_video_url_thumb],
                                       fit: BoxFit.cover,

@@ -157,6 +157,9 @@ class _AgencyActorOfferedAuditionList
                                   _data[APIConstants.main_img_url] != null
                                       ? ClipOval(
                                           child: CachedNetworkImage(
+                                              placeholder: (context, url) => Container(
+                                                  alignment: Alignment.center,
+                                                  child: CircularProgressIndicator()),
                                               imageUrl: _data[
                                                   APIConstants.main_img_url],
                                               fit: BoxFit.cover,

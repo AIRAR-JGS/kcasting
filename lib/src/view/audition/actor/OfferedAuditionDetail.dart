@@ -180,6 +180,9 @@ class _OfferedAuditionDetail extends State<OfferedAuditionDetail>
                                     child: ClipOval(
                                       child: (_scoutData[
                                       APIConstants.production_img_url] != null) ? CachedNetworkImage(
+                                        placeholder: (context, url) => Container(
+                                            alignment: Alignment.center,
+                                            child: CircularProgressIndicator()),
                                         imageUrl: _scoutData[
                                             APIConstants.production_img_url],
                                         errorWidget: (context, url, error) =>

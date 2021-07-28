@@ -575,6 +575,9 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
                                                   .project_file_url] !=
                                               null
                                           ? CachedNetworkImage(
+                                          placeholder: (context, url) => Container(
+                                              alignment: Alignment.center,
+                                              child: CircularProgressIndicator()),
                                               imageUrl: _castingBoardData[
                                                   APIConstants
                                                       .project_file_url],

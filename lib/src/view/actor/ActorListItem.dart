@@ -67,6 +67,9 @@ class _ActorListItem extends State<ActorListItem> with BaseUtilMixin {
                           ? ClipRRect(
                               borderRadius: CustomStyles.circle7BorderRadius(),
                               child: CachedNetworkImage(
+                                  placeholder: (context, url) => Container(
+                                      alignment: Alignment.center,
+                                      child: CircularProgressIndicator()),
                                   imageUrl: _data[APIConstants.main_img_url],
                                   fit: BoxFit.cover))
                           : null),

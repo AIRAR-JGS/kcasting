@@ -211,6 +211,9 @@ class _AgencyProfile extends State<AgencyProfile>
                                   )
                                 : ClipOval(
                                     child: CachedNetworkImage(
+                                        placeholder: (context, url) => Container(
+                                            alignment: Alignment.center,
+                                            child: CircularProgressIndicator()),
                                         imageUrl: KCastingAppData().myInfo[
                                             APIConstants
                                                 .management_logo_img_url],

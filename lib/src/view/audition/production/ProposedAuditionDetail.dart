@@ -79,6 +79,9 @@ class _ProposedAuditionDetail extends State<ProposedAuditionDetail>
                                                     ? ClipOval(
                                                         child:
                                                             CachedNetworkImage(
+                                                              placeholder: (context, url) => Container(
+                                                                  alignment: Alignment.center,
+                                                                  child: CircularProgressIndicator()),
                                                         fit: BoxFit.cover,
                                                         imageUrl: _scoutData[
                                                             APIConstants

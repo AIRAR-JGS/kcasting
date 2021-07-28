@@ -388,6 +388,9 @@ class _AuditionApplyUploadVideo extends State<AuditionApplyUploadVideo>
                                                                     .cover,
                                                               )
                                                             : CachedNetworkImage(
+                                                            placeholder: (context, url) => Container(
+                                                                alignment: Alignment.center,
+                                                                child: CircularProgressIndicator()),
                                                                 imageUrl: _myVideos[index].videoData[APIConstants
                                                                     .actor_video_url_thumb],
                                                                 fit: BoxFit

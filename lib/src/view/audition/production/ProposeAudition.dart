@@ -193,6 +193,9 @@ class _ProposeAudition extends State<ProposeAudition> with BaseUtilMixin {
                                                     ? ClipOval(
                                                         child:
                                                             CachedNetworkImage(
+                                                                placeholder: (context, url) => Container(
+                                                                    alignment: Alignment.center,
+                                                                    child: CircularProgressIndicator()),
                                                                 fit: BoxFit
                                                                     .cover,
                                                                 imageUrl:

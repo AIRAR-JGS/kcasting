@@ -210,6 +210,9 @@ class _OfferedAuditionList extends State<OfferedAuditionList>
                                           alignment: Alignment.topCenter,
                                           child: ClipOval(
                                             child: CachedNetworkImage(
+                                              placeholder: (context, url) => Container(
+                                                  alignment: Alignment.center,
+                                                  child: CircularProgressIndicator()),
                                               width: 30,
                                               height: 30,
                                               imageUrl: _scoutList[index][

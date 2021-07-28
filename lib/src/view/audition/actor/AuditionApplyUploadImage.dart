@@ -328,6 +328,9 @@ class _AuditionApplyUploadImage extends State<AuditionApplyUploadImage>
                                                           _myPhotos[index]
                                                               .photoFile)
                                                       : CachedNetworkImage(
+                                                      placeholder: (context, url) => Container(
+                                                          alignment: Alignment.center,
+                                                          child: CircularProgressIndicator()),
                                                           imageUrl: _myPhotos[index]
                                                                   .photoData[
                                                               APIConstants

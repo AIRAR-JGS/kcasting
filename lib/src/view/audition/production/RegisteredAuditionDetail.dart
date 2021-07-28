@@ -445,6 +445,9 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
             ? ClipRRect(
                 borderRadius: CustomStyles.circle7BorderRadius(),
                 child: CachedNetworkImage(
+                    placeholder: (context, url) => Container(
+                        alignment: Alignment.center,
+                        child: CircularProgressIndicator()),
                     imageUrl: _imgUrlArr[idx],
                     fit: BoxFit.cover,
                     errorWidget: (context, url, error) =>

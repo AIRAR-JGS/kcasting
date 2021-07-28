@@ -517,7 +517,9 @@ class _AgencyActorList extends State<AgencyActorList>
                                                                             null
                                                                         ? ClipRRect(
                                                                             borderRadius: CustomStyles.circle4BorderRadius(),
-                                                                            child: CachedNetworkImage(imageUrl: _data[APIConstants.main_img_url], fit: BoxFit.cover))
+                                                                            child: CachedNetworkImage(placeholder: (context, url) => Container(
+                                                                                alignment: Alignment.center,
+                                                                                child: CircularProgressIndicator()),imageUrl: _data[APIConstants.main_img_url], fit: BoxFit.cover))
                                                                         : null),
                                                                 Container(
                                                                     margin: EdgeInsets
@@ -618,7 +620,9 @@ class _AgencyActorList extends State<AgencyActorList>
                                                                       ? ClipRRect(
                                                                           borderRadius:
                                                                               CustomStyles.circle7BorderRadius(),
-                                                                          child: CachedNetworkImage(imageUrl: _data[APIConstants.main_img_url], fit: BoxFit.cover))
+                                                                          child: CachedNetworkImage(placeholder: (context, url) => Container(
+                                                                              alignment: Alignment.center,
+                                                                              child: CircularProgressIndicator()),imageUrl: _data[APIConstants.main_img_url], fit: BoxFit.cover))
                                                                       : null),
                                                               Container(
                                                                   alignment:

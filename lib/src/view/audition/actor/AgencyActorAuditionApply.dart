@@ -159,6 +159,9 @@ class _AgencyActorAuditionApply extends State<AgencyActorAuditionApply>
                                           padding: const EdgeInsets.all(0.0),
                                           child: ClipOval(
                                             child: CachedNetworkImage(
+                                                placeholder: (context, url) => Container(
+                                                    alignment: Alignment.center,
+                                                    child: CircularProgressIndicator()),
                                                 imageUrl: _data[
                                                     APIConstants.main_img_url],
                                                 fit: BoxFit.cover,

@@ -52,7 +52,7 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
   //bool _isSubmitContract = false;
   //bool _isAgreeOpenContact = false;
 
-  bool _tempContractWritable = true;
+  //bool _tempContractWritable = true;
   bool _tempContractFinish = false;
 
   bool _isUpload = false;
@@ -438,10 +438,22 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
   /*
   * 배우 계약서 작성하기
   * */
-  void requestWriteContract(BuildContext context) {
+  Future<void> requestWriteContract(BuildContext context) async {
     setState(() {
       _isUpload = true;
     });
+
+    // 계좌번호 암호화
+    final publicPem =
+        await rootBundle.loadString('assets/files/public_key.pem');
+    final publicKey = Encrypt.RSAKeyParser().parse(publicPem) as RSAPublicKey;
+
+    final encryptor = Encrypt.Encrypter(Encrypt.RSA(publicKey: publicKey));
+    final encryptedAccountNum =
+    encryptor.encrypt(StringUtils.trimmedString(_txtFieldAccountNum.text));
+    String juminNum = _txtFieldJumin1.text + _txtFieldJumin2.text;
+    final encryptedJumin =
+    encryptor.encrypt(StringUtils.trimmedString(juminNum));
 
     // 배우 계약서 작성하기 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
@@ -464,10 +476,8 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
         _auditionState[APIConstants.casting_name];
     targetData[APIConstants.casting_pay] =
         _auditionState[APIConstants.casting_pay];
-    targetData[APIConstants.actor_account] =
-        StringUtils.trimmedString(_txtFieldAccountNum.text);
-    targetData[APIConstants.actor_jumin] =
-        StringUtils.trimmedString(_txtFieldJumin1.text + _txtFieldJumin2.text);
+    targetData[APIConstants.actor_account] = encryptedAccountNum.base64;
+    targetData[APIConstants.actor_jumin] = encryptedJumin.base64;
     targetData[APIConstants.actor_address] =
         StringUtils.trimmedString(_txtFieldAddress.text);
 
@@ -484,9 +494,9 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
             var _responseData = value[APIConstants.data];
 
             setState(() {
-              var _responseList = _responseData[APIConstants.list] as List;
+              showSnackBar(context, "계약서 작성 완료! 작성된 계약서는 계약완료 탭에서 확인하실 수 있습니다.");
 
-              if (_responseList != null && _responseList.length > 0) {}
+              requestMyApplyDetailApi(context);
             });
           } else {
             showSnackBar(context, APIConstants.error_msg_try_again);
@@ -919,7 +929,7 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
             ]));
         break;
       case "합격":
-        if (_tempContractWritable) {
+        if (_auditionState[APIConstants.isSignStandby] == 1) {
           return Container(
               padding:
               EdgeInsets.only(top: 20, left: 15, right: 15, bottom: 20),
@@ -943,11 +953,11 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                     ),
                     Container(
                         margin: EdgeInsets.only(top: 30),
-                        child: Text('1회당 출연료',
+                        child: Text('출연료',
                             style: CustomStyles.darkBold16TextStyle())),
                     Container(
                         margin: EdgeInsets.only(top: 15),
-                        child: Text('500,000',
+                        child: Text(StringUtils.checkedString(_auditionState[APIConstants.final_pay]),
                             style: CustomStyles.dark16TextStyle())),
                     Container(
                       margin: EdgeInsets.only(top: 30),
@@ -1578,7 +1588,7 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                                   _auditionState[APIConstants
                                           .thirdAuditionTarget_result_type] ==
                                       '합격' &&
-                                  _tempContractWritable &&
+                                  _auditionState[APIConstants.isSignStandby] == 1 &&
                                   !_tempContractFinish)
                               ? true
                               : false),

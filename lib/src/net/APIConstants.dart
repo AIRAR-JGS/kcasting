@@ -471,6 +471,7 @@ class APIConstants {
   static const String isOpenSecondAudition = "isOpenSecondAudition";
   static const String isOpenThirdAudition = "isOpenThirdAudition";
   static const String isAuditionQuit = "isAuditionQuit";
+  static const String isSignStandby = "isSignStandby";
 
 // 사용 안함
 /*static const String apply_image = "apply_image";

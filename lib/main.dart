@@ -12,7 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
 
@@ -161,7 +162,7 @@ class _MyHomePageState extends State<MyHomePage> with BaseUtilMixin {
     targetDatas[APIConstants.seq] = seq;
 
     Map<String, dynamic> params = new Map();
-    switch(memberType) {
+    switch (memberType) {
       case APIConstants.member_type_actor:
         params[APIConstants.key] = APIConstants.SEL_ACT_INFO;
         break;
@@ -191,7 +192,7 @@ class _MyHomePageState extends State<MyHomePage> with BaseUtilMixin {
                   KCastingAppData().myInfo =
                       _listData.length > 0 ? _listData[0] : null;
 
-                  switch(KCastingAppData().myInfo[APIConstants.member_type]) {
+                  switch (KCastingAppData().myInfo[APIConstants.member_type]) {
                     case APIConstants.member_type_actor:
                       requestActorProfileApi(context);
                       break;
@@ -202,7 +203,6 @@ class _MyHomePageState extends State<MyHomePage> with BaseUtilMixin {
                       replaceView(context, Home());
                       break;
                   }
-
                 } catch (e) {
                   replaceView(context, Login());
                 }

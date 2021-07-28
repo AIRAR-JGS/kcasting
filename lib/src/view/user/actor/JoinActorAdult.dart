@@ -7,6 +7,7 @@ import 'package:casting_call/src/net/RestClientInterface.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
 import 'package:casting_call/src/view/main/Home.dart';
 import 'package:casting_call/src/view/user/actor/JoinActorSelectType.dart';
+import 'package:casting_call/src/view/user/common/AuthWebView.dart';
 import 'package:dio/dio.dart';
 import 'package:encrypt/encrypt.dart';
 import 'package:flutter/gestures.dart';
@@ -172,14 +173,16 @@ class _JoinActorAdult extends State<JoinActorAdult> with BaseUtilMixin {
                                                   .colorFontLightGrey,
                                             ),
                                           ),
-                                          /*Container(
+                                          Container(
                                               height: 50,
                                               padding: EdgeInsets.only(
                                                   left: 30, right: 30),
                                               width: double.infinity,
                                               child: CustomStyles
                                                   .greyBorderRound7ButtonStyle(
-                                                      '본인 인증하기', () {})),*/
+                                                      '본인 인증하기', () {
+                                                        addView(context, AuthWebView());
+                                              })),
                                           Container(
                                               margin: EdgeInsets.only(top: 0),
                                               padding: EdgeInsets.only(

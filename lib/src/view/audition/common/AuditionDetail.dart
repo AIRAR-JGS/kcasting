@@ -9,6 +9,7 @@ import 'package:casting_call/src/view/audition/actor/AgencyActorAuditionApply.da
 import 'package:casting_call/src/view/audition/actor/AuditionApplyUploadImage.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../KCastingAppData.dart';
 
@@ -498,7 +499,7 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
                                         padding: EdgeInsets.only(
                                             left: 15, right: 15),
                                         margin: EdgeInsets.only(top: 10.0),
-                                        child: Text('첨부파일',
+                                        child: Text('첨부파일 또는 이미지',
                                             style: CustomStyles
                                                 .darkBold16TextStyle())),
                                     visible: _castingBoardData[APIConstants
@@ -523,12 +524,23 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Text('모집요강 안내.pdf',
-                                                  style: CustomStyles
-                                                      .dark16TextStyle()),
-                                              Text('다운로드',
-                                                  style: CustomStyles
-                                                      .darkBold16TextStyle())
+                                              Expanded(
+                                                  flex: 1,
+                                                  child: Text('첨부파일',
+                                                      style: CustomStyles.dark14TextStyle(),
+                                                      overflow: TextOverflow.clip)),
+                                              Expanded(
+                                                  flex: 0,
+                                                  child: CustomStyles
+                                                      .darkBold14TextButtonStyle('다운로드',
+                                                          () async {
+                                                        String _url = _castingBoardData[
+                                                        APIConstants
+                                                            .project_file_url];
+                                                        await canLaunch(_url)
+                                                            ? await launch(_url)
+                                                            : throw '$_url을 열 수 없습니다.';
+                                                      }))
                                             ])),
                                     visible:
                                         _castingBoardData[APIConstants.isImg] ==
@@ -544,7 +556,6 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
                                       margin: EdgeInsets.only(top: 15),
                                       alignment: Alignment.center,
                                       width: MediaQuery.of(context).size.width,
-                                      height: 200,
                                       decoration: BoxDecoration(
                                         gradient: LinearGradient(
                                             begin: Alignment.topLeft,
@@ -564,7 +575,7 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
                                           ? (Image.network(
                                               _castingBoardData[APIConstants
                                                   .project_file_url],
-                                              fit: BoxFit.cover))
+                                              fit: BoxFit.fitWidth))
                                           : null,
                                     ),
                                     visible:
@@ -1057,7 +1068,7 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
                                         (_castingBoardData[_isBookmarkedKey] == 1)
                                             ? Image.asset(
                                             'assets/images/toggle_like_on.png',
-                                            width: 20)
+                                            width: 20,color: CustomColors.colorAccent)
                                             : Image.asset(
                                             'assets/images/toggle_like_off.png',
                                             width: 20)

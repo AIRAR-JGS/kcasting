@@ -172,16 +172,16 @@ class _JoinActorAdult extends State<JoinActorAdult> with BaseUtilMixin {
                                                   .colorFontLightGrey,
                                             ),
                                           ),
-                                          Container(
+                                          /*Container(
                                               height: 50,
                                               padding: EdgeInsets.only(
                                                   left: 30, right: 30),
                                               width: double.infinity,
                                               child: CustomStyles
                                                   .greyBorderRound7ButtonStyle(
-                                                      '본인 인증하기', () {})),
+                                                      '본인 인증하기', () {})),*/
                                           Container(
-                                              margin: EdgeInsets.only(top: 30),
+                                              margin: EdgeInsets.only(top: 0),
                                               padding: EdgeInsets.only(
                                                   left: 30, right: 30),
                                               alignment: Alignment.centerLeft,

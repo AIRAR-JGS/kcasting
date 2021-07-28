@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/KCastingAppData.dart';
 import 'package:casting_call/res/CustomColors.dart';
@@ -17,7 +16,9 @@ class AuditionListItem extends StatelessWidget with BaseUtilMixin {
   final bool isMyScrapList;
   final VoidCallback onClickedBookmark;
 
-  AuditionListItem({Key key, this.castingItem, this.isMyScrapList, this.onClickedBookmark}) : super(key: key);
+  AuditionListItem(
+      {Key key, this.castingItem, this.isMyScrapList, this.onClickedBookmark})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -263,11 +264,25 @@ class AuditionListItem extends StatelessWidget with BaseUtilMixin {
                                                   Container(
                                                       margin: EdgeInsets.only(
                                                           top: 10),
+                                                      child: Text(
+                                                          StringUtils.checkedString(
+                                                              castingItem[
+                                                                  APIConstants
+                                                                      .production_name]),
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: CustomStyles
+                                                              .darkBold16TextStyle()))
+                                                  /*Container(
+                                                    width: 60,
+                                                      margin: EdgeInsets.only(
+                                                          top: 10),
                                                       child: castingItem[
                                                                   APIConstants
                                                                       .production_img_url] !=
                                                               null
-                                                          ? CachedNetworkImage(
+                                                          ? ClipRRect(
+                                                          child: CachedNetworkImage(
                                                               imageUrl: castingItem[
                                                                   APIConstants
                                                                       .production_img_url],
@@ -282,9 +297,9 @@ class AuditionListItem extends StatelessWidget with BaseUtilMixin {
                                                                           .darkBold16TextStyle()),
                                                               height: 15,
                                                               fit: BoxFit
-                                                                  .contain,
-                                                            )
-                                                          : null)
+                                                                  .fitWidth,
+                                                            ))
+                                                          : null)*/
                                                 ]))),
                                     visible: castingItem[APIConstants
                                                 .production_img_url] !=
@@ -332,22 +347,30 @@ class AuditionListItem extends StatelessWidget with BaseUtilMixin {
                                         width: 30,
                                         margin: EdgeInsets.only(left: 10),
                                         alignment: Alignment.center,
-                                        child: isMyScrapList ? (Image.asset(
-                                            'assets/images/toggle_like_on.png',
-                                            width: 20)) :(KCastingAppData().myInfo[APIConstants.member_type] ==
-                                            APIConstants.member_type_actor)
-                                            ? ((castingItem[APIConstants.isActorCastringScrap] == 1)
-                                            ? Image.asset('assets/images/toggle_like_on.png',
-                                            width: 20)
-                                            : Image.asset('assets/images/toggle_like_off.png',
-                                            width: 20))
-                                            : ((castingItem[APIConstants.isManagementCastringScrap] == 1)
-                                            ? Image.asset(
-                                            'assets/images/toggle_like_on.png',
-                                            width: 20)
-                                            : Image.asset(
-                                            'assets/images/toggle_like_off.png',
-                                            width: 20))  ),
+                                        child: isMyScrapList
+                                            ? (Image.asset(
+                                                'assets/images/toggle_like_on.png',
+                                                width: 20,
+                                                color:
+                                                    CustomColors.colorAccent))
+                                            : (KCastingAppData().myInfo[APIConstants.member_type] ==
+                                                    APIConstants
+                                                        .member_type_actor)
+                                                ? ((castingItem[APIConstants.isActorCastringScrap] == 1)
+                                                    ? Image.asset('assets/images/toggle_like_on.png',
+                                                        width: 20,
+                                                        color: CustomColors
+                                                            .colorAccent)
+                                                    : Image.asset('assets/images/toggle_like_off.png',
+                                                        width: 20))
+                                                : ((castingItem[APIConstants.isManagementCastringScrap] == 1)
+                                                    ? Image.asset('assets/images/toggle_like_on.png',
+                                                        width: 20,
+                                                        color: CustomColors
+                                                            .colorAccent)
+                                                    : Image.asset(
+                                                        'assets/images/toggle_like_off.png',
+                                                        width: 20))),
                                     visible: (KCastingAppData().myInfo[APIConstants.member_type]) ==
                                             APIConstants.member_type_product
                                         ? false

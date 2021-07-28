@@ -109,6 +109,7 @@ class _PushNotification extends State<PushNotification> with BaseUtilMixin {
               var _pagingData = _responseList[APIConstants.paging];
 
               _total = _pagingData[APIConstants.total];
+              KCastingAppData().myInfo[APIConstants.newAlertCnt] = _total;
 
               if (_responseList != null && _responseList.length > 0) {
                 _noticeList.addAll(_responseList[APIConstants.list]);
@@ -201,62 +202,64 @@ class _PushNotification extends State<PushNotification> with BaseUtilMixin {
                   physics: AlwaysScrollableScrollPhysics(),
                   child: Column(children: [
                     Container(
-                        child: (_noticeList.length > 0
-                            ? ListView.separated(
-                                primary: false,
-                                physics: NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount: _noticeList.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  Map<String, dynamic> _data =
-                                      _noticeList[index];
+                        child: ListView.separated(
+                            primary: false,
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: _noticeList.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              Map<String, dynamic> _data = _noticeList[index];
 
-                                  return Container(
-                                      alignment: Alignment.centerLeft,
-                                      child: GestureDetector(
-                                          onTap: () {
-                                            requestCheckNoticeApi(context,
-                                                _data[APIConstants.seq]);
-                                          },
-                                          child: Container(
-                                              alignment: Alignment.centerLeft,
-                                              padding: EdgeInsets.only(
-                                                  left: 15,
-                                                  right: 15,
-                                                  top: 20,
-                                                  bottom: 20),
-                                              child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Container(
-                                                        margin: EdgeInsets.only(
-                                                            bottom: 5),
-                                                        child: Text(
-                                                            _data[APIConstants
-                                                                .alert_contents],
-                                                            style: CustomStyles
-                                                                .normal16TextStyle())),
-                                                    Container(
-                                                        child: Text(
-                                                            _data[APIConstants
-                                                                .addDate],
-                                                            style: CustomStyles
-                                                                .normal14TextStyle()))
-                                                  ]))));
-                                },
-                                separatorBuilder: (context, index) {
-                                  return Divider(
-                                    height: 0.1,
-                                    color: CustomColors.colorFontLightGrey,
-                                  );
-                                })
-                            : Container(
-                                alignment: Alignment.center,
-                                child: Text('알림이 없습니다.',
-                                    style: CustomStyles.normal16TextStyle())))),
-                    Divider()
+                              return Container(
+                                  alignment: Alignment.centerLeft,
+                                  child: GestureDetector(
+                                      onTap: () {
+                                        requestCheckNoticeApi(
+                                            context, _data[APIConstants.seq]);
+                                      },
+                                      child: Container(
+                                          alignment: Alignment.centerLeft,
+                                          padding: EdgeInsets.only(
+                                              left: 15,
+                                              right: 15,
+                                              top: 20,
+                                              bottom: 20),
+                                          child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                    margin: EdgeInsets.only(
+                                                        bottom: 5),
+                                                    child: Text(
+                                                        _data[APIConstants
+                                                            .alert_contents],
+                                                        style: CustomStyles
+                                                            .normal16TextStyle())),
+                                                Container(
+                                                    child: Text(
+                                                        _data[APIConstants
+                                                            .addDate],
+                                                        style: CustomStyles
+                                                            .normal14TextStyle()))
+                                              ]))));
+                            },
+                            separatorBuilder: (context, index) {
+                              return Divider(
+                                height: 0.1,
+                                color: CustomColors.colorFontLightGrey,
+                              );
+                            })),
+                    Visibility(
+                        child: Divider(),
+                        visible: _noticeList.length > 0 ? true : false),
                   ])),
+              Visibility(
+                  child: Container(
+                      alignment: Alignment.center,
+                      child: Text('알림이 없습니다.',
+                          style: CustomStyles.normal16TextStyle())),
+                  visible: _noticeList.length > 0 ? false : true),
               Visibility(
                 child: Container(
                     color: Colors.black38,

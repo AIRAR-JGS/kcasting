@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
+import 'package:casting_call/src/dialog/DialogAuditionQuit.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/net/RestClientInterface.dart';
 import 'package:casting_call/src/util/DateTileUtils.dart';
@@ -1629,8 +1630,18 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                                                   child: Container(
                                                       child: CustomStyles
                                                           .darkBold14TextButtonStyle(
-                                                              '오디션 마감하기',
-                                                              () {}))),
+                                                              '오디션 마감하기', () {
+                                                    showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                                _context) =>
+                                                            DialogAuditionQuit(
+                                                                onClickedAgree:
+                                                                    () {
+                                                              requestQuitAudition(
+                                                                  context);
+                                                            }));
+                                                  }))),
                                               visible: _firstAuditionInfo[
                                                           APIConstants
                                                               .isAuditionQuit] ==
@@ -1907,6 +1918,50 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
             });
           } else {
             // 오디션 대상자 단일 수정 실패
+            showSnackBar(context, APIConstants.error_msg_try_again);
+          }
+        }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
+      }
+    });
+  }
+
+  /*
+  * 오디션 마감하기
+  * */
+  void requestQuitAudition(BuildContext context) {
+    setState(() {
+      _isUpload = true;
+    });
+
+    // 오디션 마감하기 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetData = new Map();
+    targetData[APIConstants.casting_seq] = _castingSeq;
+
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.UPD_PCT_QUIT;
+    params[APIConstants.target] = targetData;
+
+    // 오디션 마감하기 api 호출
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value == null) {
+          // 에러 - 데이터 널
+          showSnackBar(context, '다시 시도해 주세요.');
+        } else {
+          if (value[APIConstants.resultVal]) {
+            setState(() {
+              //var _responseData = value[APIConstants.data];
+
+              showSnackBar(context, "오디션이 마감되었습니다.");
+            });
+          } else {
+            // 오디션 마감하기 실패
             showSnackBar(context, APIConstants.error_msg_try_again);
           }
         }

@@ -464,6 +464,7 @@ class _ActorDetail extends State<ActorDetail>
                               child: _actorProfile[APIConstants.isProductionActorScrap] == 1 ? Image.asset(
                                 'assets/images/toggle_like_on.png',
                                 width: 20,
+                                color: CustomColors.colorAccent
                               ) : Image.asset(
                             'assets/images/toggle_like_off.png',
                             width: 20,

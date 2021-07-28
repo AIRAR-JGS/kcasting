@@ -58,25 +58,14 @@ class _AuditionApplyList extends State<AuditionApplyList>
       _actorSeq = KCastingAppData().myInfo[APIConstants.seq];
     }
 
-    requestMyApplyListHeadApi(context);
-
     _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(_handleTabSelection);
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    _tabIndex = 0;
-
-    _total = 0;
-    _auditionList = [];
-
-    requestMyApplyListApi(context, "진행중");
 
     _scrollController = new ScrollController(initialScrollOffset: 5.0)
       ..addListener(_scrollListener);
+
+    requestMyApplyListHeadApi(context);
+    requestMyApplyListApi(context, "진행중");
   }
 
   _handleTabSelection() {

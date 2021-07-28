@@ -7,12 +7,15 @@ import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/net/RestClientInterface.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
 import 'package:dio/dio.dart';
+import 'package:encrypt/encrypt.dart' as Encrypt;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:pointycastle/asymmetric/api.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
@@ -427,6 +430,136 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
           // 기업 실명확인 실패
           showSnackBar(context, "계좌 소유주 확인 실패");
         }
+      }
+    });
+  }
+
+  /*
+  * 배우 계약서 작성하기
+  * */
+  void requestWriteContract(BuildContext context) {
+    setState(() {
+      _isUpload = true;
+    });
+
+    // 배우 계약서 작성하기 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetData = new Map();
+    targetData[APIConstants.actor_name] =
+        _auditionState[APIConstants.actor_name];
+    targetData[APIConstants.production_name] =
+        _auditionState[APIConstants.production_name];
+    targetData[APIConstants.project_name] =
+        _auditionState[APIConstants.project_name];
+    targetData[APIConstants.release_planDate] =
+        _auditionState[APIConstants.release_planDate];
+    targetData[APIConstants.casting_name] =
+        _auditionState[APIConstants.casting_name];
+    targetData[APIConstants.casting_pay] =
+        _auditionState[APIConstants.casting_pay];
+
+    Map<String, dynamic> params = new Map();
+    //params[APIConstants.key] = APIConstants.UPD_SAT_ACCEPTCONTACT;
+    params[APIConstants.target] = targetData;
+
+    // 배우 계약서 작성하기 api 호출
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value != null) {
+          if (value[APIConstants.resultVal]) {
+            // 배우 계약서 작성하기 성공
+            var _responseData = value[APIConstants.data];
+
+            setState(() {
+              var _responseList = _responseData[APIConstants.list] as List;
+
+              if (_responseList != null && _responseList.length > 0) {
+                _auditionState = _responseList[0];
+
+                requestMyApplyDetailApi(context);
+              }
+            });
+          } else {
+            showSnackBar(context, APIConstants.error_msg_try_again);
+          }
+        } else {
+          showSnackBar(context, APIConstants.error_msg_server_not_response);
+        }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
+      }
+    });
+  }
+
+  /*
+  * 배우 3차 합격 데이터 저장
+  * */
+  Future<void> requestSaveContract(BuildContext context) async {
+    setState(() {
+      _isUpload = true;
+    });
+
+    // 계좌번호 암호화
+    final publicPem =
+        await rootBundle.loadString('assets/files/public_key.pem');
+    final publicKey = Encrypt.RSAKeyParser().parse(publicPem) as RSAPublicKey;
+
+    final encryptor = Encrypt.Encrypter(Encrypt.RSA(publicKey: publicKey));
+    final encryptedAccountNum =
+        encryptor.encrypt(StringUtils.trimmedString(_txtFieldAccountNum.text));
+    String juminNum = _txtFieldJumin1.text + _txtFieldJumin2.text;
+    final encryptedJumin =
+        encryptor.encrypt(StringUtils.trimmedString(juminNum));
+
+    // 배우 3차 합격 데이터 저장 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetData = new Map();
+    targetData[APIConstants.thirdAuditionTarget_seq] =
+        _auditionState[APIConstants.thirdAuditionTarget_seq];
+    targetData[APIConstants.actor_bank_code] =
+        _bankVal[APIConstants.child_code];
+    targetData[APIConstants.actor_account_number] = encryptedAccountNum.base64;
+    targetData[APIConstants.actor_account_name] =
+        StringUtils.trimmedString(_txtFieldAccountName.text);
+    targetData[APIConstants.actor_jumin] = encryptedJumin.base64;
+    targetData[APIConstants.final_pay] =
+        _auditionState[APIConstants.casting_pay];
+
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.UPD_TAT_AGREEMENTCOMPLETION;
+    params[APIConstants.target] = targetData;
+
+    // 배우 3차 합격 데이터 저장 api 호출
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value != null) {
+          if (value[APIConstants.resultVal]) {
+            // 배우 3차 합격 데이터 저장 성공
+            var _responseData = value[APIConstants.data];
+
+            setState(() {
+              var _responseList = _responseData[APIConstants.list] as List;
+
+              if (_responseList != null && _responseList.length > 0) {
+                _auditionState = _responseList[0];
+
+                requestMyApplyDetailApi(context);
+              }
+            });
+          } else {
+            showSnackBar(context, APIConstants.error_msg_try_again);
+          }
+        } else {
+          showSnackBar(context, APIConstants.error_msg_server_not_response);
+        }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
       }
     });
   }
@@ -1357,6 +1490,8 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                                   showSnackBar(context, '주소지를 입력해 주세요.');
                                   return false;
                                 }
+
+                                requestWriteContract(context);
                               })),
                           visible: (_tabIndex == 2 &&
                                   _auditionState[APIConstants

@@ -9,6 +9,7 @@ import 'package:casting_call/src/util/StringUtils.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_document_picker/flutter_document_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -78,6 +79,47 @@ class _ProjectAdd extends State<ProjectAdd> with BaseUtilMixin {
     } else {
       showSnackBar(context, "선택된 이미지가 없습니다.");
     }
+  }
+
+  _pickDocument() async {
+    String result;
+    try {
+      FlutterDocumentPickerParams params = FlutterDocumentPickerParams(
+        allowedFileExtensions: ['pdf', 'docx'],
+        allowedUtiTypes: [
+          'com.airar.castingCall.pdf',
+          'com.airar.castingCall.pdf'
+        ],
+        allowedMimeTypes: ['application/pdf', 'application/pdf'],
+        invalidFileNameSymbols: ['/'],
+      );
+
+      result = await FlutterDocumentPicker.openDocument(params: params);
+
+      if (result != null) {
+        File file = File(result);
+
+        final size = file.readAsBytesSync().lengthInBytes;
+        final kb = size / 1024;
+        final mb = kb / 1024;
+
+        if (mb > 100) {
+          showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
+        } else {
+          setState(() {
+            _profileImgFile = file;
+          });
+        }
+      } else {
+        showSnackBar(context, "선택된 파일이 없습니다.");
+      }
+
+      print('result: $result');
+    } catch (e) {
+      print(e);
+      result = 'Error: $e';
+      showSnackBar(context, APIConstants.error_msg_try_again);
+    } finally {}
   }
 
   /*
@@ -155,51 +197,112 @@ class _ProjectAdd extends State<ProjectAdd> with BaseUtilMixin {
                                                   MainAxisAlignment
                                                       .spaceBetween,
                                               children: [
-                                                Text('이미지',
+                                                Text('이미지 또는 첨부파일',
                                                     style: CustomStyles
                                                         .dark16TextStyle()),
                                                 GestureDetector(
                                                   onTap: () async {
-                                                    //
-                                                    var status =
-                                                        Platform.isAndroid
-                                                            ? await Permission
-                                                                .storage
-                                                                .request()
-                                                            : await Permission
-                                                                .photos
-                                                                .request();
-                                                    if (status.isGranted) {
-                                                      getImageFromGallery();
-                                                    } else {
-                                                      showDialog(
-                                                          context: context,
-                                                          builder: (BuildContext
-                                                                  context) =>
-                                                              CupertinoAlertDialog(
-                                                                title: Text(
-                                                                    '저장공간 접근권한'),
-                                                                content: Text(
-                                                                    '사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
-                                                                actions: <
-                                                                    Widget>[
-                                                                  CupertinoDialogAction(
-                                                                    child: Text(
-                                                                        '거부'),
-                                                                    onPressed: () =>
-                                                                        Navigator.of(context)
-                                                                            .pop(),
-                                                                  ),
-                                                                  CupertinoDialogAction(
-                                                                    child: Text(
-                                                                        '허용'),
-                                                                    onPressed: () =>
-                                                                        openAppSettings(),
-                                                                  ),
-                                                                ],
-                                                              ));
-                                                    }
-                                                    //
+                                                    showModalBottomSheet(
+                                                        elevation: 5,
+                                                        context: context,
+                                                        builder: (context) {
+                                                          return Wrap(
+                                                              crossAxisAlignment:
+                                                              WrapCrossAlignment.center,
+                                                              children: [
+                                                                ListTile(
+                                                                    title: Text(
+                                                                      '이미지 선택',
+                                                                      textAlign: TextAlign.center,
+                                                                    ),
+                                                                    onTap: () async {
+                                                                      var status = Platform.isAndroid
+                                                                          ? await Permission.storage
+                                                                          .request()
+                                                                          : await Permission.photos
+                                                                          .request();
+                                                                      if (status.isGranted) {
+                                                                        getImageFromGallery();
+                                                                        Navigator.pop(context);
+                                                                      } else {
+                                                                        showDialog(
+                                                                            context: context,
+                                                                            builder: (BuildContext
+                                                                            context) =>
+                                                                                CupertinoAlertDialog(
+                                                                                    title:
+                                                                                    Text('저장공간 접근권한'),
+                                                                                    content: Text(
+                                                                                        '사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
+                                                                                    actions: <Widget>[
+                                                                                      CupertinoDialogAction(
+                                                                                        child: Text('거부'),
+                                                                                        onPressed: () =>
+                                                                                            Navigator.of(
+                                                                                                context)
+                                                                                                .pop(),
+                                                                                      ),
+                                                                                      CupertinoDialogAction(
+                                                                                          child:
+                                                                                          Text('허용'),
+                                                                                          onPressed: () =>
+                                                                                              openAppSettings())
+                                                                                    ]));
+                                                                      }
+                                                                    }),
+                                                                Divider(),
+                                                                ListTile(
+                                                                    title: Text(
+                                                                      '첨부파일 선택',
+                                                                      textAlign: TextAlign.center,
+                                                                    ),
+                                                                    onTap: () async {
+                                                                      var status = Platform.isAndroid
+                                                                          ? await Permission.storage
+                                                                          .request()
+                                                                          : await Permission.photos
+                                                                          .request();
+                                                                      if (status.isGranted) {
+                                                                        _pickDocument();
+                                                                        Navigator.pop(context);
+                                                                      } else {
+                                                                        showDialog(
+                                                                            context: context,
+                                                                            builder: (BuildContext
+                                                                            context) =>
+                                                                                CupertinoAlertDialog(
+                                                                                  title:
+                                                                                  Text('저장공간 접근권한'),
+                                                                                  content: Text(
+                                                                                      '사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
+                                                                                  actions: <Widget>[
+                                                                                    CupertinoDialogAction(
+                                                                                      child: Text('거부'),
+                                                                                      onPressed: () =>
+                                                                                          Navigator.of(
+                                                                                              context)
+                                                                                              .pop(),
+                                                                                    ),
+                                                                                    CupertinoDialogAction(
+                                                                                      child: Text('허용'),
+                                                                                      onPressed: () =>
+                                                                                          openAppSettings(),
+                                                                                    ),
+                                                                                  ],
+                                                                                ));
+                                                                      }
+                                                                    }),
+                                                                Divider(),
+                                                                ListTile(
+                                                                    title: Text(
+                                                                      '취소',
+                                                                      textAlign: TextAlign.center,
+                                                                    ),
+                                                                    onTap: () {
+                                                                      Navigator.pop(context);
+                                                                    })
+                                                              ]);
+                                                        });
                                                   },
                                                   child: Text('업로드',
                                                       style: CustomStyles
@@ -208,7 +311,7 @@ class _ProjectAdd extends State<ProjectAdd> with BaseUtilMixin {
                                               ],
                                             ),
                                           ),
-                                          Visibility(
+                                          /*Visibility(
                                               child: Container(
                                                   margin: EdgeInsets.only(
                                                       left: 15,
@@ -232,7 +335,17 @@ class _ProjectAdd extends State<ProjectAdd> with BaseUtilMixin {
                                                           fit: BoxFit.cover))),
                                               visible: _profileImgFile == null
                                                   ? false
-                                                  : true),
+                                                  : true),*/
+                                          Visibility(
+                                              child: Container(
+                                                  margin: EdgeInsets.only(
+                                                      left: 15,
+                                                      right: 15,
+                                                      top: 15),
+                                                  width: MediaQuery.of(context).size.width,
+                                                  decoration: BoxDecoration(color: CustomColors.colorWhite),
+                                                  child: (_profileImgFile == null ? null : Text(_profileImgFile.path))),
+                                              visible: _profileImgFile == null ? false : true),
                                           Container(
                                             margin: EdgeInsets.only(
                                                 top: 30, bottom: 30),
@@ -667,7 +780,7 @@ class _ProjectAdd extends State<ProjectAdd> with BaseUtilMixin {
     targetDatas[APIConstants.shooting_place] = _txtFieldShootingPlace.text;
     targetDatas[APIConstants.shooting_startDate] = _startDate;
     targetDatas[APIConstants.shooting_endDate] = _endDate;
-    //targetDatas[APIConstants.shooting_endDate] = _openDate;
+    targetDatas[APIConstants.release_planDate] = _openDate;
 
     Map<String, dynamic> params = new Map();
     params[APIConstants.key] = APIConstants.INS_PPJ_INFO_FormData;

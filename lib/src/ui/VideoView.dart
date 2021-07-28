@@ -44,13 +44,19 @@ class _VideoView extends State<VideoView> {
 
     _videoURL = widget.videoURL;
 
-    _controller = VideoPlayerController.network(_videoURL);
-    _controller.setLooping(false);
-    initFuture = _controller.initialize();
+    _controller = VideoPlayerController.network(_videoURL)..initialize().then((_) {
+      initFuture = _controller.initialize();
 
-    flickManager = FlickManager(videoPlayerController: _controller);
+      _controller.setLooping(false);
 
-    _streamController.add(initFuture);
+      flickManager = FlickManager(videoPlayerController: _controller);
+
+      _streamController.add(initFuture);
+    });
+
+
+
+
 
     /*initFuture =
         _controller.initialize().then((value) => _controller.addListener(() {

@@ -64,6 +64,7 @@ class APIConstants {
   static const String DEA_ACS_INFO = "DEA_ACS_INFO";                              // 배우 캐스팅 스크랩 삭제
   static const String UPD_SAT_ACCEPTCONTACT = "UPD_SAT_ACCEPTCONTACT";            // 배우 2차 합격 연락처 공개
   static const String UPD_TAT_AGREEMENTCOMPLETION = "UPD_TAT_AGREEMENTCOMPLETION";// 배우 3차 합격 데이터 저장
+  static const String INS_TOT_MODUOPEN = "INS_TOT_MODUOPEN";                      // 모두싸인 - 전자 계약 오픈 (템플릿 기반 이메일 서명 요청)
 
   // 제작사 회원
   static const String INS_PRD_JOIN = "INS_PRD_JOIN";                              // 제작사 회원가입
@@ -267,6 +268,11 @@ class APIConstants {
   static const String actor_account_number = "actor_account_number";
   static const String actor_account_name = "actor_account_name";
   static const String actor_jumin = "actor_jumin";
+  static const String sign_type = "sign_type";
+  static const String sign_value = "sign_value";
+  static const String pdf_pwd = "pdf_pwd";
+  static const String actor_account = "actor_account";
+  static const String actor_address = "actor_address";
   static const String final_pay = "final_pay";
   static const String actor_account_holder = "actor_account_holder";
   static const String actor_account_holder_birth = "actor_account_holder_birth";

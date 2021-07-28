@@ -3,6 +3,7 @@ import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/net/RestClientInterface.dart';
+import 'package:casting_call/src/view/audition/actor/OfferedAuditionDetail.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
@@ -214,6 +215,23 @@ class _PushNotification extends State<PushNotification> with BaseUtilMixin {
                                   alignment: Alignment.centerLeft,
                                   child: GestureDetector(
                                       onTap: () {
+                                        if(_data[APIConstants.alert_type] != null && _data[APIConstants.type_seq] != null) {
+                                          switch(_data[APIConstants.alert_type]) {
+                                            case APIConstants.ADD_ACT_PRP:
+                                              // 배우 회원 오디션 제안 받음
+                                              addView(context, OfferedAuditionDetail(seq: _data[APIConstants.type_seq]));
+
+                                              break;
+
+                                            case APIConstants.ADD_MNG_PRP:
+                                            // 매니지먼트 회원 오디션 제안 받음
+                                              addView(context, OfferedAuditionDetail(seq: _data[APIConstants.type_seq]));
+
+                                              break;
+
+                                          }
+                                        }
+
                                         requestCheckNoticeApi(
                                             context, _data[APIConstants.seq]);
                                       },

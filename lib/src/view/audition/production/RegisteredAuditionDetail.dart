@@ -48,7 +48,6 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
   Map<String, dynamic> _thirdAuditionInfo = new Map();
   List<dynamic> _thirdAuditionApplyList = [];
 
-  Map<String, dynamic> _auditionResultInfo = new Map();
   List<dynamic> _auditionResultList = [];
 
   String _endDate = "";
@@ -417,6 +416,21 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
     }
   }
 
+  Widget profileImgWidget(List<String> _imgUrlArr, int idx) {
+    return Container(
+        height: MediaQuery.of(context).size.width / 5,
+        width: MediaQuery.of(context).size.width / 5,
+        child: (_imgUrlArr.length > idx)
+            ? ClipRRect(
+                borderRadius: CustomStyles.circle7BorderRadius(),
+                child: CachedNetworkImage(
+                    imageUrl: _imgUrlArr[idx],
+                    fit: BoxFit.cover,
+                    errorWidget: (context, url, error) =>
+                        CustomStyles.defalutImg()))
+            : CustomStyles.defalutImg());
+  }
+
   /*
   * 1차 오디션 지원자 현황
   * */
@@ -517,69 +531,9 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                5,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                5,
-                                            child: (_imgUrlArr.length > 0)
-                                                ? ClipRRect(
-                                                    borderRadius: CustomStyles
-                                                        .circle7BorderRadius(),
-                                                    child: CachedNetworkImage(
-                                                        imageUrl: _imgUrlArr[0],
-                                                        fit: BoxFit.cover,
-                                                        errorWidget: (context,
-                                                                url, error) =>
-                                                            CustomStyles
-                                                                .defalutImg()))
-                                                : CustomStyles.defalutImg()),
-                                        Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                5,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                5,
-                                            child: (_imgUrlArr.length > 1)
-                                                ? ClipRRect(
-                                                    borderRadius: CustomStyles
-                                                        .circle7BorderRadius(),
-                                                    child: CachedNetworkImage(
-                                                        imageUrl: _imgUrlArr[1],
-                                                        fit: BoxFit.cover,
-                                                        errorWidget: (context,
-                                                                url, error) =>
-                                                            CustomStyles
-                                                                .defalutImg()))
-                                                : CustomStyles.defalutImg()),
-                                        Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                5,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                5,
-                                            child: (_imgUrlArr.length > 2)
-                                                ? ClipRRect(
-                                                    borderRadius: CustomStyles
-                                                        .circle7BorderRadius(),
-                                                    child: CachedNetworkImage(
-                                                        imageUrl: _imgUrlArr[2],
-                                                        fit: BoxFit.cover,
-                                                        errorWidget: (context,
-                                                                url, error) =>
-                                                            CustomStyles
-                                                                .defalutImg()))
-                                                : CustomStyles.defalutImg()),
+                                        profileImgWidget(_imgUrlArr, 0),
+                                        profileImgWidget(_imgUrlArr, 1),
+                                        profileImgWidget(_imgUrlArr, 2),
                                         Container(
                                             width: MediaQuery.of(context)
                                                     .size
@@ -651,7 +605,16 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
               );
             })
       ]),
-      Divider()
+      Visibility(
+          child: Divider(),
+          visible: _firstAuditionApplyList.length > 0 ? true : false),
+      Visibility(
+          child: Container(
+              margin: EdgeInsets.only(top: 50),
+              alignment: Alignment.center,
+              child:
+                  Text("지원자가 없습니다.", style: CustomStyles.normal14TextStyle())),
+          visible: _firstAuditionApplyList.length > 0 ? false : true)
     ]));
   }
 
@@ -951,69 +914,9 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                5,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                5,
-                                            child: (_imgUrlArr.length > 0)
-                                                ? ClipRRect(
-                                                    borderRadius: CustomStyles
-                                                        .circle7BorderRadius(),
-                                                    child: CachedNetworkImage(
-                                                        imageUrl: _imgUrlArr[0],
-                                                        fit: BoxFit.cover,
-                                                        errorWidget: (context,
-                                                                url, error) =>
-                                                            CustomStyles
-                                                                .defalutImg()))
-                                                : CustomStyles.defalutImg()),
-                                        Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                5,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                5,
-                                            child: (_imgUrlArr.length > 1)
-                                                ? ClipRRect(
-                                                    borderRadius: CustomStyles
-                                                        .circle7BorderRadius(),
-                                                    child: CachedNetworkImage(
-                                                        imageUrl: _imgUrlArr[1],
-                                                        fit: BoxFit.cover,
-                                                        errorWidget: (context,
-                                                                url, error) =>
-                                                            CustomStyles
-                                                                .defalutImg()))
-                                                : CustomStyles.defalutImg()),
-                                        Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                5,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                5,
-                                            child: (_imgUrlArr.length > 2)
-                                                ? ClipRRect(
-                                                    borderRadius: CustomStyles
-                                                        .circle7BorderRadius(),
-                                                    child: CachedNetworkImage(
-                                                        imageUrl: _imgUrlArr[2],
-                                                        fit: BoxFit.cover,
-                                                        errorWidget: (context,
-                                                                url, error) =>
-                                                            CustomStyles
-                                                                .defalutImg()))
-                                                : CustomStyles.defalutImg())
+                                        profileImgWidget(_imgUrlArr, 0),
+                                        profileImgWidget(_imgUrlArr, 1),
+                                        profileImgWidget(_imgUrlArr, 2)
                                       ]),
                                   Row(
                                     mainAxisAlignment:
@@ -1093,7 +996,14 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
               );
             })
       ]),
-      Divider()
+      Visibility(child: Divider(), visible: _dataCnt > 0 ? true : false),
+      Visibility(
+          child: Container(
+              margin: EdgeInsets.only(top: 50),
+              alignment: Alignment.center,
+              child:
+                  Text("지원자가 없습니다.", style: CustomStyles.normal14TextStyle())),
+          visible: _dataCnt > 0 ? false : true)
     ]));
   }
 
@@ -1226,69 +1136,9 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                5,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                5,
-                                            child: (_imgUrlArr.length > 0)
-                                                ? ClipRRect(
-                                                    borderRadius: CustomStyles
-                                                        .circle7BorderRadius(),
-                                                    child: CachedNetworkImage(
-                                                        imageUrl: _imgUrlArr[0],
-                                                        fit: BoxFit.cover,
-                                                        errorWidget: (context,
-                                                                url, error) =>
-                                                            CustomStyles
-                                                                .defalutImg()))
-                                                : CustomStyles.defalutImg()),
-                                        Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                5,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                5,
-                                            child: (_imgUrlArr.length > 1)
-                                                ? ClipRRect(
-                                                    borderRadius: CustomStyles
-                                                        .circle7BorderRadius(),
-                                                    child: CachedNetworkImage(
-                                                        imageUrl: _imgUrlArr[1],
-                                                        fit: BoxFit.cover,
-                                                        errorWidget: (context,
-                                                                url, error) =>
-                                                            CustomStyles
-                                                                .defalutImg()))
-                                                : CustomStyles.defalutImg()),
-                                        Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                5,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                5,
-                                            child: (_imgUrlArr.length > 2)
-                                                ? ClipRRect(
-                                                    borderRadius: CustomStyles
-                                                        .circle7BorderRadius(),
-                                                    child: CachedNetworkImage(
-                                                        imageUrl: _imgUrlArr[2],
-                                                        fit: BoxFit.cover,
-                                                        errorWidget: (context,
-                                                                url, error) =>
-                                                            CustomStyles
-                                                                .defalutImg()))
-                                                : CustomStyles.defalutImg())
+                                        profileImgWidget(_imgUrlArr, 0),
+                                        profileImgWidget(_imgUrlArr, 1),
+                                        profileImgWidget(_imgUrlArr, 2)
                                       ]),
                                   Row(
                                     mainAxisAlignment:
@@ -1368,7 +1218,14 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
               );
             })
       ]),
-      Divider()
+      Visibility(child: Divider(), visible: _dataCnt > 0 ? true : false),
+      Visibility(
+          child: Container(
+              margin: EdgeInsets.only(top: 50),
+              alignment: Alignment.center,
+              child:
+                  Text("지원자가 없습니다.", style: CustomStyles.normal14TextStyle())),
+          visible: _dataCnt > 0 ? false : true)
     ]));
   }
 
@@ -1380,10 +1237,6 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
 
     return Container(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Container(
-          margin: EdgeInsets.only(top: 15),
-          child: Divider(
-              color: CustomColors.colorFontGrey, height: 1, thickness: 0.5)),
       Wrap(children: [
         ListView.separated(
             physics: NeverScrollableScrollPhysics(),
@@ -1426,72 +1279,9 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Container(
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .width /
-                                                  5,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width /
-                                                  5,
-                                              child: (_imgUrlArr.length > 0)
-                                                  ? ClipRRect(
-                                                      borderRadius: CustomStyles
-                                                          .circle7BorderRadius(),
-                                                      child: CachedNetworkImage(
-                                                          imageUrl:
-                                                              _imgUrlArr[0],
-                                                          fit: BoxFit.cover,
-                                                          errorWidget: (context,
-                                                                  url, error) =>
-                                                              CustomStyles
-                                                                  .defalutImg()))
-                                                  : CustomStyles.defalutImg()),
-                                          Container(
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .width /
-                                                  5,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width /
-                                                  5,
-                                              child: (_imgUrlArr.length > 1)
-                                                  ? ClipRRect(
-                                                      borderRadius: CustomStyles
-                                                          .circle7BorderRadius(),
-                                                      child: CachedNetworkImage(
-                                                          imageUrl:
-                                                              _imgUrlArr[1],
-                                                          fit: BoxFit.cover,
-                                                          errorWidget: (context,
-                                                                  url, error) =>
-                                                              CustomStyles
-                                                                  .defalutImg()))
-                                                  : CustomStyles.defalutImg()),
-                                          Container(
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .width /
-                                                  5,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width /
-                                                  5,
-                                              child: (_imgUrlArr.length > 2)
-                                                  ? ClipRRect(
-                                                      borderRadius: CustomStyles
-                                                          .circle7BorderRadius(),
-                                                      child: CachedNetworkImage(
-                                                          imageUrl:
-                                                              _imgUrlArr[2],
-                                                          fit: BoxFit.cover,
-                                                          errorWidget: (context,
-                                                                  url, error) =>
-                                                              CustomStyles
-                                                                  .defalutImg()))
-                                                  : CustomStyles.defalutImg()),
+                                          profileImgWidget(_imgUrlArr, 0),
+                                          profileImgWidget(_imgUrlArr, 1),
+                                          profileImgWidget(_imgUrlArr, 2)
                                         ]),
                                     Row(
                                       mainAxisAlignment:
@@ -1565,7 +1355,14 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
               );
             })
       ]),
-      Divider()
+      Visibility(child: Divider(), visible: _dataCnt > 0 ? true : false),
+      Visibility(
+          child: Container(
+              margin: EdgeInsets.only(top: 50),
+              alignment: Alignment.center,
+              child: Text("최종합격자가 없습니다.",
+                  style: CustomStyles.normal14TextStyle())),
+          visible: _dataCnt > 0 ? false : true)
     ]));
   }
 

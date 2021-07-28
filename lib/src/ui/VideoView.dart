@@ -110,8 +110,8 @@ class _VideoView extends State<VideoView> {
 
   @override
   void dispose() {
-    _controller.dispose();
     flickManager.dispose();
+    _controller.dispose();
 
     super.dispose();
   }

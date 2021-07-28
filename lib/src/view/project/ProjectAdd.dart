@@ -85,12 +85,17 @@ class _ProjectAdd extends State<ProjectAdd> with BaseUtilMixin {
     String result;
     try {
       FlutterDocumentPickerParams params = FlutterDocumentPickerParams(
-        allowedFileExtensions: ['pdf', 'docx'],
+        allowedFileExtensions: ['doc', 'pdf', 'docx'],
         allowedUtiTypes: [
-          'com.airar.castingCall.pdf',
-          'com.airar.castingCall.pdf'
+          'com.adobe.pdf',
+          'com.microsoft.word.doc',
+          'org.openxmlformats.wordprocessingml.document'
         ],
-        allowedMimeTypes: ['application/pdf', 'application/pdf'],
+        allowedMimeTypes: [
+          'application/pdf',
+          'application/msword',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        ],
         invalidFileNameSymbols: ['/'],
       );
 
@@ -208,85 +213,82 @@ class _ProjectAdd extends State<ProjectAdd> with BaseUtilMixin {
                                                         builder: (context) {
                                                           return Wrap(
                                                               crossAxisAlignment:
-                                                              WrapCrossAlignment.center,
+                                                                  WrapCrossAlignment
+                                                                      .center,
                                                               children: [
                                                                 ListTile(
                                                                     title: Text(
                                                                       '이미지 선택',
-                                                                      textAlign: TextAlign.center,
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .center,
                                                                     ),
-                                                                    onTap: () async {
+                                                                    onTap:
+                                                                        () async {
                                                                       var status = Platform.isAndroid
-                                                                          ? await Permission.storage
-                                                                          .request()
-                                                                          : await Permission.photos
-                                                                          .request();
-                                                                      if (status.isGranted) {
+                                                                          ? await Permission
+                                                                              .storage
+                                                                              .request()
+                                                                          : await Permission
+                                                                              .photos
+                                                                              .request();
+                                                                      if (status
+                                                                          .isGranted) {
                                                                         getImageFromGallery();
-                                                                        Navigator.pop(context);
+                                                                        Navigator.pop(
+                                                                            context);
                                                                       } else {
                                                                         showDialog(
-                                                                            context: context,
-                                                                            builder: (BuildContext
-                                                                            context) =>
-                                                                                CupertinoAlertDialog(
-                                                                                    title:
-                                                                                    Text('저장공간 접근권한'),
-                                                                                    content: Text(
-                                                                                        '사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
-                                                                                    actions: <Widget>[
-                                                                                      CupertinoDialogAction(
-                                                                                        child: Text('거부'),
-                                                                                        onPressed: () =>
-                                                                                            Navigator.of(
-                                                                                                context)
-                                                                                                .pop(),
-                                                                                      ),
-                                                                                      CupertinoDialogAction(
-                                                                                          child:
-                                                                                          Text('허용'),
-                                                                                          onPressed: () =>
-                                                                                              openAppSettings())
-                                                                                    ]));
+                                                                            context:
+                                                                                context,
+                                                                            builder: (BuildContext context) =>
+                                                                                CupertinoAlertDialog(title: Text('저장공간 접근권한'), content: Text('사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'), actions: <Widget>[
+                                                                                  CupertinoDialogAction(
+                                                                                    child: Text('거부'),
+                                                                                    onPressed: () => Navigator.of(context).pop(),
+                                                                                  ),
+                                                                                  CupertinoDialogAction(child: Text('허용'), onPressed: () => openAppSettings())
+                                                                                ]));
                                                                       }
                                                                     }),
                                                                 Divider(),
                                                                 ListTile(
                                                                     title: Text(
                                                                       '첨부파일 선택',
-                                                                      textAlign: TextAlign.center,
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .center,
                                                                     ),
-                                                                    onTap: () async {
+                                                                    onTap:
+                                                                        () async {
                                                                       var status = Platform.isAndroid
-                                                                          ? await Permission.storage
-                                                                          .request()
-                                                                          : await Permission.photos
-                                                                          .request();
-                                                                      if (status.isGranted) {
+                                                                          ? await Permission
+                                                                              .storage
+                                                                              .request()
+                                                                          : await Permission
+                                                                              .photos
+                                                                              .request();
+                                                                      if (status
+                                                                          .isGranted) {
                                                                         _pickDocument();
-                                                                        Navigator.pop(context);
+                                                                        Navigator.pop(
+                                                                            context);
                                                                       } else {
                                                                         showDialog(
-                                                                            context: context,
-                                                                            builder: (BuildContext
-                                                                            context) =>
+                                                                            context:
+                                                                                context,
+                                                                            builder: (BuildContext context) =>
                                                                                 CupertinoAlertDialog(
-                                                                                  title:
-                                                                                  Text('저장공간 접근권한'),
-                                                                                  content: Text(
-                                                                                      '사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
+                                                                                  title: Text('저장공간 접근권한'),
+                                                                                  content: Text('사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
                                                                                   actions: <Widget>[
                                                                                     CupertinoDialogAction(
                                                                                       child: Text('거부'),
-                                                                                      onPressed: () =>
-                                                                                          Navigator.of(
-                                                                                              context)
-                                                                                              .pop(),
+                                                                                      onPressed: () => Navigator.of(context).pop(),
                                                                                     ),
                                                                                     CupertinoDialogAction(
                                                                                       child: Text('허용'),
-                                                                                      onPressed: () =>
-                                                                                          openAppSettings(),
+                                                                                      onPressed: () => openAppSettings(),
                                                                                     ),
                                                                                   ],
                                                                                 ));
@@ -296,10 +298,13 @@ class _ProjectAdd extends State<ProjectAdd> with BaseUtilMixin {
                                                                 ListTile(
                                                                     title: Text(
                                                                       '취소',
-                                                                      textAlign: TextAlign.center,
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .center,
                                                                     ),
                                                                     onTap: () {
-                                                                      Navigator.pop(context);
+                                                                      Navigator.pop(
+                                                                          context);
                                                                     })
                                                               ]);
                                                         });
@@ -342,10 +347,20 @@ class _ProjectAdd extends State<ProjectAdd> with BaseUtilMixin {
                                                       left: 15,
                                                       right: 15,
                                                       top: 15),
-                                                  width: MediaQuery.of(context).size.width,
-                                                  decoration: BoxDecoration(color: CustomColors.colorWhite),
-                                                  child: (_profileImgFile == null ? null : Text(_profileImgFile.path))),
-                                              visible: _profileImgFile == null ? false : true),
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  decoration: BoxDecoration(
+                                                      color: CustomColors
+                                                          .colorWhite),
+                                                  child:
+                                                      (_profileImgFile == null
+                                                          ? null
+                                                          : Text(_profileImgFile
+                                                              .path))),
+                                              visible: _profileImgFile == null
+                                                  ? false
+                                                  : true),
                                           Container(
                                             margin: EdgeInsets.only(
                                                 top: 30, bottom: 30),

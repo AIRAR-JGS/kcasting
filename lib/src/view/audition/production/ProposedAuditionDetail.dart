@@ -69,15 +69,17 @@ class _ProposedAuditionDetail extends State<ProposedAuditionDetail>
                                           Expanded(
                                             flex: 0,
                                             child: Container(
+                                                width: 67,
+                                                height: 67,
                                                 margin:
                                                     EdgeInsets.only(right: 5),
-                                                alignment: Alignment.topCenter,
                                                 child: (_scoutData[APIConstants
                                                             .main_img_url] !=
                                                         null
                                                     ? ClipOval(
                                                         child:
                                                             CachedNetworkImage(
+                                                        fit: BoxFit.cover,
                                                         imageUrl: _scoutData[
                                                             APIConstants
                                                                 .main_img_url],
@@ -86,20 +88,15 @@ class _ProposedAuditionDetail extends State<ProposedAuditionDetail>
                                                             Image.asset(
                                                                 'assets/images/btn_mypage.png',
                                                                 fit: BoxFit
-                                                                    .contain,
-                                                                width: 67,
+                                                                    .cover,
                                                                 color: CustomColors
                                                                     .colorBgGrey),
-                                                        width: 67,
-                                                        height: 67,
-                                                      )
-                                                        )
-                                                    : Icon(
-                                                        Icons.account_circle,
+                                                      ))
+                                                    : Image.asset(
+                                                        'assets/images/btn_mypage.png',
+                                                        fit: BoxFit.cover,
                                                         color: CustomColors
-                                                            .colorFontLightGrey,
-                                                        size: 67,
-                                                      )),
+                                                            .colorBgGrey)),
                                                 decoration: BoxDecoration(
                                                   color:
                                                       CustomColors.colorWhite,

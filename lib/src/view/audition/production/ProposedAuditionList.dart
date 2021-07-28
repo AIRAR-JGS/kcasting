@@ -167,41 +167,46 @@ class _ProposedAuditionList extends State<ProposedAuditionList>
                                           Expanded(
                                             flex: 0,
                                             child: Container(
+                                                width: 30,
+                                                height: 30,
                                                 margin:
                                                     EdgeInsets.only(right: 5),
-                                                alignment: Alignment.topCenter,
                                                 child: (_proposalList[index][
                                                             APIConstants
                                                                 .main_img_url] !=
                                                         null
                                                     ? ClipOval(
                                                         child:
-                                                        CachedNetworkImage(
-                                                          width: 30,
-                                                          height: 30,
-                                                          imageUrl: _proposalList[index][
-                                                          APIConstants
-                                                              .main_img_url],
-                                                          errorWidget: (context, url,
-                                                              error) =>
-                                                              Image.asset(
-                                                                  'assets/images/btn_mypage.png',
-                                                                  fit: BoxFit.cover,
-                                                                  color: CustomColors
-                                                                      .colorBgGrey),
-                                                        )
-                                                      )
-                                                    : Icon(
-                                                        Icons.account_circle,
+                                                            CachedNetworkImage(
+                                                        fit: BoxFit.cover,
+                                                        imageUrl: _proposalList[
+                                                                index][
+                                                            APIConstants
+                                                                .main_img_url],
+                                                        errorWidget: (context,
+                                                                url, error) =>
+                                                            Image.asset(
+                                                                'assets/images/btn_mypage.png',
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                                color: CustomColors
+                                                                    .colorBgGrey),
+                                                      ))
+                                                    : Image.asset(
+                                                        'assets/images/btn_mypage.png',
+                                                        fit: BoxFit.cover,
                                                         color: CustomColors
-                                                            .colorFontLightGrey,
-                                                        size: 30,
-                                                      )),
+                                                            .colorBgGrey)),
                                                 decoration: BoxDecoration(
-                                                  color: CustomColors.colorWhite,
-                                                  borderRadius: BorderRadius.all( Radius.circular(50.0)),
+                                                  color:
+                                                      CustomColors.colorWhite,
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(
+                                                              50.0)),
                                                   border: Border.all(
-                                                    color: CustomColors.colorAccent,
+                                                    color: CustomColors
+                                                        .colorAccent,
                                                     width: 1.0,
                                                   ),
                                                 )),

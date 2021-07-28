@@ -11,11 +11,17 @@ import 'package:flutter/material.dart';
 import '../../../KCastingAppData.dart';
 
 class PushNotification extends StatefulWidget {
+  final VoidCallback onClickedHome;
+
+  const PushNotification({Key key, this.onClickedHome}) : super(key: key);
+
   @override
   _PushNotification createState() => _PushNotification();
 }
 
 class _PushNotification extends State<PushNotification> with BaseUtilMixin {
+  VoidCallback _onClickedHome;
+
   // 알림 리스트 관련 변수
   bool _isUpload = false;
   ScrollController _scrollController;
@@ -28,10 +34,12 @@ class _PushNotification extends State<PushNotification> with BaseUtilMixin {
 
   @override
   void initState() {
+    super.initState();
+
+    _onClickedHome = widget.onClickedHome;
+
     _scrollController = ScrollController(initialScrollOffset: 50.0);
     _scrollController.addListener(_scrollListener);
-
-    super.initState();
 
     // 알림 목록 api 조회
     requestNoticeListApi(context);
@@ -107,15 +115,18 @@ class _PushNotification extends State<PushNotification> with BaseUtilMixin {
           if (value[APIConstants.resultVal]) {
             // 알림목록조회 성공
             setState(() {
-              var _responseList = value[APIConstants.data];
-              var _pagingData = _responseList[APIConstants.paging];
+              var _responseData = value[APIConstants.data];
+              var _pagingData = _responseData[APIConstants.paging];
 
               _total = _pagingData[APIConstants.total];
               KCastingAppData().myInfo[APIConstants.newAlertCnt] = _total;
 
+              var _responseList = _responseData[APIConstants.list];
               if (_responseList != null && _responseList.length > 0) {
                 _noticeList.addAll(_responseList[APIConstants.list]);
               }
+
+              _onClickedHome();
 
               _isLoading = false;
             });

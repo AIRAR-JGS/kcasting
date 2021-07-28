@@ -74,7 +74,7 @@ class HomeAppBar extends StatelessWidget
                   padding: const EdgeInsets.all(0.0),
                   child: GestureDetector(
                       onTap: () {
-                        addView(context, PushNotification());
+                        addView(context, PushNotification(onClickedHome: onClickedOpenHome));
                       },
                       child: (KCastingAppData()
                                       .myInfo[APIConstants.newAlertCnt] !=

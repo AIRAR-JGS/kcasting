@@ -86,22 +86,22 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
         _tabIndex = _tabController.index;
 
         _total = 0;
-        _firstAuditionApplyList = [];
-        _secondAuditionApplyList = [];
-        _thirdAuditionApplyList = [];
-        _auditionResultList = [];
 
         switch (_tabIndex) {
           case 0:
+            _firstAuditionApplyList = [];
             _apiKey = APIConstants.SAR_FAD_STATE;
             break;
           case 1:
+            _secondAuditionApplyList = [];
             _apiKey = APIConstants.SAR_SAD_STATE;
             break;
           case 2:
+            _thirdAuditionApplyList = [];
             _apiKey = APIConstants.SAR_TAD_STATE;
             break;
           case 3:
+            _auditionResultList = [];
             _apiKey = APIConstants.SAR_TAD_FINSTATE;
             break;
         }
@@ -235,7 +235,21 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
     targetData[APIConstants.casting_seq] = _castingSeq;
 
     Map<String, dynamic> paging = new Map();
-    paging[APIConstants.offset] = _firstAuditionApplyList.length;
+    switch (_apiKey) {
+      case APIConstants.SAR_FAD_STATE:
+        paging[APIConstants.offset] = _firstAuditionApplyList.length;
+        break;
+      case APIConstants.SAR_SAD_STATE:
+        paging[APIConstants.offset] = _firstAuditionApplyList.length;
+        break;
+      case APIConstants.SAR_TAD_STATE:
+        paging[APIConstants.offset] = _firstAuditionApplyList.length;
+        break;
+      case APIConstants.SAR_TAD_FINSTATE:
+        paging[APIConstants.offset] = _firstAuditionApplyList.length;
+        break;
+    }
+
     paging[APIConstants.limit] = _limit;
 
     Map<String, dynamic> params = new Map();
@@ -328,12 +342,16 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
 
                       case APIConstants.ThirdAudition:
                         {
+                          print("1111111111111");
                           var _listData = _data[APIConstants.data];
                           if (_listData != null) {
+
+                            print("22222222222");
                             List<dynamic> _auditionInfoList =
                                 _listData[APIConstants.list] as List;
                             if (_auditionInfoList != null &&
                                 _auditionInfoList.length > 0) {
+                              print("3333333333333");
                               _thirdAuditionInfo = _auditionInfoList[0];
                             }
                           } else {
@@ -344,14 +362,17 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
 
                       case APIConstants.ThirdAuditionTarget:
                         {
+                          print("4444444444");
                           var _listData = _data[APIConstants.data];
                           if (_listData != null) {
+                            print("55555555555");
                             var paging = _listData[APIConstants.paging];
                             _total = paging[APIConstants.total];
 
                             List<dynamic> _auditionInfoList =
                                 _listData[APIConstants.list] as List;
                             if (_auditionInfoList != null) {
+                              print("666666666666");
                               _thirdAuditionApplyList.addAll(_auditionInfoList);
                               _isLoading = false;
                             }
@@ -397,14 +418,14 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
         return firstAuditionApplyList();
         break;
       case 1:
-        if (_firstAuditionInfo[APIConstants.isOpenSecondAudition] == 1) {
+        if (_secondAuditionInfo != null) {
           return secondAuditionApplyList();
         } else {
           return openSecondAudition();
         }
         break;
       case 2:
-        if (_firstAuditionInfo[APIConstants.isOpenThirdAudition] == 1) {
+        if (_thirdAuditionInfo != null) {
           return thirdAuditionApplyList();
         } else {
           return openThirdAudition();

@@ -7,12 +7,12 @@ import 'package:casting_call/src/net/RestClientInterface.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
 import 'package:casting_call/src/view/main/Home.dart';
 import 'package:casting_call/src/view/user/actor/JoinActorSelectType.dart';
-import 'package:casting_call/src/view/user/common/AuthWebView.dart';
 import 'package:dio/dio.dart';
-import 'package:encrypt/encrypt.dart';
+import 'package:encrypt/encrypt.dart' as Encrypt;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:intl/intl.dart';
 import 'package:pointycastle/asymmetric/api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,12 +20,26 @@ import 'package:shared_preferences/shared_preferences.dart';
 *  14세 이상 배우 회원가입
 * */
 class JoinActorAdult extends StatefulWidget {
+  final String authName;
+  final String authPhone;
+  final String authBirth;
+  final String authGender;
+
+  const JoinActorAdult(
+      {Key key, this.authName, this.authPhone, this.authBirth, this.authGender})
+      : super(key: key);
+
   @override
   _JoinActorAdult createState() => _JoinActorAdult();
 }
 
 class _JoinActorAdult extends State<JoinActorAdult> with BaseUtilMixin {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+
+  String _authName;
+  String _authPhone;
+  String _authBirth;
+  String _authGender;
 
   bool _isUpload = false;
 
@@ -44,6 +58,42 @@ class _JoinActorAdult extends State<JoinActorAdult> with BaseUtilMixin {
   @override
   void initState() {
     super.initState();
+
+    _authName = widget.authName;
+    _authPhone = widget.authPhone;
+    _authBirth = widget.authBirth;
+    _authGender = widget.authGender;
+    print(_authName);
+    print(_authPhone);
+    print(_authBirth);
+    print(_authGender);
+
+    if (_authName != null) {
+      _txtFieldName.text = _authName;
+    }
+
+    if (_authPhone != null) {
+      _txtFieldPhone.text = _authPhone;
+    }
+
+    if (_authPhone != null) {
+      _txtFieldPhone.text = _authPhone;
+    }
+
+    if (_authBirth != null) {
+      var now = DateTime.parse(_authBirth);
+      var formatter = new DateFormat('yyyy-MM-dd');
+
+      _birthDate = formatter.format(now);
+    }
+
+    if (_authGender != null) {
+      if (_authGender == '0') {
+        _userGender = 0;
+      } else {
+        _userGender = 1;
+      }
+    }
   }
 
   /*
@@ -173,7 +223,7 @@ class _JoinActorAdult extends State<JoinActorAdult> with BaseUtilMixin {
                                                   .colorFontLightGrey,
                                             ),
                                           ),
-                                          Container(
+                                          /*Container(
                                               height: 50,
                                               padding: EdgeInsets.only(
                                                   left: 30, right: 30),
@@ -182,7 +232,7 @@ class _JoinActorAdult extends State<JoinActorAdult> with BaseUtilMixin {
                                                   .greyBorderRound7ButtonStyle(
                                                       '본인 인증하기', () {
                                                         addView(context, AuthWebView());
-                                              })),
+                                              })),*/
                                           Container(
                                               margin: EdgeInsets.only(top: 0),
                                               padding: EdgeInsets.only(
@@ -205,9 +255,10 @@ class _JoinActorAdult extends State<JoinActorAdult> with BaseUtilMixin {
                                                   left: 30, right: 30),
                                               margin: EdgeInsets.only(top: 5),
                                               child: CustomStyles
-                                                  .greyBorderRound7TextField(
+                                                  .greyBorderRound7TextFieldWithDisableOpt(
                                                       _txtFieldName,
-                                                      '반드시 본명을 입력해 주세요.')),
+                                                      '반드시 본명을 입력해 주세요.',
+                                                      false)),
                                           Container(
                                               margin: EdgeInsets.only(top: 15),
                                               padding: EdgeInsets.only(
@@ -378,10 +429,10 @@ class _JoinActorAdult extends State<JoinActorAdult> with BaseUtilMixin {
                                                   left: 30, right: 30),
                                               margin: EdgeInsets.only(top: 5),
                                               child: CustomStyles
-                                                  .greyBorderRound7TextFieldWithOption(
+                                                  .greyBorderRound7TextFieldWithDisableOpt(
                                                       _txtFieldPhone,
-                                                      TextInputType.number,
-                                                      '숫자로만 입력해 주세요.')),
+                                                      '숫자로만 입력해 주세요.',
+                                                      false)),
                                           Container(
                                             margin: EdgeInsets.only(
                                                 top: 30, bottom: 30),
@@ -643,9 +694,9 @@ class _JoinActorAdult extends State<JoinActorAdult> with BaseUtilMixin {
     // 비밀번호 암호화
     final publicPem =
         await rootBundle.loadString('assets/files/public_key.pem');
-    final publicKey = RSAKeyParser().parse(publicPem) as RSAPublicKey;
+    final publicKey = Encrypt.RSAKeyParser().parse(publicPem) as RSAPublicKey;
 
-    final encryptor = Encrypter(RSA(publicKey: publicKey));
+    final encryptor = Encrypt.Encrypter(Encrypt.RSA(publicKey: publicKey));
     final encrypted =
         encryptor.encrypt(StringUtils.trimmedString(_txtFieldPW.text));
 

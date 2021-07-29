@@ -3,9 +3,9 @@ import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/dialog/DialogParentAuth.dart';
 import 'package:casting_call/src/view/user/common/JoinSelectType.dart';
+import 'package:casting_call/src/view/user/common/SelfAuth.dart';
 import 'package:flutter/material.dart';
 
-import 'JoinActorAdult.dart';
 import 'JoinActorChildParentAgree.dart';
 
 /*
@@ -74,7 +74,15 @@ class _JoinActorSelectType extends State<JoinActorSelectType>
                           ),
                           GestureDetector(
                               onTap: () {
-                                replaceView(context, JoinActorAdult());
+                                replaceView(
+                                    context,
+                                    SelfAuth(
+                                        authRes: '',
+                                        authName: '',
+                                        authPhone: '',
+                                        authBirth: '',
+                                        authGender: '',
+                                        memberType: ''));
                               },
                               child: Container(
                                   margin: EdgeInsets.only(top: 20),

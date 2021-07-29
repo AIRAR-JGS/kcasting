@@ -206,12 +206,6 @@
       "languageVersion": "2.12"
     },
     {
-      "name": "flutter_webview_plugin",
-      "rootUri": "file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_webview_plugin-0.4.0",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
-    },
-    {
       "name": "grouped_buttons",
       "rootUri": "file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/grouped_buttons-1.0.4",
       "packageUri": "lib/",
@@ -602,6 +596,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "webview_flutter",
+      "rootUri": "file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/webview_flutter-2.0.10",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "win32",
       "rootUri": "file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/win32-2.0.5",
       "packageUri": "lib/",
@@ -632,7 +632,7 @@
       "languageVersion": "2.7"
     }
   ],
-  "generated": "2021-07-28T12:10:12.047614Z",
+  "generated": "2021-07-29T02:07:19.260390Z",
   "generator": "pub",
   "generatorVersion": "2.13.0-211.6.beta"
 }

@@ -5,6 +5,7 @@ import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/net/RestClientInterface.dart';
 import 'package:casting_call/src/view/audition/actor/AuditionApplyDetail.dart';
 import 'package:casting_call/src/view/audition/actor/OfferedAuditionDetail.dart';
+import 'package:casting_call/src/view/audition/production/RegisteredAuditionDetail.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
@@ -47,9 +48,6 @@ class _PushNotification extends State<PushNotification> with BaseUtilMixin {
 
   // 리스트뷰 스크롤 컨트롤러 이벤트 리스너
   _scrollListener() {
-    print(_scrollController.position.extentAfter);
-    print(_scrollController.offset);
-
     if (_total == 0 || _noticeList.length >= _total) return;
 
     if (_scrollController.offset >=
@@ -123,7 +121,7 @@ class _PushNotification extends State<PushNotification> with BaseUtilMixin {
 
               var _responseList = _responseData[APIConstants.list];
               if (_responseList != null && _responseList.length > 0) {
-                _noticeList.addAll(_responseList[APIConstants.list]);
+                _noticeList.addAll(_responseList);
               }
 
               _onClickedHome();
@@ -133,6 +131,7 @@ class _PushNotification extends State<PushNotification> with BaseUtilMixin {
           }
         }
       } catch (e) {
+        print(e.toString());
         showSnackBar(context, APIConstants.error_msg_try_again);
       } finally {
         setState(() {
@@ -250,6 +249,18 @@ class _PushNotification extends State<PushNotification> with BaseUtilMixin {
                                             case APIConstants.UPD_MNG_AAS:
                                             // 매니지먼트 소속 배우 회원이 지원한 오디션 상태값 변경됨
                                               addView(context, AuditionApplyDetail(applySeq: _data[APIConstants.type_seq]));
+
+                                              break;
+
+                                            case APIConstants.ADD_PRD_AAA:
+                                            // 제작사가 등록한 오디션에 누가 지원함
+                                              addView(context, RegisteredAuditionDetail(castingSeq: _data[APIConstants.type_seq]));
+
+                                              break;
+
+                                            case APIConstants.UPD_PRD_PPS:
+                                            // 제작사가 제안한 오디션에 배우가 수락 또는 거절함
+                                              addView(context, OfferedAuditionDetail(seq: _data[APIConstants.type_seq]));
 
                                               break;
                                           }

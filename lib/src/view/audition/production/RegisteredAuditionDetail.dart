@@ -240,13 +240,13 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
         paging[APIConstants.offset] = _firstAuditionApplyList.length;
         break;
       case APIConstants.SAR_SAD_STATE:
-        paging[APIConstants.offset] = _firstAuditionApplyList.length;
+        paging[APIConstants.offset] = _secondAuditionApplyList.length;
         break;
       case APIConstants.SAR_TAD_STATE:
-        paging[APIConstants.offset] = _firstAuditionApplyList.length;
+        paging[APIConstants.offset] = _thirdAuditionApplyList.length;
         break;
       case APIConstants.SAR_TAD_FINSTATE:
-        paging[APIConstants.offset] = _firstAuditionApplyList.length;
+        paging[APIConstants.offset] = _auditionResultList.length;
         break;
     }
 

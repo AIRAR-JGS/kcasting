@@ -2,9 +2,9 @@ import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
-import 'package:casting_call/src/view/user/actor/JoinActorSelectType.dart';
-import 'package:casting_call/src/view/user/common/Login.dart';
 import 'package:casting_call/src/view/user/common/CompanyAuth.dart';
+import 'package:casting_call/src/view/user/common/Login.dart';
+import 'package:casting_call/src/view/user/common/SelfAuth.dart';
 import 'package:flutter/material.dart';
 
 /*
@@ -48,7 +48,16 @@ class _JoinSelectType extends State<JoinSelectType> with BaseUtilMixin {
                         children: [
                           GestureDetector(
                               onTap: () {
-                                replaceView(context, JoinActorSelectType());
+                                //replaceView(context, JoinActorSelectType());
+                                replaceView(
+                                    context,
+                                    SelfAuth(
+                                        authRes: '',
+                                        authName: '',
+                                        authPhone: '',
+                                        authBirth: '',
+                                        authGender: '',
+                                        memberType: ''));
                               },
                               child: Container(
                                   alignment: Alignment.center,

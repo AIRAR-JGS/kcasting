@@ -47,7 +47,7 @@ class APIConstants {
   static const String INS_AVD_LIST_FORMDATA = "INS_AVD_LIST_FormData";            // 배우 비디오 등록
   static const String DEA_AVD_LIST = "DEA_AVD_LIST";                              // 배우 비디오 일괄 삭제
   static const String INS_AAA_INFO_FORMDATA = "INS_AAA_INFO_FormData";            // 배우 오디션 지원
-  static const String SEL_AAA_LIST = "SEL_AAA_LIST";                              // 배우 오디션 지원 현황 조회
+  //static const String SEL_AAA_LIST = "SEL_AAA_LIST";                              // 배우 오디션 지원 현황 조회
   static const String DEL_AAA_INFO = "DEL_AAA_INFO";                              // 배우 오디션 지원 취소
   static const String SAR_AAP_INFO = "SAR_AAP_INFO";                              // 배우 오디션 제출 프로필 조회
   static const String SEL_AAA_STATE = "SEL_AAA_STATE";                            // 배우 오디션 지원 상태 조회
@@ -234,6 +234,8 @@ class APIConstants {
   static const String ADD_MNG_PRP = "ADD_MNG_PRP";
   static const String UPD_ACT_AAS = "UPD_ACT_AAS";
   static const String UPD_MNG_AAS = "UPD_MNG_AAS";
+  static const String ADD_PRD_AAA = "ADD_PRD_AAA";
+  static const String UPD_PRD_PPS = "UPD_PRD_PPS";
 
   // 배우 회원 관련
   static const String table_actor_profile = "ActorProfile";

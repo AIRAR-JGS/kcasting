@@ -126,10 +126,6 @@ flutter_tags
 2.0
 file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_tags-0.4.9+1/
 file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_tags-0.4.9+1/lib/
-flutter_webview_plugin
-2.12
-file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_webview_plugin-0.4.0/
-file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_webview_plugin-0.4.0/lib/
 grouped_buttons
 2.1
 file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/grouped_buttons-1.0.4/
@@ -386,6 +382,10 @@ wakelock_windows
 2.12
 file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/wakelock_windows-0.1.0/
 file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/wakelock_windows-0.1.0/lib/
+webview_flutter
+2.12
+file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/webview_flutter-2.0.10/
+file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/webview_flutter-2.0.10/lib/
 win32
 2.12
 file:///D:/flutter/.pub-cache/hosted/pub.dartlang.org/win32-2.0.5/

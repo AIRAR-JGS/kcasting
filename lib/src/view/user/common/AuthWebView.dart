@@ -6,8 +6,6 @@ import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/view/user/common/JoinSelectType.dart';
 import 'package:casting_call/src/view/user/common/SelfAuth.dart';
 import 'package:flutter/material.dart';
-
-//import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 /*
@@ -103,7 +101,12 @@ class _AuthWebView extends State<AuthWebView> with BaseUtilMixin {
                       },
                       navigationDelegate: (NavigationRequest request) {
                         if (request.url
-                            .startsWith('https://www.youtube.com/')) {
+                            .startsWith('https://itunes.apple.com')) {
+                          print('blocking navigation to $request}');
+                          return NavigationDecision.prevent;
+                        }
+                        if (request.url
+                            .startsWith('niceipin2')) {
                           print('blocking navigation to $request}');
                           return NavigationDecision.prevent;
                         }
@@ -120,118 +123,3 @@ class _AuthWebView extends State<AuthWebView> with BaseUtilMixin {
                 }))));
   }
 }
-
-/*
-import 'package:casting_call/BaseWidget.dart';
-import 'package:casting_call/res/CustomStyles.dart';
-import 'package:casting_call/src/view/user/common/JoinSelectType.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
-
-*/
-/*
-*  법인 조회
-* */ /*
-
-class AuthWebView extends StatefulWidget {
-  @override
-  _AuthWebView createState() => _AuthWebView();
-}
-
-class _AuthWebView extends State<AuthWebView> with BaseUtilMixin {
-  // Instance of WebView plugin
-
-  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-
-  String selectedUrl =
-      'https://k-casting.com/nice/checkplusSafe/checkplus_main.php';
-
-  final Set<JavascriptChannel> jsChannels = [
-    JavascriptChannel(
-        name: 'KCastingAuth',
-        onMessageReceived: (JavascriptMessage message) {
-          print(message.message);
-        }),
-    JavascriptChannel(
-        name: 'Alert',
-        onMessageReceived: (JavascriptMessage message) {
-
-        }),
-    
-  ].toSet();
-
-  final flutterWebViewPlugin = FlutterWebviewPlugin();
-
-  @override
-  Future<void> initState() {
-    super.initState();
-
-    flutterWebViewPlugin.onStateChanged.listen((viewState) async {
-      if (viewState.type == WebViewState.finishLoad) {
-        flutterWebViewPlugin.evalJavascript(js);
-      }
-    });
-  }
-
-  */
-/*
-  *  메인위젯
-  * */ /*
-
-  @override
-  Widget build(BuildContext context) {
-    return WillPopScope(
-        onWillPop: () {
-          // 로그인 페이지 이동
-          return Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => JoinSelectType()),
-          );
-        },
-        child: Theme(
-            data: CustomStyles.defaultTheme(),
-            child: Scaffold(
-                key: _scaffoldKey,
-                appBar: CustomStyles.defaultAppBar('본인인증', () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => JoinSelectType()),
-                  );
-                }),
-                body: Builder(builder: (BuildContext context) {
-                  return WebviewScaffold(
-                      
-                      url: selectedUrl,
-                      javascriptChannels: jsChannels,
-                      enableAppScheme: true,
-                      mediaPlaybackRequiresUserGesture: false,
-                      withZoom: true,
-                      withJavascript: true,
-                      withLocalStorage: true,
-                      hidden: true,
-                      initialChild: Container(
-                          alignment: Alignment.center,
-                          child: CircularProgressIndicator()),
-                      bottomNavigationBar: BottomAppBar(
-                          child: Row(children: <Widget>[
-                        IconButton(
-                            icon: const Icon(Icons.arrow_back_ios),
-                            onPressed: () {
-                              flutterWebViewPlugin.goBack();
-                            }),
-                        IconButton(
-                            icon: const Icon(Icons.arrow_forward_ios),
-                            onPressed: () {
-                              flutterWebViewPlugin.goForward();
-                            }),
-                        IconButton(
-                            icon: const Icon(Icons.autorenew),
-                            onPressed: () {
-                              flutterWebViewPlugin.reload();
-                            })
-                      ])));
-                }))));
-  }
-}
-*/

@@ -58,7 +58,6 @@ dependencies:
   shared_preferences: ^2.0.6
   encrypt: ^5.0.0
   pointycastle: ^3.2.0-rc0
-  #flutter_webview_plugin: ^0.4.0
   webview_flutter: ^2.0.10
 
 dev_dependencies:

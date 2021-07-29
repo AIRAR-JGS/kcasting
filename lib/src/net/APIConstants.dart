@@ -274,6 +274,7 @@ class APIConstants {
   static const String sign_value = "sign_value";
   static const String pdf_pwd = "pdf_pwd";
   static const String actor_account = "actor_account";
+  static const String actor_account_bank = "actor_account_bank";
   static const String actor_address = "actor_address";
   static const String final_pay = "final_pay";
   static const String actor_account_holder = "actor_account_holder";

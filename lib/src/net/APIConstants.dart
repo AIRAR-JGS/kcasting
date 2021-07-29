@@ -478,6 +478,8 @@ class APIConstants {
   static const String paper_id = "paper_id";
   static const String paper_email = "paper_email";
   static const String paper_url = "paper_url";
+  static const String casting_state_type = "casting_state_type";
+  static const String isPayment = "isPayment";
 
 // 사용 안함
 /*static const String apply_image = "apply_image";

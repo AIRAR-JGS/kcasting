@@ -206,7 +206,7 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
                                   .myInfo[APIConstants.member_type] ==
                               APIConstants.member_type_actor) {
                             if (_castingBoardData[
-                                    APIConstants.firstAudition_state_type] ==
+                                    APIConstants.casting_state_type] ==
                                 "마감") {
                               _castingStateStr = "마감된 공고입니다.";
                             } else {

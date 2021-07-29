@@ -86,15 +86,6 @@ class _ActorProfile extends State<ActorProfile>
         });
       }
     });
-
-    setState(() {
-      // 배우 이미지
-      _myPhotos = KCastingAppData().myImage;
-      _originalMyPhotos = KCastingAppData().myImage;
-
-      _myVideos = KCastingAppData().myVideo;
-      _originalMyVideos = KCastingAppData().myVideo;
-    });
   }
 
   @override
@@ -204,6 +195,13 @@ class _ActorProfile extends State<ActorProfile>
         _filmorgraphyList.addAll(KCastingAppData().myFilmorgraphy);
         _originalFilmorgraphyList.addAll(KCastingAppData().myFilmorgraphy);
       }
+
+      // 배우 이미지
+      _myPhotos.addAll(KCastingAppData().myImage);
+      _originalMyPhotos.addAll(KCastingAppData().myImage);
+
+      _myVideos.addAll(KCastingAppData().myVideo);
+      _originalMyVideos.addAll(KCastingAppData().myVideo);
     });
   }
 
@@ -900,9 +898,6 @@ class _ActorProfile extends State<ActorProfile>
                                                         .darkBold14TextButtonStyle(
                                                             '편집', () {
                                                       setState(() {
-                                                        _originalMyPhotos =
-                                                            _myPhotos;
-
                                                         _isImageListEditMode =
                                                             true;
                                                       });
@@ -928,8 +923,10 @@ class _ActorProfile extends State<ActorProfile>
                                                         .darkBold14TextButtonStyle(
                                                             '취소', () {
                                                       setState(() {
-                                                        _myPhotos =
-                                                            _originalMyPhotos;
+                                                        _myPhotos.clear();
+                                                        _myPhotos.addAll(
+                                                            _originalMyPhotos);
+
                                                         _deletedImageList = [];
 
                                                         _isImageListEditMode =
@@ -943,8 +940,10 @@ class _ActorProfile extends State<ActorProfile>
                                                         .darkBold14TextButtonStyle(
                                                             '저장', () {
                                                       setState(() {
-                                                        _originalMyPhotos =
-                                                            _myPhotos;
+                                                        _originalMyPhotos
+                                                            .clear();
+                                                        _originalMyPhotos
+                                                            .addAll(_myPhotos);
 
                                                         _isImageListEditMode =
                                                             false;
@@ -1056,9 +1055,6 @@ class _ActorProfile extends State<ActorProfile>
                                                           .darkBold14TextButtonStyle(
                                                               '편집', () {
                                                         setState(() {
-                                                          _originalMyVideos =
-                                                              _myVideos;
-
                                                           _isVideoListEditMode =
                                                               true;
                                                         });
@@ -1087,8 +1083,9 @@ class _ActorProfile extends State<ActorProfile>
                                                           .darkBold14TextButtonStyle(
                                                               '취소', () {
                                                         setState(() {
-                                                          _myVideos =
-                                                              _originalMyVideos;
+                                                          _myVideos.clear();
+                                                          _myVideos.addAll(
+                                                              _originalMyVideos);
 
                                                           _deletedVideoList =
                                                               [];
@@ -1104,8 +1101,11 @@ class _ActorProfile extends State<ActorProfile>
                                                           .darkBold14TextButtonStyle(
                                                               '저장', () {
                                                         setState(() {
-                                                          _originalMyVideos =
-                                                              _myVideos;
+                                                          _originalMyVideos
+                                                              .clear();
+                                                          _originalMyVideos
+                                                              .addAll(
+                                                                  _myVideos);
 
                                                           _isVideoListEditMode =
                                                               false;

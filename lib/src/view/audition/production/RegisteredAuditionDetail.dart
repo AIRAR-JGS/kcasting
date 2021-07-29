@@ -1380,7 +1380,18 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                                         return false;
                                       }
 
-                                      requestSavePay(context, _data[APIConstants.thirdAuditionTarget_seq]);
+                                      if (StringUtils.trimmedString(
+                                              _txtFieldPay.text) ==
+                                          '0') {
+                                        showSnackBar(
+                                            context, '출연료는 0원 이상이어야 합니다.');
+                                        return false;
+                                      }
+
+                                      requestSavePay(
+                                          context,
+                                          _data[APIConstants
+                                              .thirdAuditionTarget_seq]);
                                     }))),
                             visible: (StringUtils.checkedString(
                                         _data[APIConstants.result_type]) ==
@@ -1397,6 +1408,56 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                             visible: (StringUtils.checkedString(
                                         _data[APIConstants.result_type]) ==
                                     "계약요청전")
+                                ? true
+                                : false),
+                        Visibility(
+                            child: Container(
+                                padding: EdgeInsets.only(top: 5, bottom: 10),
+                                child: Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    height: 48,
+                                    child: CustomStyles.greyBGRound7ButtonStyle(
+                                        '출연료 지급하기', () {
+                                      requestPayToActor(
+                                          context,
+                                          _data[APIConstants
+                                              .thirdAuditionTarget_seq]);
+                                    }))),
+                            visible: (StringUtils.checkedString(
+                                            _data[APIConstants.result_type]) ==
+                                        "계약완료" &&
+                                    _data[APIConstants.isPayment] == 0)
+                                ? true
+                                : false),
+                        Visibility(
+                            child: Container(
+                                alignment: Alignment.centerLeft,
+                                child: Text('* 배우에게 출연료를 지급해 주세요.',
+                                    style: CustomStyles.normal14TextStyle())),
+                            visible: (StringUtils.checkedString(
+                                            _data[APIConstants.result_type]) ==
+                                        "계약완료" &&
+                                    _data[APIConstants.isPayment] == 0)
+                                ? true
+                                : false),
+                        Visibility(
+                            child: Container(
+                                padding: EdgeInsets.only(top: 5, bottom: 10),
+                                child: Container(
+                                    alignment: Alignment.center,
+                                    width: MediaQuery.of(context).size.width,
+                                    height: 48,
+                                    decoration: new BoxDecoration(
+                                        color: CustomColors.colorBgGrey,
+                                        borderRadius:
+                                            CustomStyles.circle7BorderRadius()),
+                                    child: Text("출연료 지급완료",
+                                        style:
+                                            CustomStyles.normal16TextStyle()))),
+                            visible: (StringUtils.checkedString(
+                                            _data[APIConstants.result_type]) ==
+                                        "계약완료" &&
+                                    _data[APIConstants.isPayment] == 1)
                                 ? true
                                 : false),
                       ])));
@@ -1843,7 +1904,8 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
     // 출연료 확정하기 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
     targetData[APIConstants.thirdAuditionTarget_seq] = seq;
-    targetData[APIConstants.final_pay] = StringUtils.trimmedString(_txtFieldPay.text);
+    targetData[APIConstants.final_pay] =
+        StringUtils.trimmedString(_txtFieldPay.text);
 
     Map<String, dynamic> params = new Map();
     params[APIConstants.key] = APIConstants.UPD_TAT_PAY;
@@ -1870,6 +1932,58 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
             });
           } else {
             // 출연료 확정하기 실패
+            showSnackBar(context, value[APIConstants.resultMsg]);
+          }
+        }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
+      }
+    });
+  }
+
+  /*
+  * 출연료 지급하기
+  * */
+  void requestPayToActor(BuildContext context, int seq) {
+    setState(() {
+      _isUpload = true;
+    });
+
+    // 출연료 지급하기 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetData = new Map();
+    targetData[APIConstants.thirdAuditionTarget_seq] = seq;
+    targetData[APIConstants.final_pay] =
+        StringUtils.trimmedString(_txtFieldPay.text);
+
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.UPD_TAT_PAY;
+    params[APIConstants.target] = targetData;
+
+    // 출연료 지급하기 api 호출
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value == null) {
+          // 에러 - 데이터 널
+          showSnackBar(context, '다시 시도해 주세요.');
+        } else {
+          if (value[APIConstants.resultVal]) {
+            setState(() {
+              showSnackBar(context, "출연료를 지급하였습니다.");
+
+              _tabIndex = 3;
+
+              _total = 0;
+              _auditionResultList = [];
+              _apiKey = APIConstants.SAR_TAD_FINSTATE;
+
+              requestCastingStateList(context);
+            });
+          } else {
+            // 출연료 지급하기 실패
             showSnackBar(context, value[APIConstants.resultMsg]);
           }
         }

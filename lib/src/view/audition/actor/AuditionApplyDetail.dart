@@ -119,8 +119,12 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
     if (_tabController.indexIsChanging) {
       setState(() {
         _tabIndex = _tabController.index;
+
+        requestMyApplyDetailApi(context);
       });
     }
+
+
   }
 
   /*

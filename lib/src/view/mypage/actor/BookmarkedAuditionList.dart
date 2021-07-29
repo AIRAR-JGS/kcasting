@@ -129,56 +129,57 @@ class _BookmarkedAuditionList extends State<BookmarkedAuditionList>
               children: [
                 Container(
                     child: SingleChildScrollView(
-                        child: Column(
-                  children: [
-                    Container(
-                        margin: EdgeInsets.only(top: 15),
-                        padding: EdgeInsets.all(15),
-                        alignment: Alignment.topLeft,
-                        child: Text('마이 스크랩',
-                            style: CustomStyles.normal24TextStyle())),
-                    Container(
-                      padding: EdgeInsets.only(left: 15, right: 15, bottom: 15),
+                        child: Column(children: [
+                  Container(
+                      margin: EdgeInsets.only(top: 15),
+                      padding: EdgeInsets.all(15),
                       alignment: Alignment.topLeft,
-                      child: RichText(
-                          text: new TextSpan(
-                        style: CustomStyles.dark16TextStyle(),
-                        children: <TextSpan>[
-                          new TextSpan(text: '내 스크랩 '),
-                          new TextSpan(
-                              text: _castingBoardList.length.toString(),
-                              style: CustomStyles.red16TextStyle()),
-                          new TextSpan(text: '개'),
-                        ],
-                      )),
-                    ),
-                    _castingBoardList.length > 0
-                        ? (Wrap(children: [
-                            ListView.builder(
-                                padding: EdgeInsets.only(bottom: 50),
-                                controller: _scrollController,
-                                physics: NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount: _castingBoardList.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Container(
-                                      margin: EdgeInsets.only(bottom: 10),
-                                      alignment: Alignment.center,
-                                      child: AuditionListItem(
+                      child: Text('마이 스크랩',
+                          style: CustomStyles.normal24TextStyle())),
+                  Container(
+                    padding: EdgeInsets.only(left: 15, right: 15, bottom: 15),
+                    alignment: Alignment.topLeft,
+                    child: RichText(
+                        text: new TextSpan(
+                      style: CustomStyles.dark16TextStyle(),
+                      children: <TextSpan>[
+                        new TextSpan(text: '내 스크랩 '),
+                        new TextSpan(
+                            text: _castingBoardList.length.toString(),
+                            style: CustomStyles.red16TextStyle()),
+                        new TextSpan(text: '개'),
+                      ],
+                    )),
+                  ),
+                  _castingBoardList.length > 0
+                      ? (Wrap(children: [
+                          ListView.builder(
+                              padding: EdgeInsets.only(bottom: 50),
+                              controller: _scrollController,
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: _castingBoardList.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Container(
+                                    margin: EdgeInsets.only(bottom: 10),
+                                    alignment: Alignment.center,
+                                    child: AuditionListItem(
                                         castingItem: _castingBoardList[index],
                                         isMyScrapList: true,
-                                        onClickedBookmark: (){
-                                          requestActorBookmarkEditApi(context, index);
-                                        },
-                                      ));
-                                })
-                          ]))
-                        : Container(
-                            margin: EdgeInsets.only(top: 30),
-                            child: Text('캐스팅이 없습니다.',
-                                style: CustomStyles.normal16TextStyle()))
-                  ],
-                ))),
+                                        onClickedBookmark: () {
+                                          requestActorBookmarkEditApi(
+                                              context, index);
+                                        }));
+                              })
+                        ]))
+                      : Container()
+                ]))),
+                Visibility(
+                    child: Container(
+                        alignment: Alignment.center,
+                        child: Text('스크랩한 캐스팅이 없습니다.',
+                            style: CustomStyles.normal16TextStyle())),
+                    visible: _castingBoardList.length > 0 ? false : true),
                 Visibility(
                   child: Container(
                       color: Colors.black38,
@@ -193,15 +194,15 @@ class _BookmarkedAuditionList extends State<BookmarkedAuditionList>
   /*
   * 배우 북마크 목록
   * */
-  void requestActorBookmarkEditApi(
-      BuildContext context, int idx) {
+  void requestActorBookmarkEditApi(BuildContext context, int idx) {
     final dio = Dio();
 
     // 배우 북마크 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetDate = new Map();
     targetDate[APIConstants.actor_seq] =
-    KCastingAppData().myInfo[APIConstants.seq];
-    targetDate[APIConstants.casting_seq] = _castingBoardList[idx][APIConstants.casting_seq];
+        KCastingAppData().myInfo[APIConstants.seq];
+    targetDate[APIConstants.casting_seq] =
+        _castingBoardList[idx][APIConstants.casting_seq];
 
     Map<String, dynamic> params = new Map();
     params[APIConstants.key] = APIConstants.DEA_ACS_INFO;

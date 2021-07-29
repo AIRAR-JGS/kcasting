@@ -36,6 +36,11 @@ class _AuthWebView extends State<AuthWebView> with BaseUtilMixin {
             print(message.message);
 
             returnToJoinPage(message.message);
+          }),
+      JavascriptChannel(
+          name: 'alert',
+          onMessageReceived: (JavascriptMessage message) {
+
           })
     ].toSet();
   }

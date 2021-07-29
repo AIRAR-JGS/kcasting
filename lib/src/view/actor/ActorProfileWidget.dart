@@ -5,7 +5,6 @@ import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/ui/ImageView.dart';
-import 'package:casting_call/src/ui/VideoView.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
 import 'package:casting_call/src/view/mypage/actor/ActorFilmoListItem.dart';
 import 'package:flutter/cupertino.dart';
@@ -13,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_tags/flutter_tags.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /*
 * 배우 프로필 관련 위젯 모음
@@ -640,14 +640,20 @@ class ActorProfileWidget {
                                                   .circle4BorderRadius()))),
                             ),
                             GestureDetector(
-                              onTap: () {
-                                Navigator.push(
+                              onTap: () async {
+                                /*Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => VideoView(
                                           videoURL: actorVideoList[index]
-                                              [APIConstants.actor_video_url])),
-                                );
+                                          [APIConstants.actor_video_url])),
+                                );*/
+
+                                String _url = actorVideoList[index]
+                                    [APIConstants.actor_video_url];
+                                await canLaunch(_url)
+                                    ? await launch(_url)
+                                    : throw '$_url을 열 수 없습니다.';
                               },
                               child: Image.asset('assets/images/btn_play.png',
                                   width: 50),

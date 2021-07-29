@@ -6,7 +6,7 @@ import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/view/user/common/JoinSelectType.dart';
 import 'package:casting_call/src/view/user/common/SelfAuth.dart';
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_plus/webview_flutter_plus.dart';
 
 /*
 *  본인인증 웹뷰
@@ -19,8 +19,10 @@ class AuthWebView extends StatefulWidget {
 class _AuthWebView extends State<AuthWebView> with BaseUtilMixin {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
-  final Completer<WebViewController> _controller =
-      Completer<WebViewController>();
+  /*final Completer<WebViewController> _controller =
+      Completer<WebViewController>();*/
+  WebViewPlusController _controller;
+  double _height = 1;
 
   String selectedUrl =
       'https://k-casting.com/nice/checkplusSafe/checkplus_main.php';
@@ -31,7 +33,7 @@ class _AuthWebView extends State<AuthWebView> with BaseUtilMixin {
   Future<void> initState() {
     super.initState();
 
-    if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
+    //if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
 
     jsChannels = [
       JavascriptChannel(
@@ -88,14 +90,13 @@ class _AuthWebView extends State<AuthWebView> with BaseUtilMixin {
                   );
                 }),
                 body: Builder(builder: (BuildContext context) {
-                  return WebView(
+                  return WebViewPlus(
                       initialUrl: selectedUrl,
                       javascriptMode: JavascriptMode.unrestricted,
                       javascriptChannels: jsChannels,
                       debuggingEnabled: true,
-                      onWebViewCreated: (WebViewController webViewController) {
-
-                        _controller.complete(webViewController);
+                      onWebViewCreated: (webViewController) {
+                        this._controller = webViewController;
                       },
                       onProgress: (int progress) {
                         print("WebView is loading (progress : $progress%)");

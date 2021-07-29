@@ -94,6 +94,7 @@ class _AuthWebView extends State<AuthWebView> with BaseUtilMixin {
                       javascriptChannels: jsChannels,
                       debuggingEnabled: true,
                       onWebViewCreated: (WebViewController webViewController) {
+
                         _controller.complete(webViewController);
                       },
                       onProgress: (int progress) {

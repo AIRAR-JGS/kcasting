@@ -22,6 +22,8 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>io.flutter.embedded_views_preview</key>
+    <true/>
 	<key>NSAppTransportSecurity</key>
     <dict>
         <key>NSAllowsArbitraryLoads</key>
@@ -29,8 +31,6 @@
         <key>NSAllowsArbitraryLoadsInWebContent</key>
         <true/>
     </dict>
-    <key>io.flutter.embedded_views_preview</key>
-    <string>YES</string>
 	<key>NSCameraUsageDescription</key>
 	<string>사진 또는 비디오를 업로드하려면 사진앱에 접근할 수 있어야 합니다.</string>
 	<key>NSPhotoLibraryUsageDescription</key>

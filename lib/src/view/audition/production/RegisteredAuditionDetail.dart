@@ -1837,8 +1837,14 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
               showSnackBar(context, "수정 완료");
             });
           } else {
-            // 오디션 대상자 단일 수정 실패
-            showSnackBar(context, APIConstants.error_msg_try_again);
+            if(value[APIConstants.resultMsg] == 'target data cannot edit. already Audition quit.') {
+              showSnackBar(context, '계약이 완료된 배우의 상태를 수정할 수 없습니다.');
+            } else {
+              // 오디션 대상자 단일 수정 실패
+              showSnackBar(context, APIConstants.error_msg_try_again);
+            }
+
+
           }
         }
       } catch (e) {
@@ -1956,11 +1962,9 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
     // 출연료 지급하기 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
     targetData[APIConstants.thirdAuditionTarget_seq] = seq;
-    targetData[APIConstants.final_pay] =
-        StringUtils.trimmedString(_txtFieldPay.text);
 
     Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.UPD_TAT_PAY;
+    params[APIConstants.key] = APIConstants.CHK_TAT_PAY;
     params[APIConstants.target] = targetData;
 
     // 출연료 지급하기 api 호출

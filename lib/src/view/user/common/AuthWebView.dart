@@ -16,7 +16,6 @@ class _AuthWebView extends State<AuthWebView> with BaseUtilMixin {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   WebViewPlusController _controller;
-  double _height = 1;
 
   String selectedUrl =
       'https://k-casting.com/nice/checkplusSafe/checkplus_main.php';
@@ -27,8 +26,6 @@ class _AuthWebView extends State<AuthWebView> with BaseUtilMixin {
   Future<void> initState() {
     super.initState();
 
-    //if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
-
     jsChannels = [
       JavascriptChannel(
           name: 'KCastingAuth',
@@ -38,10 +35,7 @@ class _AuthWebView extends State<AuthWebView> with BaseUtilMixin {
             returnToJoinPage(message.message);
           }),
       JavascriptChannel(
-          name: 'alert',
-          onMessageReceived: (JavascriptMessage message) {
-
-          })
+          name: 'alert', onMessageReceived: (JavascriptMessage message) {})
     ].toSet();
   }
 

@@ -7,6 +7,7 @@ import 'package:casting_call/src/net/RestClientInterface.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
 import 'package:casting_call/src/view/main/Home.dart';
 import 'package:casting_call/src/view/user/actor/JoinActorSelectType.dart';
+import 'package:casting_call/src/view/user/common/JoinSelectType.dart';
 import 'package:dio/dio.dart';
 import 'package:encrypt/encrypt.dart' as Encrypt;
 import 'package:flutter/gestures.dart';
@@ -104,7 +105,7 @@ class _JoinActorAdult extends State<JoinActorAdult> with BaseUtilMixin {
     return WillPopScope(
         onWillPop: () {
           // 로그인 페이지 이동
-          replaceView(context, JoinActorSelectType());
+          replaceView(context, JoinSelectType());
           return Future.value(false);
         },
         child: Theme(
@@ -112,7 +113,7 @@ class _JoinActorAdult extends State<JoinActorAdult> with BaseUtilMixin {
             child: Scaffold(
                 key: _scaffoldKey,
                 appBar: CustomStyles.defaultAppBar('회원가입', () {
-                  replaceView(context, JoinActorSelectType());
+                  replaceView(context, JoinSelectType());
                   return Future.value(false);
                 }),
                 body: Stack(

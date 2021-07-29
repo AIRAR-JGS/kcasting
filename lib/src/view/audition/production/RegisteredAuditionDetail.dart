@@ -1345,7 +1345,7 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                                   child: Text(
                                     StringUtils.checkedString(
                                         _data[APIConstants.result_type]),
-                                    style: CustomStyles.normal16TextStyle(),
+                                    style: CustomStyles.normal14TextStyle(),
                                   ))
                             ]),
                         Container(
@@ -1374,7 +1374,13 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                                     height: 48,
                                     child: CustomStyles.greyBGRound7ButtonStyle(
                                         '출연료 확정 및 계약요청하기', () {
+                                      if (StringUtils.isEmpty(
+                                          _txtFieldPay.text)) {
+                                        showSnackBar(context, '출연료를 입력해 주세요.');
+                                        return false;
+                                      }
 
+                                      requestSavePay(context, _data[APIConstants.thirdAuditionTarget_seq]);
                                     }))),
                             visible: (StringUtils.checkedString(
                                         _data[APIConstants.result_type]) ==
@@ -1690,6 +1696,10 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
           if (value[APIConstants.resultVal]) {
             showSnackBar(context, "3차 오디션을 오픈하였습니다.");
 
+            setState(() {
+              _firstAuditionInfo[APIConstants.isOpenThirdAudition] = 1;
+            });
+
             _tabIndex = 2;
 
             _total = 0;
@@ -1805,13 +1815,62 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
         } else {
           if (value[APIConstants.resultVal]) {
             setState(() {
-              //var _responseData = value[APIConstants.data];
-
               showSnackBar(context, "오디션이 마감되었습니다.");
             });
           } else {
             // 오디션 마감하기 실패
             showSnackBar(context, APIConstants.error_msg_try_again);
+          }
+        }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
+      }
+    });
+  }
+
+  /*
+  * 출연료 확정하기
+  * */
+  void requestSavePay(BuildContext context, int seq) {
+    setState(() {
+      _isUpload = true;
+    });
+
+    // 출연료 확정하기 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetData = new Map();
+    targetData[APIConstants.thirdAuditionTarget_seq] = seq;
+    targetData[APIConstants.final_pay] = StringUtils.trimmedString(_txtFieldPay.text);
+
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.UPD_TAT_PAY;
+    params[APIConstants.target] = targetData;
+
+    // 출연료 확정하기 api 호출
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
+      try {
+        if (value == null) {
+          // 에러 - 데이터 널
+          showSnackBar(context, '다시 시도해 주세요.');
+        } else {
+          if (value[APIConstants.resultVal]) {
+            setState(() {
+              showSnackBar(context, "전자계약을 요청하였습니다.");
+
+              _tabIndex = 3;
+
+              _total = 0;
+              _auditionResultList = [];
+              _apiKey = APIConstants.SAR_TAD_FINSTATE;
+
+              requestCastingStateList(context);
+            });
+          } else {
+            // 출연료 확정하기 실패
+            showSnackBar(context, value[APIConstants.resultMsg]);
           }
         }
       } catch (e) {

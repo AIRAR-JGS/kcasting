@@ -923,7 +923,7 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                   child: Text('면접안내', style: CustomStyles.dark20TextStyle())),
               Container(
                   child: Text(
-                      '서배우님의 면접 일정은 담당자가 확인하는대로\n해당 연락처의 문자로 갈 예정입니다.\n잠시만 기다려주세요.\n\n면접 후, 면접관이 합격 또는 불합격 통보시\n해당 화면에 결과가 나타납니다.',
+                      '면접 일정은 담당자가 확인하는대로\n해당 연락처의 문자로 갈 예정입니다.\n잠시만 기다려주세요.\n\n면접 후, 면접관이 합격 또는 불합격 통보시\n해당 화면에 결과가 나타납니다.',
                       style: CustomStyles.dark16TextStyle()))
             ]));
         break;
@@ -1322,6 +1322,20 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
               Container(
                   child: Text(
                       '아쉽게도 3차 오디션에 합격하지 못했습니다.\n다음에 더 좋은 배역으로 만나길 바랍니다.\n감사합니다.',
+                      style: CustomStyles.dark16TextStyle())),
+            ]));
+        break;
+      case "면접완료":
+        return Container(
+            padding: EdgeInsets.all(15),
+            child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Container(
+                  margin: EdgeInsets.only(bottom: 15, top: 15),
+                  child: Text('면접완료', style: CustomStyles.dark20TextStyle())),
+              Container(
+                  child: Text(
+                      '면접결과 대기 중입니다.',
                       style: CustomStyles.dark16TextStyle())),
             ]));
         break;

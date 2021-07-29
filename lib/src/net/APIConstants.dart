@@ -99,6 +99,7 @@ class APIConstants {
   static const String INS_PAS_INFO = "INS_PAS_INFO";                              // 제작사 회원 스크랩 추가
   static const String DEA_PAS_INFO = "DEA_PAS_INFO";                              // 제작사 회원 스크랩 삭제
   static const String UPD_PCT_QUIT = "UPD_PCT_QUIT";                              // 오디션 마감
+  static const String UPD_TAT_PAY = "UPD_TAT_PAY";                                // 제작사 : 3차 오디션 대상자 1회차 출연료 수정
 
   // 매니지먼트 회원
   static const String INS_MGM_JOIN = "INS_MGM_JOIN";                              // 매니지먼트 회원가입

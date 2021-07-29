@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/KCastingAppData.dart';
 import 'package:casting_call/res/Constants.dart';
@@ -14,6 +16,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   runApp(MyApp());
 }
 

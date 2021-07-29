@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomStyles.dart';
@@ -8,9 +7,6 @@ import 'package:casting_call/src/view/user/common/SelfAuth.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter_plus/webview_flutter_plus.dart';
 
-/*
-*  본인인증 웹뷰
-* */
 class AuthWebView extends StatefulWidget {
   @override
   _AuthWebView createState() => _AuthWebView();
@@ -19,8 +15,6 @@ class AuthWebView extends StatefulWidget {
 class _AuthWebView extends State<AuthWebView> with BaseUtilMixin {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
-  /*final Completer<WebViewController> _controller =
-      Completer<WebViewController>();*/
   WebViewPlusController _controller;
   double _height = 1;
 
@@ -66,9 +60,6 @@ class _AuthWebView extends State<AuthWebView> with BaseUtilMixin {
             memberType: 'A'));
   }
 
-  /*
-  *  메인위젯
-  * */
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -95,6 +86,7 @@ class _AuthWebView extends State<AuthWebView> with BaseUtilMixin {
                       javascriptMode: JavascriptMode.unrestricted,
                       javascriptChannels: jsChannels,
                       debuggingEnabled: true,
+                      allowsInlineMediaPlayback: true,
                       onWebViewCreated: (webViewController) {
                         this._controller = webViewController;
                       },
@@ -107,8 +99,7 @@ class _AuthWebView extends State<AuthWebView> with BaseUtilMixin {
                           print('blocking navigation to $request}');
                           return NavigationDecision.prevent;
                         }
-                        if (request.url
-                            .startsWith('niceipin2')) {
+                        if (request.url.startsWith('niceipin2')) {
                           print('blocking navigation to $request}');
                           return NavigationDecision.prevent;
                         }

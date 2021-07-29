@@ -123,8 +123,6 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
         requestMyApplyDetailApi(context);
       });
     }
-
-
   }
 
   /*
@@ -1333,13 +1331,12 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
         return Container(
             padding: EdgeInsets.all(15),
             child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Container(
                   margin: EdgeInsets.only(bottom: 15, top: 15),
                   child: Text('면접완료', style: CustomStyles.dark20TextStyle())),
               Container(
-                  child: Text(
-                      '면접결과 대기 중입니다.',
+                  child: Text('면접결과 대기 중입니다.',
                       style: CustomStyles.dark16TextStyle())),
             ]));
         break;
@@ -1352,8 +1349,8 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
   /*
   * 최종 합격
   * */
-  Widget tabPassAudition(int resultVal) {
-    return (resultVal == 0)
+  Widget tabPassAudition() {
+    return (_auditionState[APIConstants.isPayment] == 0)
         // 최종합격
         ? Container(
             padding: EdgeInsets.all(15),
@@ -1371,16 +1368,10 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                       Text('출연료', style: CustomStyles.darkBold16TextStyle())),
               Container(
                   margin: EdgeInsets.only(top: 15),
-                  child:
-                      Text('500,000', style: CustomStyles.dark16TextStyle())),
-              Container(
-                  margin: EdgeInsets.only(top: 30),
-                  child: Text('입금받을 계좌',
-                      style: CustomStyles.darkBold16TextStyle())),
-              Container(
-                  margin: EdgeInsets.only(top: 15),
-                  child: Text('우리은행 000-0000-00000',
-                      style: CustomStyles.dark16TextStyle())),
+                  child: Text(
+                      StringUtils.checkedString(
+                          _auditionState[APIConstants.final_pay]),
+                      style: CustomStyles.dark16TextStyle()))
             ]))
         : Container(
             padding: EdgeInsets.only(top: 20, left: 15, right: 15, bottom: 20),
@@ -1388,9 +1379,9 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Container(
                   margin: EdgeInsets.only(bottom: 15, top: 15),
-                  child: Text('지급완료', style: CustomStyles.dark20TextStyle())),
+                  child: Text('계약완료', style: CustomStyles.dark20TextStyle())),
               Container(
-                  child: Text('서배우님! 제출하신 계좌로 출연료가 지급되었습니다.\n확인 부탁드립니다.',
+                  child: Text('계약서에 작성하신 계좌로 출연료가 지급되었습니다.\n확인 부탁드립니다.',
                       style: CustomStyles.dark16TextStyle())),
               Container(
                   margin: EdgeInsets.only(top: 30),
@@ -1398,23 +1389,9 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                       Text('출연료', style: CustomStyles.darkBold16TextStyle())),
               Container(
                   margin: EdgeInsets.only(top: 15),
-                  child:
-                      Text('500,000', style: CustomStyles.dark16TextStyle())),
-              Container(
-                  margin: EdgeInsets.only(top: 30),
-                  child: Text('입금받을 계좌',
-                      style: CustomStyles.darkBold16TextStyle())),
-              Container(
-                  margin: EdgeInsets.only(top: 15),
-                  child: Text('우리은행 000-0000-00000',
-                      style: CustomStyles.dark16TextStyle())),
-              Container(
-                  margin: EdgeInsets.only(top: 30),
-                  child: Text('해당 제작사 연락처',
-                      style: CustomStyles.darkBold16TextStyle())),
-              Container(
-                  margin: EdgeInsets.only(top: 15),
-                  child: Text('K 엔터테인먼트 02)111-1111',
+                  child: Text(
+                      StringUtils.checkedString(
+                          _auditionState[APIConstants.final_pay]),
                       style: CustomStyles.dark16TextStyle()))
             ]));
   }
@@ -1536,7 +1513,7 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                                       tabFirstAudition(),
                                       tabSecondAudition(),
                                       tabThirdAudition(),
-                                      tabPassAudition(0)
+                                      tabPassAudition()
                                     ][_tabIndex])
                               ]))),
                       Visibility(

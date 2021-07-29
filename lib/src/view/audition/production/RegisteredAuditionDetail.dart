@@ -36,6 +36,8 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
 
   bool _isUpload = false;
 
+  final _txtFieldPay = TextEditingController();
+
   int _castingSeq;
   String _apiKey = APIConstants.SAR_FAD_STATE;
 
@@ -345,7 +347,6 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                           print("1111111111111");
                           var _listData = _data[APIConstants.data];
                           if (_listData != null) {
-
                             print("22222222222");
                             List<dynamic> _auditionInfoList =
                                 _listData[APIConstants.list] as List;
@@ -1278,6 +1279,10 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                 _imgUrlArr = [];
               }
 
+              if (_data[APIConstants.result_type] != "계약요청전") {
+                _txtFieldPay.text = _data[APIConstants.final_pay].toString();
+              }
+
               return Container(
                   alignment: Alignment.center,
                   padding:
@@ -1308,38 +1313,38 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                                           profileImgWidget(_imgUrlArr, 2)
                                         ]),
                                     Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
-                                            margin: EdgeInsets.only(
-                                                top: 10, left: 5),
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(
-                                              StringUtils.checkedString(_data[
-                                                  APIConstants.actor_name]),
-                                              style: CustomStyles
-                                                  .normal16TextStyle(),
-                                            )),
-                                        Container(
-                                            margin: EdgeInsets.only(
-                                                top: 10, left: 5),
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(
-                                              StringUtils.checkedString(_data[
-                                                  APIConstants.actor_phone]),
-                                              style: CustomStyles
-                                                  .normal16TextStyle(),
-                                            ))
-                                      ],
-                                    )
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Container(
+                                              margin: EdgeInsets.only(
+                                                  top: 10, left: 5),
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                StringUtils.checkedString(_data[
+                                                    APIConstants.actor_name]),
+                                                style: CustomStyles
+                                                    .normal16TextStyle(),
+                                              )),
+                                          Container(
+                                              margin: EdgeInsets.only(
+                                                  top: 10, left: 5),
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                StringUtils.checkedString(_data[
+                                                    APIConstants.actor_phone]),
+                                                style: CustomStyles
+                                                    .normal16TextStyle(),
+                                              ))
+                                        ])
                                   ])),
                               Container(
                                   margin: EdgeInsets.only(left: 16),
                                   width: MediaQuery.of(context).size.width / 5,
                                   alignment: Alignment.center,
                                   child: Text(
-                                    "계약대기",
+                                    StringUtils.checkedString(
+                                        _data[APIConstants.result_type]),
                                     style: CustomStyles.normal16TextStyle(),
                                   ))
                             ]),
@@ -1350,31 +1355,44 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                                 style: CustomStyles.normal14TextStyle())),
                         Container(
                             padding: EdgeInsets.only(top: 10, bottom: 10),
-                            child: Row(children: [
-                              Expanded(
-                                  flex: 7,
-                                  child: Container(
-                                      child: CustomStyles
-                                          .greyBorderRound7TextFieldWithOption(
-                                              new TextEditingController(),
-                                              TextInputType.number,
-                                              ''))),
-                              Expanded(
-                                  flex: 0,
-                                  child: Container(
-                                      height: 48,
-                                      margin: EdgeInsets.only(left: 5),
-                                      child:
-                                          CustomStyles.greyBGRound7ButtonStyle(
-                                              '저장', () {
-                                        // 인증번호 받기 버튼 클릭
-                                      })))
-                            ])),
-                        Container(
-                            margin: EdgeInsets.only(top: 10),
-                            alignment: Alignment.centerLeft,
-                            child: Text('* 1회당 출연료를 입력한 후 저장버튼을 누르는 즉시, 해당 배우가 계약서를 작성할 수 있습니다.',
-                                style: CustomStyles.normal14TextStyle())),
+                            child: Container(
+                                child: CustomStyles
+                                    .greyBorderRound7TextFieldWithDisableOpt(
+                                        _txtFieldPay,
+                                        '',
+                                        (StringUtils.checkedString(_data[
+                                                    APIConstants
+                                                        .result_type]) ==
+                                                "계약요청전")
+                                            ? true
+                                            : false))),
+                        Visibility(
+                            child: Container(
+                                padding: EdgeInsets.only(top: 5, bottom: 10),
+                                child: Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    height: 48,
+                                    child: CustomStyles.greyBGRound7ButtonStyle(
+                                        '출연료 확정 및 계약요청하기', () {
+
+                                    }))),
+                            visible: (StringUtils.checkedString(
+                                        _data[APIConstants.result_type]) ==
+                                    "계약요청전")
+                                ? true
+                                : false),
+                        Visibility(
+                            child: Container(
+                                margin: EdgeInsets.only(top: 10),
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                    '* 1회당 출연료를 입력한 후 \'출연료 확정 및 계약요청하기\'버튼을 누르는 즉시, 해당 배우가 계약서를 작성할 수 있습니다.',
+                                    style: CustomStyles.normal14TextStyle())),
+                            visible: (StringUtils.checkedString(
+                                        _data[APIConstants.result_type]) ==
+                                    "계약요청전")
+                                ? true
+                                : false),
                       ])));
             },
             separatorBuilder: (context, index) {

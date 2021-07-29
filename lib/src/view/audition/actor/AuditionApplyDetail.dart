@@ -48,13 +48,6 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
   // 지원현황 리스트 관련 변수
   Map<String, dynamic> _auditionState = new Map();
 
-  //bool _isSubmitVideo = false;
-  //bool _isSubmitContract = false;
-  //bool _isAgreeOpenContact = false;
-
-  //bool _tempContractWritable = true;
-  bool _tempContractFinish = false;
-
   bool _isUpload = false;
 
   // 실명인증 관련
@@ -112,7 +105,8 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
 
     if (_tabController.index == 3) {
       // 계약 완료
-      if (!_tempContractFinish) {
+      if (_auditionState[APIConstants.result_type] == null ||
+          _auditionState[APIConstants.result_type] != "계약완료") {
         int index = _tabController.previousIndex;
         setState(() {
           _tabController.index = index;
@@ -934,363 +928,388 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
             ]));
         break;
       case "합격":
-        if (_auditionState[APIConstants.isSignStandby] == 1) {
-          return Container(
-              padding:
-                  EdgeInsets.only(top: 20, left: 15, right: 15, bottom: 20),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                        margin: EdgeInsets.only(bottom: 15, top: 15),
-                        child: Text('최종합격',
-                            style: CustomStyles.dark20TextStyle())),
-                    Container(
-                        child: Text(
-                            '최종합격을 축하드립니다.\n출연 확정을 위해 본인 명의의 주민등록번호와\n입금받을 계좌와 주소를 확인 후 아래의 계약서를\n작성해주세요.',
-                            style: CustomStyles.dark16TextStyle())),
-                    Container(
-                      margin: EdgeInsets.only(top: 30),
-                      child: Divider(
-                        height: 0.1,
-                        color: CustomColors.colorFontLightGrey,
-                      ),
-                    ),
-                    Container(
+        switch (_auditionState[APIConstants.result_type]) {
+          case "계약서대기중":
+            return Container(
+                padding:
+                    EdgeInsets.only(top: 20, left: 15, right: 15, bottom: 20),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                          margin: EdgeInsets.only(bottom: 15, top: 15),
+                          child: Text('최종합격',
+                              style: CustomStyles.dark20TextStyle())),
+                      Container(
+                          child: Text(
+                              '최종합격을 축하드립니다.\n제작사에서 최종 출연료를 확정하면 계약서를 작성하실 수 있습니다. 조금만 기다려 주세요.',
+                              style: CustomStyles.dark16TextStyle()))
+                    ]));
+            break;
+          case "계약서미작성":
+            return Container(
+                padding:
+                    EdgeInsets.only(top: 20, left: 15, right: 15, bottom: 20),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                          margin: EdgeInsets.only(bottom: 15, top: 15),
+                          child: Text('최종합격',
+                              style: CustomStyles.dark20TextStyle())),
+                      Container(
+                          child: Text(
+                              '최종합격을 축하드립니다.\n출연 확정을 위해 본인 명의의 주민등록번호와\n입금받을 계좌와 주소를 확인 후 아래의 계약서를\n작성해주세요.',
+                              style: CustomStyles.dark16TextStyle())),
+                      Container(
                         margin: EdgeInsets.only(top: 30),
-                        child: Text('출연료',
-                            style: CustomStyles.darkBold16TextStyle())),
-                    Container(
-                        margin: EdgeInsets.only(top: 15),
-                        child: Text(
-                            StringUtils.checkedString(
-                                _auditionState[APIConstants.final_pay]),
-                            style: CustomStyles.dark16TextStyle())),
-                    Container(
-                      margin: EdgeInsets.only(top: 30),
-                      child: Divider(
-                        height: 0.1,
-                        color: CustomColors.colorFontLightGrey,
+                        child: Divider(
+                          height: 0.1,
+                          color: CustomColors.colorFontLightGrey,
+                        ),
                       ),
-                    ),
-                    Container(
+                      Container(
+                          margin: EdgeInsets.only(top: 30),
+                          child: Text('출연료',
+                              style: CustomStyles.darkBold16TextStyle())),
+                      Container(
+                          margin: EdgeInsets.only(top: 15),
+                          child: Text(
+                              StringUtils.checkedString(
+                                  _auditionState[APIConstants.final_pay]),
+                              style: CustomStyles.dark16TextStyle())),
+                      Container(
                         margin: EdgeInsets.only(top: 30),
-                        child: Text('실명인증',
-                            style: CustomStyles.darkBold16TextStyle())),
-                    Visibility(
-                        child: Column(children: [
-                          Container(
-                              margin: EdgeInsets.only(top: 10),
-                              alignment: Alignment.centerLeft,
-                              child: Text('이름',
-                                  style: CustomStyles.normal14TextStyle())),
-                          Container(
-                              margin: EdgeInsets.only(top: 5),
-                              child: CustomStyles
-                                  .greyBorderRound7TextFieldWithDisableOpt(
-                                      _txtFieldName,
-                                      '본명 입력',
-                                      !_isAccountChecked)),
-                          Container(
-                              margin: EdgeInsets.only(top: 10),
-                              alignment: Alignment.centerLeft,
-                              child: Text('주민등록번호',
-                                  style: CustomStyles.normal14TextStyle())),
-                          Container(
-                              margin: EdgeInsets.only(top: 10),
-                              width: double.infinity,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    flex: 3,
-                                    child: Container(
-                                        child: CustomStyles
-                                            .greyBorderRound7TextFieldWithOption(
-                                                _txtFieldJumin1,
-                                                TextInputType.number,
-                                                '앞 6자리')),
-                                  ),
-                                  Expanded(
-                                    flex: 0,
-                                    child: Container(
-                                      alignment: Alignment.center,
-                                      margin:
-                                          EdgeInsets.only(left: 5, right: 5),
-                                      child: Text("-",
-                                          style: TextStyle(
-                                              fontSize: 13,
-                                              color:
-                                                  CustomColors.colorFontGrey)),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 3,
-                                    child: Container(
-                                        child: CustomStyles
-                                            .greyBorderRound7PWDTextFieldOnlyNumber(
-                                                _txtFieldJumin2, '뒷 7자리')),
-                                  ),
-                                  Expanded(
+                        child: Divider(
+                          height: 0.1,
+                          color: CustomColors.colorFontLightGrey,
+                        ),
+                      ),
+                      Container(
+                          margin: EdgeInsets.only(top: 30),
+                          child: Text('실명인증',
+                              style: CustomStyles.darkBold16TextStyle())),
+                      Visibility(
+                          child: Column(children: [
+                            Container(
+                                margin: EdgeInsets.only(top: 10),
+                                alignment: Alignment.centerLeft,
+                                child: Text('이름',
+                                    style: CustomStyles.normal14TextStyle())),
+                            Container(
+                                margin: EdgeInsets.only(top: 5),
+                                child: CustomStyles
+                                    .greyBorderRound7TextFieldWithDisableOpt(
+                                        _txtFieldName,
+                                        '본명 입력',
+                                        !_isAccountChecked)),
+                            Container(
+                                margin: EdgeInsets.only(top: 10),
+                                alignment: Alignment.centerLeft,
+                                child: Text('주민등록번호',
+                                    style: CustomStyles.normal14TextStyle())),
+                            Container(
+                                margin: EdgeInsets.only(top: 10),
+                                width: double.infinity,
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Expanded(
                                       flex: 3,
                                       child: Container(
-                                          height: 48,
-                                          margin: EdgeInsets.only(left: 5),
                                           child: CustomStyles
-                                              .greyBGRound7ButtonStyle('인증하기',
-                                                  () {
-                                            setState(() {
-                                              if (StringUtils.isEmpty(
-                                                  _txtFieldName.text)) {
-                                                showSnackBar(
-                                                    context, '이름을 입력해 주세요.');
-                                                return false;
-                                              }
+                                              .greyBorderRound7TextFieldWithOption(
+                                                  _txtFieldJumin1,
+                                                  TextInputType.number,
+                                                  '앞 6자리')),
+                                    ),
+                                    Expanded(
+                                      flex: 0,
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        margin:
+                                            EdgeInsets.only(left: 5, right: 5),
+                                        child: Text("-",
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                color: CustomColors
+                                                    .colorFontGrey)),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 3,
+                                      child: Container(
+                                          child: CustomStyles
+                                              .greyBorderRound7PWDTextFieldOnlyNumber(
+                                                  _txtFieldJumin2, '뒷 7자리')),
+                                    ),
+                                    Expanded(
+                                        flex: 3,
+                                        child: Container(
+                                            height: 48,
+                                            margin: EdgeInsets.only(left: 5),
+                                            child: CustomStyles
+                                                .greyBGRound7ButtonStyle('인증하기',
+                                                    () {
+                                              setState(() {
+                                                if (StringUtils.isEmpty(
+                                                    _txtFieldName.text)) {
+                                                  showSnackBar(
+                                                      context, '이름을 입력해 주세요.');
+                                                  return false;
+                                                }
 
-                                              if (StringUtils.isEmpty(
-                                                  _txtFieldJumin1.text)) {
-                                                showSnackBar(context,
-                                                    '주민번호 앞자리를 입력해 주세요.');
-                                                return false;
-                                              }
+                                                if (StringUtils.isEmpty(
+                                                    _txtFieldJumin1.text)) {
+                                                  showSnackBar(context,
+                                                      '주민번호 앞자리를 입력해 주세요.');
+                                                  return false;
+                                                }
 
-                                              if (StringUtils.isEmpty(
-                                                  _txtFieldJumin2.text)) {
-                                                showSnackBar(context,
-                                                    '주민번호 뒷자리를 입력해 주세요.');
-                                                return false;
-                                              }
+                                                if (StringUtils.isEmpty(
+                                                    _txtFieldJumin2.text)) {
+                                                  showSnackBar(context,
+                                                      '주민번호 뒷자리를 입력해 주세요.');
+                                                  return false;
+                                                }
 
-                                              requestCheckRealName(context);
-                                            });
-                                          })))
-                                ],
-                              ))
-                        ]),
-                        visible: !_isNameChecked),
-                    Visibility(
-                        child: Container(
-                            margin: EdgeInsets.only(top: 10),
-                            alignment: Alignment.centerLeft,
-                            child: Text('실명인증이 완료되었습니다.',
-                                style: CustomStyles.normal14TextStyle())),
-                        visible: _isNameChecked),
-                    Container(
-                      margin: EdgeInsets.only(top: 30),
-                      child: Divider(
-                        height: 0.1,
-                        color: CustomColors.colorFontLightGrey,
-                      ),
-                    ),
-                    Container(
+                                                requestCheckRealName(context);
+                                              });
+                                            })))
+                                  ],
+                                ))
+                          ]),
+                          visible: !_isNameChecked),
+                      Visibility(
+                          child: Container(
+                              margin: EdgeInsets.only(top: 10),
+                              alignment: Alignment.centerLeft,
+                              child: Text('실명인증이 완료되었습니다.',
+                                  style: CustomStyles.normal14TextStyle())),
+                          visible: _isNameChecked),
+                      Container(
                         margin: EdgeInsets.only(top: 30),
-                        child: Text('계좌인증',
-                            style: CustomStyles.darkBold16TextStyle())),
-                    Container(
-                        margin: EdgeInsets.only(top: 5),
-                        child: CustomStyles
-                            .greyBorderRound7TextFieldWithDisableOpt(
-                                _txtFieldAccountName,
-                                '예금주명 입력',
-                                !_isAccountChecked)),
-                    Container(
-                        margin: EdgeInsets.only(top: 5),
-                        child: CustomStyles
-                            .greyBorderRound7NumbersOnlyTextFieldWithDisableOpt(
-                                _txtFieldAccountBirth,
-                                '예금주 생년월일 6자리 입력(숫자만)',
-                                !_isAccountChecked)),
-                    Container(
-                      margin: EdgeInsets.only(top: 5),
-                      width: double.infinity,
-                      child: DropdownButtonFormField(
-                        //value: _bankVal,
-                        hint: Container(
-                          //and here
-                          child: Text("은행 선택",
-                              style: CustomStyles.light14TextStyle()),
+                        child: Divider(
+                          height: 0.1,
+                          color: CustomColors.colorFontLightGrey,
                         ),
-                        onChanged: _isAccountChecked
-                            ? null
-                            : (newValue) {
-                                setState(() {
-                                  _bankVal = newValue;
-                                });
-                              },
-                        items: KCastingAppData().bankCode.map((value) {
-                          return DropdownMenuItem<Map<String, dynamic>>(
-                            value: value,
-                            child: Text(value[APIConstants.child_name],
-                                style: CustomStyles.normal14TextStyle()),
-                          );
-                        }).toList(),
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: CustomColors.colorFontLightGrey,
-                                    width: 1.0),
-                                borderRadius: BorderRadius.circular(7.0)),
-                            contentPadding: EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 10)),
                       ),
-                    ),
-                    Container(
+                      Container(
+                          margin: EdgeInsets.only(top: 30),
+                          child: Text('계좌인증',
+                              style: CustomStyles.darkBold16TextStyle())),
+                      Container(
+                          margin: EdgeInsets.only(top: 5),
+                          child: CustomStyles
+                              .greyBorderRound7TextFieldWithDisableOpt(
+                                  _txtFieldAccountName,
+                                  '예금주명 입력',
+                                  !_isAccountChecked)),
+                      Container(
+                          margin: EdgeInsets.only(top: 5),
+                          child: CustomStyles
+                              .greyBorderRound7NumbersOnlyTextFieldWithDisableOpt(
+                                  _txtFieldAccountBirth,
+                                  '예금주 생년월일 6자리 입력(숫자만)',
+                                  !_isAccountChecked)),
+                      Container(
                         margin: EdgeInsets.only(top: 5),
                         width: double.infinity,
-                        child: Row(
-                          children: [
-                            Expanded(
-                              flex: 7,
-                              child: Container(
-                                  child: CustomStyles
-                                      .greyBorderRound7NumbersOnlyTextFieldWithDisableOpt(
-                                          _txtFieldAccountNum,
-                                          '계좌번호 입력',
-                                          !_isAccountChecked)),
-                            ),
-                            Expanded(
-                              flex: 0,
-                              child: Container(
-                                  height: 48,
-                                  margin: EdgeInsets.only(left: 5),
-                                  child: CustomStyles.greyBGRound7ButtonStyle(
-                                      _isAccountChecked ? '인증완료' : '계좌인증', () {
-                                    // 인증번호 받기 버튼 클릭
-                                    if (_isAccountChecked) {
-                                      showSnackBar(context, "이미 인증되었습니다.");
-                                    } else {
-                                      if (StringUtils.isEmpty(
-                                          _txtFieldAccountName.text)) {
-                                        showSnackBar(context, '예금주명을 입력해 주세요.');
-                                        return false;
-                                      }
-
-                                      if (StringUtils.isEmpty(
-                                          _txtFieldAccountBirth.text)) {
-                                        showSnackBar(
-                                            context, '예금주 생년월일 6자리를 입력해 주세요.');
-                                        return false;
-                                      }
-
-                                      if (_bankVal == null) {
-                                        showSnackBar(context, '은행을 선택해 주세요.');
-                                        return false;
-                                      }
-
-                                      if (_bankVal[APIConstants.child_code] ==
-                                          null) {
-                                        showSnackBar(context, '은행을 선택해 주세요.');
-                                        return false;
-                                      }
-
-                                      if (StringUtils.isEmpty(
-                                          _txtFieldAccountNum.text)) {
-                                        showSnackBar(context, '계좌번호를 입력해 주세요.');
-                                        return false;
-                                      }
-
-                                      requestAccountCheckApi(context);
-                                    }
-                                  })),
-                            )
-                          ],
-                        )),
-                    Container(
-                      margin: EdgeInsets.only(top: 30),
-                      child: Divider(
-                        height: 0.1,
-                        color: CustomColors.colorFontLightGrey,
+                        child: DropdownButtonFormField(
+                          //value: _bankVal,
+                          hint: Container(
+                            //and here
+                            child: Text("은행 선택",
+                                style: CustomStyles.light14TextStyle()),
+                          ),
+                          onChanged: _isAccountChecked
+                              ? null
+                              : (newValue) {
+                                  setState(() {
+                                    _bankVal = newValue;
+                                  });
+                                },
+                          items: KCastingAppData().bankCode.map((value) {
+                            return DropdownMenuItem<Map<String, dynamic>>(
+                              value: value,
+                              child: Text(value[APIConstants.child_name],
+                                  style: CustomStyles.normal14TextStyle()),
+                            );
+                          }).toList(),
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: CustomColors.colorFontLightGrey,
+                                      width: 1.0),
+                                  borderRadius: BorderRadius.circular(7.0)),
+                              contentPadding: EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 10)),
+                        ),
                       ),
-                    ),
-                    Container(
+                      Container(
+                          margin: EdgeInsets.only(top: 5),
+                          width: double.infinity,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                flex: 7,
+                                child: Container(
+                                    child: CustomStyles
+                                        .greyBorderRound7NumbersOnlyTextFieldWithDisableOpt(
+                                            _txtFieldAccountNum,
+                                            '계좌번호 입력',
+                                            !_isAccountChecked)),
+                              ),
+                              Expanded(
+                                flex: 0,
+                                child: Container(
+                                    height: 48,
+                                    margin: EdgeInsets.only(left: 5),
+                                    child: CustomStyles.greyBGRound7ButtonStyle(
+                                        _isAccountChecked ? '인증완료' : '계좌인증',
+                                        () {
+                                      // 인증번호 받기 버튼 클릭
+                                      if (_isAccountChecked) {
+                                        showSnackBar(context, "이미 인증되었습니다.");
+                                      } else {
+                                        if (StringUtils.isEmpty(
+                                            _txtFieldAccountName.text)) {
+                                          showSnackBar(
+                                              context, '예금주명을 입력해 주세요.');
+                                          return false;
+                                        }
+
+                                        if (StringUtils.isEmpty(
+                                            _txtFieldAccountBirth.text)) {
+                                          showSnackBar(context,
+                                              '예금주 생년월일 6자리를 입력해 주세요.');
+                                          return false;
+                                        }
+
+                                        if (_bankVal == null) {
+                                          showSnackBar(context, '은행을 선택해 주세요.');
+                                          return false;
+                                        }
+
+                                        if (_bankVal[APIConstants.child_code] ==
+                                            null) {
+                                          showSnackBar(context, '은행을 선택해 주세요.');
+                                          return false;
+                                        }
+
+                                        if (StringUtils.isEmpty(
+                                            _txtFieldAccountNum.text)) {
+                                          showSnackBar(
+                                              context, '계좌번호를 입력해 주세요.');
+                                          return false;
+                                        }
+
+                                        requestAccountCheckApi(context);
+                                      }
+                                    })),
+                              )
+                            ],
+                          )),
+                      Container(
                         margin: EdgeInsets.only(top: 30),
-                        child: Text('주소지 입력',
-                            style: CustomStyles.darkBold16TextStyle())),
-                    Container(
-                        margin: EdgeInsets.only(top: 5),
-                        child: CustomStyles.greyBorderRound7TextField(
-                            _txtFieldAddress, '주소 입력')),
-                    Container(
-                      margin: EdgeInsets.only(top: 30),
-                      child: Divider(
-                        height: 0.1,
-                        color: CustomColors.colorFontLightGrey,
+                        child: Divider(
+                          height: 0.1,
+                          color: CustomColors.colorFontLightGrey,
+                        ),
                       ),
-                    ),
-                    Container(
+                      Container(
+                          margin: EdgeInsets.only(top: 30),
+                          child: Text('주소지 입력',
+                              style: CustomStyles.darkBold16TextStyle())),
+                      Container(
+                          margin: EdgeInsets.only(top: 5),
+                          child: CustomStyles.greyBorderRound7TextField(
+                              _txtFieldAddress, '주소 입력')),
+                      Container(
                         margin: EdgeInsets.only(top: 30),
-                        child: Text('계약서 수신 이메일주소',
-                            style: CustomStyles.darkBold16TextStyle())),
-                    Container(
-                        margin: EdgeInsets.only(top: 5),
-                        child: CustomStyles.greyBorderRound7TextFieldWithOption(
-                            _txtFieldEmail,
-                            TextInputType.emailAddress,
-                            '정확하게 입력해 주세요.')),
-                    Container(
-                        margin: EdgeInsets.only(top: 5),
-                        child: Text('* 계약서를 수신할 이메일 주소를 정확하게 입력해 주세요.',
-                            style: CustomStyles.grey14TextStyle())),
-                    Container(
-                      margin: EdgeInsets.only(top: 30),
-                      child: Divider(
-                        height: 0.1,
-                        color: CustomColors.colorFontLightGrey,
+                        child: Divider(
+                          height: 0.1,
+                          color: CustomColors.colorFontLightGrey,
+                        ),
                       ),
-                    ),
-                    Container(
+                      Container(
+                          margin: EdgeInsets.only(top: 30),
+                          child: Text('계약서 수신 이메일주소',
+                              style: CustomStyles.darkBold16TextStyle())),
+                      Container(
+                          margin: EdgeInsets.only(top: 5),
+                          child:
+                              CustomStyles.greyBorderRound7TextFieldWithOption(
+                                  _txtFieldEmail,
+                                  TextInputType.emailAddress,
+                                  '정확하게 입력해 주세요.')),
+                      Container(
+                          margin: EdgeInsets.only(top: 5),
+                          child: Text('* 계약서를 수신할 이메일 주소를 정확하게 입력해 주세요.',
+                              style: CustomStyles.grey14TextStyle())),
+                      Container(
                         margin: EdgeInsets.only(top: 30),
-                        child: Text('계약서 파일 비밀번호',
-                            style: CustomStyles.darkBold16TextStyle())),
-                    Container(
-                        margin: EdgeInsets.only(top: 5),
-                        child: CustomStyles.greyBorderRound7PWDTextField(
-                            _txtFieldPdfPwd, '영어, 숫자 조합 10자리 입력')),
-                    Container(
-                        margin: EdgeInsets.only(top: 5, bottom: 50),
-                        child: Text(
-                            '* 작성하신 계약서 파일을 열어볼 때 필요한 비밀번호 입니다. 비밀번호 분실 시 계약서 파일 조회가 불가능하오니, 꼭 메모해 두시길 바랍니다.',
-                            style: CustomStyles.grey14TextStyle())),
-                  ]));
-        }
-        // 계약서 작성 대기
-        else {
-          return Container(
+                        child: Divider(
+                          height: 0.1,
+                          color: CustomColors.colorFontLightGrey,
+                        ),
+                      ),
+                      Container(
+                          margin: EdgeInsets.only(top: 30),
+                          child: Text('계약서 파일 비밀번호',
+                              style: CustomStyles.darkBold16TextStyle())),
+                      Container(
+                          margin: EdgeInsets.only(top: 5),
+                          child: CustomStyles.greyBorderRound7PWDTextField(
+                              _txtFieldPdfPwd, '영어, 숫자 조합 10자리 입력')),
+                      Container(
+                          margin: EdgeInsets.only(top: 5, bottom: 50),
+                          child: Text(
+                              '* 작성하신 계약서 파일을 열어볼 때 필요한 비밀번호 입니다. 비밀번호 분실 시 계약서 파일 조회가 불가능하오니, 꼭 메모해 두시길 바랍니다.',
+                              style: CustomStyles.grey14TextStyle())),
+                    ]));
+            break;
+          case "서명대기중":
+            return Container(
+                padding:
+                    EdgeInsets.only(top: 20, left: 15, right: 15, bottom: 20),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                          margin: EdgeInsets.only(bottom: 15, top: 15),
+                          child: Text('계약서 서명대기중',
+                              style: CustomStyles.dark20TextStyle())),
+                      Container(
+                          child: Text(
+                              '작성하신 계약서가 \'' +
+                                  _auditionState[APIConstants.paper_email] +
+                                  '\'로 발송되었습니다.\n계약서에 서명하시면 계약이 완료됩니다.',
+                              style: CustomStyles.dark16TextStyle()))
+                    ]));
+            break;
+          case "계약완료":
+            return Container(
               padding:
                   EdgeInsets.only(top: 20, left: 15, right: 15, bottom: 20),
               child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                        margin: EdgeInsets.only(bottom: 15, top: 15),
-                        child: Text('최종합격',
-                            style: CustomStyles.dark20TextStyle())),
-                    Container(
-                        child: Text(
-                            '최종합격을 축하드립니다.\n계약서가 등록되면 작성해 주세요. 계약서 등록은 시간이 소요될 수 있습니다.',
-                            style: CustomStyles.dark16TextStyle()))
-                  ]));
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                      margin: EdgeInsets.only(top: 30),
+                      child: Text('계약서 작성완료',
+                          style: CustomStyles.darkBold20TextStyle())),
+                  Container(
+                      margin: EdgeInsets.only(top: 10),
+                      child: Text('계약완료 탭에서 작성하신 계약서를 확인하실 수 있습니다.',
+                          style: CustomStyles.dark16TextStyle()))
+                ],
+              ),
+            );
+            break;
         }
 
-        break;
-      case "계약완료":
-        return Container(
-          padding: EdgeInsets.only(top: 20, left: 15, right: 15, bottom: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                  margin: EdgeInsets.only(top: 30),
-                  child: Text('계약서 작성완료',
-                      style: CustomStyles.darkBold20TextStyle())),
-              Container(
-                  margin: EdgeInsets.only(top: 10),
-                  child: Text('계약완료 탭에서 작성하신 계약서를 확인하실 수 있습니다.',
-                      style: CustomStyles.dark16TextStyle()))
-            ],
-          ),
-        );
         break;
       case "불합격":
         return Container(
@@ -1590,9 +1609,8 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                                   _auditionState[APIConstants
                                           .thirdAuditionTarget_result_type] ==
                                       '합격' &&
-                                  _auditionState[APIConstants.isSignStandby] ==
-                                      1 &&
-                                  !_tempContractFinish)
+                                  _auditionState[APIConstants.result_type] ==
+                                      "계약서미작성")
                               ? true
                               : false),
                       Visibility(
@@ -1600,8 +1618,16 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                               width: MediaQuery.of(context).size.width,
                               height: 55,
                               child: CustomStyles.blueBGSquareButtonStyle(
-                                  '계약서 보기', () {})),
-                          visible: (_tabIndex == 3 && _tempContractFinish)
+                                  '계약서 보기', () async {
+                                String _url =
+                                    _auditionState[APIConstants.paper_url];
+                                await canLaunch(_url)
+                                    ? await launch(_url)
+                                    : throw '$_url을 열 수 없습니다.';
+                              })),
+                          visible: (_tabIndex == 3 &&
+                                  _auditionState[APIConstants.result_type] ==
+                                      "계약완료")
                               ? true
                               : false)
                     ])),

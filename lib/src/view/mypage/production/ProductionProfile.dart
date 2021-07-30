@@ -220,7 +220,7 @@ class _ProductionProfile extends State<ProductionProfile>
     if (_kIsWeb) {
       showSnackBar(context, APIConstants.use_mobile_app);
     } else {
-      final pickedFile = await picker.getImage(source: ImageSource.gallery);
+      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
       if (pickedFile != null) {
         File file = File(pickedFile.path);

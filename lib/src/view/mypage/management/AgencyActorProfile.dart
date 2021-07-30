@@ -745,7 +745,7 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
       _profileImgFile2 = bytesFromPicker;
     });*/
 
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       if (type == 0) {
@@ -771,7 +771,7 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
   }
 
   Future getVideoFromGallery() async {
-    final pickedFile = await picker.getVideo(source: ImageSource.gallery);
+    final pickedFile = await picker.pickVideo(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       getVideoThumbnail(pickedFile.path);

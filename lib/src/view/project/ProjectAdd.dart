@@ -41,8 +41,6 @@ class _ProjectAdd extends State<ProjectAdd> with BaseUtilMixin {
   String _endDate;
   String _openDate;
 
-  //int _agreeTerms = 0;
-
   File _profileImgFile;
   final picker = ImagePicker();
 
@@ -60,7 +58,7 @@ class _ProjectAdd extends State<ProjectAdd> with BaseUtilMixin {
 
   // 갤러리에서 이미지 가져오기
   Future getImageFromGallery() async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       File file = File(pickedFile.path);

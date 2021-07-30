@@ -154,7 +154,7 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
 
   // 갤러리에서 이미지 가져오기
   Future getImageFromGallery() async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       File file = File(pickedFile.path);

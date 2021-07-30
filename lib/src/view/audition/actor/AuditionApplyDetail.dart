@@ -174,7 +174,7 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
 
   // 갤러리에서 비디오 가져오기
   Future getVideoFromGallery() async {
-    final pickedFile = await picker.getVideo(source: ImageSource.gallery);
+    final pickedFile = await picker.pickVideo(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       //print(pickedFile.path);

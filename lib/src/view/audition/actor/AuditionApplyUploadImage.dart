@@ -136,7 +136,7 @@ class _AuditionApplyUploadImage extends State<AuditionApplyUploadImage>
   }
 
   Future getImageFromGallery() async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       //print(pickedFile.path);

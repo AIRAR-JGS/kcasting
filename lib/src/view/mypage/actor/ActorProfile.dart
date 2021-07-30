@@ -572,7 +572,7 @@ class _ActorProfile extends State<ActorProfile>
     if (_kIsWeb) {
       showSnackBar(context, APIConstants.use_mobile_app);
     } else {
-      final pickedFile = await picker.getImage(source: ImageSource.gallery);
+      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
       if (pickedFile != null) {
         if (type == 0) {
@@ -603,7 +603,7 @@ class _ActorProfile extends State<ActorProfile>
     if (_kIsWeb) {
       showSnackBar(context, APIConstants.use_mobile_app);
     } else {
-      final pickedFile = await picker.getVideo(source: ImageSource.gallery);
+      final pickedFile = await picker.pickVideo(source: ImageSource.gallery);
 
       if (pickedFile != null) {
         getVideoThumbnail(pickedFile.path);

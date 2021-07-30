@@ -504,13 +504,13 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
                     })),
 
                 // 회원약관
-                Container(
+                /*Container(
                     margin: EdgeInsets.only(top: 5, left: 15, right: 15),
                     alignment: Alignment.topLeft,
                     child: CustomStyles.normal16TextButtonStyle('회원약관', () {
                       launchInBrowser(
                           'https://www.enterrobang.com/entry/companyinfo');
-                    })),
+                    })),*/
 
                 // 개인정보처리방침
                 Container(

@@ -347,9 +347,8 @@ class _AgencyActorAuditionApply extends State<AgencyActorAuditionApply>
                                               castingSeq: _castingSeq,
                                               projectName: _projectName,
                                               castingName: _castingName,
-                                              actorSeq: _actorList[
-                                                      _selectActorIdx]
-                                                  [APIConstants.actor_seq])));
+                                              actorSeq: _actorList[_selectActorIdx][APIConstants.actor_seq],
+                                          actorProfileSeq: _actorList[_selectActorIdx][APIConstants.actorProfile_seq])));
                             }))),
                   ]))
             ],

@@ -31,6 +31,7 @@ class AuditionApplyUploadProfile extends StatefulWidget {
   final List<File> newVideos;
   final List<File> newVideoThumbs;
   final int actorSeq;
+  final int actorProfileSeq;
 
   const AuditionApplyUploadProfile(
       {Key key,
@@ -42,7 +43,8 @@ class AuditionApplyUploadProfile extends StatefulWidget {
       this.dbVideos,
       this.newVideos,
       this.newVideoThumbs,
-      this.actorSeq})
+      this.actorSeq,
+      this.actorProfileSeq})
       : super(key: key);
 
   @override
@@ -62,17 +64,25 @@ class _AuditionApplyUploadProfile extends State<AuditionApplyUploadProfile>
   List<File> _newVideos;
   List<File> _newVideoThumbs;
   int _actorSeq;
+  int _actorProfileSeq;
 
   final GlobalKey<TagsState> _myKeywordTagStateKey = GlobalKey<TagsState>();
 
+  var _actorProfile = new Map<String, dynamic>();
+  List<dynamic> _actorEducation = [];
+  List<dynamic> _actorLanguage = [];
+  List<dynamic> _actorDialect = [];
+  List<dynamic> _actorAbility = [];
+  List<dynamic> _actorCastingKwd = [];
+  List<dynamic> _actorLookKwd = [];
   String _actorAgeStr = "";
   String _actorEducationStr = "";
   String _actorLanguageStr = "";
-  String _actordialectStr = "";
+  String _actorDialectStr = "";
   String _actorAbilityStr = "";
   List<String> _actorKwdList = [];
 
-  List<dynamic> _filmorgraphyList = [];
+  List<dynamic> _actorFilmorgraphy = [];
 
   bool _isUpload = false;
 
@@ -89,79 +99,316 @@ class _AuditionApplyUploadProfile extends State<AuditionApplyUploadProfile>
     _newVideos = widget.newVideos;
     _newVideoThumbs = widget.newVideoThumbs;
     _actorSeq = widget.actorSeq;
+    _actorProfileSeq = widget.actorProfileSeq;
 
-    // 배우 학력사항
-    for (int i = 0; i < KCastingAppData().myEducation.length; i++) {
-      var _eduData = KCastingAppData().myEducation[i];
-      _actorEducationStr += _eduData[APIConstants.education_name];
-      _actorEducationStr += "\t";
-      _actorEducationStr += _eduData[APIConstants.major_name];
+    if (KCastingAppData().myInfo[APIConstants.member_type] ==
+        APIConstants.member_type_actor) {
+      _actorProfile = KCastingAppData().myInfo;
 
-      if (i != KCastingAppData().myEducation.length - 1)
-        _actorEducationStr += "\n";
-    }
+      // 배우 학력사항
+      for (int i = 0; i < KCastingAppData().myEducation.length; i++) {
+        var _eduData = KCastingAppData().myEducation[i];
+        _actorEducationStr += _eduData[APIConstants.education_name];
+        _actorEducationStr += "\t";
+        _actorEducationStr += _eduData[APIConstants.major_name];
 
-    // 배우 언어
-    for (int i = 0; i < KCastingAppData().myLanguage.length; i++) {
-      var _lanData = KCastingAppData().myLanguage[i];
-      _actorLanguageStr += _lanData[APIConstants.language_type];
-
-      if (i != KCastingAppData().myLanguage.length - 1)
-        _actorLanguageStr += "\t";
-    }
-
-    // 배우 사투리
-    if (KCastingAppData().myDialect != null) {
-      for (int i = 0; i < KCastingAppData().myDialect.length; i++) {
-        var _dialectData = KCastingAppData().myDialect[i];
-        _actordialectStr += _dialectData[APIConstants.dialect_type];
-
-        if (i != KCastingAppData().myDialect.length - 1)
-          _actordialectStr += ",\t";
+        if (i != KCastingAppData().myEducation.length - 1)
+          _actorEducationStr += "\n";
       }
-    }
 
-    // 배우 특기
-    for (int i = 0; i < KCastingAppData().myAbility.length; i++) {
-      var _abilityData = KCastingAppData().myAbility[i];
-      _actorAbilityStr += _abilityData[APIConstants.child_type];
+      // 배우 언어
+      for (int i = 0; i < KCastingAppData().myLanguage.length; i++) {
+        var _lanData = KCastingAppData().myLanguage[i];
+        _actorLanguageStr += _lanData[APIConstants.language_type];
 
-      if (i != KCastingAppData().myAbility.length - 1)
-        _actorAbilityStr += ",\t";
-    }
+        if (i != KCastingAppData().myLanguage.length - 1)
+          _actorLanguageStr += "\t";
+      }
 
-    // 배우 캐스팅 키워드
-    if (KCastingAppData().myCastingKwd != null) {
-      for (int i = 0; i < KCastingAppData().myCastingKwd.length; i++) {
-        var _castingKwdData = KCastingAppData().myCastingKwd[i];
+      // 배우 사투리
+      if (KCastingAppData().myDialect != null) {
+        for (int i = 0; i < KCastingAppData().myDialect.length; i++) {
+          var _dialectData = KCastingAppData().myDialect[i];
+          _actorDialectStr += _dialectData[APIConstants.dialect_type];
 
-        for (int j = 0; j < KCastingAppData().commonCodeK01.length; j++) {
-          var _castingKwdCode = KCastingAppData().commonCodeK01[j];
+          if (i != KCastingAppData().myDialect.length - 1)
+            _actorDialectStr += ",\t";
+        }
+      }
 
-          if (_castingKwdData[APIConstants.code_seq] ==
-              _castingKwdCode[APIConstants.seq]) {
-            _actorKwdList.add(_castingKwdCode[APIConstants.child_name]);
+      // 배우 특기
+      for (int i = 0; i < KCastingAppData().myAbility.length; i++) {
+        var _abilityData = KCastingAppData().myAbility[i];
+        _actorAbilityStr += _abilityData[APIConstants.child_type];
+
+        if (i != KCastingAppData().myAbility.length - 1)
+          _actorAbilityStr += ",\t";
+      }
+
+      // 배우 캐스팅 키워드
+      if (KCastingAppData().myCastingKwd != null) {
+        for (int i = 0; i < KCastingAppData().myCastingKwd.length; i++) {
+          var _castingKwdData = KCastingAppData().myCastingKwd[i];
+
+          for (int j = 0; j < KCastingAppData().commonCodeK01.length; j++) {
+            var _castingKwdCode = KCastingAppData().commonCodeK01[j];
+
+            if (_castingKwdData[APIConstants.code_seq] ==
+                _castingKwdCode[APIConstants.seq]) {
+              _actorKwdList.add(_castingKwdCode[APIConstants.child_name]);
+            }
           }
         }
       }
-    }
 
-    // 배우 외모 키워드
-    for (int i = 0; i < KCastingAppData().myLookKwd.length; i++) {
-      var _lookKwdData = KCastingAppData().myLookKwd[i];
+      // 배우 외모 키워드
+      for (int i = 0; i < KCastingAppData().myLookKwd.length; i++) {
+        var _lookKwdData = KCastingAppData().myLookKwd[i];
 
-      for (int j = 0; j < KCastingAppData().commonCodeK02.length; j++) {
-        var _lookKwdCode = KCastingAppData().commonCodeK02[j];
+        for (int j = 0; j < KCastingAppData().commonCodeK02.length; j++) {
+          var _lookKwdCode = KCastingAppData().commonCodeK02[j];
 
-        if (_lookKwdData[APIConstants.code_seq] ==
-            _lookKwdCode[APIConstants.seq]) {
-          _actorKwdList.add(_lookKwdCode[APIConstants.child_name]);
+          if (_lookKwdData[APIConstants.code_seq] ==
+              _lookKwdCode[APIConstants.seq]) {
+            _actorKwdList.add(_lookKwdCode[APIConstants.child_name]);
+          }
         }
       }
-    }
 
-    // 배우 필모그래피
-    _filmorgraphyList.addAll(KCastingAppData().myFilmorgraphy);
+      // 배우 필모그래피
+      _actorFilmorgraphy.addAll(KCastingAppData().myFilmorgraphy);
+    } else {
+      requestActorProfileApi(context);
+    }
+  }
+
+  /*
+  * 배우프로필조회
+  * */
+  void requestActorProfileApi(BuildContext context) {
+    final dio = Dio();
+
+    // 배우프로필조회 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetData = new Map();
+    targetData[APIConstants.actor_seq] = _actorSeq;
+    targetData[APIConstants.actor_profile_seq] = _actorProfileSeq;
+
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.SAR_APR_INFO;
+    params[APIConstants.target] = targetData;
+
+    _actorKwdList.clear();
+
+    // 배우프로필조회 api 호출
+    RestClient(dio).postRequestMainControl(params).then((value) async {
+      if (value == null) {
+        // 에러 - 데이터 널
+        showSnackBar(context, APIConstants.error_msg_server_not_response);
+      } else {
+        if (value[APIConstants.resultVal]) {
+          // 배우프로필조회 성공
+          var _responseList = value[APIConstants.data] as List;
+
+          setState(() {
+            for (int i = 0; i < _responseList.length; i++) {
+              var _data = _responseList[i];
+
+              switch (_data[APIConstants.table]) {
+                // 배우 프로필
+                case APIConstants.table_actor_profile:
+                  {
+                    var _listData = _data[APIConstants.data];
+                    if (_listData != null) {
+                      List<dynamic> _actorProfileList =
+                          _listData[APIConstants.list] as List;
+                      if (_actorProfileList != null) {
+                        _actorProfile = _actorProfileList.length > 0
+                            ? _actorProfileList[0]
+                            : null;
+                      }
+                    }
+                    break;
+                  }
+
+                // 배우 학력사항
+                case APIConstants.table_actor_education:
+                  {
+                    var _listData = _data[APIConstants.data];
+                    if (_listData != null) {
+                      _actorEducation.clear();
+                      _actorEducation.addAll(_listData[APIConstants.list]);
+                    } else {
+                      _actorEducation = [];
+                    }
+
+                    _actorEducationStr = "";
+                    for (int i = 0; i < _actorEducation.length; i++) {
+                      var _eduData = _actorEducation[i];
+                      _actorEducationStr +=
+                          _eduData[APIConstants.education_name];
+                      _actorEducationStr += "\t";
+                      _actorEducationStr += _eduData[APIConstants.major_name];
+
+                      if (i != _actorEducation.length - 1)
+                        _actorEducationStr += "\n";
+                    }
+
+                    break;
+                  }
+
+                // 배우 언어
+                case APIConstants.table_actor_languge:
+                  {
+                    var _listData = _data[APIConstants.data];
+
+                    if (_listData != null) {
+                      _actorLanguage.clear();
+                      _actorLanguage.addAll(_listData[APIConstants.list]);
+                    } else {
+                      _actorLanguage = [];
+                    }
+
+                    _actorLanguageStr = "";
+                    for (int i = 0; i < _actorLanguage.length; i++) {
+                      var _lanData = _actorLanguage[i];
+                      _actorLanguageStr += _lanData[APIConstants.language_type];
+
+                      if (i != _actorLanguage.length - 1)
+                        _actorLanguageStr += "\t";
+                    }
+
+                    break;
+                  }
+
+                // 배우 사투리
+                case APIConstants.table_actor_dialect:
+                  {
+                    var _listData = _data[APIConstants.data];
+
+                    if (_listData != null) {
+                      _actorDialect.clear();
+                      _actorDialect.addAll(_listData[APIConstants.list]);
+                    } else {
+                      _actorDialect = [];
+                    }
+
+                    _actorDialectStr = "";
+                    for (int i = 0; i < _actorDialect.length; i++) {
+                      var _lanData = _actorDialect[i];
+                      _actorDialectStr += _lanData[APIConstants.dialect_type];
+
+                      if (i != _actorDialect.length - 1)
+                        _actorDialectStr += "\t";
+                    }
+
+                    break;
+                  }
+
+                // 배우 특기
+                case APIConstants.table_actor_ability:
+                  {
+                    var _listData = _data[APIConstants.data];
+
+                    if (_listData != null) {
+                      _actorAbility.clear();
+                      _actorAbility.addAll(_listData[APIConstants.list]);
+                    } else {
+                      _actorAbility = [];
+                    }
+
+                    _actorAbilityStr = "";
+                    for (int i = 0; i < _actorAbility.length; i++) {
+                      var _abilityData = _actorAbility[i];
+                      _actorAbilityStr += _abilityData[APIConstants.child_type];
+
+                      if (i != _actorAbility.length - 1)
+                        _actorAbilityStr += ",\t";
+                    }
+                    break;
+                  }
+
+                // 배우 키워드
+                case APIConstants.table_actor_castingKwd:
+                  {
+                    var _listData = _data[APIConstants.data];
+
+                    if (_listData != null) {
+                      _actorCastingKwd.clear();
+                      _actorCastingKwd.addAll(_listData[APIConstants.list]);
+                    } else {
+                      _actorCastingKwd = [];
+                    }
+
+                    for (int i = 0; i < _actorCastingKwd.length; i++) {
+                      var _lookKwdData = _actorCastingKwd[i];
+
+                      for (int j = 0;
+                          j < KCastingAppData().commonCodeK01.length;
+                          j++) {
+                        var _lookKwdCode = KCastingAppData().commonCodeK01[j];
+
+                        if (_lookKwdData[APIConstants.code_seq] ==
+                            _lookKwdCode[APIConstants.seq]) {
+                          print(_lookKwdCode[APIConstants.child_name]);
+                          _actorKwdList
+                              .add(_lookKwdCode[APIConstants.child_name]);
+                        }
+                      }
+                    }
+
+                    break;
+                  }
+
+                // 배우 외모 키워드
+                case APIConstants.table_actor_lookkwd:
+                  {
+                    var _listData = _data[APIConstants.data];
+
+                    if (_listData != null) {
+                      _actorLookKwd.clear();
+                      _actorLookKwd.addAll(_listData[APIConstants.list]);
+                    } else {
+                      _actorLookKwd = [];
+                    }
+
+                    for (int i = 0; i < _actorLookKwd.length; i++) {
+                      var _lookKwdData = _actorLookKwd[i];
+
+                      for (int j = 0;
+                          j < KCastingAppData().commonCodeK02.length;
+                          j++) {
+                        var _lookKwdCode = KCastingAppData().commonCodeK02[j];
+
+                        if (_lookKwdData[APIConstants.code_seq] ==
+                            _lookKwdCode[APIConstants.seq]) {
+                          print(_lookKwdCode[APIConstants.child_name]);
+                          _actorKwdList
+                              .add(_lookKwdCode[APIConstants.child_name]);
+                        }
+                      }
+                    }
+
+                    break;
+                  }
+
+                // 배우 필모그래피
+                case APIConstants.table_actor_filmography:
+                  {
+                    var _listData = _data[APIConstants.data];
+                    if (_listData != null) {
+                      _actorFilmorgraphy.addAll(_listData[APIConstants.list]);
+                    }
+                    break;
+                  }
+              }
+            }
+          });
+        } else {
+          // 배우프로필조회 실패
+          showSnackBar(context, APIConstants.error_msg_try_again);
+        }
+      }
+    });
   }
 
   /*
@@ -252,11 +499,11 @@ class _AuditionApplyUploadProfile extends State<AuditionApplyUploadProfile>
                                       ActorProfileWidget.profileWidget(
                                           context,
                                           _myKeywordTagStateKey,
-                                          KCastingAppData().myProfile,
+                                          _actorProfile,
                                           _actorAgeStr,
                                           _actorEducationStr,
                                           _actorLanguageStr,
-                                          _actordialectStr,
+                                          _actorDialectStr,
                                           _actorAbilityStr,
                                           _actorKwdList),
                                       Container(
@@ -274,7 +521,8 @@ class _AuditionApplyUploadProfile extends State<AuditionApplyUploadProfile>
                                             shrinkWrap: true,
                                             padding: EdgeInsets.only(
                                                 left: 10, right: 10),
-                                            itemCount: _filmorgraphyList.length,
+                                            itemCount:
+                                                _actorFilmorgraphy.length,
                                             itemBuilder: (context, index) {
                                               return Column(
                                                   mainAxisAlignment:
@@ -293,12 +541,13 @@ class _AuditionApplyUploadProfile extends State<AuditionApplyUploadProfile>
                                                     ),
                                                     ActorFilmoListItem(
                                                         idx: index,
-                                                        data: _filmorgraphyList[
-                                                            index],
+                                                        data:
+                                                            _actorFilmorgraphy[
+                                                                index],
                                                         isEditMode: false,
                                                         onClickEvent: () {
                                                           setState(() {
-                                                            _filmorgraphyList
+                                                            _actorFilmorgraphy
                                                                 .removeAt(
                                                                     index);
                                                           });
@@ -328,7 +577,9 @@ class _AuditionApplyUploadProfile extends State<AuditionApplyUploadProfile>
                                               castingName: _castingName,
                                               dbImgages: _dbImgages,
                                               newImgages: _newImgages,
-                                              actorSeq: _actorSeq));
+                                              actorSeq: _actorSeq,
+                                              actorProfileSeq:
+                                                  _actorProfileSeq));
                                     }))),
                             Expanded(
                                 child: Container(

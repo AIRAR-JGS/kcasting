@@ -26,13 +26,14 @@ class AuditionApplyUploadImage extends StatefulWidget {
   final String projectName;
   final String castingName;
   final int actorSeq;
+  final int actorProfileSeq;
 
   const AuditionApplyUploadImage(
       {Key key,
       this.castingSeq,
       this.projectName,
       this.castingName,
-      this.actorSeq})
+      this.actorSeq, this.actorProfileSeq})
       : super(key: key);
 
   @override
@@ -49,6 +50,7 @@ class _AuditionApplyUploadImage extends State<AuditionApplyUploadImage>
   String _projectName;
   String _castingName;
   int _actor_seq;
+  int _actorProfileSeq;
 
   File _imageFile;
   List<ImageListModel> _myPhotos = [];
@@ -74,6 +76,7 @@ class _AuditionApplyUploadImage extends State<AuditionApplyUploadImage>
     _projectName = widget.projectName;
     _castingName = widget.castingName;
     _actor_seq = widget.actorSeq;
+    _actorProfileSeq = widget.actorProfileSeq;
 
     if (KCastingAppData().myInfo[APIConstants.member_type] ==
         APIConstants.member_type_actor) {
@@ -461,6 +464,7 @@ class _AuditionApplyUploadImage extends State<AuditionApplyUploadImage>
             newImgages: newImgageFiles,
             projectName: _projectName,
             castingName: _castingName,
-            actorSeq: _actor_seq));
+            actorSeq: _actor_seq,
+        actorProfileSeq: _actorProfileSeq));
   }
 }

@@ -30,6 +30,7 @@ class AuditionApplyUploadVideo extends StatefulWidget {
   final List<Map<String, dynamic>> dbImgages;
   final List<File> newImgages;
   final int actorSeq;
+  final int actorProfileSeq;
 
   const AuditionApplyUploadVideo(
       {Key key,
@@ -38,7 +39,7 @@ class AuditionApplyUploadVideo extends StatefulWidget {
       this.castingName,
       this.dbImgages,
       this.newImgages,
-      this.actorSeq})
+      this.actorSeq, this.actorProfileSeq})
       : super(key: key);
 
   @override
@@ -59,6 +60,7 @@ class _AuditionApplyUploadVideo extends State<AuditionApplyUploadVideo>
   List<Map<String, dynamic>> _dbImgages;
   List<File> _newImgages;
   int _actorSeq;
+  int _actorProfileSeq;
 
   List<VideoListModel> _myVideos = [];
 
@@ -86,6 +88,7 @@ class _AuditionApplyUploadVideo extends State<AuditionApplyUploadVideo>
     _dbImgages = widget.dbImgages;
     _newImgages = widget.newImgages;
     _actorSeq = widget.actorSeq;
+    _actorProfileSeq = widget.actorProfileSeq;
 
     if (KCastingAppData().myInfo[APIConstants.member_type] ==
         APIConstants.member_type_actor) {
@@ -499,7 +502,7 @@ class _AuditionApplyUploadVideo extends State<AuditionApplyUploadVideo>
                                                             _projectName,
                                                         castingName:
                                                             _castingName,
-                                                        actorSeq: _actorSeq)),
+                                                        actorSeq: _actorSeq, actorProfileSeq: _actorProfileSeq)),
                                           );
                                         }))),
                                 Expanded(
@@ -597,6 +600,7 @@ class _AuditionApplyUploadVideo extends State<AuditionApplyUploadVideo>
           newVideos: newVideoFiles,
           newVideoThumbs: newVideoThumbFiles,
           actorSeq: _actorSeq,
+          actorProfileSeq: _actorProfileSeq,
         ));
   }
 }

@@ -8,7 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-import '../../../KCastingAppData.dart';
+import '../../../../KCastingAppData.dart';
 
 /*
 * 제작사 - 마이스크랩

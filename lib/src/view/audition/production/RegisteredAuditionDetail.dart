@@ -1496,16 +1496,19 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                                       ? _firstAuditionApplyList[0]
                                       : "")
                                   : ((_tabIndex == 1)
-                                      ? ObjectKey(_secondAuditionApplyList.length > 0
-                                          ? _secondAuditionApplyList[0]
-                                          : "")
-                                      : ((_tabIndex == 2)
-                                          ? ObjectKey(_thirdAuditionApplyList.length > 0
-                                              ? _thirdAuditionApplyList[0]
+                                      ? ObjectKey(
+                                          _secondAuditionApplyList.length > 0
+                                              ? _secondAuditionApplyList[0]
                                               : "")
-                                          : ObjectKey(_auditionResultList.length > 0
-                                              ? _auditionResultList[0]
-                                              : ""))),
+                                      : ((_tabIndex == 2)
+                                          ? ObjectKey(
+                                              _thirdAuditionApplyList.length > 0
+                                                  ? _thirdAuditionApplyList[0]
+                                                  : "")
+                                          : ObjectKey(
+                                              _auditionResultList.length > 0
+                                                  ? _auditionResultList[0]
+                                                  : ""))),
                               child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [

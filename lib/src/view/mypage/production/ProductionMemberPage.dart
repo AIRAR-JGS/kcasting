@@ -6,7 +6,7 @@ import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/dialog/DialogMemberLogoutConfirm.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
-import 'package:casting_call/src/view/actor/BookmarkedActorList.dart';
+import 'package:casting_call/src/view/mypage/production/BookmarkedActorList.dart';
 import 'package:casting_call/src/view/audition/production/ProposedAuditionList.dart';
 import 'package:casting_call/src/view/mypage/production/ProductionMemberInfo.dart';
 import 'package:casting_call/src/view/mypage/production/ProductionProfile.dart';

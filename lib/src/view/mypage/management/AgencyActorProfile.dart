@@ -66,6 +66,7 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
   String _actorAgeStr = "";
   String _actorEducationStr = "";
   String _actorLanguageStr = "";
+  String _actorDialectStr = "";
   String _actorAbilityStr = "";
   List<String> _actorKwdList = [];
   final GlobalKey<TagsState> _myKeywordTagStateKey = GlobalKey<TagsState>();
@@ -119,6 +120,8 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
     params[APIConstants.key] = APIConstants.SAR_APR_INFO;
     params[APIConstants.target] = targetData;
 
+    _actorKwdList.clear();
+
     // 배우프로필조회 api 호출
     RestClient(dio).postRequestMainControl(params).then((value) async {
       if (value == null) {
@@ -156,7 +159,7 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
                     var _listData = _data[APIConstants.data];
                     if (_listData != null) {
                       _actorEducation.clear();
-                      _actorEducation = _listData[APIConstants.list] as List;
+                      _actorEducation.addAll(_listData[APIConstants.list]);
                     } else {
                       _actorEducation = [];
                     }
@@ -183,7 +186,7 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
 
                     if (_listData != null) {
                       _actorLanguage.clear();
-                      _actorLanguage = _listData[APIConstants.list] as List;
+                      _actorLanguage.addAll(_listData[APIConstants.list]);
                     } else {
                       _actorLanguage = [];
                     }
@@ -207,9 +210,18 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
 
                     if (_listData != null) {
                       _actorDialect.clear();
-                      _actorDialect = _listData[APIConstants.list] as List;
+                      _actorDialect.addAll(_listData[APIConstants.list]);
                     } else {
                       _actorDialect = [];
+                    }
+
+                    _actorDialectStr = "";
+                    for (int i = 0; i < _actorDialect.length; i++) {
+                      var _lanData = _actorDialect[i];
+                      _actorDialectStr += _lanData[APIConstants.dialect_type];
+
+                      if (i != _actorDialect.length - 1)
+                        _actorDialectStr += "\t";
                     }
 
                     break;
@@ -222,7 +234,7 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
 
                     if (_listData != null) {
                       _actorAbility.clear();
-                      _actorAbility = _listData[APIConstants.list] as List;
+                      _actorAbility.addAll(_listData[APIConstants.list]);
                     } else {
                       _actorAbility = [];
                     }
@@ -245,9 +257,25 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
 
                     if (_listData != null) {
                       _actorCastingKwd.clear();
-                      _actorCastingKwd = _listData[APIConstants.list] as List;
+                      _actorCastingKwd.addAll(_listData[APIConstants.list]);
                     } else {
                       _actorCastingKwd = [];
+                    }
+
+                    for (int i = 0; i < _actorCastingKwd.length; i++) {
+                      var _lookKwdData = _actorCastingKwd[i];
+
+                      for (int j = 0;
+                      j < KCastingAppData().commonCodeK01.length;
+                      j++) {
+                        var _lookKwdCode = KCastingAppData().commonCodeK01[j];
+
+                        if (_lookKwdData[APIConstants.code_seq] ==
+                            _lookKwdCode[APIConstants.seq]) {
+                          print(_lookKwdCode[APIConstants.child_name]);
+                          _actorKwdList.add(_lookKwdCode[APIConstants.child_name]);
+                        }
+                      }
                     }
 
                     break;
@@ -260,7 +288,7 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
 
                     if (_listData != null) {
                       _actorLookKwd.clear();
-                      _actorLookKwd = _listData[APIConstants.list] as List;
+                      _actorLookKwd.addAll(_listData[APIConstants.list]);
                     } else {
                       _actorLookKwd = [];
                     }
@@ -275,8 +303,8 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
 
                         if (_lookKwdData[APIConstants.code_seq] ==
                             _lookKwdCode[APIConstants.seq]) {
-                          _actorKwdList
-                              .add(_lookKwdCode[APIConstants.child_name]);
+                          print(_lookKwdCode[APIConstants.child_name]);
+                          _actorKwdList.add(_lookKwdCode[APIConstants.child_name]);
                         }
                       }
                     }
@@ -289,11 +317,13 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
                   {
                     var _listData = _data[APIConstants.data];
                     if (_listData != null) {
-                      _actorFilmorgraphy = _listData[APIConstants.list] as List;
-                      _originalFilmorgraphyList =
-                          _listData[APIConstants.list] as List;
+                      _actorFilmorgraphy.clear();
+                      _actorFilmorgraphy.addAll(_listData[APIConstants.list]);
+                      _originalFilmorgraphyList.clear();
+                      _originalFilmorgraphyList.addAll(_listData[APIConstants.list]);
                     } else {
                       _actorFilmorgraphy = [];
+                      _originalFilmorgraphyList = [];
                     }
                     break;
                   }
@@ -303,10 +333,13 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
                   {
                     var _listData = _data[APIConstants.data];
                     if (_listData != null) {
-                      _actorImage = _listData[APIConstants.list] as List;
-                      _originalMyPhotos = _listData[APIConstants.list] as List;
+                      _actorImage.clear();
+                      _actorImage.addAll(_listData[APIConstants.list]);
+                      _originalMyPhotos.clear();
+                      _originalMyPhotos.addAll(_listData[APIConstants.list]);
                     } else {
                       _actorImage = [];
+                      _originalMyPhotos = [];
                     }
                     break;
                   }
@@ -316,10 +349,13 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
                   {
                     var _listData = _data[APIConstants.data];
                     if (_listData != null) {
-                      _actorVideo = _listData[APIConstants.list] as List;
-                      _originalMyVideos = _listData[APIConstants.list] as List;
+                      _actorVideo.clear();
+                      _actorVideo.addAll(_listData[APIConstants.list]);
+                      _originalMyVideos.clear();
+                      _originalMyVideos.addAll(_listData[APIConstants.list]);
                     } else {
                       _actorVideo = [];
+                      _originalMyVideos = [];
                     }
 
                     break;
@@ -464,8 +500,7 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
 
     // 배우 필모그래피 삭제 api 호출 시 보낼 파라미터
     Map<String, dynamic> callbackDatas = new Map();
-    callbackDatas[APIConstants.actor_seq] =
-        KCastingAppData().myInfo[APIConstants.seq];
+    callbackDatas[APIConstants.actor_seq] = _seq;
 
     Map<String, dynamic> targetDatas = new Map();
     targetDatas[APIConstants.seq] = _deletedFilmorgraphyList;
@@ -538,8 +573,6 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
           setState(() {
             // 수정된 회원정보 전역변수에 저장
             if (_responseList.length > 0) {
-              KCastingAppData().myImage = _responseList;
-
               _actorImage = _responseList;
               _originalMyPhotos = _responseList;
             }
@@ -581,8 +614,6 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
             setState(() {
               // 수정된 회원정보 전역변수에 저장
               if (_responseList.length > 0) {
-                KCastingAppData().myImage = _responseList;
-
                 _actorImage = _responseList;
                 _originalMyPhotos = _responseList;
               }
@@ -652,8 +683,6 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
 
               // 수정된 회원정보 전역변수에 저장
               if (_responseList.length > 0) {
-                KCastingAppData().myVideo = _responseList;
-
                 _actorVideo = _responseList;
                 _originalMyVideos = _responseList;
               }
@@ -700,8 +729,6 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
 
             setState(() {
               // 수정된 회원정보 전역변수에 저장
-              KCastingAppData().myVideo = _responseList;
-
               _actorVideo = _responseList;
               _originalMyVideos = _responseList;
             });
@@ -824,7 +851,7 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
                                           _actorAgeStr,
                                           _actorEducationStr,
                                           _actorLanguageStr,
-                                          _actorLanguageStr,
+                                          _actorDialectStr,
                                           _actorAbilityStr,
                                           _actorKwdList),
                                       Container(
@@ -1081,9 +1108,6 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
                                                             .darkBold14TextButtonStyle(
                                                                 '편집', () {
                                                           setState(() {
-                                                            _originalMyPhotos =
-                                                                _actorImage;
-
                                                             _isImageListEditMode =
                                                                 true;
                                                           });
@@ -1109,9 +1133,11 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
                                                             .darkBold14TextButtonStyle(
                                                                 '취소', () {
                                                           setState(() {
-                                                            _actorImage =
-                                                                _originalMyPhotos;
-                                                            _deletedImageList =
+                                                            _actorImage.clear();
+                                                            _actorImage.addAll(
+                                                                _originalMyPhotos);
+
+                                                            _deletedVideoList =
                                                                 [];
 
                                                             _isImageListEditMode =
@@ -1125,8 +1151,11 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
                                                             .darkBold14TextButtonStyle(
                                                                 '저장', () {
                                                           setState(() {
-                                                            _originalMyPhotos =
-                                                                _actorImage;
+                                                            _originalMyPhotos
+                                                                .clear();
+                                                            _originalMyPhotos
+                                                                .addAll(
+                                                                    _actorImage);
 
                                                             _isImageListEditMode =
                                                                 false;
@@ -1234,9 +1263,6 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
                                                               .darkBold14TextButtonStyle(
                                                                   '편집', () {
                                                             setState(() {
-                                                              _originalMyVideos =
-                                                                  _actorVideo;
-
                                                               _isVideoListEditMode =
                                                                   true;
                                                             });
@@ -1266,8 +1292,10 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
                                                               .darkBold14TextButtonStyle(
                                                                   '취소', () {
                                                             setState(() {
-                                                              _actorVideo =
-                                                                  _originalMyVideos;
+                                                              _actorVideo
+                                                                  .clear();
+                                                              _actorVideo.addAll(
+                                                                  _originalMyVideos);
 
                                                               _deletedVideoList =
                                                                   [];
@@ -1283,8 +1311,11 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
                                                               .darkBold14TextButtonStyle(
                                                                   '저장', () {
                                                             setState(() {
-                                                              _originalMyVideos =
-                                                                  _actorVideo;
+                                                              _originalMyVideos
+                                                                  .clear();
+                                                              _originalMyVideos
+                                                                  .addAll(
+                                                                      _actorVideo);
 
                                                               _isVideoListEditMode =
                                                                   false;

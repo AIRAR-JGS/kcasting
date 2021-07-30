@@ -127,82 +127,84 @@ class _BookmarkedAgencyAuditionList extends State<BookmarkedAgencyAuditionList>
             appBar: CustomStyles.defaultAppBar('마이 스크랩', () {
               Navigator.pop(context);
             }),
-            body: Stack(
-              children: [
-                Container(
-                    child: SingleChildScrollView(
-                        child: Column(
-                  children: [
-                    Container(
-                        margin: EdgeInsets.only(top: 15),
-                        padding: EdgeInsets.all(15),
-                        alignment: Alignment.topLeft,
-                        child: Text('마이 스크랩',
-                            style: CustomStyles.normal24TextStyle())),
-                    Container(
-                      padding: EdgeInsets.only(left: 15, right: 15, bottom: 15),
+            body: Stack(children: [
+              Container(
+                  child: SingleChildScrollView(
+                      child: Column(
+                children: [
+                  Container(
+                      margin: EdgeInsets.only(top: 15),
+                      padding: EdgeInsets.all(15),
                       alignment: Alignment.topLeft,
-                      child: RichText(
-                          text: new TextSpan(
-                        style: CustomStyles.dark16TextStyle(),
-                        children: <TextSpan>[
-                          new TextSpan(text: '내 스크랩 '),
-                          new TextSpan(
-                              text: _castingBoardList.length.toString(),
-                              style: CustomStyles.red16TextStyle()),
-                          new TextSpan(text: '개'),
-                        ],
-                      )),
-                    ),
-                    _castingBoardList.length > 0
-                        ? (Wrap(children: [
-                            ListView.builder(
-                                padding: EdgeInsets.only(bottom: 50),
-                                controller: _scrollController,
-                                physics: NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount: _castingBoardList.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Container(
-                                      margin: EdgeInsets.only(bottom: 10),
-                                      alignment: Alignment.center,
-                                      child: AuditionListItem(
-                                        castingItem: _castingBoardList[index],
-                                        isMyScrapList: true,
-                                        onClickedBookmark: () {
-                                          requestManagementBookmarkEditApi(context, index);
-                                        },
-                                      ));
-                                })
-                          ]))
-                        : Container(
-                            margin: EdgeInsets.only(top: 30),
-                            child: Text('캐스팅이 없습니다.',
-                                style: CustomStyles.normal16TextStyle()))
-                  ],
-                ))),
-                Visibility(
+                      child: Text('마이 스크랩',
+                          style: CustomStyles.normal24TextStyle())),
+                  Container(
+                    padding: EdgeInsets.only(left: 15, right: 15, bottom: 15),
+                    alignment: Alignment.topLeft,
+                    child: RichText(
+                        text: new TextSpan(
+                      style: CustomStyles.dark16TextStyle(),
+                      children: <TextSpan>[
+                        new TextSpan(text: '내 스크랩 '),
+                        new TextSpan(
+                            text: _castingBoardList.length.toString(),
+                            style: CustomStyles.red16TextStyle()),
+                        new TextSpan(text: '개'),
+                      ],
+                    )),
+                  ),
+                  _castingBoardList.length > 0
+                      ? (Wrap(children: [
+                          ListView.builder(
+                              padding: EdgeInsets.only(bottom: 50),
+                              controller: _scrollController,
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: _castingBoardList.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Container(
+                                    margin: EdgeInsets.only(bottom: 10),
+                                    alignment: Alignment.center,
+                                    child: AuditionListItem(
+                                      castingItem: _castingBoardList[index],
+                                      isMyScrapList: true,
+                                      onClickedBookmark: () {
+                                        requestManagementBookmarkEditApi(
+                                            context, index);
+                                      },
+                                    ));
+                              })
+                        ]))
+                      : Container()
+                ],
+              ))),
+              Visibility(
+                  child: Container(
+                      alignment: Alignment.center,
+                      child: Text('스크랩한 캐스팅이 없습니다.',
+                          style: CustomStyles.normal16TextStyle())),
+                  visible: _castingBoardList.length > 0 ? false : true),
+              Visibility(
                   child: Container(
                       color: Colors.black38,
                       alignment: Alignment.center,
                       child: CircularProgressIndicator()),
-                  visible: _isUpload,
-                )
-              ],
-            )));
+                  visible: _isUpload)
+            ])));
   }
 
   /*
   * 매니지먼트 북마크 목록
   * */
-  void requestManagementBookmarkEditApi(
-      BuildContext context, int idx) {
+  void requestManagementBookmarkEditApi(BuildContext context, int idx) {
     final dio = Dio();
 
     // 매니지먼트 북마크 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetDate = new Map();
-    targetDate[APIConstants.management_seq] = KCastingAppData().myInfo[APIConstants.seq];
-    targetDate[APIConstants.casting_seq] = _castingBoardList[idx][APIConstants.casting_seq];
+    targetDate[APIConstants.management_seq] =
+        KCastingAppData().myInfo[APIConstants.seq];
+    targetDate[APIConstants.casting_seq] =
+        _castingBoardList[idx][APIConstants.casting_seq];
 
     Map<String, dynamic> params = new Map();
     params[APIConstants.key] = APIConstants.DEA_MCS_INFO;

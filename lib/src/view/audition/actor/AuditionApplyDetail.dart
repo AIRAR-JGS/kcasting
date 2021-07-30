@@ -882,7 +882,7 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
               Container(
                   margin: EdgeInsets.only(top: 10),
                   child: Text(
-                      KCastingAppData().myInfo[APIConstants.actor_phone] +
+                      StringUtils.checkedString(KCastingAppData().myInfo[APIConstants.actor_phone]) +
                           '로 면접일정이 안내됩니다.',
                       style: CustomStyles.dark16TextStyle()))
             ]));

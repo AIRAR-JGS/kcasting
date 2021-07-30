@@ -97,7 +97,8 @@ class AuditionListItem extends StatelessWidget with BaseUtilMixin {
                             Container(
                                 margin: EdgeInsets.only(top: 18, right: 10),
                                 alignment: Alignment.center,
-                                child: Text('D-0',
+                                child: Text(StringUtils.checkedString(castingItem[
+                                APIConstants.d_day]),
                                     style: CustomStyles.normal14TextStyle()))
                           ],
                         ),

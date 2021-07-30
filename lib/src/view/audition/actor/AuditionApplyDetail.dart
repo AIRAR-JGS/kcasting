@@ -737,11 +737,14 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                         visible: _agreeTerms == 0 ? false : true),
                     Container(
                         margin: EdgeInsets.only(top: 30),
-                        child: Text('기간',
+                        child: Text('비디오 제출 기간',
                             style: CustomStyles.darkBold16TextStyle())),
                     Container(
                         margin: EdgeInsets.only(top: 10),
-                        child: Text('2020.12.30까지',
+                        child: Text(
+                            StringUtils.checkedString(_auditionState[
+                                    APIConstants.secondAudition_endDate])
+                                .substring(0, 10),
                             style: CustomStyles.dark16TextStyle())),
                     Visibility(
                       child: Column(
@@ -912,8 +915,7 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
               Container(
                   margin: EdgeInsets.only(top: 10),
                   child: Text(
-                      StringUtils.checkedString(KCastingAppData()
-                              .myInfo[APIConstants.actor_phone]) +
+                      StringUtils.checkedString(_auditionState[APIConstants.actor_phone]) +
                           '로 면접일정이 안내됩니다.',
                       style: CustomStyles.dark16TextStyle()))
             ]));

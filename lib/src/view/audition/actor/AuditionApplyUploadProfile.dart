@@ -103,7 +103,7 @@ class _AuditionApplyUploadProfile extends State<AuditionApplyUploadProfile>
 
     if (KCastingAppData().myInfo[APIConstants.member_type] ==
         APIConstants.member_type_actor) {
-      _actorProfile = KCastingAppData().myInfo;
+      _actorProfile = KCastingAppData().myProfile;
 
       // 배우 학력사항
       for (int i = 0; i < KCastingAppData().myEducation.length; i++) {

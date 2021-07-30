@@ -206,7 +206,7 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
                                   .myInfo[APIConstants.member_type] ==
                               APIConstants.member_type_actor) {
                             if (_castingBoardData[
-                                    APIConstants.casting_state_type] ==
+                                    APIConstants.firstAudition_state_type] ==
                                 "마감") {
                               _castingStateStr = "마감된 공고입니다.";
                             } else {
@@ -216,6 +216,14 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
                               } else {
                                 _castingStateStr = "이미 지원한 공고입니다.";
                               }
+                            }
+                          } else if(KCastingAppData()
+                              .myInfo[APIConstants.member_type] ==
+                              APIConstants.member_type_management) {
+                            if (_castingBoardData[
+                            APIConstants.firstAudition_state_type] ==
+                                "마감") {
+                              _castingStateStr = "마감된 공고입니다.";
                             }
                           }
                         }

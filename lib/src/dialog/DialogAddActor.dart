@@ -6,7 +6,7 @@ import 'package:casting_call/src/util/StringUtils.dart';
 import 'package:flutter/material.dart';
 
 class DialogAddActor extends StatefulWidget {
-  final Function(String, int) onClickedAgree;
+  final Function(String, int, String) onClickedAgree;
 
   const DialogAddActor({Key key, this.onClickedAgree}) : super(key: key);
 
@@ -15,9 +15,10 @@ class DialogAddActor extends StatefulWidget {
 }
 
 class _DialogAddActor extends State<DialogAddActor> with BaseUtilMixin {
-  Function(String, int) _onClickedAgree;
+  Function(String, int, String) _onClickedAgree;
 
   final _txtActorName = TextEditingController();
+  final _txtActorPhone = TextEditingController();
   int _actorGender = 0;
 
   @override
@@ -60,7 +61,7 @@ class _DialogAddActor extends State<DialogAddActor> with BaseUtilMixin {
                             padding: EdgeInsets.only(
                                 left: 15, top: 20, right: 15, bottom: 20),
                             alignment: Alignment.topLeft,
-                            height: 220,
+                            height: 350,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -101,12 +102,13 @@ class _DialogAddActor extends State<DialogAddActor> with BaseUtilMixin {
                                   ),
                                 ),
                                 Container(
-                                    margin: EdgeInsets.only(bottom: 20),
+                                    margin: EdgeInsets.only(bottom: 5),
                                     child: Text('성별',
                                         textAlign: TextAlign.start,
                                         style:
                                             CustomStyles.normal16TextStyle())),
                                 Container(
+                                    margin: EdgeInsets.only(bottom: 30),
                                     width: double.infinity,
                                     child: Row(children: <Widget>[
                                       Radio(
@@ -140,6 +142,48 @@ class _DialogAddActor extends State<DialogAddActor> with BaseUtilMixin {
                                           style:
                                               CustomStyles.normal14TextStyle())
                                     ])),
+                                Container(
+                                    margin: EdgeInsets.only(bottom: 5),
+                                    child: Text('연락처',
+                                        textAlign: TextAlign.start,
+                                        style:
+                                        CustomStyles.normal16TextStyle())),
+                                Container(
+                                    margin: EdgeInsets.only(bottom: 5),
+                                    child: Text('오디션 결과 연락을 받을 수 있는 정확한 전화번호를 입력해 주세요.',
+                                        textAlign: TextAlign.start,
+                                        style:
+                                        CustomStyles.normal14TextStyle())),
+                                Container(
+                                  margin: EdgeInsets.only(bottom: 0),
+                                  child: TextField(
+                                    maxLines: 1,
+                                    controller: _txtActorPhone,
+                                    keyboardType: TextInputType.phone,
+                                    decoration: InputDecoration(
+                                      isDense: true,
+                                      contentPadding: EdgeInsets.symmetric(
+                                          vertical: 10, horizontal: 10),
+                                      hintText: "전화번호",
+                                      hintStyle:
+                                      CustomStyles.light14TextStyle(),
+                                      border: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: CustomColors
+                                                  .colorFontLightGrey,
+                                              width: 1.0),
+                                          borderRadius: CustomStyles
+                                              .circle7BorderRadius()),
+                                      focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: CustomColors
+                                                  .colorFontLightGrey,
+                                              width: 1.0),
+                                          borderRadius: CustomStyles
+                                              .circle7BorderRadius()),
+                                    ),
+                                  ),
+                                ),
                               ],
                             )),
                         Container(
@@ -181,11 +225,18 @@ class _DialogAddActor extends State<DialogAddActor> with BaseUtilMixin {
                                           return false;
                                         }
 
+                                        if (StringUtils.isEmpty(
+                                            _txtActorName.text)) {
+                                          showSnackBar(
+                                              context, '연락처를 입력해 주세요.');
+                                          return false;
+                                        }
+
                                         Navigator.of(context).pop();
 
                                         _onClickedAgree(
                                             _txtActorName.text.toString(),
-                                            _actorGender);
+                                            _actorGender, _txtActorPhone.text.toString());
                                       },
                                       child: Container(
                                           alignment: Alignment.center,

@@ -317,7 +317,8 @@ class _AgencyActorList extends State<AgencyActorList>
                                                               DialogAddActor(
                                                                   onClickedAgree:
                                                                       (name,
-                                                                          gender) {
+                                                                          gender,
+                                                                          phone) {
                                                             Navigator.pop(
                                                                 context);
                                                             replaceView(
@@ -327,7 +328,9 @@ class _AgencyActorList extends State<AgencyActorList>
                                                                     gender: gender ==
                                                                             0
                                                                         ? "남자"
-                                                                        : "여자"));
+                                                                        : "여자",
+                                                                    phone:
+                                                                        phone));
                                                           }),
                                                         );
                                                       },
@@ -517,9 +520,7 @@ class _AgencyActorList extends State<AgencyActorList>
                                                                             null
                                                                         ? ClipRRect(
                                                                             borderRadius: CustomStyles.circle4BorderRadius(),
-                                                                            child: CachedNetworkImage(placeholder: (context, url) => Container(
-                                                                                alignment: Alignment.center,
-                                                                                child: CircularProgressIndicator()),imageUrl: _data[APIConstants.main_img_url], fit: BoxFit.cover))
+                                                                            child: CachedNetworkImage(placeholder: (context, url) => Container(alignment: Alignment.center, child: CircularProgressIndicator()), imageUrl: _data[APIConstants.main_img_url], fit: BoxFit.cover))
                                                                         : null),
                                                                 Container(
                                                                     margin: EdgeInsets
@@ -605,24 +606,23 @@ class _AgencyActorList extends State<AgencyActorList>
                                                                       borderRadius:
                                                                           CustomStyles
                                                                               .circle7BorderRadius()),
-                                                                  width: (MediaQuery.of(
-                                                                              context)
+                                                                  width: (MediaQuery.of(context)
                                                                           .size
                                                                           .width /
                                                                       2),
-                                                                  height: (MediaQuery.of(
-                                                                              context)
+                                                                  height: (MediaQuery.of(context)
                                                                           .size
                                                                           .width /
                                                                       2),
                                                                   child: _data[APIConstants.main_img_url] !=
                                                                           null
                                                                       ? ClipRRect(
-                                                                          borderRadius:
-                                                                              CustomStyles.circle7BorderRadius(),
-                                                                          child: CachedNetworkImage(placeholder: (context, url) => Container(
-                                                                              alignment: Alignment.center,
-                                                                              child: CircularProgressIndicator()),imageUrl: _data[APIConstants.main_img_url], fit: BoxFit.cover))
+                                                                          borderRadius: CustomStyles
+                                                                              .circle7BorderRadius(),
+                                                                          child: CachedNetworkImage(
+                                                                              placeholder: (context, url) => Container(alignment: Alignment.center, child: CircularProgressIndicator()),
+                                                                              imageUrl: _data[APIConstants.main_img_url],
+                                                                              fit: BoxFit.cover))
                                                                       : null),
                                                               Container(
                                                                   alignment:

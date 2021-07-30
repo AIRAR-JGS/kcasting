@@ -17,8 +17,9 @@ import 'AgencyActorList.dart';
 class RegisterAgencyActorProfileMainInfo extends StatefulWidget {
   final String name;
   final String gender;
+  final String phone;
 
-  const RegisterAgencyActorProfileMainInfo({Key key, this.name, this.gender})
+  const RegisterAgencyActorProfileMainInfo({Key key, this.name, this.gender, this.phone})
       : super(key: key);
 
   @override
@@ -30,6 +31,7 @@ class _RegisterAgencyActorProfileMainInfo
     extends State<RegisterAgencyActorProfileMainInfo> with BaseUtilMixin {
   String _name;
   String _gender;
+  String _phone;
 
   final _txtFieldName = TextEditingController();
   final _txtFieldIntroduce = TextEditingController();
@@ -55,6 +57,7 @@ class _RegisterAgencyActorProfileMainInfo
 
     _name = widget.name;
     _gender = widget.gender;
+    _phone = widget.phone;
 
     _txtFieldName.text = _name;
   }
@@ -608,6 +611,7 @@ class _RegisterAgencyActorProfileMainInfo
     infoTargetData[APIConstants.sex_type] = _gender;
     infoTargetData[APIConstants.actor_birth] = _birthDate;
     infoTargetData[APIConstants.management_seq] = KCastingAppData().myInfo[APIConstants.management_seq];
+    infoTargetData[APIConstants.actor_phone] = _phone;
 
     actorProfile[APIConstants.info_target] = infoTargetData;
 

@@ -333,6 +333,7 @@ class APIConstants {
   static const String casting_target = "casting_target";
   static const String firstAudition_target = "firstAudition_target";
   static const String casting_name = "casting_name";
+  static const String d_day = "d_day";
   static const String casting_count = "casting_count";
   static const String casting_cnt = "casting_cnt";
   static const String apply_cnt = "apply_cnt";

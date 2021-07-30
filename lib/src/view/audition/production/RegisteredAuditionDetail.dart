@@ -791,7 +791,7 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
           Container(
               margin: EdgeInsets.only(top: 30),
               alignment: Alignment.centerLeft,
-              child: Text('마감날짜', style: CustomStyles.darkBold14TextStyle())),
+              child: Text('비디오 제출 마감일', style: CustomStyles.darkBold14TextStyle())),
           GestureDetector(
             onTap: () {
               showDatePickerForDday(context, (date) {

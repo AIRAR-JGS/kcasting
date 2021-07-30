@@ -11,6 +11,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags/flutter_tags.dart';
 
+import 'AgencyActorProfileModifyMainInfo.dart';
+
 /*
 * 배우 프로필 수정 - 2
 * */
@@ -718,7 +720,6 @@ class _AgencyActorProfileModifySubInfo
                                             onPressed: (item) {
                                               _lookKeyword[index].isSelected =
                                                   item.active;
-                                              print(item.active);
                                             },
                                           );
                                         },
@@ -736,7 +737,7 @@ class _AgencyActorProfileModifySubInfo
                                 height: 55,
                                 child: CustomStyles.greyBGSquareButtonStyle(
                                     '이전', () {
-                                  /*replaceView(
+                                  replaceView(
                                     context,
                                     AgencyActorProfileModifyMainInfo(
                                         actorProfileSeq: _actorProfileSeq,
@@ -746,8 +747,8 @@ class _AgencyActorProfileModifySubInfo
                                         actorDialect: _actorDialect,
                                         actorAbility: _actorAbility,
                                         actorCastingKwd: _actorCastingKwd,
-                                        actorLookKwd: _actorLookKwd));*/
-                                  Navigator.pop(context);
+                                        actorLookKwd: _actorLookKwd));
+                                 // Navigator.pop(context);
                                 }))),
                         Expanded(
                             child: Container(
@@ -885,8 +886,10 @@ class _AgencyActorProfileModifySubInfo
           // 배우프로필조회 성공
           var _responseList = value[APIConstants.data] as List;
 
-          Navigator.popUntil(
-              context, ModalRoute.withName('AgencyActorProfile'));
+          /*Navigator.popUntil(
+              context, ModalRoute.withName('AgencyActorProfile'));*/
+
+          Navigator.pop(context);
         }
       }
     });

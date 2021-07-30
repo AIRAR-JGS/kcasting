@@ -47,7 +47,7 @@ Future<ThumbnailResult> genThumbnail(ThumbnailRequest r) async {
         timeMs: r.timeMs,
         quality: r.quality);
 
-    print("thumbnail file is located: $thumbnailPath");
+    //print("thumbnail file is located: $thumbnailPath");
 
     final file = File(thumbnailPath);
     bytes = file.readAsBytesSync();
@@ -62,7 +62,7 @@ Future<ThumbnailResult> genThumbnail(ThumbnailRequest r) async {
   }
 
   int _imageDataSize = bytes.length;
-  print("image size: $_imageDataSize");
+  //print("image size: $_imageDataSize");
 
   final _image = Image.memory(
     bytes,

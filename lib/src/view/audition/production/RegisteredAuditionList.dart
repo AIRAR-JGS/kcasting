@@ -103,12 +103,9 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
             _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
       setState(() {
-        print("comes to bottom $_isLoading");
         _isLoading = true;
 
         if (_isLoading) {
-          print("RUNNING LOAD MORE");
-
           requestCastingStateList(context);
         }
       });
@@ -186,7 +183,7 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
           Wrap(children: [
             ListView.separated(
                 physics: NeverScrollableScrollPhysics(),
-                controller: _scrollController,
+                primary: false,
                 shrinkWrap: true,
                 itemCount: _castingStateList.length,
                 itemBuilder: (BuildContext context, int index) {
@@ -632,7 +629,7 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
                 physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: _castingStateList.length,
-                controller: _scrollController,
+                primary: false,
                 itemBuilder: (BuildContext context, int index) {
                   Map<String, dynamic> _data = _castingStateList[index];
 
@@ -726,7 +723,7 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
                 physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: _castingStateList.length,
-                controller: _scrollController,
+                primary: false,
                 itemBuilder: (BuildContext context, int index) {
                   Map<String, dynamic> _data = _castingStateList[index];
 
@@ -835,6 +832,9 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
               children: [
                 Container(
                     child: SingleChildScrollView(
+                        controller: _scrollController,
+                        physics: AlwaysScrollableScrollPhysics(),
+                        key: ObjectKey(_castingStateList.length > 0 ? _castingStateList[0] : ""),
                         child: Container(
                             child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,

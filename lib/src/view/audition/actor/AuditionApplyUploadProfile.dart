@@ -349,7 +349,6 @@ class _AuditionApplyUploadProfile extends State<AuditionApplyUploadProfile>
 
                         if (_lookKwdData[APIConstants.code_seq] ==
                             _lookKwdCode[APIConstants.seq]) {
-                          print(_lookKwdCode[APIConstants.child_name]);
                           _actorKwdList
                               .add(_lookKwdCode[APIConstants.child_name]);
                         }
@@ -381,7 +380,6 @@ class _AuditionApplyUploadProfile extends State<AuditionApplyUploadProfile>
 
                         if (_lookKwdData[APIConstants.code_seq] ==
                             _lookKwdCode[APIConstants.seq]) {
-                          print(_lookKwdCode[APIConstants.child_name]);
                           _actorKwdList
                               .add(_lookKwdCode[APIConstants.child_name]);
                         }

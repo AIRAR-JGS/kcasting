@@ -90,12 +90,9 @@ class _AuditionApplyList extends State<AuditionApplyList>
             _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
       setState(() {
-        print("comes to bottom $_isLoading");
         _isLoading = true;
 
         if (_isLoading) {
-          print("RUNNING LOAD MORE");
-
           String stateType =
               _tabIndex == 0 ? "진행중" : (_tabIndex == 1 ? "계약완료" : "불합격");
           requestMyApplyListApi(context, stateType);
@@ -275,10 +272,9 @@ class _AuditionApplyList extends State<AuditionApplyList>
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Wrap(children: [
             ListView.separated(
+                primary: false,
                 physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
-                // Need to display a loading tile if more items are coming
-                controller: _scrollController,
                 itemCount: _auditionList.length,
                 itemBuilder: (BuildContext context, int index) {
                   return Container(
@@ -368,24 +364,6 @@ class _AuditionApplyList extends State<AuditionApplyList>
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.end,
                                             children: [
-                                              /*Visibility(
-                                                child: Container(
-                                                    margin: EdgeInsets.only(
-                                                        bottom: 5),
-                                                    child: Text(
-                                                      (_auditionList[index][
-                                                                  APIConstants
-                                                                      .isView] ==
-                                                              0)
-                                                          ? "미열람"
-                                                          : "열람",
-                                                      style: CustomStyles
-                                                          .light12TextStyle(),
-                                                    )),
-                                                visible: _tabIndex == 0
-                                                    ? true
-                                                    : false,
-                                              ),*/
                                               Container(
                                                 child: Text(
                                                   _auditionList[index]
@@ -424,6 +402,9 @@ class _AuditionApplyList extends State<AuditionApplyList>
                 children: [
                   Container(
                       child: SingleChildScrollView(
+                          controller: _scrollController,
+                          physics: AlwaysScrollableScrollPhysics(),
+                          key: ObjectKey(_auditionList.length > 0 ? _auditionList[0] : ""),
                           child: Container(
                               child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,

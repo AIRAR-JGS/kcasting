@@ -111,7 +111,6 @@ class _ProductionMemberPage extends State<ProductionMemberPage>
               ? _headerView()
               : GestureDetector(
                   onTap: () {
-                    print('메뉴 ' + index.toString());
                     switch (index) {
                       // 프로필 관리
                       case 1:

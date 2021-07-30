@@ -230,7 +230,6 @@ class _ActorMemberPage extends State<ActorMemberPage> with BaseUtilMixin {
                   ? _headerView()
                   : GestureDetector(
                       onTap: () {
-                        print('메뉴 ' + index.toString());
                         switch (index) {
                           // 프로필 관리
                           case 1:

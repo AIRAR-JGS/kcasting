@@ -282,8 +282,6 @@ class _ActorList extends State<ActorList> with BaseUtilMixin {
                                               borderRadius:
                                                   BorderRadius.circular(5),
                                               onPressed: (item) {
-                                                print(item);
-
                                                 setState(() {
                                                   category.isActive =
                                                       !category.isActive;

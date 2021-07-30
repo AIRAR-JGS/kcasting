@@ -356,8 +356,6 @@ class ActorProfileWidget {
                         combine: ItemTagsCombine.withTextBefore,
                         elevation: 0.0,
                         borderRadius: BorderRadius.circular(50),
-                        onPressed: (item) => print(item),
-                        onLongPressed: (item) => print(item),
                       );
                     },
                   ),

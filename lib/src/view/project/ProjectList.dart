@@ -79,12 +79,9 @@ class _ProjectList extends State<ProjectList>
             _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
       setState(() {
-        print("comes to bottom $_isLoading");
         _isLoading = true;
 
         if (_isLoading) {
-          print("RUNNING LOAD MORE");
-
           requestProjectListApi(context);
         }
       });
@@ -172,7 +169,7 @@ class _ProjectList extends State<ProjectList>
             ListView.separated(
                 physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
-                controller: _scrollController,
+                primary: false,
                 itemCount: (_tabIndex == 0)
                     ? _projectMovieList.length
                     : _projectDramaList.length,
@@ -253,106 +250,130 @@ class _ProjectList extends State<ProjectList>
               children: [
                 Container(
                     child: SingleChildScrollView(
+                        controller: _scrollController,
+                        physics: AlwaysScrollableScrollPhysics(),
+                        key: (_tabIndex == 0
+                            ? ObjectKey(_projectMovieList.length > 0
+                                ? _projectMovieList[0]
+                                : "")
+                            : ObjectKey(_projectDramaList.length > 0
+                                ? _projectDramaList[0]
+                                : "")),
                         child: Container(
                             child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                      Container(
-                        margin: EdgeInsets.only(top: 30.0, bottom: 10),
-                        padding: EdgeInsets.only(left: 16, right: 16),
-                        child: Text('오디션 관리',
-                            style: CustomStyles.normal24TextStyle()),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 15, left: 15, right: 15),
-                        padding: EdgeInsets.only(left: 10, right: 10),
-                        height: 50,
-                        decoration: BoxDecoration(
-                          borderRadius: CustomStyles.circle7BorderRadius(),
-                          border: Border.all(
-                              width: 1, color: CustomColors.colorFontLightGrey),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Flexible(
-                              child: TextField(
-                                controller: _txtFieldSearch,
-                                decoration: InputDecoration(
-                                  isDense: true,
-                                  border: InputBorder.none,
-                                  contentPadding: EdgeInsets.symmetric(
-                                      vertical: 0, horizontal: 0),
-                                  hintText: "오디션을 검색해보세요",
-                                  hintStyle: CustomStyles.normal16TextStyle(),
-                                ),
-                                style: CustomStyles.dark16TextStyle(),
+                              Container(
+                                margin: EdgeInsets.only(top: 30.0, bottom: 10),
+                                padding: EdgeInsets.only(left: 16, right: 16),
+                                child: Text('오디션 관리',
+                                    style: CustomStyles.normal24TextStyle()),
                               ),
-                            ),
-                            Padding(
-                                padding: EdgeInsets.only(left: 10),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    _projectDramaList.clear();
-                                    _projectMovieList.clear();
-
-                                    projectName = _txtFieldSearch.text;
-                                    requestProjectListApi(context);
-                                  },
-                                  child: Image.asset(
-                                    'assets/images/btn_search.png',
-                                    width: 20,
-                                    fit: BoxFit.contain,
-                                  ),
-                                ))
-                          ],
-                        ),
-                      ),
-                      Container(
-                          padding: EdgeInsets.only(right: 15, top: 20),
-                          width: MediaQuery.of(context).size.width,
-                          color: CustomColors.colorWhite,
-                          child: Row(
-                            children: [
-                              Expanded(
-                                  child: TabBar(
-                                    controller: _tabController,
-                                    indicatorSize: TabBarIndicatorSize.label,
-                                    indicatorPadding: EdgeInsets.zero,
-                                    labelStyle: CustomStyles.bold14TextStyle(),
-                                    unselectedLabelStyle:
-                                        CustomStyles.normal14TextStyle(),
-                                    tabs: [Tab(text: '영화'), Tab(text: '드라마')],
-                                  ),
-                                  flex: 1),
-                              Expanded(
-                                  child: Container(
-                                margin: EdgeInsets.only(left: 15, right: 15),
-                                alignment: Alignment.centerRight,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    replaceView(context, ProjectAdd());
-                                  },
-                                  child: Text('+ 프로젝트 추가',
-                                      style: CustomStyles.blue16TextStyle()),
+                              Container(
+                                margin: EdgeInsets.only(
+                                    top: 15, left: 15, right: 15),
+                                padding: EdgeInsets.only(left: 10, right: 10),
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  borderRadius:
+                                      CustomStyles.circle7BorderRadius(),
+                                  border: Border.all(
+                                      width: 1,
+                                      color: CustomColors.colorFontLightGrey),
                                 ),
-                              ))
-                            ],
-                          )),
-                      Container(
-                        margin: EdgeInsets.only(top: 10),
-                        child: Divider(
-                          height: 0.1,
-                          color: CustomColors.colorFontLightGrey,
-                        ),
-                      ),
-                      Expanded(
-                        flex: 0,
-                        child: [tabProjectList(), tabProjectList()][_tabIndex],
-                      )
-                    ])))),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Flexible(
+                                      child: TextField(
+                                        controller: _txtFieldSearch,
+                                        decoration: InputDecoration(
+                                          isDense: true,
+                                          border: InputBorder.none,
+                                          contentPadding: EdgeInsets.symmetric(
+                                              vertical: 0, horizontal: 0),
+                                          hintText: "오디션을 검색해보세요",
+                                          hintStyle:
+                                              CustomStyles.normal16TextStyle(),
+                                        ),
+                                        style: CustomStyles.dark16TextStyle(),
+                                      ),
+                                    ),
+                                    Padding(
+                                        padding: EdgeInsets.only(left: 10),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            _projectDramaList.clear();
+                                            _projectMovieList.clear();
+
+                                            projectName = _txtFieldSearch.text;
+                                            requestProjectListApi(context);
+                                          },
+                                          child: Image.asset(
+                                            'assets/images/btn_search.png',
+                                            width: 20,
+                                            fit: BoxFit.contain,
+                                          ),
+                                        ))
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                  padding: EdgeInsets.only(right: 15, top: 20),
+                                  width: MediaQuery.of(context).size.width,
+                                  color: CustomColors.colorWhite,
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                          child: TabBar(
+                                            controller: _tabController,
+                                            indicatorSize:
+                                                TabBarIndicatorSize.label,
+                                            indicatorPadding: EdgeInsets.zero,
+                                            labelStyle:
+                                                CustomStyles.bold14TextStyle(),
+                                            unselectedLabelStyle: CustomStyles
+                                                .normal14TextStyle(),
+                                            tabs: [
+                                              Tab(text: '영화'),
+                                              Tab(text: '드라마')
+                                            ],
+                                          ),
+                                          flex: 1),
+                                      Expanded(
+                                          child: Container(
+                                        margin: EdgeInsets.only(
+                                            left: 15, right: 15),
+                                        alignment: Alignment.centerRight,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            replaceView(context, ProjectAdd());
+                                          },
+                                          child: Text('+ 프로젝트 추가',
+                                              style: CustomStyles
+                                                  .blue16TextStyle()),
+                                        ),
+                                      ))
+                                    ],
+                                  )),
+                              Container(
+                                margin: EdgeInsets.only(top: 10),
+                                child: Divider(
+                                  height: 0.1,
+                                  color: CustomColors.colorFontLightGrey,
+                                ),
+                              ),
+                              Expanded(
+                                flex: 0,
+                                child: [
+                                  tabProjectList(),
+                                  tabProjectList()
+                                ][_tabIndex],
+                              )
+                            ])))),
                 Visibility(
                   child: Container(
                       color: Colors.black38,

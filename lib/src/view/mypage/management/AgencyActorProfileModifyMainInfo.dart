@@ -730,7 +730,7 @@ class _AgencyActorProfileModifyMainInfo
       actorProfile[APIConstants.education_target] = educationTarget;
     }
 
-    addView(
+    replaceView(
         context,
         AgencyActorProfileModifySubInfo(
             targetData: actorProfile,

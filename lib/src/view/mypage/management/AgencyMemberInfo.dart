@@ -222,7 +222,7 @@ class _AgencyMemberInfo extends State<AgencyMemberInfo> with BaseUtilMixin {
                                           builder: (BuildContext context) =>
                                               DialogMemberLeaveConfirm(
                                                   onClickedAgree: () {
-                                                //requestManagementDeleteInfoApi(context);
+                                                requestManagementDeleteInfoApi(context);
                                               }));
                                     }))
                               ])))
@@ -252,7 +252,7 @@ class _AgencyMemberInfo extends State<AgencyMemberInfo> with BaseUtilMixin {
         KCastingAppData().myInfo[APIConstants.seq];
 
     Map<String, dynamic> params = new Map();
-    params[APIConstants.key] = APIConstants.DEL_ACT_INFO;
+    params[APIConstants.key] = APIConstants.DEL_MGM_INFO;
     params[APIConstants.target] = targetDatas;
 
     // 매니지먼트 회원 탈퇴 api 호출

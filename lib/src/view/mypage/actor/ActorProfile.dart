@@ -576,7 +576,6 @@ class _ActorProfile extends State<ActorProfile>
           _profileImgFile = file;
           requestUpdateActorProfile(context, _profileImgFile);
         } else {
-          print(pickedFile.path);
           File _image = File(pickedFile.path);
 
           final size = _image.readAsBytesSync().lengthInBytes;
@@ -602,8 +601,6 @@ class _ActorProfile extends State<ActorProfile>
       final pickedFile = await picker.getVideo(source: ImageSource.gallery);
 
       if (pickedFile != null) {
-        print(pickedFile.path);
-
         getVideoThumbnail(pickedFile.path);
       } else {
         showSnackBar(context, "선택된 이미지가 없습니다.");
@@ -616,8 +613,6 @@ class _ActorProfile extends State<ActorProfile>
         video: filePath,
         thumbnailPath: (await getTemporaryDirectory()).path,
         imageFormat: ImageFormat.JPEG);
-
-    print(fileName);
 
     var _videoFile = File(filePath);
     final size = _videoFile.readAsBytesSync().lengthInBytes;

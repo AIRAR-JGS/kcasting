@@ -253,6 +253,9 @@ class _AuditionList extends State<AuditionList> with BaseUtilMixin {
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
             child: SingleChildScrollView(
+                controller: _scrollController,
+                physics: AlwaysScrollableScrollPhysics(),
+                key: ObjectKey(_castingBoardList.length > 0 ? _castingBoardList[0] : ""),
                 child: Column(children: [
               Expanded(
                   flex: 0,
@@ -701,7 +704,7 @@ class _AuditionList extends State<AuditionList> with BaseUtilMixin {
                                   children: <TextSpan>[
                                     new TextSpan(
                                         text:
-                                            _castingBoardList.length.toString(),
+                                            _total.toString(),
                                         style: CustomStyles.red14TextStyle()),
                                     new TextSpan(text: '개의 배역'),
                                   ],
@@ -756,7 +759,7 @@ class _AuditionList extends State<AuditionList> with BaseUtilMixin {
                   ? (Wrap(children: [
                       ListView.builder(
                           padding: EdgeInsets.only(bottom: 50),
-                          controller: _scrollController,
+                          primary: false,
                           physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           itemCount: _castingBoardList.length,

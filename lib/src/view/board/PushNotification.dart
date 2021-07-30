@@ -131,7 +131,6 @@ class _PushNotification extends State<PushNotification> with BaseUtilMixin {
           }
         }
       } catch (e) {
-        print(e.toString());
         showSnackBar(context, APIConstants.error_msg_try_again);
       } finally {
         setState(() {

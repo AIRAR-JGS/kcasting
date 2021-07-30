@@ -691,7 +691,6 @@ class _RegisterAgencyActorProfileSubInfo
                                             onPressed: (item) {
                                               _lookKeyword[index].isSelected =
                                                   item.active;
-                                              print(item.active);
                                             },
                                           );
                                         },

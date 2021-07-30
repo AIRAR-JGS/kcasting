@@ -1,17 +1,13 @@
-import 'dart:collection';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-
 class QualityLinks {
   String videoId;
 
   QualityLinks(this.videoId);
 
- /* getQualitiesSync() {
+/* getQualitiesSync() {
     return getQualitiesAsync();
   }*/
 
-  /*Future<SplayTreeMap> getQualitiesAsync() async {
+/*Future<SplayTreeMap> getQualitiesAsync() async {
     try {
       var response = await http
           .get('https://player.vimeo.com/video/' + videoId + '/config');

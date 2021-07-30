@@ -272,7 +272,6 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
 
                         if (_lookKwdData[APIConstants.code_seq] ==
                             _lookKwdCode[APIConstants.seq]) {
-                          print(_lookKwdCode[APIConstants.child_name]);
                           _actorKwdList.add(_lookKwdCode[APIConstants.child_name]);
                         }
                       }
@@ -303,7 +302,6 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
 
                         if (_lookKwdData[APIConstants.code_seq] ==
                             _lookKwdCode[APIConstants.seq]) {
-                          print(_lookKwdCode[APIConstants.child_name]);
                           _actorKwdList.add(_lookKwdCode[APIConstants.child_name]);
                         }
                       }
@@ -455,17 +453,9 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
       request.files.add(
           http.MultipartFile.fromBytes(APIConstants.target_files, profileFile));
 
-      var response = await request.send().then((value) async {
-        if (value.statusCode == 200) {
-          print(request.toString());
-          print(request.fields.toString());
-          print(request.files.toString());
-          var result = await value.stream.toBytes();
-          print(String.fromCharCodes(result));
-        }
-      });
+
     } catch (e) {
-      print(e.toString());
+
     } finally {
       client.close();
     }
@@ -758,7 +748,6 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
-      print(pickedFile.path);
       if (type == 0) {
         _profileImgFile = File(pickedFile.path);
 
@@ -785,8 +774,6 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
     final pickedFile = await picker.getVideo(source: ImageSource.gallery);
 
     if (pickedFile != null) {
-      print(pickedFile.path);
-
       getVideoThumbnail(pickedFile.path);
     } else {
       showSnackBar(context, "선택된 이미지가 없습니다.");
@@ -798,8 +785,6 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
         video: filePath,
         thumbnailPath: (await getTemporaryDirectory()).path,
         imageFormat: ImageFormat.JPEG);
-
-    print(fileName);
 
     var _videoFile = File(filePath);
     final size = _videoFile.readAsBytesSync().lengthInBytes;

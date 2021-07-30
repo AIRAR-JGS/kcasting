@@ -147,7 +147,7 @@ class _AuditionApplyUploadVideo extends State<AuditionApplyUploadVideo>
     final pickedFile = await picker.getVideo(source: ImageSource.gallery);
 
     if (pickedFile != null) {
-      print(pickedFile.path);
+      //print(pickedFile.path);
 
       getVideoThumbnail(pickedFile.path);
     } else {

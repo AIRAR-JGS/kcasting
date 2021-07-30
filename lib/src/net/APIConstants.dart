@@ -122,6 +122,7 @@ class APIConstants {
   static const String SEL_MCS_LIST = "SEL_MCS_LIST";                              // 매니지먼트 회원 스크랩 목록 조회
   static const String INS_MCS_INFO = "INS_MCS_INFO";                              // 매니지먼트 회원 스크랩 추가
   static const String DEA_MCS_INFO = "DEA_MCS_INFO";                              // 매니지먼트 회원 스크랩 삭제
+  static const String DEL_MGM_INFO = "DEL_MGM_INFO";                              // 매니지먼트 회원 탈퇴
 
   // 공통 - request, response
   static const String key = "key";

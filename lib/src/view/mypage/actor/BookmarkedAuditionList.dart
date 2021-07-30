@@ -129,6 +129,9 @@ class _BookmarkedAuditionList extends State<BookmarkedAuditionList>
               children: [
                 Container(
                     child: SingleChildScrollView(
+                        controller: _scrollController,
+                        physics: AlwaysScrollableScrollPhysics(),
+                        key: ObjectKey(_castingBoardList.length > 0 ? _castingBoardList[0] : ""),
                         child: Column(children: [
                   Container(
                       margin: EdgeInsets.only(top: 15),
@@ -155,7 +158,7 @@ class _BookmarkedAuditionList extends State<BookmarkedAuditionList>
                       ? (Wrap(children: [
                           ListView.builder(
                               padding: EdgeInsets.only(bottom: 50),
-                              controller: _scrollController,
+                              primary: false,
                               physics: NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
                               itemCount: _castingBoardList.length,

@@ -665,7 +665,6 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
                                         onPressed: (item) {
                                           _lookKeyword[index].isSelected =
                                               item.active;
-                                          print(item.active);
                                         },
                                       );
                                     },

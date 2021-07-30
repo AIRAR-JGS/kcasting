@@ -64,10 +64,6 @@ class _JoinActorAdult extends State<JoinActorAdult> with BaseUtilMixin {
     _authPhone = widget.authPhone;
     _authBirth = widget.authBirth;
     _authGender = widget.authGender;
-    print(_authName);
-    print(_authPhone);
-    print(_authBirth);
-    print(_authGender);
 
     if (_authName != null) {
       _txtFieldName.text = _authName;

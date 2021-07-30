@@ -82,12 +82,9 @@ class _OfferedAuditionList extends State<OfferedAuditionList>
             _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
       setState(() {
-        print("comes to bottom $_isLoading");
         _isLoading = true;
 
         if (_isLoading) {
-          print("RUNNING LOAD MORE");
-
           requestMyApplyListApi(context);
         }
       });
@@ -169,8 +166,7 @@ class _OfferedAuditionList extends State<OfferedAuditionList>
             ListView.separated(
               physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,
-              // Need to display a loading tile if more items are coming
-              controller: _scrollController,
+              primary: false,
               itemCount: _scoutList.length,
               itemBuilder: (BuildContext context, int index) {
                 return Container(
@@ -353,6 +349,9 @@ class _OfferedAuditionList extends State<OfferedAuditionList>
               children: [
                 Container(
                   child: SingleChildScrollView(
+                    controller: _scrollController,
+                    physics: AlwaysScrollableScrollPhysics(),
+                    key: ObjectKey(_scoutList.length > 0 ? _scoutList[0] : ""),
                     child: Container(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

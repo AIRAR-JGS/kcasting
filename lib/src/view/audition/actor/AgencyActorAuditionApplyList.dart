@@ -54,9 +54,6 @@ class _AgencyActorAuditionApplyList extends State<AgencyActorAuditionApplyList>
 
   // 리스트뷰 스크롤 컨트롤러 이벤트 리스너
   _scrollListener() {
-    print(_scrollController.position.extentAfter);
-    print(_scrollController.offset);
-
     if (_total == 0 || _actorList.length >= _total) return;
 
     if (_scrollController.offset >=

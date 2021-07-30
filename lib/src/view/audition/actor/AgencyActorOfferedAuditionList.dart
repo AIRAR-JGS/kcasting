@@ -54,9 +54,6 @@ class _AgencyActorOfferedAuditionList
 
   // 리스트뷰 스크롤 컨트롤러 이벤트 리스너
   _scrollListener() {
-    print(_scrollController.position.extentAfter);
-    print(_scrollController.offset);
-
     if (_total == 0 || _actorList.length >= _total) return;
 
     if (_scrollController.offset >=
@@ -272,11 +269,11 @@ class _AgencyActorOfferedAuditionList
                         _actorList.length > 0
                             ? Container(
                                 child: ListView.separated(
+                                    shrinkWrap: true,
                                     primary: false,
                                     physics: NeverScrollableScrollPhysics(),
                                     padding: EdgeInsets.only(
                                         left: 15, right: 15, bottom: 30),
-                                    shrinkWrap: true,
                                     itemCount: _actorList.length,
                                     itemBuilder:
                                         (BuildContext context, int index) {

@@ -54,12 +54,9 @@ class _ProposedAuditionList extends State<ProposedAuditionList>
             _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
       setState(() {
-        print("comes to bottom $_isLoading");
         _isLoading = true;
 
         if (_isLoading) {
-          print("RUNNING LOAD MORE");
-
           requestProjectListApi(context);
         }
       });
@@ -135,7 +132,7 @@ class _ProposedAuditionList extends State<ProposedAuditionList>
         ListView.separated(
             physics: NeverScrollableScrollPhysics(),
             shrinkWrap: true,
-            controller: _scrollController,
+            primary: false,
             itemCount: _proposalList.length,
             itemBuilder: (BuildContext context, int index) {
               return Container(
@@ -322,6 +319,9 @@ class _ProposedAuditionList extends State<ProposedAuditionList>
               children: [
                 Container(
                     child: SingleChildScrollView(
+                        controller: _scrollController,
+                        physics: AlwaysScrollableScrollPhysics(),
+                        key: ObjectKey(_proposalList.length > 0 ? _proposalList[0] : ""),
                         child: Container(
                             child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,

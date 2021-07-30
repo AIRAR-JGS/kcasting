@@ -137,12 +137,9 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
             _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
       setState(() {
-        print("comes to bottom $_isLoading");
         _isLoading = true;
 
         if (_isLoading) {
-          print("RUNNING LOAD MORE");
-
           requestCastingStateList(context);
         }
       });
@@ -215,11 +212,7 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
       } else {
         showSnackBar(context, "선택된 파일이 없습니다.");
       }
-
-      print('result: $result');
     } catch (e) {
-      print(e);
-      result = 'Error: $e';
       showSnackBar(context, APIConstants.error_msg_try_again);
     } finally {}
   }
@@ -344,15 +337,12 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
 
                       case APIConstants.ThirdAudition:
                         {
-                          print("1111111111111");
                           var _listData = _data[APIConstants.data];
                           if (_listData != null) {
-                            print("22222222222");
                             List<dynamic> _auditionInfoList =
                                 _listData[APIConstants.list] as List;
                             if (_auditionInfoList != null &&
                                 _auditionInfoList.length > 0) {
-                              print("3333333333333");
                               _thirdAuditionInfo = _auditionInfoList[0];
                             }
                           } else {
@@ -363,17 +353,14 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
 
                       case APIConstants.ThirdAuditionTarget:
                         {
-                          print("4444444444");
                           var _listData = _data[APIConstants.data];
                           if (_listData != null) {
-                            print("55555555555");
                             var paging = _listData[APIConstants.paging];
                             _total = paging[APIConstants.total];
 
                             List<dynamic> _auditionInfoList =
                                 _listData[APIConstants.list] as List;
                             if (_auditionInfoList != null) {
-                              print("666666666666");
                               _thirdAuditionApplyList.addAll(_auditionInfoList);
                               _isLoading = false;
                             }
@@ -519,7 +506,7 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
         ListView.separated(
             physics: NeverScrollableScrollPhysics(),
             shrinkWrap: true,
-            controller: _scrollController,
+            primary: false,
             itemCount: _firstAuditionApplyList.length,
             itemBuilder: (BuildContext context, int index) {
               Map<String, dynamic> _data = _firstAuditionApplyList[index];
@@ -791,7 +778,8 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
           Container(
               margin: EdgeInsets.only(top: 30),
               alignment: Alignment.centerLeft,
-              child: Text('비디오 제출 마감일', style: CustomStyles.darkBold14TextStyle())),
+              child: Text('비디오 제출 마감일',
+                  style: CustomStyles.darkBold14TextStyle())),
           GestureDetector(
             onTap: () {
               showDatePickerForDday(context, (date) {
@@ -903,7 +891,7 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
         ListView.separated(
             physics: NeverScrollableScrollPhysics(),
             shrinkWrap: true,
-            controller: _scrollController,
+            primary: false,
             itemCount: _dataCnt,
             itemBuilder: (BuildContext context, int index) {
               Map<String, dynamic> _data = _secondAuditionApplyList[index];
@@ -1125,7 +1113,7 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
         ListView.separated(
             physics: NeverScrollableScrollPhysics(),
             shrinkWrap: true,
-            controller: _scrollController,
+            primary: false,
             itemCount: _dataCnt,
             itemBuilder: (BuildContext context, int index) {
               Map<String, dynamic> _data = _thirdAuditionApplyList[index];
@@ -1266,7 +1254,7 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
         ListView.separated(
             physics: NeverScrollableScrollPhysics(),
             shrinkWrap: true,
-            controller: _scrollController,
+            primary: false,
             itemCount: _dataCnt,
             itemBuilder: (BuildContext context, int index) {
               Map<String, dynamic> _data = _auditionResultList[index];
@@ -1501,108 +1489,130 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                       Expanded(
                           flex: 1,
                           child: SingleChildScrollView(
+                              controller: _scrollController,
+                              physics: AlwaysScrollableScrollPhysics(),
+                              key: (_tabIndex == 0)
+                                  ? ObjectKey(_firstAuditionApplyList.length > 0
+                                      ? _firstAuditionApplyList[0]
+                                      : "")
+                                  : ((_tabIndex == 1)
+                                      ? ObjectKey(_secondAuditionApplyList.length > 0
+                                          ? _secondAuditionApplyList[0]
+                                          : "")
+                                      : ((_tabIndex == 2)
+                                          ? ObjectKey(_thirdAuditionApplyList.length > 0
+                                              ? _thirdAuditionApplyList[0]
+                                              : "")
+                                          : ObjectKey(_auditionResultList.length > 0
+                                              ? _auditionResultList[0]
+                                              : ""))),
                               child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                Container(
-                                    margin:
-                                        EdgeInsets.only(top: 30.0, bottom: 10),
-                                    padding: EdgeInsets.only(
-                                        left: 16, right: 16, bottom: 15),
-                                    child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Expanded(
-                                              flex: 1,
-                                              child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  children: [
-                                                    Container(
-                                                        child: Text(
-                                                            StringUtils.checkedString(
-                                                                _firstAuditionInfo[
-                                                                    APIConstants
-                                                                        .project_name]),
-                                                            style: CustomStyles
-                                                                .darkBold10TextStyle())),
-                                                    Container(
-                                                        margin: EdgeInsets.only(
-                                                            top: 5),
-                                                        child: Text(
-                                                            StringUtils.checkedString(
-                                                                _firstAuditionInfo[
-                                                                    APIConstants
-                                                                        .casting_name]),
-                                                            style: CustomStyles
-                                                                .dark20TextStyle()))
-                                                  ])),
-                                          Visibility(
-                                              child: Expanded(
-                                                  flex: 0,
-                                                  child: Container(
-                                                      child: CustomStyles
-                                                          .darkBold14TextButtonStyle(
-                                                              '오디션 마감하기', () {
-                                                    showDialog(
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                                _context) =>
-                                                            DialogAuditionQuit(
-                                                                onClickedAgree:
-                                                                    () {
-                                                              requestQuitAudition(
-                                                                  context);
-                                                            }));
-                                                  }))),
-                                              visible: _firstAuditionInfo[
-                                                          APIConstants
-                                                              .isAuditionQuit] ==
-                                                      0
-                                                  ? true
-                                                  : false),
-                                          Visibility(
-                                              child: Expanded(
-                                                  flex: 0,
-                                                  child: Container(
-                                                      child: Text('마감된 오디션입니다.',
-                                                          style: CustomStyles
-                                                              .dark14TextStyle()))),
-                                              visible: _firstAuditionInfo[
-                                                          APIConstants
-                                                              .isAuditionQuit] ==
-                                                      0
-                                                  ? false
-                                                  : true)
-                                        ])),
-                                Container(
-                                    color: CustomColors.colorWhite,
-                                    child: TabBar(
-                                        controller: _tabController,
-                                        indicatorPadding: EdgeInsets.zero,
-                                        labelStyle:
-                                            CustomStyles.bold14TextStyle(),
-                                        unselectedLabelStyle:
-                                            CustomStyles.normal14TextStyle(),
-                                        tabs: [
-                                          Tab(text: '1차 오디션'),
-                                          Tab(text: '2차 오디션'),
-                                          Tab(text: '3차 오디션'),
-                                          Tab(text: '최종합격')
-                                        ])),
-                                Expanded(
-                                  flex: 0,
-                                  child: [
-                                    tabAuditionApplyList(),
-                                    tabAuditionApplyList(),
-                                    tabAuditionApplyList(),
-                                    tabAuditionApplyList()
-                                  ][_tabIndex],
-                                )
-                              ]))),
+                                    Container(
+                                        margin: EdgeInsets.only(
+                                            top: 30.0, bottom: 10),
+                                        padding: EdgeInsets.only(
+                                            left: 16, right: 16, bottom: 15),
+                                        child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Expanded(
+                                                  flex: 1,
+                                                  child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Container(
+                                                            child: Text(
+                                                                StringUtils.checkedString(
+                                                                    _firstAuditionInfo[
+                                                                        APIConstants
+                                                                            .project_name]),
+                                                                style: CustomStyles
+                                                                    .darkBold10TextStyle())),
+                                                        Container(
+                                                            margin:
+                                                                EdgeInsets.only(
+                                                                    top: 5),
+                                                            child: Text(
+                                                                StringUtils.checkedString(
+                                                                    _firstAuditionInfo[
+                                                                        APIConstants
+                                                                            .casting_name]),
+                                                                style: CustomStyles
+                                                                    .dark20TextStyle()))
+                                                      ])),
+                                              Visibility(
+                                                  child: Expanded(
+                                                      flex: 0,
+                                                      child: Container(
+                                                          child: CustomStyles
+                                                              .darkBold14TextButtonStyle(
+                                                                  '오디션 마감하기',
+                                                                  () {
+                                                        showDialog(
+                                                            context: context,
+                                                            builder: (BuildContext
+                                                                    _context) =>
+                                                                DialogAuditionQuit(
+                                                                    onClickedAgree:
+                                                                        () {
+                                                                  requestQuitAudition(
+                                                                      context);
+                                                                }));
+                                                      }))),
+                                                  visible: _firstAuditionInfo[
+                                                              APIConstants
+                                                                  .isAuditionQuit] ==
+                                                          0
+                                                      ? true
+                                                      : false),
+                                              Visibility(
+                                                  child: Expanded(
+                                                      flex: 0,
+                                                      child: Container(
+                                                          child: Text(
+                                                              '마감된 오디션입니다.',
+                                                              style: CustomStyles
+                                                                  .dark14TextStyle()))),
+                                                  visible: _firstAuditionInfo[
+                                                              APIConstants
+                                                                  .isAuditionQuit] ==
+                                                          0
+                                                      ? false
+                                                      : true)
+                                            ])),
+                                    Container(
+                                        color: CustomColors.colorWhite,
+                                        child: TabBar(
+                                            controller: _tabController,
+                                            indicatorPadding: EdgeInsets.zero,
+                                            labelStyle:
+                                                CustomStyles.bold14TextStyle(),
+                                            unselectedLabelStyle: CustomStyles
+                                                .normal14TextStyle(),
+                                            tabs: [
+                                              Tab(text: '1차 오디션'),
+                                              Tab(text: '2차 오디션'),
+                                              Tab(text: '3차 오디션'),
+                                              Tab(text: '최종합격')
+                                            ])),
+                                    Expanded(
+                                      flex: 0,
+                                      child: [
+                                        tabAuditionApplyList(),
+                                        tabAuditionApplyList(),
+                                        tabAuditionApplyList(),
+                                        tabAuditionApplyList()
+                                      ][_tabIndex],
+                                    )
+                                  ]))),
                       Visibility(
                         child: Container(
                             width: MediaQuery.of(context).size.width,

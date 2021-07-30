@@ -30,7 +30,6 @@ class _AuthWebView extends State<AuthWebView> with BaseUtilMixin {
       JavascriptChannel(
           name: 'KCastingAuth',
           onMessageReceived: (JavascriptMessage message) {
-            print(message.message);
 
             returnToJoinPage(message.message);
           }),
@@ -90,26 +89,20 @@ class _AuthWebView extends State<AuthWebView> with BaseUtilMixin {
                         this._controller = webViewController;
                       },
                       onProgress: (int progress) {
-                        print("WebView is loading (progress : $progress%)");
                       },
                       navigationDelegate: (NavigationRequest request) {
                         if (request.url
                             .startsWith('https://itunes.apple.com')) {
-                          print('blocking navigation to $request}');
                           return NavigationDecision.prevent;
                         }
                         if (request.url.startsWith('niceipin2')) {
-                          print('blocking navigation to $request}');
                           return NavigationDecision.prevent;
                         }
-                        print('allowing navigation to $request');
                         return NavigationDecision.navigate;
                       },
                       onPageStarted: (String url) {
-                        print('Page started loading: $url');
                       },
                       onPageFinished: (String url) {
-                        print('Page finished loading: $url');
                       },
                       gestureNavigationEnabled: true);
                 }))));

@@ -118,11 +118,7 @@ class _ProjectAdd extends State<ProjectAdd> with BaseUtilMixin {
       } else {
         showSnackBar(context, "선택된 파일이 없습니다.");
       }
-
-      print('result: $result');
     } catch (e) {
-      print(e);
-      result = 'Error: $e';
       showSnackBar(context, APIConstants.error_msg_try_again);
     } finally {}
   }

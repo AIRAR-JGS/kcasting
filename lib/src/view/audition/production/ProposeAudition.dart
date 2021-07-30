@@ -69,12 +69,9 @@ class _ProposeAudition extends State<ProposeAudition> with BaseUtilMixin {
             _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
       setState(() {
-        print("comes to bottom $_isLoading");
         _isLoading = true;
 
         if (_isLoading) {
-          print("RUNNING LOAD MORE");
-
           requestMyApplyListApi(context);
         }
       });

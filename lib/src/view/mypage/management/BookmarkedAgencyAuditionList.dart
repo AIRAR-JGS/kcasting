@@ -130,6 +130,9 @@ class _BookmarkedAgencyAuditionList extends State<BookmarkedAgencyAuditionList>
             body: Stack(children: [
               Container(
                   child: SingleChildScrollView(
+                      controller: _scrollController,
+                      physics: AlwaysScrollableScrollPhysics(),
+                      key: ObjectKey(_castingBoardList.length > 0 ? _castingBoardList[0] : ""),
                       child: Column(
                 children: [
                   Container(
@@ -157,7 +160,7 @@ class _BookmarkedAgencyAuditionList extends State<BookmarkedAgencyAuditionList>
                       ? (Wrap(children: [
                           ListView.builder(
                               padding: EdgeInsets.only(bottom: 50),
-                              controller: _scrollController,
+                              primary: false,
                               physics: NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
                               itemCount: _castingBoardList.length,

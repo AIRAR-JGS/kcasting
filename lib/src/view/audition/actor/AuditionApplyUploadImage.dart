@@ -139,7 +139,7 @@ class _AuditionApplyUploadImage extends State<AuditionApplyUploadImage>
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
-      print(pickedFile.path);
+      //print(pickedFile.path);
       _imageFile = File(pickedFile.path);
 
       final size = _imageFile.readAsBytesSync().lengthInBytes;

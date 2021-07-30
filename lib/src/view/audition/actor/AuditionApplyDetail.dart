@@ -608,131 +608,161 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
         break;
 
       case "합격":
-        return Container(
-            padding: EdgeInsets.only(top: 15, left: 15, right: 15, bottom: 30),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Container(
-                margin: EdgeInsets.only(bottom: 15, top: 15),
-                child: Text('1차 합격',
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              ),
-              Container(
-                  child: Text(
-                      '1차 오디션 합격을 진심으로 축하드립니다.\n2차 오디션은 대본 오디션입니다.\n대본을 다운받아 영상 촬영 후 등록해 주세요.\n\n대본의 내용 유출 방지를 위해,\n비밀 유지 서약에 동의하신 후에, 대본을 확인할 수 있습니다.',
-                      style: CustomStyles.dark16TextStyle())),
-              Container(
-                  margin: EdgeInsets.only(top: 30),
-                  child: Text(
-                      _auditionState[
-                                  APIConstants.script_securityPledge_isAgree] ==
-                              0
-                          ? '서약'
-                          : '비밀 유지 서약에 동의하셨습니다.',
-                      style: CustomStyles.darkBold16TextStyle())),
-              Visibility(
-                  child: Container(
-                      margin: EdgeInsets.only(top: 10),
-                      child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: Radio<int>(
-                                    value: _agreeTerms,
-                                    visualDensity: VisualDensity.compact,
-                                    groupValue: 1,
-                                    toggleable: true,
-                                    onChanged: (_) {
-                                      setState(() {
-                                        if (_agreeTerms == 0) {
-                                          // 동의
-                                          _agreeTerms = 1;
-                                        } else {
-                                          // 비동의
-                                          _agreeTerms = 0;
-                                        }
-                                      });
-                                    },
-                                    materialTapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap)),
-                            Container(
-                                child: Text('대본 비밀 유지 서약에 대해 동의합니다.',
-                                    style: CustomStyles.dark14TextStyle()))
-                          ])),
-                  visible: _auditionState[
-                              APIConstants.script_securityPledge_isAgree] ==
-                          1
-                      ? false
-                      : true),
-              Visibility(
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                            margin: EdgeInsets.only(top: 30),
-                            child: Text('대본',
-                                style: CustomStyles.darkBold16TextStyle())),
-                        Container(
-                            margin: EdgeInsets.only(top: 15),
-                            padding: EdgeInsets.only(
-                                left: 10, right: 10, top: 12, bottom: 12),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                            ),
+        if (_auditionState[APIConstants.secondAudition_state_type] == null) {
+          // 2차 오디션 오픈 전
+          return Container(
+              padding:
+                  EdgeInsets.only(top: 15, left: 15, right: 15, bottom: 30),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(bottom: 15, top: 15),
+                      child: Text('1차 합격',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold)),
+                    ),
+                    Container(
+                        child: Text(
+                            '1차 오디션 합격을 진심으로 축하드립니다.\n2차 오디션이 오픈될 때까지 기다려 주세요.',
+                            style: CustomStyles.dark16TextStyle()))
+                  ]));
+        } else {
+          // 2차 오디션 오픈 후
+          return Container(
+              padding:
+                  EdgeInsets.only(top: 15, left: 15, right: 15, bottom: 30),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(bottom: 15, top: 15),
+                      child: Text('1차 합격',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold)),
+                    ),
+                    Container(
+                        child: Text(
+                            '1차 오디션 합격을 진심으로 축하드립니다.\n2차 오디션은 대본 오디션입니다.\n대본을 다운받아 영상 촬영 후 등록해 주세요.\n\n대본의 내용 유출 방지를 위해,\n비밀 유지 서약에 동의하신 후에, 대본을 확인할 수 있습니다.',
+                            style: CustomStyles.dark16TextStyle())),
+                    Container(
+                        margin: EdgeInsets.only(top: 30),
+                        child: Text(
+                            _auditionState[APIConstants
+                                        .script_securityPledge_isAgree] ==
+                                    0
+                                ? '서약'
+                                : '비밀 유지 서약에 동의하셨습니다.',
+                            style: CustomStyles.darkBold16TextStyle())),
+                    Visibility(
+                        child: Container(
+                            margin: EdgeInsets.only(top: 10),
                             child: Row(
                                 mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Expanded(
-                                      flex: 1,
-                                      child: Text('대본파일',
-                                          style: CustomStyles.dark14TextStyle(),
-                                          overflow: TextOverflow.clip)),
-                                  Expanded(
-                                      flex: 0,
-                                      child: CustomStyles
-                                          .darkBold14TextButtonStyle('다운로드',
-                                              () async {
-                                        String _url = _auditionState[
-                                            APIConstants
-                                                .secondAudition_script_url];
-                                        await canLaunch(_url)
-                                            ? await launch(_url)
-                                            : throw '$_url을 열 수 없습니다.';
-                                      }))
-                                ]))
-                      ]),
-                  visible: _agreeTerms == 0 ? false : true),
-              Container(
-                  margin: EdgeInsets.only(top: 30),
-                  child: Text('기간', style: CustomStyles.darkBold16TextStyle())),
-              Container(
-                  margin: EdgeInsets.only(top: 10),
-                  child: Text('2020.12.30까지',
-                      style: CustomStyles.dark16TextStyle())),
-              Visibility(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                          margin: EdgeInsets.only(top: 30),
-                          child: Text('비디오 제출완료!',
-                              style: CustomStyles.darkBold20TextStyle())),
-                      Container(
-                          margin: EdgeInsets.only(top: 10),
-                          child: Text('제출한 비디오는 제출 프로필>비디오에 추가되었습니다.',
-                              style: CustomStyles.dark16TextStyle()))
-                    ]),
-                visible: _auditionState[APIConstants.isSubmitVideo] == 1
-                    ? true
-                    : false,
-              )
-            ]));
+                                  SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: Radio<int>(
+                                          value: _agreeTerms,
+                                          visualDensity: VisualDensity.compact,
+                                          groupValue: 1,
+                                          toggleable: true,
+                                          onChanged: (_) {
+                                            setState(() {
+                                              if (_agreeTerms == 0) {
+                                                // 동의
+                                                _agreeTerms = 1;
+                                              } else {
+                                                // 비동의
+                                                _agreeTerms = 0;
+                                              }
+                                            });
+                                          },
+                                          materialTapTargetSize:
+                                              MaterialTapTargetSize
+                                                  .shrinkWrap)),
+                                  Container(
+                                      child: Text('대본 비밀 유지 서약에 대해 동의합니다.',
+                                          style:
+                                              CustomStyles.dark14TextStyle()))
+                                ])),
+                        visible: _auditionState[APIConstants
+                                    .script_securityPledge_isAgree] ==
+                                1
+                            ? false
+                            : true),
+                    Visibility(
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                  margin: EdgeInsets.only(top: 30),
+                                  child: Text('대본',
+                                      style:
+                                          CustomStyles.darkBold16TextStyle())),
+                              Container(
+                                  margin: EdgeInsets.only(top: 15),
+                                  padding: EdgeInsets.only(
+                                      left: 10, right: 10, top: 12, bottom: 12),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[200],
+                                  ),
+                                  child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                            flex: 1,
+                                            child: Text('대본파일',
+                                                style: CustomStyles
+                                                    .dark14TextStyle(),
+                                                overflow: TextOverflow.clip)),
+                                        Expanded(
+                                            flex: 0,
+                                            child: CustomStyles
+                                                .darkBold14TextButtonStyle(
+                                                    '다운로드', () async {
+                                              String _url = _auditionState[
+                                                  APIConstants
+                                                      .secondAudition_script_url];
+                                              await canLaunch(_url)
+                                                  ? await launch(_url)
+                                                  : throw '$_url을 열 수 없습니다.';
+                                            }))
+                                      ]))
+                            ]),
+                        visible: _agreeTerms == 0 ? false : true),
+                    Container(
+                        margin: EdgeInsets.only(top: 30),
+                        child: Text('기간',
+                            style: CustomStyles.darkBold16TextStyle())),
+                    Container(
+                        margin: EdgeInsets.only(top: 10),
+                        child: Text('2020.12.30까지',
+                            style: CustomStyles.dark16TextStyle())),
+                    Visibility(
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                                margin: EdgeInsets.only(top: 30),
+                                child: Text('비디오 제출완료!',
+                                    style: CustomStyles.darkBold20TextStyle())),
+                            Container(
+                                margin: EdgeInsets.only(top: 10),
+                                child: Text('제출한 비디오는 제출 프로필>비디오에 추가되었습니다.',
+                                    style: CustomStyles.dark16TextStyle()))
+                          ]),
+                      visible: _auditionState[APIConstants.isSubmitVideo] == 1
+                          ? true
+                          : false,
+                    )
+                  ]));
+        }
+
         break;
 
       case "불합격":
@@ -882,7 +912,8 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
               Container(
                   margin: EdgeInsets.only(top: 10),
                   child: Text(
-                      StringUtils.checkedString(KCastingAppData().myInfo[APIConstants.actor_phone]) +
+                      StringUtils.checkedString(KCastingAppData()
+                              .myInfo[APIConstants.actor_phone]) +
                           '로 면접일정이 안내됩니다.',
                       style: CustomStyles.dark16TextStyle()))
             ]));
@@ -930,7 +961,8 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
             ]));
         break;
       case "합격":
-        switch (_auditionState[APIConstants.result_type]) {
+        switch (StringUtils.checkedString(
+            _auditionState[APIConstants.result_type])) {
           case "계약서대기중":
             return Container(
                 padding:
@@ -993,6 +1025,11 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                               style: CustomStyles.darkBold16TextStyle())),
                       Visibility(
                           child: Column(children: [
+                            Container(
+                                margin: EdgeInsets.only(top: 10),
+                                alignment: Alignment.centerLeft,
+                                child: Text('* 입력하신 정보는 실명인증을 위해서만 사용됩니다.',
+                                    style: CustomStyles.normal14TextStyle())),
                             Container(
                                 margin: EdgeInsets.only(top: 10),
                                 alignment: Alignment.centerLeft,
@@ -1522,6 +1559,9 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                                 _auditionState[APIConstants
                                         .firstAuditionTarget_result_type] ==
                                     '합격' &&
+                                _auditionState[APIConstants
+                                        .secondAudition_state_type] !=
+                                    null &&
                                 _auditionState[APIConstants.isSubmitVideo] == 0)
                             ? true
                             : false,
@@ -1604,7 +1644,8 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                                   _auditionState[APIConstants
                                           .thirdAuditionTarget_result_type] ==
                                       '합격' &&
-                                  _auditionState[APIConstants.result_type] ==
+                                  StringUtils.checkedString(_auditionState[
+                                          APIConstants.result_type]) ==
                                       "계약서미작성")
                               ? true
                               : false),
@@ -1621,7 +1662,8 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                                     : throw '$_url을 열 수 없습니다.';
                               })),
                           visible: (_tabIndex == 3 &&
-                                  _auditionState[APIConstants.result_type] ==
+                                  StringUtils.checkedString(_auditionState[
+                                          APIConstants.result_type]) ==
                                       "계약완료")
                               ? true
                               : false)

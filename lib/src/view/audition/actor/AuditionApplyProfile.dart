@@ -1,6 +1,7 @@
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
+import 'package:casting_call/src/dialog/DialogLeaveMemberProfile.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/net/RestClientInterface.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
@@ -167,8 +168,25 @@ class _AuditionApplyProfile extends State<AuditionApplyProfile>
               }
             });
           } else {
-            // 배우 오디션 제출 프로필 조회 실패
-            showSnackBar(context, APIConstants.error_msg_try_again);
+            if(value[APIConstants.resultMsg] == 'this actor has left.') {
+              // 탈퇴한 배우 제출 프로필
+              //showSnackBar(context, value[APIConstants.resultMsg]);
+
+              showDialog(
+                context: context,
+                builder: (BuildContext context) =>
+                    DialogLeaveMemberProfile(
+                      onClickedAgree: () async {
+                        Navigator.pop(context);
+                      },
+                    ),
+              );
+            } else {
+              // 배우 오디션 제출 프로필 조회 실패
+              showSnackBar(context, APIConstants.error_msg_try_again);
+            }
+
+
           }
         }
       } catch (e) {

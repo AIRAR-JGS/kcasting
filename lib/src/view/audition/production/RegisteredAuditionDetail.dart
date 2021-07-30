@@ -1837,14 +1837,17 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
               showSnackBar(context, "수정 완료");
             });
           } else {
-            if(value[APIConstants.resultMsg] == 'target data cannot edit. already Audition quit.') {
+            if (value[APIConstants.resultMsg] ==
+                'target data cannot edit. already Audition quit.') {
               showSnackBar(context, '계약이 완료된 배우의 상태를 수정할 수 없습니다.');
+            } else if (value[APIConstants.resultMsg] ==
+                'this actor has left.') {
+              showSnackBar(
+                  context, 'K Casting 앱을 탈퇴한 배우입니다. 탈퇴 배우의 상태를 수정할 수 없습니다.');
             } else {
               // 오디션 대상자 단일 수정 실패
               showSnackBar(context, APIConstants.error_msg_try_again);
             }
-
-
           }
         }
       } catch (e) {
@@ -1937,8 +1940,13 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
               requestCastingStateList(context);
             });
           } else {
-            // 출연료 확정하기 실패
-            showSnackBar(context, value[APIConstants.resultMsg]);
+            if (value[APIConstants.resultMsg] == 'this actor has left.') {
+              showSnackBar(
+                  context, 'K Casting 앱을 탈퇴한 배우입니다. 탈퇴 배우와의 계약은 불가능합니다.');
+            } else {
+              // 출연료 확정하기 실패
+              showSnackBar(context, value[APIConstants.resultMsg]);
+            }
           }
         }
       } catch (e) {
@@ -1987,8 +1995,13 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
               requestCastingStateList(context);
             });
           } else {
-            // 출연료 지급하기 실패
-            showSnackBar(context, value[APIConstants.resultMsg]);
+            if (value[APIConstants.resultMsg] == 'this actor has left.') {
+              showSnackBar(
+                  context, 'K Casting 앱을 탈퇴한 배우입니다. 탈퇴 배우에게는 출연료를 지급할 수 없습니다.');
+            } else {
+              // 출연료 지급하기 실패
+              showSnackBar(context, value[APIConstants.resultMsg]);
+            }
           }
         }
       } catch (e) {

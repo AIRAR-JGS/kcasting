@@ -483,7 +483,7 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
                   margin: EdgeInsets.only(bottom: 10, top: 15),
                   alignment: Alignment.center,
                   child:
-                      CustomStyles.greyBorderRound21ButtonStyle('여배우 더보기', () {
+                      CustomStyles.purpleBorderRound21ButtonStyle('여배우 더보기', () {
                     widget.onClickedOpenCastingActor(
                         APIConstants.actor_sex_female);
                   })),

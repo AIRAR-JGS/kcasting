@@ -36,6 +36,7 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
   String _heightStr = "";
   String _weightStr = "";
   String _payStr = "";
+  String _auditionEndDate = "";
   String _shootingDateStr = "";
   List<dynamic> _castingLanguage;
   List<dynamic> _castingAbility;
@@ -178,6 +179,16 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
                           }
 
                           if (_castingBoardData[
+                                  APIConstants.firstAudition_endDate] !=
+                              null) {
+                            DateTime endDay = DateTileUtils.stringToDateTime(
+                                _castingBoardData[
+                                    APIConstants.firstAudition_endDate]);
+                            _auditionEndDate =
+                                DateTileUtils.dateTimeToFormattedString(endDay);
+                          }
+
+                          if (_castingBoardData[
                                       APIConstants.shooting_startDate] !=
                                   null &&
                               _castingBoardData[
@@ -217,11 +228,11 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
                                 _castingStateStr = "이미 지원한 공고입니다.";
                               }
                             }
-                          } else if(KCastingAppData()
-                              .myInfo[APIConstants.member_type] ==
+                          } else if (KCastingAppData()
+                                  .myInfo[APIConstants.member_type] ==
                               APIConstants.member_type_management) {
                             if (_castingBoardData[
-                            APIConstants.firstAudition_state_type] ==
+                                    APIConstants.firstAudition_state_type] ==
                                 "마감") {
                               _castingStateStr = "마감된 공고입니다.";
                             }
@@ -474,7 +485,7 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
                                       Expanded(
                                           flex: 7,
                                           child: Container(
-                                              child: Text('0000.00.00',
+                                              child: Text(_auditionEndDate,
                                                   style: CustomStyles
                                                       .dark16TextStyle())))
                                     ])),
@@ -583,9 +594,12 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
                                                   .project_file_url] !=
                                               null
                                           ? CachedNetworkImage(
-                                          placeholder: (context, url) => Container(
-                                              alignment: Alignment.center,
-                                              child: CircularProgressIndicator()),
+                                              placeholder: (context, url) =>
+                                                  Container(
+                                                      alignment:
+                                                          Alignment.center,
+                                                      child:
+                                                          CircularProgressIndicator()),
                                               imageUrl: _castingBoardData[
                                                   APIConstants
                                                       .project_file_url],

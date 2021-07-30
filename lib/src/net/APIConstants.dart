@@ -483,36 +483,7 @@ class APIConstants {
   static const String casting_state_type = "casting_state_type";
   static const String isPayment = "isPayment";
 
-// 사용 안함
-/*static const String apply_image = "apply_image";
-  static const String file_image = "file_image";
-  static const String file_video = "file_video";
-  static const String table_management = "Management";
-  static const String apply_video = "apply_video";
-  static const String apply_actor_img = "apply_actor_img";
-  static const String apply_actor_video = "apply_actor_video";
-  static const String isView = "isView";
-  static const String aa_state_type = "aa_state_type";
-  static const String first_audition_seq = "first_audition_seq";
-  static const String first_auditionstate_type = "first_auditionstate_type";
-  static const String first_auditionstartDate = "first_auditionstartDate";
-  static const String first_audition_target_seq = "first_audition_target_seq";
-  static const String first_audition_target_result_type = "first_audition_target_result_type";
-  static const String second_audition_state_type = "second_audition_state_type";
-  static const String second_audition_startDate = "second_audition_startDate";
-  static const String second_audition_target_seq = "second_audition_target_seq";
-  static const String second_audition_target_result_type = "second_audition_target_result_type";
-  static const String third_audition_seq = "third_audition_seq";
-  static const String third_audition_state_type = "third_audition_state_type";
-  static const String third_audition_target_seq = "third_audition_target_seq";
-  static const String third_audition_target_result_type = "third_audition_target_result_type";
-  static const String third_audition_target_bank_code = "third_audition_target_bank_code";
-  static const String thirdAudition_target_account_isAuth = "thirdAudition_target_account_isAuth";
-  static const String thirdAudition_target_phone = "thirdAudition_target_phone";
-  static const String actor_levelConfirmation_url = "actor_levelConfirmation_url";
-  static const String employmentCertificate_url = "employmentCertificate_url";
-  static const String thirdAudition_phone_use_isAgree = "thirdAudition_phone_use_isAgree";*/
-
+  // 사용 안함
   //static const String LGI_TOT_LOGIN = "LGI_TOT_LOGIN";                            // 로그인
   //static const String INS_AAA_INFO = "INS_AAA_INFO";                              // 배우 오디션 지원
   //static const String SEL_APP_LIST = "SEL_APP_LIST";                              // 배우 제안 받은 목록 조회

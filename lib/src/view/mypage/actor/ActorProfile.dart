@@ -105,11 +105,16 @@ class _ActorProfile extends State<ActorProfile>
       _actorKwdList = [];
       _filmorgraphyList = [];
       _originalFilmorgraphyList = [];
-      _isFlimorgraphyListEditMode = false;
-
       _deletedFilmorgraphyList = [];
+      _isFlimorgraphyListEditMode = false;
+      _myPhotos = [];
+      _originalMyPhotos = [];
       _deletedImageList = [];
+      _isImageListEditMode = false;
+      _myVideos = [];
+      _originalMyVideos = [];
       _deletedVideoList = [];
+      _isVideoListEditMode = false;
 
       // 배우 학력사항
       if (KCastingAppData().myEducation != null) {

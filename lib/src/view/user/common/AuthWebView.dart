@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomStyles.dart';
@@ -17,6 +18,7 @@ class _AuthWebView extends State<AuthWebView> with BaseUtilMixin {
 
   WebViewPlusController _controller;
 
+  //bool isWeb;
   String selectedUrl =
       'https://k-casting.com/nice/checkplusSafe/checkplus_main.php';
 
@@ -26,6 +28,28 @@ class _AuthWebView extends State<AuthWebView> with BaseUtilMixin {
   Future<void> initState() {
     super.initState();
 
+    /*try {
+      if (Platform.isAndroid || Platform.isIOS) {
+        isWeb = false;
+      } else {
+        isWeb = true;
+      }
+    } catch(e) {
+      isWeb = true;
+    }*/
+
+    /*if(!isWeb) {
+      jsChannels = [
+        JavascriptChannel(
+            name: 'KCastingAuth',
+            onMessageReceived: (JavascriptMessage message) {
+
+              returnToJoinPage(message.message);
+            }),
+        JavascriptChannel(
+            name: 'alert', onMessageReceived: (JavascriptMessage message) {})
+      ].toSet();
+    }*/
     jsChannels = [
       JavascriptChannel(
           name: 'KCastingAuth',
@@ -105,6 +129,32 @@ class _AuthWebView extends State<AuthWebView> with BaseUtilMixin {
                       onPageFinished: (String url) {
                       },
                       gestureNavigationEnabled: true);
+                  /*return (isWeb? launchInBrowser(selectedUrl) : WebViewPlus(
+                      initialUrl: selectedUrl,
+                      javascriptMode: JavascriptMode.unrestricted,
+                      javascriptChannels: jsChannels,
+                      debuggingEnabled: true,
+                      allowsInlineMediaPlayback: true,
+                      onWebViewCreated: (webViewController) {
+                        this._controller = webViewController;
+                      },
+                      onProgress: (int progress) {
+                      },
+                      navigationDelegate: (NavigationRequest request) {
+                        if (request.url
+                            .startsWith('https://itunes.apple.com')) {
+                          return NavigationDecision.prevent;
+                        }
+                        if (request.url.startsWith('niceipin2')) {
+                          return NavigationDecision.prevent;
+                        }
+                        return NavigationDecision.navigate;
+                      },
+                      onPageStarted: (String url) {
+                      },
+                      onPageFinished: (String url) {
+                      },
+                      gestureNavigationEnabled: true));*/
                 }))));
   }
 }

@@ -88,18 +88,19 @@ mixin BaseUtilMixin {
   }
 
   /*
-  * 웹뷰 호출i
+  * 웹뷰 호출
   * */
   Future<void> launchInBrowser(String url) async {
     if (await canLaunch(url)) {
       await launch(
         url,
+        enableDomStorage: true,
         forceSafariVC: false,
-        forceWebView: false,
-        headers: <String, String>{'my_header_key': 'my_header_value'},
+        forceWebView: true,
+        enableJavaScript: true
       );
     } else {
-      throw 'Could not launch $url';
+      throw '$url을 열 수 없습니다.';
     }
   }
 }

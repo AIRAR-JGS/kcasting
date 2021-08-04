@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomStyles.dart';
+import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/view/user/actor/JoinActorAdult.dart';
 import 'package:casting_call/src/view/user/common/AuthWebView.dart';
 import 'package:casting_call/src/view/user/common/JoinSelectType.dart';
@@ -160,7 +163,24 @@ class _SelfAuth extends State<SelfAuth> with BaseUtilMixin {
                                   child:
                                       CustomStyles.lightGreyBGSquareButtonStyle(
                                           '본인인증하기', () {
-                                    replaceView(context, AuthWebView());
+                                    bool isWeb;
+                                    try {
+                                      if (Platform.isAndroid ||
+                                          Platform.isIOS) {
+                                        isWeb = false;
+                                      } else {
+                                        isWeb = true;
+                                      }
+                                    } catch (e) {
+                                      isWeb = true;
+                                    }
+
+                                    if (isWeb) {
+                                      showSnackBar(
+                                          context, APIConstants.use_mobile_app);
+                                    } else {
+                                      replaceView(context, AuthWebView());
+                                    }
                                   })),
                               visible: _authRes == 'TRUE' ? false : true),
                           Visibility(

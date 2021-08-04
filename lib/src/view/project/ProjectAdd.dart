@@ -82,20 +82,22 @@ class _ProjectAdd extends State<ProjectAdd> with BaseUtilMixin {
   _pickDocument() async {
     String result;
     try {
-      FlutterDocumentPickerParams params = FlutterDocumentPickerParams(
-        allowedFileExtensions: ['doc', 'pdf', 'docx'],
-        allowedUtiTypes: [
-          'com.adobe.pdf',
-          'com.microsoft.word.doc',
-          'org.openxmlformats.wordprocessingml.document'
-        ],
-        allowedMimeTypes: [
-          'application/pdf',
-          'application/msword',
-          'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-        ],
-        invalidFileNameSymbols: ['/'],
-      );
+      FlutterDocumentPickerParams params =
+          FlutterDocumentPickerParams(allowedFileExtensions: [
+        'doc',
+        'pdf',
+        'docx'
+      ], allowedUtiTypes: [
+        'com.adobe.pdf',
+        'com.microsoft.word.doc',
+        'org.openxmlformats.wordprocessingml.document'
+      ], allowedMimeTypes: [
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      ], invalidFileNameSymbols: [
+        '/'
+      ]);
 
       result = await FlutterDocumentPicker.openDocument(params: params);
 
@@ -127,57 +129,53 @@ class _ProjectAdd extends State<ProjectAdd> with BaseUtilMixin {
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: CustomStyles.defaultTheme(),
-      child: Scaffold(
-          key: _scaffoldKey,
-          appBar: CustomStyles.defaultAppBar('프로젝트 추가', () {
-            Navigator.pop(context);
-          }),
-          body: Builder(
-            builder: (context) {
-              return Stack(
-                children: [
-                  Container(
+        data: CustomStyles.defaultTheme(),
+        child: Scaffold(
+            key: _scaffoldKey,
+            appBar: CustomStyles.defaultAppBar('프로젝트 추가', () {
+              Navigator.pop(context);
+            }),
+            body: Builder(builder: (context) {
+              return Stack(children: [
+                Container(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                            flex: 1,
-                            child: SingleChildScrollView(
-                                child: Container(
-                                    padding:
-                                        EdgeInsets.only(top: 30, bottom: 80),
-                                    child: Column(
-                                        mainAxisSize: MainAxisSize.max,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                              padding: EdgeInsets.only(
-                                                  left: 15, right: 15),
-                                              alignment: Alignment.centerLeft,
-                                              child: Text('작품정보',
-                                                  style: CustomStyles
-                                                      .dark16TextStyle())),
-                                          Container(
-                                              padding: EdgeInsets.only(
-                                                  left: 15, right: 15),
-                                              margin: EdgeInsets.only(top: 15),
-                                              alignment: Alignment.centerLeft,
-                                              child: Text('작품제목',
-                                                  style: CustomStyles
-                                                      .bold14TextStyle())),
-                                          Container(
-                                              padding: EdgeInsets.only(
-                                                  left: 15, right: 15),
-                                              margin: EdgeInsets.only(top: 5),
-                                              child: CustomStyles
-                                                  .greyBorderRound7TextField(
-                                                      _txtFieldProjectName,
-                                                      '')),
-                                          Container(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                      Expanded(
+                          flex: 1,
+                          child: SingleChildScrollView(
+                              child: Container(
+                                  padding: EdgeInsets.only(top: 30, bottom: 80),
+                                  child: Column(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            alignment: Alignment.centerLeft,
+                                            child: Text('작품정보',
+                                                style: CustomStyles
+                                                    .dark16TextStyle())),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            margin: EdgeInsets.only(top: 15),
+                                            alignment: Alignment.centerLeft,
+                                            child: Text('작품제목',
+                                                style: CustomStyles
+                                                    .bold14TextStyle())),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            margin: EdgeInsets.only(top: 5),
+                                            child: CustomStyles
+                                                .greyBorderRound7TextField(
+                                                    _txtFieldProjectName, '')),
+                                        Container(
                                             margin: EdgeInsets.only(
                                                 top: 15.0, left: 15, right: 15),
                                             padding: EdgeInsets.only(
@@ -186,197 +184,139 @@ class _ProjectAdd extends State<ProjectAdd> with BaseUtilMixin {
                                                 top: 12,
                                                 bottom: 12),
                                             decoration: BoxDecoration(
-                                              borderRadius: CustomStyles
-                                                  .circle7BorderRadius(),
-                                              color: CustomColors.colorBgGrey,
-                                            ),
+                                                borderRadius: CustomStyles
+                                                    .circle7BorderRadius(),
+                                                color:
+                                                    CustomColors.colorBgGrey),
                                             child: Row(
-                                              mainAxisSize: MainAxisSize.max,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text('이미지 또는 첨부파일',
-                                                    style: CustomStyles
-                                                        .dark16TextStyle()),
-                                                GestureDetector(
-                                                  onTap: () async {
-                                                    showModalBottomSheet(
-                                                        elevation: 5,
-                                                        context: context,
-                                                        builder: (context) {
-                                                          return Wrap(
-                                                              crossAxisAlignment:
-                                                                  WrapCrossAlignment
-                                                                      .center,
-                                                              children: [
-                                                                ListTile(
-                                                                    title: Text(
-                                                                      '이미지 선택',
-                                                                      textAlign:
-                                                                          TextAlign
-                                                                              .center,
-                                                                    ),
-                                                                    onTap:
-                                                                        () async {
-                                                                      var status = Platform.isAndroid
-                                                                          ? await Permission
-                                                                              .storage
-                                                                              .request()
-                                                                          : await Permission
-                                                                              .photos
-                                                                              .request();
-                                                                      if (status
-                                                                          .isGranted) {
-                                                                        getImageFromGallery();
-                                                                        Navigator.pop(
-                                                                            context);
-                                                                      } else {
-                                                                        showDialog(
-                                                                            context:
-                                                                                context,
-                                                                            builder: (BuildContext context) =>
-                                                                                CupertinoAlertDialog(title: Text('저장공간 접근권한'), content: Text('사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'), actions: <Widget>[
-                                                                                  CupertinoDialogAction(
-                                                                                    child: Text('거부'),
-                                                                                    onPressed: () => Navigator.of(context).pop(),
-                                                                                  ),
-                                                                                  CupertinoDialogAction(child: Text('허용'), onPressed: () => openAppSettings())
-                                                                                ]));
-                                                                      }
-                                                                    }),
-                                                                Divider(),
-                                                                ListTile(
-                                                                    title: Text(
-                                                                      '첨부파일 선택',
-                                                                      textAlign:
-                                                                          TextAlign
-                                                                              .center,
-                                                                    ),
-                                                                    onTap:
-                                                                        () async {
-                                                                      var status = Platform.isAndroid
-                                                                          ? await Permission
-                                                                              .storage
-                                                                              .request()
-                                                                          : await Permission
-                                                                              .photos
-                                                                              .request();
-                                                                      if (status
-                                                                          .isGranted) {
-                                                                        _pickDocument();
-                                                                        Navigator.pop(
-                                                                            context);
-                                                                      } else {
-                                                                        showDialog(
-                                                                            context:
-                                                                                context,
-                                                                            builder: (BuildContext context) =>
-                                                                                CupertinoAlertDialog(
-                                                                                  title: Text('저장공간 접근권한'),
-                                                                                  content: Text('사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
-                                                                                  actions: <Widget>[
-                                                                                    CupertinoDialogAction(
-                                                                                      child: Text('거부'),
-                                                                                      onPressed: () => Navigator.of(context).pop(),
-                                                                                    ),
-                                                                                    CupertinoDialogAction(
-                                                                                      child: Text('허용'),
-                                                                                      onPressed: () => openAppSettings(),
-                                                                                    ),
-                                                                                  ],
-                                                                                ));
-                                                                      }
-                                                                    }),
-                                                                Divider(),
-                                                                ListTile(
-                                                                    title: Text(
-                                                                      '취소',
-                                                                      textAlign:
-                                                                          TextAlign
-                                                                              .center,
-                                                                    ),
-                                                                    onTap: () {
-                                                                      Navigator.pop(
-                                                                          context);
-                                                                    })
-                                                              ]);
-                                                        });
-                                                  },
-                                                  child: Text('업로드',
+                                                mainAxisSize: MainAxisSize.max,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text('이미지 또는 첨부파일',
                                                       style: CustomStyles
-                                                          .blue16TextStyle()),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                          /*Visibility(
-                                              child: Container(
-                                                  margin: EdgeInsets.only(
-                                                      left: 15,
-                                                      right: 15,
-                                                      top: 15),
-                                                  width: MediaQuery.of(context)
-                                                      .size
-                                                      .width,
-                                                  height: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.625,
-                                                  decoration: BoxDecoration(
-                                                      color: CustomColors
-                                                          .colorBgGrey),
-                                                  child: (_profileImgFile ==
-                                                          null
-                                                      ? null
-                                                      : Image.file(
-                                                          _profileImgFile,
-                                                          fit: BoxFit.cover))),
-                                              visible: _profileImgFile == null
-                                                  ? false
-                                                  : true),*/
-                                          Visibility(
-                                              child: Container(
-                                                  margin: EdgeInsets.only(
-                                                      left: 15,
-                                                      right: 15,
-                                                      top: 15),
-                                                  width: MediaQuery.of(context)
-                                                      .size
-                                                      .width,
-                                                  decoration: BoxDecoration(
-                                                      color: CustomColors
-                                                          .colorWhite),
-                                                  child:
-                                                      (_profileImgFile == null
-                                                          ? null
-                                                          : Text(_profileImgFile
-                                                              .path))),
-                                              visible: _profileImgFile == null
-                                                  ? false
-                                                  : true),
-                                          Container(
+                                                          .dark16TextStyle()),
+                                                  GestureDetector(
+                                                      onTap: () async {
+                                                        showModalBottomSheet(
+                                                            elevation: 5,
+                                                            context: context,
+                                                            builder: (context) {
+                                                              return Wrap(
+                                                                  crossAxisAlignment:
+                                                                      WrapCrossAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    ListTile(
+                                                                        title: Text(
+                                                                            '이미지 선택',
+                                                                            textAlign: TextAlign
+                                                                                .center),
+                                                                        onTap:
+                                                                            () async {
+                                                                          var status = Platform.isAndroid
+                                                                              ? await Permission.storage.request()
+                                                                              : await Permission.photos.request();
+                                                                          if (status
+                                                                              .isGranted) {
+                                                                            getImageFromGallery();
+                                                                            Navigator.pop(context);
+                                                                          } else {
+                                                                            showDialog(
+                                                                                context: context,
+                                                                                builder: (BuildContext context) => CupertinoAlertDialog(title: Text('저장공간 접근권한'), content: Text('사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'), actions: <Widget>[
+                                                                                      CupertinoDialogAction(
+                                                                                        child: Text('거부'),
+                                                                                        onPressed: () => Navigator.of(context).pop(),
+                                                                                      ),
+                                                                                      CupertinoDialogAction(child: Text('허용'), onPressed: () => openAppSettings())
+                                                                                    ]));
+                                                                          }
+                                                                        }),
+                                                                    Divider(),
+                                                                    ListTile(
+                                                                        title: Text(
+                                                                            '첨부파일 선택',
+                                                                            textAlign: TextAlign
+                                                                                .center),
+                                                                        onTap:
+                                                                            () async {
+                                                                          var status = Platform.isAndroid
+                                                                              ? await Permission.storage.request()
+                                                                              : await Permission.photos.request();
+                                                                          if (status
+                                                                              .isGranted) {
+                                                                            _pickDocument();
+                                                                            Navigator.pop(context);
+                                                                          } else {
+                                                                            showDialog(
+                                                                                context: context,
+                                                                                builder: (BuildContext context) => CupertinoAlertDialog(title: Text('저장공간 접근권한'), content: Text('사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'), actions: <Widget>[
+                                                                                      CupertinoDialogAction(child: Text('거부'), onPressed: () => Navigator.of(context).pop()),
+                                                                                      CupertinoDialogAction(child: Text('허용'), onPressed: () => openAppSettings())
+                                                                                    ]));
+                                                                          }
+                                                                        }),
+                                                                    Divider(),
+                                                                    ListTile(
+                                                                        title:
+                                                                            Text(
+                                                                          '취소',
+                                                                          textAlign:
+                                                                              TextAlign.center,
+                                                                        ),
+                                                                        onTap:
+                                                                            () {
+                                                                          Navigator.pop(
+                                                                              context);
+                                                                        })
+                                                                  ]);
+                                                            });
+                                                      },
+                                                      child: Text('업로드',
+                                                          style: CustomStyles
+                                                              .blue16TextStyle()))
+                                                ])),
+                                        Visibility(
+                                            child: Container(
+                                                margin: EdgeInsets.only(
+                                                    left: 15,
+                                                    right: 15,
+                                                    top: 15),
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                decoration: BoxDecoration(
+                                                    color: CustomColors
+                                                        .colorWhite),
+                                                child: (_profileImgFile == null
+                                                    ? null
+                                                    : Text(
+                                                        _profileImgFile.path))),
+                                            visible: _profileImgFile == null
+                                                ? false
+                                                : true),
+                                        Container(
                                             margin: EdgeInsets.only(
                                                 top: 30, bottom: 30),
                                             child: Divider(
-                                              height: 0.1,
-                                              color: CustomColors
-                                                  .colorFontLightGrey,
-                                            ),
-                                          ),
-                                          Container(
-                                              padding: EdgeInsets.only(
-                                                  left: 15, right: 15),
-                                              alignment: Alignment.centerLeft,
-                                              child: Text('제작유형',
-                                                  style: CustomStyles
-                                                      .bold14TextStyle())),
-                                          Container(
-                                              margin: EdgeInsets.only(top: 5),
-                                              padding: EdgeInsets.only(
-                                                  left: 15, right: 15),
-                                              width: double.infinity,
-                                              child: DropdownButtonFormField(
+                                                height: 0.1,
+                                                color: CustomColors
+                                                    .colorFontLightGrey)),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            alignment: Alignment.centerLeft,
+                                            child: Text('제작유형',
+                                                style: CustomStyles
+                                                    .bold14TextStyle())),
+                                        Container(
+                                            margin: EdgeInsets.only(top: 5),
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            width: double.infinity,
+                                            child: DropdownButtonFormField(
                                                 value: _projectType,
                                                 onChanged: (String newValue) {
                                                   setState(() {
@@ -398,265 +338,258 @@ class _ProjectAdd extends State<ProjectAdd> with BaseUtilMixin {
                                                               .normal14TextStyle()));
                                                 }).toList(),
                                                 decoration: InputDecoration(
-                                                  contentPadding:
-                                                      EdgeInsets.only(
-                                                          left: 15,
-                                                          right: 15,
-                                                          top: 0,
-                                                          bottom: 0),
-                                                  border: OutlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                          color: CustomColors
-                                                              .colorFontGrey,
-                                                          width: 1.0),
-                                                      borderRadius: CustomStyles
-                                                          .circle7BorderRadius()),
-                                                  focusedBorder: OutlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                          color: CustomColors
-                                                              .colorFontGrey,
-                                                          width: 1.0),
-                                                      borderRadius: CustomStyles
-                                                          .circle7BorderRadius()),
-                                                ),
-                                              )),
-                                          Container(
-                                              margin: EdgeInsets.only(top: 15),
-                                              padding: EdgeInsets.only(
-                                                  left: 15, right: 15),
-                                              alignment: Alignment.centerLeft,
-                                              child: Text('장르',
-                                                  style: CustomStyles
-                                                      .bold14TextStyle())),
-                                          Container(
-                                              padding: EdgeInsets.only(
-                                                  left: 15, right: 15),
-                                              margin: EdgeInsets.only(top: 5),
-                                              child: CustomStyles
-                                                  .greyBorderRound7TextField(
-                                                      _txtFieldProjectGenre,
-                                                      '')),
-                                          Container(
-                                              margin: EdgeInsets.only(top: 15),
-                                              padding: EdgeInsets.only(
-                                                  left: 15, right: 15),
-                                              alignment: Alignment.centerLeft,
-                                              child: Text('작품소개',
-                                                  style: CustomStyles
-                                                      .bold14TextStyle())),
-                                          Container(
+                                                    contentPadding:
+                                                        EdgeInsets.only(
+                                                            left: 15,
+                                                            right: 15,
+                                                            top: 0,
+                                                            bottom: 0),
+                                                    border: OutlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                            color: CustomColors.colorFontGrey,
+                                                            width: 1.0),
+                                                        borderRadius: CustomStyles.circle7BorderRadius()),
+                                                    focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: CustomColors.colorFontGrey, width: 1.0), borderRadius: CustomStyles.circle7BorderRadius())))),
+                                        Container(
+                                            margin: EdgeInsets.only(top: 15),
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            alignment: Alignment.centerLeft,
+                                            child: Text('장르',
+                                                style: CustomStyles
+                                                    .bold14TextStyle())),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            margin: EdgeInsets.only(top: 5),
+                                            child: CustomStyles
+                                                .greyBorderRound7TextField(
+                                                    _txtFieldProjectGenre, '')),
+                                        Container(
+                                            margin: EdgeInsets.only(top: 15),
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            alignment: Alignment.centerLeft,
+                                            child: Text('작품소개',
+                                                style: CustomStyles
+                                                    .bold14TextStyle())),
+                                        Container(
                                             padding: EdgeInsets.only(
                                                 left: 15, right: 15),
                                             margin: EdgeInsets.only(top: 5),
                                             child: TextField(
-                                              controller:
-                                                  _txtFieldProjectIntoduce,
-                                              maxLines: 8,
-                                              decoration: InputDecoration(
-                                                isDense: true,
-                                                contentPadding:
-                                                    EdgeInsets.symmetric(
-                                                        vertical: 10,
-                                                        horizontal: 10),
-                                                hintText: "",
-                                                hintStyle: CustomStyles
-                                                    .light14TextStyle(),
-                                                border: OutlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                        color: CustomColors
-                                                            .colorFontLightGrey,
-                                                        width: 1.0),
-                                                    borderRadius: CustomStyles
-                                                        .circle7BorderRadius()),
-                                                focusedBorder: OutlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                        color: CustomColors
-                                                            .colorFontLightGrey,
-                                                        width: 1.0),
-                                                    borderRadius: CustomStyles
-                                                        .circle7BorderRadius()),
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                              margin: EdgeInsets.only(top: 30),
-                                              padding: EdgeInsets.only(
-                                                  left: 15, right: 15),
-                                              alignment: Alignment.centerLeft,
-                                              child: Text('일정안내',
-                                                  style: CustomStyles
-                                                      .dark16TextStyle())),
-                                          Container(
-                                              margin: EdgeInsets.only(top: 15),
-                                              padding: EdgeInsets.only(
-                                                  left: 15, right: 15),
-                                              alignment: Alignment.centerLeft,
-                                              child: Text('촬영기간',
-                                                  style: CustomStyles
-                                                      .bold14TextStyle())),
-                                          Container(
+                                                controller:
+                                                    _txtFieldProjectIntoduce,
+                                                maxLines: 8,
+                                                decoration: InputDecoration(
+                                                    isDense: true,
+                                                    contentPadding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 10,
+                                                            horizontal: 10),
+                                                    hintText: "",
+                                                    hintStyle: CustomStyles
+                                                        .light14TextStyle(),
+                                                    border: OutlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                            color: CustomColors
+                                                                .colorFontLightGrey,
+                                                            width: 1.0),
+                                                        borderRadius: CustomStyles
+                                                            .circle7BorderRadius()),
+                                                    focusedBorder: OutlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                            color: CustomColors
+                                                                .colorFontLightGrey,
+                                                            width: 1.0),
+                                                        borderRadius:
+                                                            CustomStyles.circle7BorderRadius())))),
+                                        Container(
+                                            margin: EdgeInsets.only(top: 30),
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            alignment: Alignment.centerLeft,
+                                            child: Text('일정안내',
+                                                style: CustomStyles
+                                                    .dark16TextStyle())),
+                                        Container(
+                                            margin: EdgeInsets.only(top: 15),
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            alignment: Alignment.centerLeft,
+                                            child: Text('촬영기간',
+                                                style: CustomStyles
+                                                    .bold14TextStyle())),
+                                        Container(
                                             padding: EdgeInsets.only(
                                                 left: 15, right: 15),
                                             margin: EdgeInsets.only(top: 5),
-                                            child: Row(
-                                              children: [
-                                                Expanded(
-                                                    child: GestureDetector(
-                                                  onTap: () {
-                                                    showDatePickerForDday(
-                                                        context, (date) {
-                                                      setState(() {
-                                                        var _birthY = date.year
-                                                            .toString();
-                                                        var _birthM = date.month
-                                                            .toString()
-                                                            .padLeft(2, '0');
-                                                        var _birthD = date.day
-                                                            .toString()
-                                                            .padLeft(2, '0');
+                                            child: Row(children: [
+                                              Expanded(
+                                                  child: GestureDetector(
+                                                      onTap: () {
+                                                        showDatePickerForDday(
+                                                            context, (date) {
+                                                          setState(() {
+                                                            var _birthY = date
+                                                                .year
+                                                                .toString();
+                                                            var _birthM = date
+                                                                .month
+                                                                .toString()
+                                                                .padLeft(
+                                                                    2, '0');
+                                                            var _birthD = date
+                                                                .day
+                                                                .toString()
+                                                                .padLeft(
+                                                                    2, '0');
 
-                                                        _startDate = _birthY +
-                                                            '-' +
-                                                            _birthM +
-                                                            '-' +
-                                                            _birthD;
-                                                      });
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                      height: 48,
-                                                      margin: EdgeInsets.only(
-                                                          right: 5),
-                                                      padding:
-                                                          EdgeInsets.all(5),
-                                                      decoration: BoxDecoration(
-                                                          borderRadius: CustomStyles
-                                                              .circle7BorderRadius(),
-                                                          border: Border.all(
-                                                              width: 1,
-                                                              color: CustomColors
-                                                                  .colorFontGrey)),
-                                                      child: Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Container(
-                                                            margin:
-                                                                EdgeInsets.only(
-                                                                    right: 10),
-                                                            child: Icon(
-                                                                Icons
-                                                                    .date_range,
-                                                                color: CustomColors
-                                                                    .colorFontTitle),
-                                                          ),
-                                                          Text(_startDate,
-                                                              style: CustomStyles
-                                                                  .bold14TextStyle()),
-                                                        ],
-                                                      )),
-                                                )),
-                                                Container(
+                                                            _startDate =
+                                                                _birthY +
+                                                                    '-' +
+                                                                    _birthM +
+                                                                    '-' +
+                                                                    _birthD;
+                                                          });
+                                                        });
+                                                      },
+                                                      child: Container(
+                                                          height: 48,
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  right: 5),
+                                                          padding:
+                                                              EdgeInsets.all(5),
+                                                          decoration: BoxDecoration(
+                                                              borderRadius:
+                                                                  CustomStyles
+                                                                      .circle7BorderRadius(),
+                                                              border: Border.all(
+                                                                  width: 1,
+                                                                  color: CustomColors
+                                                                      .colorFontGrey)),
+                                                          child: Row(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .max,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Container(
+                                                                    margin: EdgeInsets.only(
+                                                                        right:
+                                                                            10),
+                                                                    child: Icon(
+                                                                        Icons
+                                                                            .date_range,
+                                                                        color: CustomColors
+                                                                            .colorFontTitle)),
+                                                                Text(_startDate,
+                                                                    style: CustomStyles
+                                                                        .bold14TextStyle())
+                                                              ])))),
+                                              Container(
                                                   margin: EdgeInsets.only(
                                                       left: 10, right: 10),
                                                   child: Text('-',
                                                       style: CustomStyles
-                                                          .normal16TextStyle()),
-                                                ),
-                                                Expanded(
-                                                    child: GestureDetector(
-                                                  onTap: () {
-                                                    showDatePickerForDday(
-                                                        context, (date) {
-                                                      setState(() {
-                                                        var _birthY = date.year
-                                                            .toString();
-                                                        var _birthM = date.month
-                                                            .toString()
-                                                            .padLeft(2, '0');
-                                                        var _birthD = date.day
-                                                            .toString()
-                                                            .padLeft(2, '0');
+                                                          .normal16TextStyle())),
+                                              Expanded(
+                                                  child: GestureDetector(
+                                                      onTap: () {
+                                                        showDatePickerForDday(
+                                                            context, (date) {
+                                                          setState(() {
+                                                            var _birthY = date
+                                                                .year
+                                                                .toString();
+                                                            var _birthM = date
+                                                                .month
+                                                                .toString()
+                                                                .padLeft(
+                                                                    2, '0');
+                                                            var _birthD = date
+                                                                .day
+                                                                .toString()
+                                                                .padLeft(
+                                                                    2, '0');
 
-                                                        _endDate = _birthY +
-                                                            '-' +
-                                                            _birthM +
-                                                            '-' +
-                                                            _birthD;
-                                                      });
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                      height: 48,
-                                                      margin: EdgeInsets.only(
-                                                          right: 5),
-                                                      padding:
-                                                          EdgeInsets.all(5),
-                                                      decoration: BoxDecoration(
-                                                          borderRadius: CustomStyles
-                                                              .circle7BorderRadius(),
-                                                          border: Border.all(
-                                                              width: 1,
-                                                              color: CustomColors
-                                                                  .colorFontGrey)),
-                                                      child: Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Container(
-                                                            margin:
-                                                                EdgeInsets.only(
-                                                                    right: 10),
-                                                            child: Icon(
-                                                                Icons
-                                                                    .date_range,
-                                                                color: CustomColors
-                                                                    .colorFontTitle),
-                                                          ),
-                                                          Text(_endDate,
-                                                              style: CustomStyles
-                                                                  .bold14TextStyle()),
-                                                        ],
-                                                      )),
-                                                )),
-                                              ],
-                                            ),
-                                          ),
-                                          Container(
-                                              margin: EdgeInsets.only(top: 15),
-                                              padding: EdgeInsets.only(
-                                                  left: 15, right: 15),
-                                              alignment: Alignment.centerLeft,
-                                              child: Text('촬영장소',
-                                                  style: CustomStyles
-                                                      .bold14TextStyle())),
-                                          Container(
-                                              padding: EdgeInsets.only(
-                                                  left: 15, right: 15),
-                                              margin: EdgeInsets.only(top: 5),
-                                              child: CustomStyles
-                                                  .greyBorderRound7TextField(
-                                                      _txtFieldShootingPlace,
-                                                      '')),
-                                          Container(
-                                              margin: EdgeInsets.only(top: 15),
-                                              padding: EdgeInsets.only(
-                                                  left: 15, right: 15),
-                                              alignment: Alignment.centerLeft,
-                                              child: Text('작품 오픈 예정일',
-                                                  style: CustomStyles
-                                                      .bold14TextStyle())),
-                                          Container(
-                                              padding: EdgeInsets.only(
-                                                  left: 15, right: 15),
-                                              margin: EdgeInsets.only(top: 5),
-                                              child: GestureDetector(
+                                                            _endDate = _birthY +
+                                                                '-' +
+                                                                _birthM +
+                                                                '-' +
+                                                                _birthD;
+                                                          });
+                                                        });
+                                                      },
+                                                      child: Container(
+                                                          height: 48,
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  right: 5),
+                                                          padding:
+                                                              EdgeInsets.all(5),
+                                                          decoration: BoxDecoration(
+                                                              borderRadius:
+                                                                  CustomStyles
+                                                                      .circle7BorderRadius(),
+                                                              border: Border.all(
+                                                                  width: 1,
+                                                                  color: CustomColors
+                                                                      .colorFontGrey)),
+                                                          child: Row(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .max,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Container(
+                                                                    margin: EdgeInsets.only(
+                                                                        right:
+                                                                            10),
+                                                                    child: Icon(
+                                                                        Icons
+                                                                            .date_range,
+                                                                        color: CustomColors
+                                                                            .colorFontTitle)),
+                                                                Text(_endDate,
+                                                                    style: CustomStyles
+                                                                        .bold14TextStyle())
+                                                              ]))))
+                                            ])),
+                                        Container(
+                                            margin: EdgeInsets.only(top: 15),
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            alignment: Alignment.centerLeft,
+                                            child: Text('촬영장소',
+                                                style: CustomStyles
+                                                    .bold14TextStyle())),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            margin: EdgeInsets.only(top: 5),
+                                            child: CustomStyles
+                                                .greyBorderRound7TextField(
+                                                    _txtFieldShootingPlace,
+                                                    '')),
+                                        Container(
+                                            margin: EdgeInsets.only(top: 15),
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            alignment: Alignment.centerLeft,
+                                            child: Text('작품 오픈 예정일',
+                                                style: CustomStyles
+                                                    .bold14TextStyle())),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            margin: EdgeInsets.only(top: 5),
+                                            child: GestureDetector(
                                                 onTap: () {
                                                   showDatePickerForDday(context,
                                                       (date) {
@@ -691,56 +624,49 @@ class _ProjectAdd extends State<ProjectAdd> with BaseUtilMixin {
                                                             color: CustomColors
                                                                 .colorFontGrey)),
                                                     child: Row(
-                                                      mainAxisSize:
-                                                          MainAxisSize.max,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Container(
-                                                          margin:
-                                                              EdgeInsets.only(
-                                                                  right: 10),
-                                                          child: Icon(
-                                                              Icons.date_range,
-                                                              color: CustomColors
-                                                                  .colorFontTitle),
-                                                        ),
-                                                        Text(_openDate,
-                                                            style: CustomStyles
-                                                                .bold14TextStyle()),
-                                                      ],
-                                                    )),
-                                              )),
-                                        ])))),
-                        Container(
-                            width: double.infinity,
-                            height: 55,
-                            color: Colors.grey,
-                            child: Container(
-                                width: MediaQuery.of(context).size.width,
-                                height: 55,
-                                child: CustomStyles.blueBGSquareButtonStyle(
-                                    '프로젝트 추가', () {
-                                  if (checkValidate(context)) {
-                                    requestAddProjectApi(context);
-                                  }
-                                })))
-                      ],
-                    ),
-                  ),
-                  Visibility(
+                                                        mainAxisSize:
+                                                            MainAxisSize.max,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Container(
+                                                              margin: EdgeInsets
+                                                                  .only(
+                                                                      right:
+                                                                          10),
+                                                              child: Icon(
+                                                                  Icons
+                                                                      .date_range,
+                                                                  color: CustomColors
+                                                                      .colorFontTitle)),
+                                                          Text(_openDate,
+                                                              style: CustomStyles
+                                                                  .bold14TextStyle())
+                                                        ]))))
+                                      ])))),
+                      Container(
+                          width: double.infinity,
+                          height: 55,
+                          color: Colors.grey,
+                          child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: 55,
+                              child: CustomStyles.blueBGSquareButtonStyle(
+                                  '프로젝트 추가', () {
+                                if (checkValidate(context)) {
+                                  requestAddProjectApi(context);
+                                }
+                              })))
+                    ])),
+                Visibility(
                     child: Container(
                         color: Colors.black38,
                         alignment: Alignment.center,
                         child: CircularProgressIndicator()),
-                    visible: _isUpload,
-                  )
-                ],
-              );
-            },
-          )),
-    );
+                    visible: _isUpload)
+              ]);
+            })));
   }
 
   /*
@@ -820,13 +746,12 @@ class _ProjectAdd extends State<ProjectAdd> with BaseUtilMixin {
 
             if (_responseList.length > 0) {
               Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ProjectAddComplete(
-                        projectSeq: _responseList[0][APIConstants.seq],
-                        projectName: _responseList[0]
-                            [APIConstants.project_name])),
-              );
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ProjectAddComplete(
+                          projectSeq: _responseList[0][APIConstants.seq],
+                          projectName: _responseList[0]
+                              [APIConstants.project_name])));
             }
           } else {
             showSnackBar(context, APIConstants.error_msg_try_again);

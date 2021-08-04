@@ -4,6 +4,7 @@ import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/view/user/actor/JoinActorAdult.dart';
+import 'package:casting_call/src/view/user/actor/JoinActorChildParentAgree.dart';
 import 'package:casting_call/src/view/user/common/AuthWebView.dart';
 import 'package:casting_call/src/view/user/common/JoinSelectType.dart';
 import 'package:flutter/material.dart';
@@ -46,6 +47,9 @@ class _SelfAuth extends State<SelfAuth> with BaseUtilMixin {
   String _authGender;
   String _memberType;
 
+  String _title = '';
+  String _msg = '';
+
   @override
   void initState() {
     super.initState();
@@ -56,6 +60,15 @@ class _SelfAuth extends State<SelfAuth> with BaseUtilMixin {
     _authBirth = widget.authBirth;
     _authGender = widget.authGender;
     _memberType = widget.memberType;
+
+    if (_memberType == 'A') {
+      _title = "본인인증";
+      _msg =
+          '배우 회원은 오디션 지원 및 계약 시 실명과 연락처 정보가 필요합니다.\n\n따라서 배우회원가입을 하시려면 본인인증을 해주셔야 합니다.\n\n실명과 연락처 정보는 대면면접 일정안내 또는 계약서 작성 이외의 다른 용도로 사용되지 않습니다.';
+    } else {
+      _title = "법정대리인 본인인증";
+      _msg = '14세 미만 가입자는 법정대리인의 인증절차가 필요합니다. 법정대리인의 본인인증 절차를 진행해 주세요.';
+    }
 
     if (_authComplete == "TRUE") {
       showSnackBar(context, "본인인증이 완료되었습니다.");
@@ -110,7 +123,7 @@ class _SelfAuth extends State<SelfAuth> with BaseUtilMixin {
                                                 margin:
                                                     EdgeInsets.only(bottom: 30),
                                                 alignment: Alignment.center,
-                                                child: Text('본인인증',
+                                                child: Text(_title,
                                                     style: CustomStyles
                                                         .normal24TextStyle())),
                                             Visibility(
@@ -120,8 +133,7 @@ class _SelfAuth extends State<SelfAuth> with BaseUtilMixin {
                                                     margin: EdgeInsets.only(
                                                         bottom: 30),
                                                     alignment: Alignment.center,
-                                                    child: Text(
-                                                        '배우 회원은 오디션 지원 및 계약 시 실명과 연락처 정보가 필요합니다.\n\n따라서 배우회원가입을 하시려면 본인인증을 해주셔야 합니다.\n\n실명과 연락처 정보는 대면면접 일정안내 또는 계약서 작성 이외의 다른 용도로 사용되지 않습니다.',
+                                                    child: Text(_msg,
                                                         style: CustomStyles
                                                             .normal16TextStyle())),
                                                 visible: _authRes == ''
@@ -179,7 +191,8 @@ class _SelfAuth extends State<SelfAuth> with BaseUtilMixin {
                                       showSnackBar(
                                           context, APIConstants.use_mobile_app);
                                     } else {
-                                      replaceView(context, AuthWebView());
+                                      replaceView(context,
+                                          AuthWebView(memberType: _memberType));
                                     }
                                   })),
                               visible: _authRes == 'TRUE' ? false : true),
@@ -190,13 +203,20 @@ class _SelfAuth extends State<SelfAuth> with BaseUtilMixin {
                                   child:
                                       CustomStyles.lightGreyBGSquareButtonStyle(
                                           '배우 회원가입', () {
-                                    replaceView(
-                                        context,
-                                        JoinActorAdult(
-                                            authName: _authName,
-                                            authPhone: _authPhone,
-                                            authBirth: _authBirth,
-                                            authGender: _authGender));
+                                    if (_memberType == 'A') {
+                                      replaceView(
+                                          context,
+                                          JoinActorAdult(
+                                              authName: _authName,
+                                              authPhone: _authPhone,
+                                              authBirth: _authBirth,
+                                              authGender: _authGender));
+                                    } else {
+                                      replaceView(
+                                          context, JoinActorChildParentAgree(
+
+                                      ));
+                                    }
                                   })),
                               visible: _authRes == 'TRUE' ? true : false)
                         ])),

@@ -1,18 +1,33 @@
+import 'dart:io';
+
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/view/user/actor/JoinActorSelectType.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_document_picker/flutter_document_picker.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'JoinActorChild.dart';
-import 'JoinActorChildParentAuth.dart';
 
 /*
 * 14세 미만 배우 회원가입 시 보호자 인증하기
 * */
 class JoinActorChildParentAgree extends StatefulWidget {
+  final String authName;
+  final String authPhone;
+  final String authBirth;
+  final String authGender;
+
+  const JoinActorChildParentAgree(
+      {Key key, this.authName, this.authPhone, this.authBirth, this.authGender})
+      : super(key: key);
+
   @override
   _JoinActorChildParentAgree createState() => _JoinActorChildParentAgree();
 }
@@ -21,20 +36,123 @@ class _JoinActorChildParentAgree extends State<JoinActorChildParentAgree>
     with BaseUtilMixin {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
+  String _authName;
+  String _authPhone;
+  String _authBirth;
+  String _authGender;
+
   final _txtFieldName = TextEditingController();
   final _txtFieldPhone = TextEditingController();
-  final _txtFieldBankAccount = TextEditingController();
   final _txtFieldEmail = TextEditingController();
 
   int _userGender = 0;
-  String _bankVal = '은행선택';
   int _agreeTerms = 0;
   int _agreePrivacyPolicy = 0;
   String _birthDate = '2000-01-01';
 
+  File _scriptFile;
+  final picker = ImagePicker();
+
   @override
   void initState() {
     super.initState();
+
+    _authName = widget.authName;
+    _authPhone = widget.authPhone;
+    _authBirth = widget.authBirth;
+    _authGender = widget.authGender;
+
+    if (_authName != null) {
+      _txtFieldName.text = _authName;
+    }
+
+    if (_authPhone != null) {
+      _txtFieldPhone.text = _authPhone;
+    }
+
+    if (_authPhone != null) {
+      _txtFieldPhone.text = _authPhone;
+    }
+
+    if (_authBirth != null) {
+      var now = DateTime.parse(_authBirth);
+      var formatter = new DateFormat('yyyy-MM-dd');
+
+      _birthDate = formatter.format(now);
+    }
+
+    if (_authGender != null) {
+      if (_authGender == '0') {
+        _userGender = 0;
+      } else {
+        _userGender = 1;
+      }
+    }
+  }
+
+  // 갤러리에서 이미지 가져오기
+  Future getImageFromGallery() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      File file = File(pickedFile.path);
+
+      final size = file.readAsBytesSync().lengthInBytes;
+      final kb = size / 1024;
+      final mb = kb / 1024;
+
+      if (mb > 100) {
+        showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
+      } else {
+        setState(() {
+          _scriptFile = file;
+        });
+      }
+    } else {
+      showSnackBar(context, "선택된 이미지가 없습니다.");
+    }
+  }
+
+  _pickDocument() async {
+    String result;
+    try {
+      FlutterDocumentPickerParams params = FlutterDocumentPickerParams(
+        allowedFileExtensions: ['doc', 'pdf', 'docx'],
+        allowedUtiTypes: [
+          'com.adobe.pdf',
+          'com.microsoft.word.doc',
+          'org.openxmlformats.wordprocessingml.document'
+        ],
+        allowedMimeTypes: [
+          'application/pdf',
+          'application/msword',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        ],
+        invalidFileNameSymbols: ['/'],
+      );
+
+      result = await FlutterDocumentPicker.openDocument(params: params);
+
+      if (result != null) {
+        File file = File(result);
+
+        final size = file.readAsBytesSync().lengthInBytes;
+        final kb = size / 1024;
+        final mb = kb / 1024;
+
+        if (mb > 100) {
+          showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
+        } else {
+          setState(() {
+            _scriptFile = file;
+          });
+        }
+      } else {
+        showSnackBar(context, "선택된 파일이 없습니다.");
+      }
+    } catch (e) {
+      showSnackBar(context, APIConstants.error_msg_try_again);
+    } finally {}
   }
 
   /*
@@ -73,16 +191,174 @@ class _JoinActorChildParentAgree extends State<JoinActorChildParentAgree>
                                             style: CustomStyles
                                                 .normal24TextStyle())),
                                     Container(
-                                        height: 50,
+                                        padding: EdgeInsets.only(
+                                            left: 30, right: 30),
+                                        alignment: Alignment.centerLeft,
+                                        child: RichText(
+                                            text: TextSpan(
+                                                style: CustomStyles
+                                                    .normal14TextStyle(),
+                                                children: <TextSpan>[
+                                              TextSpan(text: '보호자 인증서류 제출'),
+                                              TextSpan(
+                                                  style: TextStyle(
+                                                      color: CustomColors
+                                                          .colorRed),
+                                                  text: '*')
+                                            ]))),
+                                    Container(
                                         padding: EdgeInsets.only(
                                             left: 30, right: 30),
                                         width: double.infinity,
-                                        child: CustomStyles
-                                            .greyBorderRound7ButtonStyle(
-                                                '보호자 인증하기', () {
-                                          addView(context,
-                                              JoinActorChildParentAuth());
-                                        })),
+                                        child: Text(
+                                            '14세 미만 배우회원가입은 제출하신 보호자 인증서류 검토를 위해 최대 1-2일이 소요될 수 있습니다.\n제출가능한 보호자 인증서류의 종류는 법적대리인의 주민등록등본, 건강보험증, 가족관계증명서입니다. ',
+                                            textAlign: TextAlign.start,
+                                            style: CustomStyles
+                                                .normal14TextStyle())),
+                                    Container(
+                                        margin: EdgeInsets.only(
+                                            top: 10, left: 30, right: 30),
+                                        padding: EdgeInsets.only(
+                                            left: 15,
+                                            right: 15,
+                                            top: 12,
+                                            bottom: 12),
+                                        decoration: BoxDecoration(
+                                          borderRadius: CustomStyles
+                                              .circle7BorderRadius(),
+                                          color: CustomColors.colorBgGrey,
+                                        ),
+                                        child: Row(
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text('첨부파일 또는 이미지',
+                                                  style: CustomStyles
+                                                      .dark16TextStyle()),
+                                              GestureDetector(
+                                                  onTap: () async {
+                                                    showModalBottomSheet(
+                                                        elevation: 5,
+                                                        context: context,
+                                                        builder: (context) {
+                                                          return Wrap(
+                                                              crossAxisAlignment:
+                                                                  WrapCrossAlignment
+                                                                      .center,
+                                                              children: [
+                                                                ListTile(
+                                                                    title: Text(
+                                                                      '이미지 선택',
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .center,
+                                                                    ),
+                                                                    onTap:
+                                                                        () async {
+                                                                      var status = Platform.isAndroid
+                                                                          ? await Permission
+                                                                              .storage
+                                                                              .request()
+                                                                          : await Permission
+                                                                              .photos
+                                                                              .request();
+                                                                      if (status
+                                                                          .isGranted) {
+                                                                        getImageFromGallery();
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                      } else {
+                                                                        showDialog(
+                                                                            context:
+                                                                                context,
+                                                                            builder: (BuildContext context) =>
+                                                                                CupertinoAlertDialog(title: Text('저장공간 접근권한'), content: Text('사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'), actions: <Widget>[
+                                                                                  CupertinoDialogAction(
+                                                                                    child: Text('거부'),
+                                                                                    onPressed: () => Navigator.of(context).pop(),
+                                                                                  ),
+                                                                                  CupertinoDialogAction(child: Text('허용'), onPressed: () => openAppSettings())
+                                                                                ]));
+                                                                      }
+                                                                    }),
+                                                                Divider(),
+                                                                ListTile(
+                                                                    title: Text(
+                                                                      '파일 선택',
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .center,
+                                                                    ),
+                                                                    onTap:
+                                                                        () async {
+                                                                      var status = Platform.isAndroid
+                                                                          ? await Permission
+                                                                              .storage
+                                                                              .request()
+                                                                          : await Permission
+                                                                              .photos
+                                                                              .request();
+                                                                      if (status
+                                                                          .isGranted) {
+                                                                        _pickDocument();
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                      } else {
+                                                                        showDialog(
+                                                                            context:
+                                                                                context,
+                                                                            builder: (BuildContext context) =>
+                                                                                CupertinoAlertDialog(
+                                                                                  title: Text('저장공간 접근권한'),
+                                                                                  content: Text('사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
+                                                                                  actions: <Widget>[
+                                                                                    CupertinoDialogAction(
+                                                                                      child: Text('거부'),
+                                                                                      onPressed: () => Navigator.of(context).pop(),
+                                                                                    ),
+                                                                                    CupertinoDialogAction(
+                                                                                      child: Text('허용'),
+                                                                                      onPressed: () => openAppSettings(),
+                                                                                    ),
+                                                                                  ],
+                                                                                ));
+                                                                      }
+                                                                    }),
+                                                                Divider(),
+                                                                ListTile(
+                                                                    title: Text(
+                                                                      '취소',
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .center,
+                                                                    ),
+                                                                    onTap: () {
+                                                                      Navigator.pop(
+                                                                          context);
+                                                                    })
+                                                              ]);
+                                                        });
+                                                  },
+                                                  child: Text('업로드',
+                                                      style: CustomStyles
+                                                          .blue16TextStyle()))
+                                            ])),
+                                    Visibility(
+                                        child: Container(
+                                            padding: EdgeInsets.only(
+                                                left: 30, right: 30),
+                                            margin: EdgeInsets.only(top: 15),
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            decoration: BoxDecoration(
+                                                color: CustomColors.colorWhite),
+                                            child: (_scriptFile == null
+                                                ? null
+                                                : Text(_scriptFile.path))),
+                                        visible:
+                                            _scriptFile == null ? false : true),
                                     Container(
                                         margin: EdgeInsets.only(top: 30),
                                         padding: EdgeInsets.only(
@@ -105,9 +381,10 @@ class _JoinActorChildParentAgree extends State<JoinActorChildParentAgree>
                                             left: 30, right: 30),
                                         margin: EdgeInsets.only(top: 5),
                                         child: CustomStyles
-                                            .greyBorderRound7TextField(
+                                            .greyBorderRound7TextFieldWithDisableOpt(
                                                 _txtFieldName,
-                                                '반드시 본명을 입력해 주세요.')),
+                                                '반드시 본명을 입력해 주세요.',
+                                                false)),
                                     Container(
                                         margin: EdgeInsets.only(top: 15),
                                         padding: EdgeInsets.only(
@@ -269,96 +546,12 @@ class _JoinActorChildParentAgree extends State<JoinActorChildParentAgree>
                                             left: 30, right: 30),
                                         margin: EdgeInsets.only(top: 5),
                                         child: CustomStyles
-                                            .greyBorderRound7TextFieldWithOption(
+                                            .greyBorderRound7TextFieldWithDisableOpt(
                                                 _txtFieldPhone,
-                                                TextInputType.number,
-                                                '숫자로만 입력해 주세요.')),
+                                                '숫자로만 입력해 주세요.',
+                                                false)),
                                     Container(
-                                        margin: EdgeInsets.only(
-                                            top: 30, bottom: 30),
-                                        child: Divider(
-                                            height: 0.1,
-                                            color: CustomColors
-                                                .colorFontLightGrey)),
-                                    Container(
-                                        padding: EdgeInsets.only(
-                                            left: 30, right: 30),
-                                        alignment: Alignment.centerLeft,
-                                        child: Text('은행 계좌',
-                                            style: CustomStyles
-                                                .normal14TextStyle())),
-                                    Container(
-                                        margin: EdgeInsets.only(top: 5),
-                                        padding: EdgeInsets.only(
-                                            left: 30, right: 30),
-                                        width: double.infinity,
-                                        child: DropdownButtonFormField(
-                                            value: _bankVal,
-                                            onChanged: (String newValue) {
-                                              setState(() {
-                                                _bankVal = newValue;
-                                              });
-                                            },
-                                            items: <String>[
-                                              '은행선택',
-                                              '국민',
-                                              '기업',
-                                              '농협'
-                                            ].map<DropdownMenuItem<String>>(
-                                                (String value) {
-                                              return DropdownMenuItem<String>(
-                                                value: value,
-                                                child: Text(value,
-                                                    style: CustomStyles
-                                                        .normal14TextStyle()),
-                                              );
-                                            }).toList(),
-                                            decoration: InputDecoration(
-                                                border: OutlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                        color: CustomColors
-                                                            .colorFontLightGrey,
-                                                        width: 1.0),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            7.0)),
-                                                contentPadding:
-                                                    EdgeInsets.symmetric(vertical: 5, horizontal: 10)))),
-                                    Container(
-                                        margin: EdgeInsets.only(top: 5),
-                                        padding: EdgeInsets.only(
-                                            left: 30, right: 30),
-                                        width: double.infinity,
-                                        child: Row(children: [
-                                          Expanded(
-                                              flex: 7,
-                                              child: Container(
-                                                  child: CustomStyles
-                                                      .greyBorderRound7TextFieldWithOption(
-                                                          _txtFieldBankAccount,
-                                                          TextInputType.number,
-                                                          '계좌번호 입력'))),
-                                          Expanded(
-                                              flex: 0,
-                                              child: Container(
-                                                  height: 48,
-                                                  margin:
-                                                      EdgeInsets.only(left: 5),
-                                                  child: CustomStyles
-                                                      .greyBGRound7ButtonStyle(
-                                                          '계좌인증', () {
-                                                    // 인증번호 받기 버튼 클릭
-                                                  })))
-                                        ])),
-                                    Container(
-                                        margin: EdgeInsets.only(
-                                            top: 30, bottom: 30),
-                                        child: Divider(
-                                          height: 0.1,
-                                          color:
-                                              CustomColors.colorFontLightGrey,
-                                        )),
-                                    Container(
+                                        margin: EdgeInsets.only(top: 15),
                                         padding: EdgeInsets.only(
                                             left: 30, right: 30),
                                         alignment: Alignment.centerLeft,

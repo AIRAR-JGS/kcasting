@@ -54,8 +54,17 @@ class _JoinActorSelectType extends State<JoinActorSelectType>
                                   context: context,
                                   builder: (BuildContext context) =>
                                       DialogParentAuth(onClickedAgree: () {
-                                        replaceView(context,
-                                            JoinActorChildParentAgree());
+                                        /*replaceView(context,
+                                            JoinActorChildParentAgree());*/
+                                        replaceView(
+                                            context,
+                                            SelfAuth(
+                                                authRes: '',
+                                                authName: '',
+                                                authPhone: '',
+                                                authBirth: '',
+                                                authGender: '',
+                                                memberType: 'C'));
                                       }));
                             },
                             child: Container(
@@ -82,7 +91,7 @@ class _JoinActorSelectType extends State<JoinActorSelectType>
                                         authPhone: '',
                                         authBirth: '',
                                         authGender: '',
-                                        memberType: ''));
+                                        memberType: 'A'));
                               },
                               child: Container(
                                   margin: EdgeInsets.only(top: 20),

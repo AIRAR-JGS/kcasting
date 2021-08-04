@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomStyles.dart';
@@ -9,6 +8,10 @@ import 'package:flutter/material.dart';
 import 'package:webview_flutter_plus/webview_flutter_plus.dart';
 
 class AuthWebView extends StatefulWidget {
+  final String memberType;
+
+  const AuthWebView({Key key, this.memberType}) : super(key: key);
+
   @override
   _AuthWebView createState() => _AuthWebView();
 }
@@ -16,45 +19,23 @@ class AuthWebView extends StatefulWidget {
 class _AuthWebView extends State<AuthWebView> with BaseUtilMixin {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
-  WebViewPlusController _controller;
+  String _memberType;
 
-  //bool isWeb;
   String selectedUrl =
       'https://k-casting.com/nice/checkplusSafe/checkplus_main.php';
-
+  WebViewPlusController _controller;
   Set<JavascriptChannel> jsChannels;
 
   @override
   Future<void> initState() {
     super.initState();
 
-    /*try {
-      if (Platform.isAndroid || Platform.isIOS) {
-        isWeb = false;
-      } else {
-        isWeb = true;
-      }
-    } catch(e) {
-      isWeb = true;
-    }*/
+    _memberType = widget.memberType;
 
-    /*if(!isWeb) {
-      jsChannels = [
-        JavascriptChannel(
-            name: 'KCastingAuth',
-            onMessageReceived: (JavascriptMessage message) {
-
-              returnToJoinPage(message.message);
-            }),
-        JavascriptChannel(
-            name: 'alert', onMessageReceived: (JavascriptMessage message) {})
-      ].toSet();
-    }*/
     jsChannels = [
       JavascriptChannel(
           name: 'KCastingAuth',
           onMessageReceived: (JavascriptMessage message) {
-
             returnToJoinPage(message.message);
           }),
       JavascriptChannel(
@@ -79,7 +60,7 @@ class _AuthWebView extends State<AuthWebView> with BaseUtilMixin {
             authPhone: authPhone,
             authBirth: authBirth,
             authGender: authGender,
-            memberType: 'A'));
+            memberType: _memberType));
   }
 
   @override
@@ -112,8 +93,7 @@ class _AuthWebView extends State<AuthWebView> with BaseUtilMixin {
                       onWebViewCreated: (webViewController) {
                         this._controller = webViewController;
                       },
-                      onProgress: (int progress) {
-                      },
+                      onProgress: (int progress) {},
                       navigationDelegate: (NavigationRequest request) {
                         if (request.url
                             .startsWith('https://itunes.apple.com')) {
@@ -124,37 +104,9 @@ class _AuthWebView extends State<AuthWebView> with BaseUtilMixin {
                         }
                         return NavigationDecision.navigate;
                       },
-                      onPageStarted: (String url) {
-                      },
-                      onPageFinished: (String url) {
-                      },
+                      onPageStarted: (String url) {},
+                      onPageFinished: (String url) {},
                       gestureNavigationEnabled: true);
-                  /*return (isWeb? launchInBrowser(selectedUrl) : WebViewPlus(
-                      initialUrl: selectedUrl,
-                      javascriptMode: JavascriptMode.unrestricted,
-                      javascriptChannels: jsChannels,
-                      debuggingEnabled: true,
-                      allowsInlineMediaPlayback: true,
-                      onWebViewCreated: (webViewController) {
-                        this._controller = webViewController;
-                      },
-                      onProgress: (int progress) {
-                      },
-                      navigationDelegate: (NavigationRequest request) {
-                        if (request.url
-                            .startsWith('https://itunes.apple.com')) {
-                          return NavigationDecision.prevent;
-                        }
-                        if (request.url.startsWith('niceipin2')) {
-                          return NavigationDecision.prevent;
-                        }
-                        return NavigationDecision.navigate;
-                      },
-                      onPageStarted: (String url) {
-                      },
-                      onPageFinished: (String url) {
-                      },
-                      gestureNavigationEnabled: true));*/
                 }))));
   }
 }

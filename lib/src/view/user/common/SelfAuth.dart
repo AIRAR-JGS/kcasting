@@ -214,7 +214,10 @@ class _SelfAuth extends State<SelfAuth> with BaseUtilMixin {
                                     } else {
                                       replaceView(
                                           context, JoinActorChildParentAgree(
-
+                                          authName: _authName,
+                                          authPhone: _authPhone,
+                                          authBirth: _authBirth,
+                                          authGender: _authGender
                                       ));
                                     }
                                   })),

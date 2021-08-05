@@ -34,6 +34,7 @@ class APIConstants {
   
   // 배우 회원
   static const String INS_ACT_JOIN = "INS_ACT_JOIN";                              // 배우 회원가입
+  static const String INS_ACT_CHILDJOIN = "INS_ACT_CHILDJOIN";                    // 배우 14세 미만 회원가입
   static const String SEL_ACT_INFO = "SEL_ACT_INFO";                              // 배우 단일 조회
   static const String SEL_ACT_LIST = "SEL_ACT_LIST";                              // 배우 목록 조회
   static const String UPD_ACT_INFO = "UPD_ACT_INFO";                              // 배우 개인정보 수정
@@ -160,12 +161,16 @@ class APIConstants {
   static const String server_error_not_valid_pwd = "It not a valid password";
   static const String server_error_not_FirstAuditionTarget = "No one passed First Audition.";
   static const String server_error_not_SecondAuditionTarget = "check table SecondAuditionTarget result_type.";
+  static const String server_error_msg_not_child = "This actor is 14 years old or older.";
+  static const String server_error_msg_unauthorized = "This actor is under the age of 14 and unauthorized.";
   static const String error_msg_try_again = " 다시 시도해 주세요.";
   static const String error_msg_server_not_response = "서버가 응답하지 않습니다. 다시 시도해 주세요.";
   static const String error_msg_join_fail = "회원가입에 실패하였습니다. 다시 시도해 주세요.";
   static const String error_msg_join_already_exist = "이미 존재하는 아이디입니다.";
   static const String error_msg_login_not_valid_id = "존재하지 않는 아이디입니다.";
   static const String error_msg_login_not_valid_pwd = "비밀번호가 올바르지 않습니다.";
+  static const String error_msg_not_child = "14세 미만이 아닌 경우, 14세 이상 회원가입 절차를 진행해 주세요.";
+  static const String error_msg_unauthorized = "보호자 인증서류 검토 중입니다. 회원가입이 승인되기까지 최대 1~2이 소요됩니다.";
   static const String use_mobile_app = "모바일 앱에서만 사용 가능한 기능입니다.";
 
   // 공통코드 관련
@@ -346,6 +351,9 @@ class APIConstants {
   static const String actor_video_url_thumb = "actor_video_url_thumb";
   static const String actor_age = "actor_age";
   static const String isActorCastringScrap = "isActorCastringScrap";
+  static const String guardian_name = "guardian_name";
+  static const String guardian_phone = "guardian_phone";
+  static const String guardian_file = "guardian_file";
 
   // 제작사 회원 관련
   static const String table_production_casting = "ProductionCasting";

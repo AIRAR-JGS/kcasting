@@ -515,8 +515,34 @@ class _JoinActorChildParentAgree extends State<JoinActorChildParentAgree>
                       width: double.infinity,
                       color: Colors.grey,
                       child: CustomStyles.lightGreyBGSquareButtonStyle(
-                          '자녀 회원가입', () {
-                        replaceView(context, JoinActorChild());
+                          '자녀 회원가입', () async {
+                        // 서류 첨부
+                        if (_scriptFile == null) {
+                          showSnackBar(context, '보호자 인증서류를 첨부해 주세요.');
+                          return false;
+                        }
+
+                        if (_agreeTerms == 0) {
+                          showSnackBar(context, '이용약관에 동의해 주세요.');
+                          return false;
+                        }
+
+                        if (_agreePrivacyPolicy == 0) {
+                          showSnackBar(context, '개인정보 수집 이용에 동의해 주세요.');
+                          return false;
+                        }
+
+                        Map<String, dynamic> targetData = new Map();
+                        targetData[APIConstants.guardian_name] =
+                            _txtFieldName.text;
+                        targetData[APIConstants.guardian_phone] =
+                            _txtFieldPhone.text;
+
+                        replaceView(
+                            context,
+                            JoinActorChild(
+                                targetData: targetData,
+                                scriptFile: _scriptFile));
                       }))
                 ])))));
   }

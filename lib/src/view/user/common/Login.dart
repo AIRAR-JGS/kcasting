@@ -264,7 +264,7 @@ class _Login extends State<Login> with BaseUtilMixin {
                   APIConstants.seq, KCastingAppData().myInfo[APIConstants.seq]);
             }
 
-            switch(memberType) {
+            switch (memberType) {
               case APIConstants.member_type_actor:
                 requestActorProfileApi(context);
                 break;
@@ -275,7 +275,6 @@ class _Login extends State<Login> with BaseUtilMixin {
                 replaceView(context, Home());
                 break;
             }
-
           } else {
             switch (value[APIConstants.resultMsg]) {
               // 존재하지 않는 아이디입니다.
@@ -287,6 +286,10 @@ class _Login extends State<Login> with BaseUtilMixin {
               case APIConstants.server_error_not_valid_pwd:
                 showSnackBar(
                     context, APIConstants.error_msg_login_not_valid_pwd);
+                break;
+              // 미인증 회원
+              case APIConstants.server_error_msg_unauthorized:
+                showSnackBar(context, APIConstants.error_msg_unauthorized);
                 break;
               default:
                 showSnackBar(context, APIConstants.error_msg_try_again);

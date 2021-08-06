@@ -333,6 +333,16 @@ class _OfferedAuditionList extends State<OfferedAuditionList>
     ));
   }
 
+  Future<void> _refreshPage() async {
+
+    setState(() {
+      _total = 0;
+      _scoutList = [];
+
+      requestMyApplyListApi(context);
+    });
+  }
+
   /*
   * 메인 위젯
   * */
@@ -348,66 +358,69 @@ class _OfferedAuditionList extends State<OfferedAuditionList>
             body: Stack(
               children: [
                 Container(
-                  child: SingleChildScrollView(
-                    controller: _scrollController,
-                    physics: AlwaysScrollableScrollPhysics(),
-                    key: ObjectKey(_scoutList.length > 0 ? _scoutList[0] : ""),
-                    child: Container(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            margin: EdgeInsets.only(top: 30.0, bottom: 10),
-                            padding: EdgeInsets.only(left: 16, right: 16),
-                            child: Text('받은 제안',
-                                style: CustomStyles.normal24TextStyle()),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width * 0.7,
-                            color: CustomColors.colorWhite,
-                            child: TabBar(
-                              indicatorSize: TabBarIndicatorSize.label,
-                              controller: _tabController,
-                              indicatorPadding: EdgeInsets.zero,
-                              labelStyle: CustomStyles.bold14TextStyle(),
-                              unselectedLabelStyle:
-                                  CustomStyles.normal14TextStyle(),
-                              tabs: [
-                                Tab(text: '전체'),
-                                Tab(text: '수락'),
-                                Tab(text: '거절'),
-                                Tab(text: '대기')
-                              ],
+                  child: RefreshIndicator(
+                    onRefresh: _refreshPage,
+                    child: SingleChildScrollView(
+                      controller: _scrollController,
+                      physics: AlwaysScrollableScrollPhysics(),
+                      key: ObjectKey(_scoutList.length > 0 ? _scoutList[0] : ""),
+                      child: Container(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              margin: EdgeInsets.only(top: 30.0, bottom: 10),
+                              padding: EdgeInsets.only(left: 16, right: 16),
+                              child: Text('받은 제안',
+                                  style: CustomStyles.normal24TextStyle()),
                             ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(top: 10),
-                            child: Divider(
-                              height: 0.1,
-                              color: CustomColors.colorFontLightGrey,
-                            ),
-                          ),
-                          Expanded(
-                            flex: 0,
-                            child: [
-                              tabItem(),
-                              tabItem(),
-                              tabItem(),
-                              tabItem()
-                            ][_tabIndex],
-                          ),
-                          Visibility(
-                              child: Container(
-                                alignment: Alignment.center,
-                                margin: EdgeInsets.only(top: 50),
-                                child: Text(
-                                  '목록이 없습니다.',
-                                  style: CustomStyles.normal16TextStyle(),
-                                  textAlign: TextAlign.center,
-                                ),
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.7,
+                              color: CustomColors.colorWhite,
+                              child: TabBar(
+                                indicatorSize: TabBarIndicatorSize.label,
+                                controller: _tabController,
+                                indicatorPadding: EdgeInsets.zero,
+                                labelStyle: CustomStyles.bold14TextStyle(),
+                                unselectedLabelStyle:
+                                CustomStyles.normal14TextStyle(),
+                                tabs: [
+                                  Tab(text: '전체'),
+                                  Tab(text: '수락'),
+                                  Tab(text: '거절'),
+                                  Tab(text: '대기')
+                                ],
                               ),
-                              visible: _scoutList.length > 0 ? false : true),
-                        ],
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(top: 10),
+                              child: Divider(
+                                height: 0.1,
+                                color: CustomColors.colorFontLightGrey,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 0,
+                              child: [
+                                tabItem(),
+                                tabItem(),
+                                tabItem(),
+                                tabItem()
+                              ][_tabIndex],
+                            ),
+                            Visibility(
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  margin: EdgeInsets.only(top: 50),
+                                  child: Text(
+                                    '목록이 없습니다.',
+                                    style: CustomStyles.normal16TextStyle(),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                visible: _scoutList.length > 0 ? false : true),
+                          ],
+                        ),
                       ),
                     ),
                   ),

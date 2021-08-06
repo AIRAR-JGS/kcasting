@@ -68,6 +68,16 @@ class _BookmarkedActorList extends State<BookmarkedActorList>
     super.dispose();
   }
 
+  Future<void> _refreshPage() async {
+
+    setState(() {
+      _total = 0;
+
+      _actorList = [];
+      requestActorListApi(context);
+    });
+  }
+
   /*
   * 배우목록조회 api 호출
   * */
@@ -135,58 +145,64 @@ class _BookmarkedActorList extends State<BookmarkedActorList>
             body: Stack(
               children: [
                 Container(
-                    child: SingleChildScrollView(
-                        child: Column(
-                  children: [
-                    Container(
-                        margin: EdgeInsets.only(top: 15),
-                        padding: EdgeInsets.all(15),
-                        alignment: Alignment.topLeft,
-                        child: Text('마이 스크랩',
-                            style: CustomStyles.normal24TextStyle())),
-                    Container(
-                        padding:
-                            EdgeInsets.only(left: 15, right: 15, bottom: 15),
-                        alignment: Alignment.topLeft,
-                        child: RichText(
-                            text: new TextSpan(
-                                style: CustomStyles.dark16TextStyle(),
-                                children: <TextSpan>[
-                              new TextSpan(text: '내 스크랩 '),
-                              new TextSpan(
-                                  text: _total.toString(),
-                                  style: CustomStyles.red16TextStyle()),
-                              new TextSpan(text: '개')
-                            ]))),
-                    _actorList.length > 0
-                        ? Wrap(children: [
-                            GridView.count(
-                                padding: EdgeInsets.only(
-                                    left: 16, right: 16, bottom: 50),
-                                physics: NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                crossAxisCount: 2,
-                                controller: _scrollController,
-                                crossAxisSpacing: 10,
-                                mainAxisSpacing: 5,
-                                childAspectRatio: (0.76),
-                                children:
+                    child: RefreshIndicator(
+                      onRefresh: _refreshPage,
+                      child: SingleChildScrollView(
+                          controller: _scrollController,
+                          physics: AlwaysScrollableScrollPhysics(),
+                          key: ObjectKey(_actorList.length > 0 ? _actorList[0] : ""),
+                          child: Column(
+                            children: [
+                              Container(
+                                  margin: EdgeInsets.only(top: 15),
+                                  padding: EdgeInsets.all(15),
+                                  alignment: Alignment.topLeft,
+                                  child: Text('마이 스크랩',
+                                      style: CustomStyles.normal24TextStyle())),
+                              Container(
+                                  padding:
+                                  EdgeInsets.only(left: 15, right: 15, bottom: 15),
+                                  alignment: Alignment.topLeft,
+                                  child: RichText(
+                                      text: new TextSpan(
+                                          style: CustomStyles.dark16TextStyle(),
+                                          children: <TextSpan>[
+                                            new TextSpan(text: '내 스크랩 '),
+                                            new TextSpan(
+                                                text: _total.toString(),
+                                                style: CustomStyles.red16TextStyle()),
+                                            new TextSpan(text: '개')
+                                          ]))),
+                              _actorList.length > 0
+                                  ? Wrap(children: [
+                                GridView.count(
+                                    padding: EdgeInsets.only(
+                                        left: 16, right: 16, bottom: 50),
+                                    primary: false,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    crossAxisCount: 2,
+                                    crossAxisSpacing: 10,
+                                    mainAxisSpacing: 5,
+                                    childAspectRatio: (0.76),
+                                    children:
                                     List.generate(_actorList.length, (index) {
-                                  return ActorListItem(data: _actorList[index],
-                                  onClickedBookmark: (){
-                                    _total = 0;
-                                    _actorList = [];
+                                      return ActorListItem(data: _actorList[index],
+                                          onClickedBookmark: (){
+                                            _total = 0;
+                                            _actorList = [];
 
-                                    requestActorListApi(context);
-                                  });
-                                }))
-                          ])
-                        : Container(
-                            margin: EdgeInsets.only(top: 30),
-                            child: Text('스크랩한 배우가 없습니다.',
-                                style: CustomStyles.normal16TextStyle()))
-                  ],
-                ))),
+                                            requestActorListApi(context);
+                                          });
+                                    }))
+                              ])
+                                  : Container(
+                                  margin: EdgeInsets.only(top: 30),
+                                  child: Text('스크랩한 배우가 없습니다.',
+                                      style: CustomStyles.normal16TextStyle()))
+                            ],
+                          )),
+                    )),
                 Visibility(
                   child: Container(
                       color: Colors.black38,

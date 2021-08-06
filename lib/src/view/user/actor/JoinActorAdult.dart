@@ -773,7 +773,7 @@ class _JoinActorAdult extends State<JoinActorAdult> with BaseUtilMixin {
         showSnackBar(context, value[APIConstants.error_msg_try_again]);
       } finally {
         setState(() {
-          _isUpload = true;
+          _isUpload = false;
         });
       }
     });

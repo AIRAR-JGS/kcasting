@@ -75,6 +75,16 @@ class _AgencyActorAuditionApplyList extends State<AgencyActorAuditionApplyList>
     super.dispose();
   }
 
+  Future<void> _refreshPage() async {
+
+    setState(() {
+      _total = 0;
+
+      _actorList = [];
+      requestActorListApi(context);
+    });
+  }
+
   /*
   * 배우목록조회 api 호출
   * */
@@ -260,7 +270,7 @@ class _AgencyActorAuditionApplyList extends State<AgencyActorAuditionApplyList>
           body: NotificationListener<ScrollNotification>(
             child: Stack(
               children: [
-                SingleChildScrollView(
+                RefreshIndicator(child: SingleChildScrollView(
                     controller: _scrollController,
                     physics: AlwaysScrollableScrollPhysics(),
                     key: ObjectKey(_actorList.length > 0 ? _actorList[0] : ""),
@@ -273,14 +283,14 @@ class _AgencyActorAuditionApplyList extends State<AgencyActorAuditionApplyList>
                             height: 50,
                             decoration: BoxDecoration(
                                 borderRadius:
-                                    CustomStyles.circle7BorderRadius(),
+                                CustomStyles.circle7BorderRadius(),
                                 border: Border.all(
                                     width: 1,
                                     color: CustomColors.colorFontLightGrey)),
                             child: Row(children: [
                               Flexible(
                                   child: TextField(
-                                    controller: _txtFieldSearch,
+                                      controller: _txtFieldSearch,
                                       decoration: InputDecoration(
                                           isDense: true,
                                           border: InputBorder.none,
@@ -288,7 +298,7 @@ class _AgencyActorAuditionApplyList extends State<AgencyActorAuditionApplyList>
                                               vertical: 0, horizontal: 0),
                                           hintText: "배우를 검색해보세요",
                                           hintStyle:
-                                              CustomStyles.normal16TextStyle()),
+                                          CustomStyles.normal16TextStyle()),
                                       style: CustomStyles.dark16TextStyle())),
                               Padding(
                                   padding: EdgeInsets.only(left: 10),
@@ -307,28 +317,28 @@ class _AgencyActorAuditionApplyList extends State<AgencyActorAuditionApplyList>
                         Divider(),
                         _actorList.length > 0
                             ? Container(
-                                child: ListView.separated(
-                                    primary: false,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    padding: EdgeInsets.only(
-                                        left: 15, right: 15, bottom: 30),
-                                    shrinkWrap: true,
-                                    itemCount: _actorList.length,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      Map<String, dynamic> _data =
-                                          _actorList[index];
-                                      return listItem(_data);
-                                    },
-                                    separatorBuilder: (context, index) {
-                                      return Divider();
-                                    }))
+                            child: ListView.separated(
+                                primary: false,
+                                physics: NeverScrollableScrollPhysics(),
+                                padding: EdgeInsets.only(
+                                    left: 15, right: 15, bottom: 30),
+                                shrinkWrap: true,
+                                itemCount: _actorList.length,
+                                itemBuilder:
+                                    (BuildContext context, int index) {
+                                  Map<String, dynamic> _data =
+                                  _actorList[index];
+                                  return listItem(_data);
+                                },
+                                separatorBuilder: (context, index) {
+                                  return Divider();
+                                }))
                             : Container(
-                                margin: EdgeInsets.only(top: 30),
-                                child: Text('보유배우의 지원현황이 없습니다.',
-                                    style: CustomStyles.normal16TextStyle()))
+                            margin: EdgeInsets.only(top: 30),
+                            child: Text('보유배우의 지원현황이 없습니다.',
+                                style: CustomStyles.normal16TextStyle()))
                       ],
-                    )),
+                    )), onRefresh: _refreshPage),
                 Visibility(
                   child: Container(
                       color: Colors.black38,

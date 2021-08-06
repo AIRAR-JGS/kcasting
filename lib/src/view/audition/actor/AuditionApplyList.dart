@@ -385,6 +385,18 @@ class _AuditionApplyList extends State<AuditionApplyList>
         ]));
   }
 
+  Future<void> _refreshPage() async {
+
+    setState(() {
+      _total = 0;
+
+      String stateType =
+      _tabIndex == 0 ? "진행중" : (_tabIndex == 1 ? "계약완료" : "불합격");
+      _auditionList = [];
+      requestMyApplyListApi(context, stateType);
+    });
+  }
+
   /*
   * 메인 위젯
   * */
@@ -401,61 +413,64 @@ class _AuditionApplyList extends State<AuditionApplyList>
               return Stack(
                 children: [
                   Container(
-                      child: SingleChildScrollView(
-                          controller: _scrollController,
-                          physics: AlwaysScrollableScrollPhysics(),
-                          key: ObjectKey(_auditionList.length > 0 ? _auditionList[0] : ""),
-                          child: Container(
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                        Container(
-                          margin: EdgeInsets.only(top: 30.0, bottom: 10),
-                          padding: EdgeInsets.only(left: 16, right: 16),
-                          child: Text('지원 현황($actorName)',
-                              style: CustomStyles.normal24TextStyle()),
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          color: CustomColors.colorWhite,
-                          child: TabBar(
-                            controller: _tabController,
-                            indicatorSize: TabBarIndicatorSize.label,
-                            indicatorPadding: EdgeInsets.zero,
-                            labelStyle: CustomStyles.bold14TextStyle(),
-                            unselectedLabelStyle:
-                                CustomStyles.normal14TextStyle(),
-                            tabs: [
-                              Tab(text: '진행중($applyIngCnt)'),
-                              Tab(text: '계약완료($applyCompleteCnt)'),
-                              Tab(text: '불합격($applyFailCnt)'),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 10),
-                          child: Divider(
-                            height: 0.1,
-                            color: CustomColors.colorFontLightGrey,
-                          ),
-                        ),
-                        Expanded(
-                          flex: 0,
-                          child: [
-                            tabMyApplyStatus(),
-                            tabMyApplyStatus(),
-                            tabMyApplyStatus()
-                          ][_tabIndex],
-                        ),
-                        Visibility(
+                      child: RefreshIndicator(
+                        onRefresh: _refreshPage,
+                        child: SingleChildScrollView(
+                            controller: _scrollController,
+                            physics: AlwaysScrollableScrollPhysics(),
+                            key: ObjectKey(_auditionList.length > 0 ? _auditionList[0] : ""),
                             child: Container(
-                                alignment: Alignment.center,
-                                margin: EdgeInsets.only(top: 50),
-                                child: Text('지원현황이 없습니다.',
-                                    style: CustomStyles.normal16TextStyle(),
-                                    textAlign: TextAlign.center)),
-                            visible: _auditionList.length > 0 ? false : true)
-                      ])))),
+                                child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        margin: EdgeInsets.only(top: 30.0, bottom: 10),
+                                        padding: EdgeInsets.only(left: 16, right: 16),
+                                        child: Text('지원 현황($actorName)',
+                                            style: CustomStyles.normal24TextStyle()),
+                                      ),
+                                      Container(
+                                        width: MediaQuery.of(context).size.width,
+                                        color: CustomColors.colorWhite,
+                                        child: TabBar(
+                                          controller: _tabController,
+                                          indicatorSize: TabBarIndicatorSize.label,
+                                          indicatorPadding: EdgeInsets.zero,
+                                          labelStyle: CustomStyles.bold14TextStyle(),
+                                          unselectedLabelStyle:
+                                          CustomStyles.normal14TextStyle(),
+                                          tabs: [
+                                            Tab(text: '진행중($applyIngCnt)'),
+                                            Tab(text: '계약완료($applyCompleteCnt)'),
+                                            Tab(text: '불합격($applyFailCnt)'),
+                                          ],
+                                        ),
+                                      ),
+                                      Container(
+                                        margin: EdgeInsets.only(top: 10),
+                                        child: Divider(
+                                          height: 0.1,
+                                          color: CustomColors.colorFontLightGrey,
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 0,
+                                        child: [
+                                          tabMyApplyStatus(),
+                                          tabMyApplyStatus(),
+                                          tabMyApplyStatus()
+                                        ][_tabIndex],
+                                      ),
+                                      Visibility(
+                                          child: Container(
+                                              alignment: Alignment.center,
+                                              margin: EdgeInsets.only(top: 50),
+                                              child: Text('지원현황이 없습니다.',
+                                                  style: CustomStyles.normal16TextStyle(),
+                                                  textAlign: TextAlign.center)),
+                                          visible: _auditionList.length > 0 ? false : true)
+                                    ]))),
+                      )),
                   Visibility(
                     child: Container(
                         color: Colors.black38,

@@ -196,6 +196,16 @@ class _PushNotification extends State<PushNotification> with BaseUtilMixin {
     });
   }
 
+  Future<void> _refreshPage() async {
+
+    setState(() {
+      _total = 0;
+
+      _noticeList = [];
+      requestNoticeListApi(context);
+    });
+  }
+
   /*
   * 메인 위젯
   * */
@@ -208,7 +218,7 @@ class _PushNotification extends State<PushNotification> with BaseUtilMixin {
               Navigator.pop(context);
             }),
             body: Stack(children: [
-              SingleChildScrollView(
+              RefreshIndicator(child: SingleChildScrollView(
                   controller: _scrollController,
                   physics: AlwaysScrollableScrollPhysics(),
                   child: Column(children: [
@@ -228,7 +238,7 @@ class _PushNotification extends State<PushNotification> with BaseUtilMixin {
                                         if(_data[APIConstants.alert_type] != null && _data[APIConstants.type_seq] != null) {
                                           switch(_data[APIConstants.alert_type]) {
                                             case APIConstants.ADD_ACT_PRP:
-                                              // 배우 회원 오디션 제안 받음
+                                            // 배우 회원 오디션 제안 받음
                                               addView(context, OfferedAuditionDetail(seq: _data[APIConstants.type_seq]));
 
                                               break;
@@ -277,7 +287,7 @@ class _PushNotification extends State<PushNotification> with BaseUtilMixin {
                                               bottom: 20),
                                           child: Column(
                                               crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                              CrossAxisAlignment.start,
                                               children: [
                                                 Container(
                                                     margin: EdgeInsets.only(
@@ -304,7 +314,7 @@ class _PushNotification extends State<PushNotification> with BaseUtilMixin {
                     Visibility(
                         child: Divider(),
                         visible: _noticeList.length > 0 ? true : false),
-                  ])),
+                  ])), onRefresh: _refreshPage),
               Visibility(
                   child: Container(
                       alignment: Alignment.center,

@@ -31,7 +31,8 @@ class APIConstants {
   static const String CHK_TOT_ALERT = "CHK_TOT_ALERT";                            // 알림 체크 (열람 처리)
   static const String SEL_TOT_USELIST = "SEL_TOT_USELIST";                        // 이용안내 목록보기
   static const String SEL_TOT_USEDETAILS = "SEL_TOT_USEDETAILS";                  // 이용안내 상세보기
-  
+  static const String SEL_BAN_LIST = "SEL_BAN_LIST";                              // 배너 목록 조회
+
   // 배우 회원
   static const String INS_ACT_JOIN = "INS_ACT_JOIN";                              // 배우 회원가입
   static const String INS_ACT_CHILDJOIN = "INS_ACT_CHILDJOIN";                    // 배우 14세 미만 회원가입

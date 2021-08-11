@@ -59,8 +59,12 @@ class _ActorListItem extends State<ActorListItem> with BaseUtilMixin {
                 },
                 child: Column(children: <Widget>[
                   Container(
-                      decoration:
-                          BoxDecoration(color: CustomColors.colorBgGrey),
+                      decoration: BoxDecoration(
+                          color: CustomColors.colorBgGrey,
+                    border: Border.all(
+                        width: 0.5,
+                        color: CustomColors.colorFontLightGrey),
+                          borderRadius: CustomStyles.circle7BorderRadius()),
                       width: (MediaQuery.of(context).size.width / 2),
                       height: (MediaQuery.of(context).size.width / 2),
                       child: _data[APIConstants.main_img_url] != null

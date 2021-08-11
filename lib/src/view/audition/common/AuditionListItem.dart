@@ -35,7 +35,8 @@ class AuditionListItem extends StatelessWidget with BaseUtilMixin {
                 width: MediaQuery.of(context).size.width * 0.9,
                 decoration: BoxDecoration(
                     border: Border.all(
-                        width: 1, color: CustomColors.colorFontLightGrey)),
+                        width: 0.5, color: CustomColors.colorFontLightGrey),
+                    borderRadius: CustomStyles.circle7BorderRadius()),
                 child: Column(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -44,6 +45,9 @@ class AuditionListItem extends StatelessWidget with BaseUtilMixin {
                       Container(
                         height: 15,
                         decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(5),
+                              topLeft: Radius.circular(5)),
                           gradient: LinearGradient(
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
@@ -52,8 +56,8 @@ class AuditionListItem extends StatelessWidget with BaseUtilMixin {
                                 1
                               ],
                               colors: [
-                                CustomColors.colorAccent,
-                                CustomColors.colorBgGrey
+                                CustomColors.colorPrimary.withAlpha(180),
+                                CustomColors.colorAccent.withAlpha(180)
                               ]),
                         ),
                       ),
@@ -97,8 +101,9 @@ class AuditionListItem extends StatelessWidget with BaseUtilMixin {
                             Container(
                                 margin: EdgeInsets.only(top: 18, right: 10),
                                 alignment: Alignment.center,
-                                child: Text(StringUtils.checkedString(castingItem[
-                                APIConstants.d_day]),
+                                child: Text(
+                                    StringUtils.checkedString(
+                                        castingItem[APIConstants.d_day]),
                                     style: CustomStyles.normal14TextStyle()))
                           ],
                         ),
@@ -335,15 +340,21 @@ class AuditionListItem extends StatelessWidget with BaseUtilMixin {
                                                       castingItem[APIConstants
                                                           .casting_uniqueness]))
                                             ])))),
-                            VerticalDivider(
-                                color: CustomColors.colorFontLightGrey,
-                                width: 0.1,
-                                thickness: 0.5),
-                            GestureDetector(
-                                onTap: () {
-                                  onClickedBookmark();
-                                },
-                                child: Visibility(
+                            Visibility(
+                                child: VerticalDivider(
+                                    color: CustomColors.colorFontLightGrey,
+                                    width: 0.1,
+                                    thickness: 0.5),
+                                visible: (KCastingAppData().myInfo[
+                                            APIConstants.member_type]) ==
+                                        APIConstants.member_type_product
+                                    ? false
+                                    : true),
+                            Visibility(
+                                child: GestureDetector(
+                                    onTap: () {
+                                      onClickedBookmark();
+                                    },
                                     child: Container(
                                         width: 30,
                                         margin: EdgeInsets.only(left: 10),
@@ -353,7 +364,7 @@ class AuditionListItem extends StatelessWidget with BaseUtilMixin {
                                                 'assets/images/toggle_like_on.png',
                                                 width: 20,
                                                 color:
-                                                    CustomColors.colorAccent))
+                                                    CustomColors.colorAccent.withAlpha(200)))
                                             : (KCastingAppData().myInfo[APIConstants.member_type] ==
                                                     APIConstants
                                                         .member_type_actor)
@@ -361,30 +372,30 @@ class AuditionListItem extends StatelessWidget with BaseUtilMixin {
                                                     ? Image.asset('assets/images/toggle_like_on.png',
                                                         width: 20,
                                                         color: CustomColors
-                                                            .colorAccent)
+                                                            .colorAccent.withAlpha(200))
                                                     : Image.asset('assets/images/toggle_like_off.png',
                                                         width: 20))
                                                 : ((castingItem[APIConstants.isManagementCastringScrap] == 1)
                                                     ? Image.asset('assets/images/toggle_like_on.png',
                                                         width: 20,
                                                         color: CustomColors
-                                                            .colorAccent)
+                                                            .colorAccent.withAlpha(200))
                                                     : Image.asset(
                                                         'assets/images/toggle_like_off.png',
-                                                        width: 20))),
-                                    visible: (KCastingAppData().myInfo[APIConstants.member_type]) ==
-                                            APIConstants.member_type_product
-                                        ? false
-                                        : true))
+                                                        width: 20)))),
+                                visible: (KCastingAppData().myInfo[APIConstants.member_type]) ==
+                                        APIConstants.member_type_product
+                                    ? false
+                                    : true)
                           ]))
                     ]))
           ]),
           Container(
-              margin: EdgeInsets.only(right: 20),
+              margin: EdgeInsets.only(right: 15),
               alignment: Alignment.center,
-              color: CustomColors.colorFontDarkGrey,
+              color: CustomColors.colorFontDarkGrey.withAlpha(240),
               width: 50,
-              height: 30,
+              height: 25,
               child: Text(
                   StringUtils.checkedString(
                       castingItem[APIConstants.project_type]),

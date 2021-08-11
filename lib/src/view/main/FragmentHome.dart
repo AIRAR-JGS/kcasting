@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/KCastingAppData.dart';
@@ -7,6 +8,7 @@ import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/net/RestClientInterface.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
 import 'package:casting_call/src/view/actor/ActorListItem.dart';
+import 'package:casting_call/src/view/audition/common/AuditionDetail.dart';
 import 'package:casting_call/src/view/audition/common/AuditionListItem.dart';
 import 'package:casting_call/src/view/board/UsageGuide.dart';
 import 'package:dio/dio.dart';
@@ -18,21 +20,22 @@ import 'package:flutter_tags/flutter_tags.dart';
 * 프레그먼트 홈 클래스(메인 화면)
 * */
 class FragmentHome extends StatefulWidget {
-  final VoidCallback onClickedOpenCastingBoard;
+  static final GlobalKey<_FragmentHome> globalKey = GlobalKey();
 
-  //final VoidCallback onClickedOpenCastingActor;
+  final VoidCallback onClickedOpenCastingBoard;
   final Function(String) onClickedOpenCastingActor;
 
   FragmentHome(
-      {Key key,
-      this.onClickedOpenCastingBoard,
-      this.onClickedOpenCastingActor});
+      {Key key, this.onClickedOpenCastingBoard, this.onClickedOpenCastingActor})
+      : super(key: globalKey);
 
   @override
   _FragmentHome createState() => _FragmentHome();
 }
 
 class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
+  ScrollController _scrollController = ScrollController();
+
   // 메인 배너 관련 변수
   List<dynamic> _bannerList = [];
 
@@ -54,10 +57,44 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
   void initState() {
     super.initState();
 
+    requestBannerListApi(context);
     requestNewCastingListApi(context);
     requestOldCastingListApi(context);
     requestActorListApi(context, APIConstants.SEL_MKM_LIST);
     requestActorListApi(context, APIConstants.SEL_MKW_LIST);
+  }
+
+  void scrollToTop() {
+    _scrollController.animateTo(_scrollController.position.minScrollExtent,
+        duration: Duration(milliseconds: 500), curve: Curves.ease);
+  }
+
+  /*
+  * 배너 목록 조회
+  * */
+  void requestBannerListApi(BuildContext context) {
+    final dio = Dio();
+
+    // 배너 목록 조회 api 호출 시 보낼 파라미터
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.SEL_BAN_LIST;
+
+    // 배너 목록 조회 api 호출
+    RestClient(dio).postRequestMainControl(params).then((value) async {
+      if (value != null) {
+        if (value[APIConstants.resultVal]) {
+          // 배너 목록 조회 성공
+          var _responseData = value[APIConstants.data];
+          var _responseList = _responseData[APIConstants.list] as List;
+
+          setState(() {
+            if (_responseList != null && _responseList.length > 0) {
+              _bannerList = _responseList;
+            }
+          });
+        }
+      }
+    });
   }
 
   /*
@@ -70,12 +107,16 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
     // 캐스팅 목록 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetDate = new Map();
     targetDate[APIConstants.order_type] = APIConstants.order_type_new;
-    if(KCastingAppData().myInfo[APIConstants.member_type] == APIConstants.member_type_actor) {
-      targetDate[APIConstants.actor_seq] = KCastingAppData().myInfo[APIConstants.seq];
+    if (KCastingAppData().myInfo[APIConstants.member_type] ==
+        APIConstants.member_type_actor) {
+      targetDate[APIConstants.actor_seq] =
+          KCastingAppData().myInfo[APIConstants.seq];
     }
 
-    if(KCastingAppData().myInfo[APIConstants.member_type] == APIConstants.member_type_management) {
-      targetDate[APIConstants.management_seq] = KCastingAppData().myInfo[APIConstants.seq];
+    if (KCastingAppData().myInfo[APIConstants.member_type] ==
+        APIConstants.member_type_management) {
+      targetDate[APIConstants.management_seq] =
+          KCastingAppData().myInfo[APIConstants.seq];
     }
 
     Map<String, dynamic> paging = new Map();
@@ -114,12 +155,16 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
     // 마감임박 캐스팅 목록 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetDate = new Map();
     targetDate[APIConstants.order_type] = APIConstants.order_type_fin;
-    if(KCastingAppData().myInfo[APIConstants.member_type] == APIConstants.member_type_actor) {
-      targetDate[APIConstants.actor_seq] = KCastingAppData().myInfo[APIConstants.seq];
+    if (KCastingAppData().myInfo[APIConstants.member_type] ==
+        APIConstants.member_type_actor) {
+      targetDate[APIConstants.actor_seq] =
+          KCastingAppData().myInfo[APIConstants.seq];
     }
 
-    if(KCastingAppData().myInfo[APIConstants.member_type] == APIConstants.member_type_management) {
-      targetDate[APIConstants.management_seq] = KCastingAppData().myInfo[APIConstants.seq];
+    if (KCastingAppData().myInfo[APIConstants.member_type] ==
+        APIConstants.member_type_management) {
+      targetDate[APIConstants.management_seq] =
+          KCastingAppData().myInfo[APIConstants.seq];
     }
 
     Map<String, dynamic> paging = new Map();
@@ -186,8 +231,10 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
                     {
                       if (apiKey == APIConstants.SEL_MKM_LIST) {
                         _actorList = keyList;
+                        print('남자배우: ' + _actorList.length.toString());
                       } else {
                         _actressList = keyList;
+                        print('여자배우: ' + _actressList.length.toString());
                       }
 
                       break;
@@ -209,21 +256,42 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
 
   // 메인 배너 아이템 위젯
   Widget _bannerItemWidget(int idx) {
-    return Container(
-      height: 160,
-      width: 160 * 1.75,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        borderRadius: CustomStyles.circle7BorderRadius(),
-        gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            stops: [0, 1],
-            colors: [CustomColors.colorPrimary, CustomColors.colorAccent]),
-      ),
-      child: Text(_bannerList[idx].toString(),
-          style: CustomStyles.bold17TextStyle()),
-    );
+    return GestureDetector(
+        onTap: () {
+          addView(
+              context,
+              AuditionDetail(
+                  castingSeq: _bannerList[idx][APIConstants.casting_seq]));
+        },
+        child: Container(
+            alignment: Alignment.center,
+            width: MediaQuery.of(context).size.width,
+            margin: EdgeInsets.symmetric(horizontal: 5.0),
+            decoration: BoxDecoration(
+                borderRadius: CustomStyles.circle7BorderRadius(),
+                gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    stops: [
+                      0,
+                      1
+                    ],
+                    colors: [
+                      CustomColors.colorPrimary,
+                      CustomColors.colorAccent
+                    ])),
+            child: _bannerList[idx][APIConstants.project_file_url] != null
+                ? ClipRRect(
+                    borderRadius: CustomStyles.circle7BorderRadius(),
+                    child: CachedNetworkImage(
+                        width: MediaQuery.of(context).size.width,
+                        placeholder: (context, url) => Container(
+                            child: CircularProgressIndicator(),
+                            alignment: Alignment.center),
+                        imageUrl: _bannerList[idx]
+                            [APIConstants.project_file_url],
+                        fit: BoxFit.fitWidth))
+                : null));
   }
 
   // 태그 아이템 위젯
@@ -231,7 +299,10 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
       bool isMan, GlobalKey<TagsState> tagStateKey, List<dynamic> tagData) {
     return Tags(
       key: tagStateKey,
-      itemCount: tagData.length, // required
+      alignment: WrapAlignment.start,
+      itemCount: tagData.length,
+      runSpacing: 5,
+      spacing: 1.5,
       itemBuilder: (int index) {
         final item = tagData[index];
         return ItemTags(
@@ -259,6 +330,7 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+        controller: _scrollController,
         padding: EdgeInsets.only(top: 20),
         child: Column(children: [
           // 메인 배너
@@ -267,13 +339,12 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
                 margin: EdgeInsets.only(bottom: 20),
                 child: CarouselSlider.builder(
                   options: CarouselOptions(
-                      height: 160.0,
+                      height: MediaQuery.of(context).size.height * 0.25,
                       autoPlay: true,
                       autoPlayInterval: Duration(seconds: 3),
                       autoPlayAnimationDuration: Duration(milliseconds: 800),
                       autoPlayCurve: Curves.fastOutSlowIn,
-                      pauseAutoPlayOnTouch: true,
-                      aspectRatio: 1.75),
+                      pauseAutoPlayOnTouch: true),
                   itemCount: _bannerList.length,
                   itemBuilder: (context, index, realIndex) =>
                       _bannerItemWidget(index),
@@ -284,6 +355,7 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
           // 새로운 캐스팅
           Visibility(
               child: Container(
+                  margin: EdgeInsets.only(top: 10),
                   padding: EdgeInsets.only(left: 16, right: 16),
                   alignment: Alignment.centerLeft,
                   child:
@@ -303,26 +375,27 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
                             margin: EdgeInsets.only(right: 10),
                             child: AuditionListItem(
                                 castingItem: _newCastingList[index],
-                            isMyScrapList: false,
-                            onClickedBookmark: (){
-                              if (KCastingAppData()
-                                  .myInfo[APIConstants.member_type] ==
-                                  APIConstants.member_type_actor) {
-                                requestActorBookmarkEditApi(context, index, true);
-                              } else if (KCastingAppData()
-                                  .myInfo[APIConstants.member_type] ==
-                                  APIConstants.member_type_management) {
-                                requestManagementBookmarkEditApi(
-                                    context, index, true);
-                              }
-
-                            }));
+                                isMyScrapList: false,
+                                onClickedBookmark: () {
+                                  if (KCastingAppData()
+                                          .myInfo[APIConstants.member_type] ==
+                                      APIConstants.member_type_actor) {
+                                    requestActorBookmarkEditApi(
+                                        context, index, true);
+                                  } else if (KCastingAppData()
+                                          .myInfo[APIConstants.member_type] ==
+                                      APIConstants.member_type_management) {
+                                    requestManagementBookmarkEditApi(
+                                        context, index, true);
+                                  }
+                                }));
                       })),
               visible: _newCastingList.length > 0 ? true : false),
 
           // 마감임박 캐스팅
           Visibility(
               child: Container(
+                  margin: EdgeInsets.only(top: 10),
                   padding: EdgeInsets.only(left: 16, right: 16),
                   alignment: Alignment.centerLeft,
                   child:
@@ -342,26 +415,27 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
                             margin: EdgeInsets.only(right: 10),
                             child: AuditionListItem(
                                 castingItem: _oldCastingList[index],
-                            isMyScrapList: false,
-                            onClickedBookmark: (){
-                              if (KCastingAppData()
-                                  .myInfo[APIConstants.member_type] ==
-                                  APIConstants.member_type_actor) {
-                                requestActorBookmarkEditApi(context, index, false);
-                              } else if (KCastingAppData()
-                                  .myInfo[APIConstants.member_type] ==
-                                  APIConstants.member_type_management) {
-                                requestManagementBookmarkEditApi(
-                                    context, index, false);
-                              }
-                            }));
+                                isMyScrapList: false,
+                                onClickedBookmark: () {
+                                  if (KCastingAppData()
+                                          .myInfo[APIConstants.member_type] ==
+                                      APIConstants.member_type_actor) {
+                                    requestActorBookmarkEditApi(
+                                        context, index, false);
+                                  } else if (KCastingAppData()
+                                          .myInfo[APIConstants.member_type] ==
+                                      APIConstants.member_type_management) {
+                                    requestManagementBookmarkEditApi(
+                                        context, index, false);
+                                  }
+                                }));
                       })),
               visible: _oldCastingList.length > 0 ? true : false),
 
           // 캐스팅 더보기
           Visibility(
               child: Container(
-                  margin: EdgeInsets.only(bottom: 10),
+                  margin: EdgeInsets.only(bottom: 20, top: 10),
                   alignment: Alignment.center,
                   child:
                       CustomStyles.greyBorderRound21ButtonStyle('캐스팅 더보기', () {
@@ -373,7 +447,6 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
 
           Visibility(
               child: Container(
-                  margin: EdgeInsets.only(bottom: 15),
                   child: Divider(color: CustomColors.colorFontLightGrey)),
               visible: _oldCastingList.length > 0 || _newCastingList.length > 0
                   ? true
@@ -382,7 +455,7 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
           // 남배우 프로필
           Visibility(
               child: Container(
-                  margin: EdgeInsets.only(bottom: 15),
+                  margin: EdgeInsets.only(bottom: 20, top: 15),
                   padding: EdgeInsets.only(left: 16, right: 16),
                   alignment: Alignment.centerLeft,
                   child:
@@ -422,7 +495,7 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
 
           Visibility(
               child: Container(
-                  margin: EdgeInsets.only(bottom: 10, top: 15),
+                  margin: EdgeInsets.only(bottom: 15, top: 20),
                   alignment: Alignment.center,
                   child:
                       CustomStyles.blueBorderRound21ButtonStyle('남배우 더보기', () {
@@ -433,14 +506,13 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
 
           Visibility(
               child: Container(
-                  margin: EdgeInsets.only(bottom: 15),
                   child: Divider(color: CustomColors.colorFontLightGrey)),
               visible: _actorList.length > 0 ? true : false),
 
           // 여배우 프로필
           Visibility(
               child: Container(
-                  margin: EdgeInsets.only(bottom: 15),
+                  margin: EdgeInsets.only(bottom: 20, top: 15),
                   padding: EdgeInsets.only(left: 15, right: 15),
                   alignment: Alignment.centerLeft,
                   child:
@@ -480,10 +552,10 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
 
           Visibility(
               child: Container(
-                  margin: EdgeInsets.only(bottom: 10, top: 15),
+                  margin: EdgeInsets.only(bottom: 10, top: 20),
                   alignment: Alignment.center,
-                  child:
-                      CustomStyles.purpleBorderRound21ButtonStyle('여배우 더보기', () {
+                  child: CustomStyles.purpleBorderRound21ButtonStyle('여배우 더보기',
+                      () {
                     widget.onClickedOpenCastingActor(
                         APIConstants.actor_sex_female);
                   })),
@@ -537,22 +609,23 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
   /*
   * 배우 북마크 목록
   * */
-  void requestActorBookmarkEditApi(
-      BuildContext context, int idx, bool isNew) {
+  void requestActorBookmarkEditApi(BuildContext context, int idx, bool isNew) {
     final dio = Dio();
 
     // 배우 북마크 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetDate = new Map();
     targetDate[APIConstants.actor_seq] =
-    KCastingAppData().myInfo[APIConstants.seq];
-    if(isNew) {
-      targetDate[APIConstants.casting_seq] = _newCastingList[idx][APIConstants.casting_seq];
+        KCastingAppData().myInfo[APIConstants.seq];
+    if (isNew) {
+      targetDate[APIConstants.casting_seq] =
+          _newCastingList[idx][APIConstants.casting_seq];
     } else {
-      targetDate[APIConstants.casting_seq] = _oldCastingList[idx][APIConstants.casting_seq];
+      targetDate[APIConstants.casting_seq] =
+          _oldCastingList[idx][APIConstants.casting_seq];
     }
 
     Map<String, dynamic> params = new Map();
-    if(isNew) {
+    if (isNew) {
       if (_newCastingList[idx][APIConstants.isActorCastringScrap] == 1) {
         params[APIConstants.key] = APIConstants.DEA_ACS_INFO;
       } else {
@@ -591,15 +664,18 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
 
     // 매니지먼트 북마크 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetDate = new Map();
-    targetDate[APIConstants.management_seq] =KCastingAppData().myInfo[APIConstants.seq];
-    if(isNew) {
-      targetDate[APIConstants.casting_seq] = _newCastingList[idx][APIConstants.casting_seq];
+    targetDate[APIConstants.management_seq] =
+        KCastingAppData().myInfo[APIConstants.seq];
+    if (isNew) {
+      targetDate[APIConstants.casting_seq] =
+          _newCastingList[idx][APIConstants.casting_seq];
     } else {
-      targetDate[APIConstants.casting_seq] = _oldCastingList[idx][APIConstants.casting_seq];
+      targetDate[APIConstants.casting_seq] =
+          _oldCastingList[idx][APIConstants.casting_seq];
     }
 
     Map<String, dynamic> params = new Map();
-    if(isNew) {
+    if (isNew) {
       if (_newCastingList[idx][APIConstants.isActorCastringScrap] == 1) {
         params[APIConstants.key] = APIConstants.DEA_MCS_INFO;
       } else {

@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 /*
 * 홈 클래스(메인 화면)
 * */
+
 class Home extends StatefulWidget {
   final String prevPage;
 
@@ -64,14 +65,17 @@ class _Home extends State<Home> with BaseUtilMixin {
       case 1:
         return AuditionList();
       case 2:
-        return ActorList(genderType: _actorGenderType,);
+        return ActorList(
+          genderType: _actorGenderType,
+        );
       case 3:
         return KCastingAppData().myInfo[APIConstants.member_type] ==
                 APIConstants.member_type_actor
             ? ActorMemberPage()
             : KCastingAppData().myInfo[APIConstants.member_type] ==
-            APIConstants.member_type_product
-            ? ProductionMemberPage() : AgencyMemberPage();
+                    APIConstants.member_type_product
+                ? ProductionMemberPage()
+                : AgencyMemberPage();
     }
   }
 
@@ -121,7 +125,11 @@ class _Home extends State<Home> with BaseUtilMixin {
                 _scaffoldKey.currentState.openDrawer();
               },
               onClickedOpenHome: () {
-                _onTap(0);
+                if (_currentFragmentIndex != 0) {
+                  _onTap(0);
+                } else {
+                  FragmentHome.globalKey.currentState.scrollToTop();
+                }
               },
               onClickedOpenMyPage: () {
                 _onTap(3);

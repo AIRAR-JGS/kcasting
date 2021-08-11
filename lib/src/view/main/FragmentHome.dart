@@ -311,7 +311,8 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
                 isMan ? CustomColors.colorPrimary : CustomColors.colorAccent,
             activeColor:
                 isMan ? CustomColors.colorPrimary : CustomColors.colorAccent,
-            textActiveColor: CustomColors.colorWhite,
+            alignment: MainAxisAlignment.center,
+            padding: EdgeInsets.only(left: 7, right: 7, top: 3, bottom: 5),
             key: Key(index.toString()),
             index: index,
             title: StringUtils.checkedString(item[APIConstants.child_name]),
@@ -597,7 +598,7 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
                 // 이용안내
                 Container(
                     margin: EdgeInsets.only(
-                        top: 25, left: 15, right: 15, bottom: 80),
+                        top: 25, left: 15, right: 15, bottom: 70),
                     alignment: Alignment.topLeft,
                     child: CustomStyles.underline16TextButtonStyle('이용안내', () {
                       addView(context, UsageGuide());

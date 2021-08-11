@@ -65,7 +65,7 @@ class _ActorMemberInfoModify extends State<ActorMemberInfoModify>
                     Container(
                         child: SingleChildScrollView(
                       child: Container(
-                        padding: EdgeInsets.only(top: 30, bottom: 30),
+                        padding: EdgeInsets.only(top: 30, bottom: 70),
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.start,

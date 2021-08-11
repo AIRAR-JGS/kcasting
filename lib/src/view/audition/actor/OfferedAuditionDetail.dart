@@ -61,21 +61,21 @@ class _OfferedAuditionDetail extends State<OfferedAuditionDetail>
     // 제안 상세 api 호출
     RestClient(Dio()).postRequestMainControl(params).then((value) async {
       try {
-      if (value == null) {
-        // 에러 - 데이터 널
-        showSnackBar(context, APIConstants.error_msg_server_not_response);
-      } else {
-        if (value[APIConstants.resultVal]) {
+        if (value == null) {
+          // 에러 - 데이터 널
+          showSnackBar(context, APIConstants.error_msg_server_not_response);
+        } else {
+          if (value[APIConstants.resultVal]) {
             // 제안 상세 성공
             setState(() {
               var _responseData = value[APIConstants.data];
               _scoutData = _responseData[APIConstants.list][0];
             });
-        } else {
-          // 수락 거절 실패
-          showSnackBar(context, APIConstants.error_msg_try_again);
+          } else {
+            // 수락 거절 실패
+            showSnackBar(context, APIConstants.error_msg_try_again);
+          }
         }
-      }
       } catch (e) {
         showSnackBar(context, APIConstants.error_msg_try_again);
       } finally {
@@ -108,12 +108,11 @@ class _OfferedAuditionDetail extends State<OfferedAuditionDetail>
     // 수락 거절 api 호출
     RestClient(Dio()).postRequestMainControl(params).then((value) async {
       try {
-      if (value == null) {
-        // 에러 - 데이터 널
-        showSnackBar(context, APIConstants.error_msg_server_not_response);
-      } else {
-        if (value[APIConstants.resultVal]) {
-
+        if (value == null) {
+          // 에러 - 데이터 널
+          showSnackBar(context, APIConstants.error_msg_server_not_response);
+        } else {
+          if (value[APIConstants.resultVal]) {
             // 수락 거절 성공
             setState(() {
               if (type == "수락") {
@@ -126,15 +125,14 @@ class _OfferedAuditionDetail extends State<OfferedAuditionDetail>
                 Navigator.pop(context);
               }
             });
-
-        } else {
-          // 수락 거절 실패
-          showSnackBar(context, APIConstants.error_msg_try_again);
+          } else {
+            // 수락 거절 실패
+            showSnackBar(context, APIConstants.error_msg_try_again);
+          }
         }
-      }
       } catch (e) {
         showSnackBar(context, APIConstants.error_msg_try_again);
-      }finally {
+      } finally {
         setState(() {
           _isUpload = false;
         });
@@ -173,43 +171,48 @@ class _OfferedAuditionDetail extends State<OfferedAuditionDetail>
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Expanded(
-                                flex: 0,
-                                child: Container(
+                                  flex: 0,
+                                  child: Container(
+                                    decoration: new BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        gradient: LinearGradient(colors: [
+                                          CustomColors.colorPrimary,
+                                          CustomColors.colorAccent
+                                        ])),
+                                    padding: EdgeInsets.all(3),
                                     margin: EdgeInsets.only(right: 5),
                                     alignment: Alignment.topCenter,
-                                    child: ClipOval(
-                                      child: (_scoutData[
-                                      APIConstants.production_img_url] != null) ? CachedNetworkImage(
-                                        placeholder: (context, url) => Container(
-                                            alignment: Alignment.center,
-                                            child: CircularProgressIndicator()),
-                                        imageUrl: _scoutData[
-                                            APIConstants.production_img_url],
-                                        errorWidget: (context, url, error) =>
-                                            Image.asset(
-                                                'assets/images/btn_mypage.png',
-                                                fit: BoxFit.contain,
-                                                width: 67,
-                                                color:
-                                                    CustomColors.colorBgGrey),
+                                    child: Container(
+                                        alignment: Alignment.center,
                                         width: 67,
                                         height: 67,
-                                      ) : Image.asset(
-                                          'assets/images/btn_mypage.png',
-                                          fit: BoxFit.contain,
-                                          width: 67,
-                                          color:
-                                          CustomColors.colorBgGrey),
-                                    ),
-                                  decoration: BoxDecoration(
-                                    color: CustomColors.colorWhite,
-                                    borderRadius: BorderRadius.all( Radius.circular(50.0)),
-                                    border: Border.all(
-                                      color: CustomColors.colorAccent,
-                                      width: 2.0,
-                                    ),
-                                  ),)
-                              ),
+                                        decoration: new BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: CustomColors.colorWhite),
+                                        padding: EdgeInsets.all(2.0),
+                                        child: ClipOval(
+                                            child: (_scoutData[APIConstants.production_img_url] != null)
+                                                ? CachedNetworkImage(
+                                                    fit: BoxFit.cover,
+                                                    placeholder: (context, url) => Container(
+                                                        alignment:
+                                                            Alignment.center,
+                                                        child:
+                                                            CircularProgressIndicator()),
+                                                    imageUrl: _scoutData[APIConstants
+                                                        .production_img_url],
+                                                    errorWidget: (context, url, error) => Image.asset('assets/images/btn_mypage.png',
+                                                        fit: BoxFit.contain,
+                                                        width: 67,
+                                                        color: CustomColors
+                                                            .colorBgGrey),
+                                                    width: 67,
+                                                    height: 67)
+                                                : Image.asset('assets/images/btn_mypage.png',
+                                                    fit: BoxFit.contain,
+                                                    width: 67,
+                                                    color: CustomColors.colorBgGrey))),
+                                  )),
                               Expanded(
                                   flex: 1,
                                   child: Text(

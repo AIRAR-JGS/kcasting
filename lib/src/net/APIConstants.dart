@@ -491,6 +491,7 @@ class APIConstants {
   static const String paper_url = "paper_url";
   static const String casting_state_type = "casting_state_type";
   static const String isPayment = "isPayment";
+  static const String auditionApply_state_type = "auditionApply_state_type";
 
   // 사용 안함
   //static const String LGI_TOT_LOGIN = "LGI_TOT_LOGIN";                            // 로그인

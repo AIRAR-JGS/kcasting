@@ -97,10 +97,15 @@ class HomeAppBar extends StatelessWidget
 
               // 마이페이지 버튼
               Container(
-                  width: 27,
-                  height: 27,
                   margin: EdgeInsets.only(right: 10),
-                  padding: const EdgeInsets.all(0.0),
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                          width: 1.5, color: CustomColors.colorWhite)),
+                  padding: EdgeInsets.all(1),
+                  alignment: Alignment.center,
+                  width: 30,
+                  height: 30,
                   child: GestureDetector(
                       onTap: () {
                         onClickedOpenMyPage();
@@ -122,8 +127,7 @@ class HomeAppBar extends StatelessWidget
                                               Image.asset(
                                                   'assets/images/btn_mypage.png',
                                                   fit: BoxFit.fitHeight)))
-                                  : Image.asset('assets/images/btn_mypage.png',
-                                      fit: BoxFit.fitHeight))
+                                  : Image.asset('assets/images/btn_mypage.png', fit: BoxFit.fitHeight))
                               : Image.asset('assets/images/btn_mypage.png', fit: BoxFit.fitHeight))
                           : KCastingAppData().myInfo[APIConstants.member_type] == APIConstants.member_type_product
                               ? (KCastingAppData().myInfo != null ? (KCastingAppData().myInfo[APIConstants.production_img_url] != null ? ClipOval(child: CachedNetworkImage(placeholder: (context, url) => Container(alignment: Alignment.center, child: CircularProgressIndicator()), imageUrl: KCastingAppData().myInfo[APIConstants.production_img_url], fit: BoxFit.cover, width: 40.0, height: 40.0, errorWidget: (context, url, error) => Image.asset('assets/images/btn_mypage.png', fit: BoxFit.fitHeight))) : Image.asset('assets/images/btn_mypage.png', fit: BoxFit.fitHeight)) : Image.asset('assets/images/btn_mypage.png', fit: BoxFit.fitHeight))

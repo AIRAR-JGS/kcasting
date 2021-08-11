@@ -4,6 +4,7 @@ class CustomColors {
   // 앱 기본 컬러
   static const Color colorPrimary = Color(0xff14D0F6);
   static const Color colorAccent = Color(0xffA657FF);
+  static const Color colorMiddle = Color(0xff9565fe);
 
   static const Color colorWhite = Color(0xffffffff);
   static const Color colorBlack = Color(0xff000000);

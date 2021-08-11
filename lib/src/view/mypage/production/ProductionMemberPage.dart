@@ -6,8 +6,8 @@ import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/dialog/DialogMemberLogoutConfirm.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
-import 'package:casting_call/src/view/mypage/production/BookmarkedActorList.dart';
 import 'package:casting_call/src/view/audition/production/ProposedAuditionList.dart';
+import 'package:casting_call/src/view/mypage/production/BookmarkedActorList.dart';
 import 'package:casting_call/src/view/mypage/production/ProductionMemberInfo.dart';
 import 'package:casting_call/src/view/mypage/production/ProductionProfile.dart';
 import 'package:casting_call/src/view/project/ProjectList.dart';
@@ -36,36 +36,45 @@ class _ProductionMemberPage extends State<ProductionMemberPage>
       child: Column(
         children: [
           Container(
-              margin: EdgeInsets.only(top: 30, bottom: 15),
-              child: KCastingAppData().myInfo == null
-                  ? Icon(
-                      Icons.account_circle,
-                      color: CustomColors.colorFontLightGrey,
-                      size: 100,
-                    )
-                  : (KCastingAppData()
-                              .myInfo[APIConstants.production_img_url] !=
-                          null
-                      ? ClipOval(
-                          child: CachedNetworkImage(
-                              placeholder: (context, url) => Container(
-                                  alignment: Alignment.center,
-                                  child: CircularProgressIndicator()),
-                              imageUrl: KCastingAppData()
-                                  .myInfo[APIConstants.production_img_url],
-                              fit: BoxFit.cover,
-                              width: 100.0,
-                              height: 100.0,
-                              errorWidget: (context, url, error) => Icon(
-                                    Icons.account_circle,
-                                    color: CustomColors.colorFontLightGrey,
-                                    size: 100,
-                                  )))
-                      : Icon(
-                          Icons.account_circle,
-                          color: CustomColors.colorFontLightGrey,
-                          size: 100,
-                        ))),
+              decoration: new BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, stops: [
+                    0,
+                    1
+                  ], colors: [
+                    CustomColors.colorPrimary,
+                    CustomColors.colorAccent
+                  ])),
+              padding: EdgeInsets.all(3),
+              margin: EdgeInsets.only(top: 40, bottom: 20),
+              child: Container(
+                  alignment: Alignment.center,
+                  width: 100.0,
+                  height: 100.0,
+                  decoration: new BoxDecoration(
+                      shape: BoxShape.circle, color: CustomColors.colorWhite),
+                  padding: EdgeInsets.all(2.0),
+                  child: KCastingAppData().myInfo == null
+                      ? Image.asset('assets/images/btn_mypage.png',
+                          color: CustomColors.colorBgGrey,
+                          width: 100,
+                          fit: BoxFit.contain)
+                      : (KCastingAppData().myInfo[APIConstants.production_img_url] != null
+                          ? ClipOval(
+                              child: CachedNetworkImage(
+                                  placeholder: (context, url) => Container(
+                                      alignment: Alignment.center,
+                                      child: CircularProgressIndicator()),
+                                  imageUrl: KCastingAppData()
+                                      .myInfo[APIConstants.production_img_url],
+                                  fit: BoxFit.cover,
+                                  width: 100.0,
+                                  height: 100.0,
+                                  errorWidget: (context, url, error) => Image.asset('assets/images/btn_mypage.png',
+                                      color: CustomColors.colorBgGrey,
+                                      width: 100,
+                                      fit: BoxFit.contain)))
+                          : Image.asset('assets/images/btn_mypage.png', color: CustomColors.colorBgGrey, width: 100, fit: BoxFit.contain)))),
           Container(
               margin: EdgeInsets.only(bottom: 30),
               child: Text(
@@ -116,9 +125,9 @@ class _ProductionMemberPage extends State<ProductionMemberPage>
                       case 1:
                         // 프로필 관리 페이지 이동
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ProductionProfile()))
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ProductionProfile()))
                             .then((value) => {initData()});
 
                         //addView(context, ProductionProfile());

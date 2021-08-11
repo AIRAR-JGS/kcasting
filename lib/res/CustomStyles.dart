@@ -538,6 +538,10 @@ class CustomStyles {
     return BorderRadius.circular(7.0);
   }
 
+  static BorderRadius circle6BorderRadius() {
+    return BorderRadius.circular(6.0);
+  }
+
   static BorderRadius circle21BorderRadius() {
     return BorderRadius.circular(21.0);
   }
@@ -746,6 +750,13 @@ class CustomStyles {
         fontSize: 17,
         color: CustomColors.colorFontGrey,
         fontWeight: FontWeight.bold);
+  }
+
+  static TextStyle normal20TextStyle() {
+    return TextStyle(
+        fontSize: 20,
+        color: CustomColors.colorFontGrey,
+        fontWeight: FontWeight.normal);
   }
 
   static TextStyle dark20TextStyle() {

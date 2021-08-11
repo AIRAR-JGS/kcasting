@@ -83,66 +83,77 @@ class _ActorMemberPage extends State<ActorMemberPage> with BaseUtilMixin {
 
   Widget _headerView() {
     return Container(
-      child: Column(
-        children: [
-          Container(
-              margin: EdgeInsets.only(top: 30, bottom: 15),
+        child: Column(children: [
+      Container(
+          decoration: new BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, stops: [
+                0,
+                1
+              ], colors: [
+                CustomColors.colorPrimary,
+                CustomColors.colorAccent
+              ])),
+          padding: EdgeInsets.all(3),
+          margin: EdgeInsets.only(top: 40, bottom: 20),
+          child: Container(
+              alignment: Alignment.center,
+              width: 100.0,
+              height: 100.0,
+              decoration: new BoxDecoration(
+                  shape: BoxShape.circle, color: CustomColors.colorWhite),
+              padding: EdgeInsets.all(2.0),
               child: KCastingAppData().myProfile == null
-                  ? Icon(
-                      Icons.account_circle,
-                      color: CustomColors.colorFontLightGrey,
-                      size: 100,
-                    )
-                  : (KCastingAppData().myProfile[APIConstants.main_img_url] !=
-                          null
+                  ? Image.asset('assets/images/btn_mypage.png',
+                      color: CustomColors.colorBgGrey,
+                      width: 100,
+                      fit: BoxFit.contain)
+                  : (KCastingAppData().myProfile[APIConstants.main_img_url] != null
                       ? ClipOval(
                           child: CachedNetworkImage(
+                              width: 100.0,
+                              height: 100.0,
                               placeholder: (context, url) => Container(
                                   alignment: Alignment.center,
                                   child: CircularProgressIndicator()),
                               imageUrl: KCastingAppData()
                                   .myProfile[APIConstants.main_img_url],
                               fit: BoxFit.cover,
-                              width: 100.0,
-                              height: 100.0,
-                              errorWidget: (context, url, error) => Icon(
-                                    Icons.account_circle,
-                                    color: CustomColors.colorFontLightGrey,
-                                    size: 100,
-                                  )))
-                      : Icon(
-                          Icons.account_circle,
-                          color: CustomColors.colorFontLightGrey,
-                          size: 100,
-                        ))),
-          Container(
-              margin: EdgeInsets.only(bottom: 15),
-              child: Text(
-                  StringUtils.checkedString(
-                      KCastingAppData().myInfo[APIConstants.actor_name]),
-                  style: CustomStyles.normal32TextStyle())),
-          Container(
-            margin: EdgeInsets.only(bottom: 20),
-            child: Row(
+                              errorWidget: (context, url, error) => Image.asset('assets/images/btn_mypage.png',
+                                  color: CustomColors.colorBgGrey,
+                                  width: 100,
+                                  fit: BoxFit.contain)))
+                      : Image.asset('assets/images/btn_mypage.png', color: CustomColors.colorBgGrey, width: 100, fit: BoxFit.contain)))),
+      Container(
+          margin: EdgeInsets.only(bottom: 15),
+          child: Text(
+              StringUtils.checkedString(
+                  KCastingAppData().myInfo[APIConstants.actor_name]),
+              style: CustomStyles.normal32TextStyle())),
+      Container(
+          margin: EdgeInsets.only(bottom: 20),
+          child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  child: Column(
-                    children: [
-                      Container(
-                          child: Text('진행중',
-                              style: CustomStyles.dark16TextStyle())),
-                      Container(
+                    child: Column(children: [
+                  Container(
+                      child:
+                          Text('진행중', style: CustomStyles.dark16TextStyle())),
+                  GestureDetector(
+                      onTap: () {
+                        // 지원현황 페이지 이동
+                        addView(context, AuditionApplyList());
+                      },
+                      child: Container(
                           margin: EdgeInsets.only(top: 5),
                           child: Text(
                               StringUtils.checkedString(
                                   _stateData[APIConstants.applyIngCnt]),
-                              style: CustomStyles.dark24TextStyle()))
-                    ],
-                  ),
-                ),
+                              style: CustomStyles.normal24TextStyle())))
+                ])),
                 Container(
                   height: 45,
                   margin: EdgeInsets.only(bottom: 5, left: 5, right: 5),
@@ -151,48 +162,50 @@ class _ActorMemberPage extends State<ActorMemberPage> with BaseUtilMixin {
                   ),
                 ),
                 Container(
-                  child: Column(
-                    children: [
-                      Container(
-                          child: Text('받은 제안',
-                              style: CustomStyles.dark16TextStyle())),
-                      Container(
+                    child: Column(children: [
+                  Container(
+                      child:
+                          Text('받은 제안', style: CustomStyles.dark16TextStyle())),
+                  GestureDetector(
+                      onTap: () {
+                        // 받은 제안 페이지 이동
+                        addView(context, OfferedAuditionList());
+                      },
+                      child: Container(
                           margin: EdgeInsets.only(top: 5),
                           child: Text(
                               StringUtils.checkedString(
                                   _stateData[APIConstants.proposalCnt]),
-                              style: CustomStyles.dark24TextStyle()))
-                    ],
-                  ),
-                ),
+                              style: CustomStyles.normal24TextStyle())))
+                ])),
                 Container(
-                  height: 45,
-                  margin: EdgeInsets.only(bottom: 5, left: 5, right: 5),
-                  child: VerticalDivider(
-                    color: CustomColors.colorFontLightGrey,
-                  ),
-                ),
+                    height: 45,
+                    margin: EdgeInsets.only(bottom: 5, left: 5, right: 5),
+                    child: VerticalDivider(
+                        color: CustomColors.colorFontLightGrey)),
                 Container(
-                  child: Column(
-                    children: [
-                      Container(
-                          child: Text('프로필 뷰',
-                              style: CustomStyles.dark16TextStyle())),
-                      Container(
+                    child: Column(children: [
+                  Container(
+                      child:
+                          Text('프로필 뷰', style: CustomStyles.dark16TextStyle())),
+                  GestureDetector(
+                      onTap: () {
+                        // 프로필 관리 페이지 이동
+                        Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ActorProfile()))
+                            .then((value) => {initData()});
+                      },
+                      child: Container(
                           margin: EdgeInsets.only(top: 5),
                           child: Text(
                               StringUtils.checkedString(
                                   _stateData[APIConstants.viewCnt]),
-                              style: CustomStyles.dark24TextStyle()))
-                    ],
-                  ),
-                )
-              ],
-            ),
-          )
-        ],
-      ),
-    );
+                              style: CustomStyles.normal24TextStyle())))
+                ]))
+              ]))
+    ]));
   }
 
   Widget _listItemView(int idx) {

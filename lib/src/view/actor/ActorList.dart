@@ -259,7 +259,7 @@ class _ActorList extends State<ActorList> with BaseUtilMixin {
                                           columns: 1,
                                           symmetry: false,
                                           horizontalScroll: true,
-                                          spacing: 1,
+                                          spacing: 2,
                                           heightHorizontalScroll: 30,
                                           key: _filterStateKey,
                                           itemCount: _filterItemList.length,
@@ -290,6 +290,11 @@ class _ActorList extends State<ActorList> with BaseUtilMixin {
                                                   visible: category.isActive,
                                                 )),
                                                 elevation: 0.0,
+                                                padding: EdgeInsets.only(
+                                                    left: 7,
+                                                    right: 4,
+                                                    top: 5,
+                                                    bottom: 4),
                                                 borderRadius:
                                                     BorderRadius.circular(5),
                                                 onPressed: (item) {
@@ -667,7 +672,7 @@ class _ActorList extends State<ActorList> with BaseUtilMixin {
                         ? Wrap(children: [
                             GridView.count(
                                 padding: EdgeInsets.only(
-                                    left: 16, right: 16, bottom: 50),
+                                    left: 16, right: 16, bottom: 70),
                                 physics: NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
                                 crossAxisCount: 2,

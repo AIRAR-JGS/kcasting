@@ -363,43 +363,54 @@ class AuditionListItem extends StatelessWidget with BaseUtilMixin {
                                             ? (Image.asset(
                                                 'assets/images/toggle_like_on.png',
                                                 width: 20,
-                                                color:
-                                                    CustomColors.colorAccent.withAlpha(200)))
+                                                color: CustomColors.colorAccent
+                                                    .withAlpha(200)))
                                             : (KCastingAppData().myInfo[APIConstants.member_type] ==
                                                     APIConstants
                                                         .member_type_actor)
                                                 ? ((castingItem[APIConstants.isActorCastringScrap] == 1)
-                                                    ? Image.asset('assets/images/toggle_like_on.png',
+                                                    ? Image.asset(
+                                                        'assets/images/toggle_like_on.png',
                                                         width: 20,
-                                                        color: CustomColors
-                                                            .colorAccent.withAlpha(200))
-                                                    : Image.asset('assets/images/toggle_like_off.png',
-                                                        width: 20))
-                                                : ((castingItem[APIConstants.isManagementCastringScrap] == 1)
-                                                    ? Image.asset('assets/images/toggle_like_on.png',
-                                                        width: 20,
-                                                        color: CustomColors
-                                                            .colorAccent.withAlpha(200))
+                                                        color: CustomColors.colorAccent
+                                                            .withAlpha(200))
                                                     : Image.asset(
                                                         'assets/images/toggle_like_off.png',
-                                                        width: 20)))),
-                                visible: (KCastingAppData().myInfo[APIConstants.member_type]) ==
-                                        APIConstants.member_type_product
-                                    ? false
-                                    : true)
+                                                        width: 20))
+                                                : ((castingItem[APIConstants.isManagementCastringScrap] == 1)
+                                                    ? Image.asset(
+                                                        'assets/images/toggle_like_on.png',
+                                                        width: 20,
+                                                        color: CustomColors.colorAccent
+                                                            .withAlpha(200))
+                                                    : Image.asset('assets/images/toggle_like_off.png', width: 20)))),
+                                visible: (KCastingAppData().myInfo[APIConstants.member_type]) == APIConstants.member_type_product ? false : true)
                           ]))
                     ]))
           ]),
           Container(
-              margin: EdgeInsets.only(right: 15),
-              alignment: Alignment.center,
-              color: CustomColors.colorFontDarkGrey.withAlpha(240),
-              width: 50,
-              height: 25,
-              child: Text(
-                  StringUtils.checkedString(
-                      castingItem[APIConstants.project_type]),
-                  style: CustomStyles.white10TextStyle()))
+              margin: EdgeInsets.only(right: 10),
+              alignment: Alignment.topRight,
+              //color: CustomColors.colorFontDarkGrey.withAlpha(240),
+              width: 32,
+              height: 32,
+              child: Stack(children: [
+                StringUtils.checkedString(
+                            castingItem[APIConstants.project_type]) ==
+                        '드라마'
+                    ? Image.asset('assets/images/ic_movie.png',
+                        color: CustomColors.colorBlack.withAlpha(200))
+                    : Image.asset('assets/images/ic_movie.png',
+                        color: CustomColors.colorBlack.withAlpha(200)),
+                Container(
+                    margin: EdgeInsets.only(top: 3),
+                    child: Center(
+                        child: Text(
+                            StringUtils.checkedString(
+                                castingItem[APIConstants.project_type]),
+                            style: CustomStyles.white10TextStyle(),
+                            textAlign: TextAlign.center)))
+              ]))
         ]));
   }
 }

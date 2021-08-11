@@ -5,6 +5,7 @@ import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/net/RestClientInterface.dart';
+import 'package:casting_call/src/ui/DecoratedTabBar.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
 import 'package:dio/dio.dart';
 import 'package:encrypt/encrypt.dart' as Encrypt;
@@ -915,7 +916,8 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
               Container(
                   margin: EdgeInsets.only(top: 10),
                   child: Text(
-                      StringUtils.checkedString(_auditionState[APIConstants.actor_phone]) +
+                      StringUtils.checkedString(
+                              _auditionState[APIConstants.actor_phone]) +
                           '로 면접일정이 안내됩니다.',
                       style: CustomStyles.dark16TextStyle()))
             ]));
@@ -1502,7 +1504,7 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                                                                     _auditionState[
                                                                         APIConstants
                                                                             .actor_name]) +
-                                                                ' 배우님의 제출 프로필',
+                                                                '님의 제출 프로필',
                                                             () {
                                                           Navigator.push(
                                                               context,
@@ -1526,26 +1528,34 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                                                             StringUtils.checkedString(
                                                                 _auditionState[
                                                                     APIConstants
-                                                                        .state_type]),
+                                                                        .auditionApply_state_type]),
                                                             style: CustomStyles
                                                                 .dark16TextStyle()))
                                                   ]))
                                         ])),
                                 Container(
                                     color: CustomColors.colorWhite,
-                                    child: TabBar(
-                                        controller: _tabController,
-                                        indicatorPadding: EdgeInsets.zero,
-                                        labelStyle:
-                                            CustomStyles.bold14TextStyle(),
-                                        unselectedLabelStyle:
-                                            CustomStyles.normal14TextStyle(),
-                                        tabs: [
-                                          Tab(text: '1차 오디션'),
-                                          Tab(text: '2차 오디션'),
-                                          Tab(text: '3차 오디션'),
-                                          Tab(text: '계약완료')
-                                        ])),
+                                    child: DecoratedTabBar(
+                                        decoration: BoxDecoration(
+                                            border: Border(
+                                                bottom: BorderSide(
+                                                    color: CustomColors
+                                                        .colorBgGrey,
+                                                    width: 1.0))),
+                                        tabBar: TabBar(
+                                            controller: _tabController,
+                                            indicatorPadding: EdgeInsets.zero,
+                                            labelStyle:
+                                                CustomStyles.bold14TextStyle(),
+                                            indicatorWeight: 2,
+                                            unselectedLabelStyle: CustomStyles
+                                                .normal14TextStyle(),
+                                            tabs: [
+                                              Tab(text: '1차 오디션'),
+                                              Tab(text: '2차 오디션'),
+                                              Tab(text: '3차 오디션'),
+                                              Tab(text: '계약완료')
+                                            ]))),
                                 Expanded(
                                     flex: 0,
                                     child: [

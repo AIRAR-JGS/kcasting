@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
+import 'package:casting_call/src/ui/DecoratedTabBar.dart';
 import 'package:casting_call/src/ui/ImageView.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
 import 'package:casting_call/src/view/mypage/actor/ActorFilmoListItem.dart';
@@ -51,7 +52,7 @@ class ActorProfileWidget {
                                   style: CustomStyles.dark20TextStyle()),
                             ))),
             Container(
-                color: CustomColors.colorFontTitle,
+                color: CustomColors.colorFontGrey.withAlpha(200),
                 padding: EdgeInsets.all(5),
                 child: GestureDetector(
                     onTap: () async {
@@ -184,7 +185,7 @@ class ActorProfileWidget {
                   flex: 3,
                   child: Container(
                       child:
-                          Text('나이', style: CustomStyles.normal14TextStyle()))),
+                          Text('생년월일', style: CustomStyles.normal14TextStyle()))),
               Expanded(
                   flex: 7,
                   child: Container(
@@ -335,7 +336,7 @@ class ActorProfileWidget {
                   ),
                   child: Tags(
                     runSpacing: 5,
-                    spacing: 5,
+                    spacing: 1.5,
                     alignment: WrapAlignment.start,
                     runAlignment: WrapAlignment.start,
                     key: myKeywordTagStateKey,
@@ -353,6 +354,8 @@ class ActorProfileWidget {
                         title: item,
                         active: false,
                         pressEnabled: false,
+                        padding: EdgeInsets.only(
+                            left: 7, right: 7, top: 3, bottom: 5),
                         combine: ItemTagsCombine.withTextBefore,
                         elevation: 0.0,
                         borderRadius: BorderRadius.circular(50),
@@ -372,16 +375,23 @@ class ActorProfileWidget {
   static Widget profileTabBarWidget(TabController tabController) {
     return Container(
         color: CustomColors.colorWhite,
-        child: TabBar(
-            controller: tabController,
-            indicatorPadding: EdgeInsets.zero,
-            labelStyle: CustomStyles.bold14TextStyle(),
-            unselectedLabelStyle: CustomStyles.normal14TextStyle(),
-            tabs: [
-              Tab(text: '필모그래피'),
-              Tab(text: '이미지'),
-              Tab(text: '비디오'),
-            ]));
+        child: DecoratedTabBar(
+          decoration: BoxDecoration(
+              border: Border(
+                  bottom:
+                      BorderSide(color: CustomColors.colorBgGrey, width: 1.0))),
+          tabBar: TabBar(
+              controller: tabController,
+              indicatorPadding: EdgeInsets.zero,
+              labelStyle: CustomStyles.bold14TextStyle(),
+              indicatorWeight: 2,
+              unselectedLabelStyle: CustomStyles.normal14TextStyle(),
+              tabs: [
+                Tab(text: '필모그래피'),
+                Tab(text: '이미지'),
+                Tab(text: '비디오'),
+              ]),
+        ));
   }
 
   /*

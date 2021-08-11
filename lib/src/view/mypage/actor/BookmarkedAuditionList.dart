@@ -169,7 +169,7 @@ class _BookmarkedAuditionList extends State<BookmarkedAuditionList>
                             _castingBoardList.length > 0
                                 ? (Wrap(children: [
                               ListView.builder(
-                                  padding: EdgeInsets.only(bottom: 50),
+                                  padding: EdgeInsets.only(bottom: 70),
                                   primary: false,
                                   physics: NeverScrollableScrollPhysics(),
                                   shrinkWrap: true,

@@ -6,6 +6,7 @@ import 'package:casting_call/src/model/CheckboxITemModel.dart';
 import 'package:casting_call/src/model/CommonCodeModel.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/net/RestClientInterface.dart';
+import 'package:casting_call/src/ui/DecoratedTabBar.dart';
 import 'package:casting_call/src/view/mypage/actor/ActorProfileModifyMainInfo.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -246,6 +247,9 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
                     width: 24,
                     height: 24,
                     child: Checkbox(
+                      side:
+                          BorderSide(width: 2, color: CustomColors.colorBgGrey),
+                      activeColor: CustomColors.colorAccent.withAlpha(200),
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       value: _secialityMusic[index].isSelected,
                       onChanged: (value) {
@@ -287,6 +291,9 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
                     width: 24,
                     height: 24,
                     child: Checkbox(
+                      side:
+                          BorderSide(width: 2, color: CustomColors.colorBgGrey),
+                      activeColor: CustomColors.colorAccent.withAlpha(200),
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       value: _secialityDance[index].isSelected,
                       onChanged: (value) {
@@ -328,6 +335,9 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
                     width: 24,
                     height: 24,
                     child: Checkbox(
+                      side:
+                          BorderSide(width: 2, color: CustomColors.colorBgGrey),
+                      activeColor: CustomColors.colorAccent.withAlpha(200),
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       value: _secialitySports[index].isSelected,
                       onChanged: (value) {
@@ -369,6 +379,9 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
                     width: 24,
                     height: 24,
                     child: Checkbox(
+                      side:
+                          BorderSide(width: 2, color: CustomColors.colorBgGrey),
+                      activeColor: CustomColors.colorAccent.withAlpha(200),
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       value: _secialityEtc[index].isSelected,
                       onChanged: (value) {
@@ -442,6 +455,13 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
                                               width: 24,
                                               height: 24,
                                               child: Checkbox(
+                                                side: BorderSide(
+                                                    width: 2,
+                                                    color: CustomColors
+                                                        .colorBgGrey),
+                                                activeColor: CustomColors
+                                                    .colorAccent
+                                                    .withAlpha(200),
                                                 materialTapTargetSize:
                                                     MaterialTapTargetSize
                                                         .shrinkWrap,
@@ -492,6 +512,13 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
                                               width: 24,
                                               height: 24,
                                               child: Checkbox(
+                                                side: BorderSide(
+                                                    width: 2,
+                                                    color: CustomColors
+                                                        .colorBgGrey),
+                                                activeColor: CustomColors
+                                                    .colorAccent
+                                                    .withAlpha(200),
                                                 materialTapTargetSize:
                                                     MaterialTapTargetSize
                                                         .shrinkWrap,
@@ -524,7 +551,7 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
                                   ),
                                 ),
                                 Container(
-                                    margin: EdgeInsets.only(bottom: 5, top: 15),
+                                    margin: EdgeInsets.only(top: 15),
                                     padding:
                                         EdgeInsets.only(left: 15, right: 15),
                                     alignment: Alignment.centerLeft,
@@ -534,21 +561,28 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
                                     margin: EdgeInsets.only(top: 5),
                                     width: MediaQuery.of(context).size.width,
                                     color: CustomColors.colorWhite,
-                                    child: TabBar(
-                                        controller: _tabController,
-                                        indicatorSize:
-                                            TabBarIndicatorSize.label,
-                                        indicatorPadding: EdgeInsets.zero,
-                                        labelStyle:
-                                            CustomStyles.bold14TextStyle(),
-                                        unselectedLabelStyle:
-                                            CustomStyles.normal14TextStyle(),
-                                        tabs: [
-                                          Tab(text: '음악'),
-                                          Tab(text: '춤'),
-                                          Tab(text: '스포츠'),
-                                          Tab(text: '기타')
-                                        ])),
+                                    child: DecoratedTabBar(
+                                      decoration: BoxDecoration(
+                                          border: Border(
+                                              bottom: BorderSide(
+                                                  color:
+                                                      CustomColors.colorBgGrey,
+                                                  width: 1.0))),
+                                      tabBar: TabBar(
+                                          controller: _tabController,
+                                          indicatorPadding: EdgeInsets.zero,
+                                          labelStyle:
+                                              CustomStyles.bold14TextStyle(),
+                                          indicatorWeight: 2,
+                                          unselectedLabelStyle:
+                                              CustomStyles.normal14TextStyle(),
+                                          tabs: [
+                                            Tab(text: '음악'),
+                                            Tab(text: '춤'),
+                                            Tab(text: '스포츠'),
+                                            Tab(text: '기타')
+                                          ]),
+                                    )),
                                 Expanded(
                                   flex: 0,
                                   child: [
@@ -577,7 +611,7 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
                                         EdgeInsets.only(left: 15, right: 15),
                                     alignment: Alignment.centerLeft,
                                     child: Text(
-                                        '회원님에게 맞는 키워드를 설정하여 제작자들에게 회원님을 노출해보세요.(최대 3개)',
+                                        '회원님에게 맞는 키워드를 설정하여 제작자들에게 회원님을 노출해보세요.',
                                         style:
                                             CustomStyles.normal14TextStyle())),
                                 Container(
@@ -596,6 +630,7 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
                                   ),
                                   child: Tags(
                                     runSpacing: 5,
+                                    spacing: 1.5,
                                     alignment: WrapAlignment.start,
                                     key: _characterTagStateKey,
                                     itemCount: _castingKeyword.length,
@@ -604,10 +639,9 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
                                       return ItemTags(
                                           textStyle:
                                               CustomStyles.dark14TextStyle(),
-                                          textColor:
-                                              CustomColors.colorFontDarkGrey,
-                                          activeColor:
-                                              CustomColors.colorPrimary,
+                                          textColor: CustomColors.colorFontGrey,
+                                          activeColor: CustomColors.colorPrimary
+                                              .withAlpha(200),
                                           textActiveColor:
                                               CustomColors.colorWhite,
                                           key: Key(index.toString()),
@@ -617,6 +651,11 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
                                           combine:
                                               ItemTagsCombine.withTextBefore,
                                           elevation: 0.0,
+                                          padding: EdgeInsets.only(
+                                              left: 7,
+                                              right: 7,
+                                              top: 3,
+                                              bottom: 5),
                                           borderRadius:
                                               BorderRadius.circular(50),
                                           onPressed: (item) {
@@ -642,6 +681,7 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
                                   ),
                                   child: Tags(
                                     runSpacing: 5,
+                                    spacing: 1.5,
                                     alignment: WrapAlignment.start,
                                     key: _appearanceTagStateKey,
                                     itemCount: _lookKeyword.length,
@@ -650,9 +690,9 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
                                       return ItemTags(
                                         textStyle:
                                             CustomStyles.dark14TextStyle(),
-                                        textColor:
-                                            CustomColors.colorFontDarkGrey,
-                                        activeColor: CustomColors.colorPrimary,
+                                        textColor: CustomColors.colorFontGrey,
+                                        activeColor: CustomColors.colorPrimary
+                                            .withAlpha(200),
                                         textActiveColor:
                                             CustomColors.colorWhite,
                                         key: Key(index.toString()),
@@ -661,6 +701,11 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
                                         active: item.isSelected,
                                         combine: ItemTagsCombine.withTextBefore,
                                         elevation: 0.0,
+                                        padding: EdgeInsets.only(
+                                            left: 7,
+                                            right: 7,
+                                            top: 3,
+                                            bottom: 5),
                                         borderRadius: BorderRadius.circular(50),
                                         onPressed: (item) {
                                           _lookKeyword[index].isSelected =

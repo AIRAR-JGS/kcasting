@@ -282,7 +282,7 @@ class _AuditionList extends State<AuditionList> with BaseUtilMixin {
                                         columns: 1,
                                         symmetry: false,
                                         horizontalScroll: true,
-                                        spacing: 1,
+                                        spacing: 2,
                                         heightHorizontalScroll: 30,
                                         key: _filterStateKey,
                                         itemCount: _filterItemList.length,
@@ -310,6 +310,7 @@ class _AuditionList extends State<AuditionList> with BaseUtilMixin {
                                                     visible: category.isActive,
                                                   )),
                                               elevation: 0.0,
+                                              padding: EdgeInsets.only(left: 7, right: 4, top: 5, bottom: 4),
                                               borderRadius: BorderRadius.circular(5),
                                               onPressed: (item) {
                                                 setState(() {
@@ -770,7 +771,7 @@ class _AuditionList extends State<AuditionList> with BaseUtilMixin {
                     _castingBoardList.length > 0
                         ? (Wrap(children: [
                       ListView.builder(
-                          padding: EdgeInsets.only(bottom: 50),
+                          padding: EdgeInsets.only(bottom: 70),
                           primary: false,
                           physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,

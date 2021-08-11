@@ -830,7 +830,9 @@ class _ActorProfile extends State<ActorProfile>
                                                 Expanded(
                                                     flex: 1,
                                                     child: Text(
-                                                        '최대 8장(각 25MB 미만)')),
+                                                        '최대 8장(각 25MB 미만)',
+                                                        style: CustomStyles
+                                                            .normal14TextStyle())),
                                                 Expanded(
                                                     flex: 0,
                                                     child: CustomStyles
@@ -916,7 +918,9 @@ class _ActorProfile extends State<ActorProfile>
                                                 Expanded(
                                                     flex: 1,
                                                     child: Text(
-                                                        '최대 8장(각 25MB 미만)')),
+                                                        '최대 8장(각 25MB 미만)',
+                                                        style: CustomStyles
+                                                            .normal14TextStyle())),
                                                 Expanded(
                                                     flex: 0,
                                                     child: CustomStyles

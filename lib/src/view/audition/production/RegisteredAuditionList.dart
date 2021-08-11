@@ -4,6 +4,7 @@ import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/dialog/DialogRegisterAuditionRole.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/net/RestClientInterface.dart';
+import 'package:casting_call/src/ui/DecoratedTabBar.dart';
 import 'package:casting_call/src/util/DateTileUtils.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
 import 'package:dio/dio.dart';
@@ -119,7 +120,6 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
   }
 
   Future<void> _refreshPage() async {
-
     setState(() {
       _total = 0;
       _castingStateList = [];
@@ -188,6 +188,7 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
 
   Widget tabCastingList() {
     return Container(
+        margin: EdgeInsets.only(bottom: 70, top: 10),
         alignment: Alignment.center,
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Wrap(children: [
@@ -212,27 +213,27 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
                           },
                           child: Container(
                               alignment: Alignment.center,
-                              padding:
-                                  EdgeInsets.only(left: 15, right: 15, top: 15),
+                              padding: EdgeInsets.only(
+                                  left: 15, right: 15, top: 15, bottom: 15),
                               child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Container(
-                                        margin: EdgeInsets.only(bottom: 5),
+                                        margin: EdgeInsets.only(bottom: 10),
                                         child: Text(
                                             StringUtils.checkedString(_data[
                                                 APIConstants.casting_name]),
                                             style: CustomStyles
                                                 .dark20TextStyle())),
                                     Container(
-                                        child: Row(children: [
-                                      Text(
-                                          '작성일 : ' +
-                                              StringUtils.checkedString(_data[
-                                                  APIConstants
-                                                      .productionCasting_addDate]),
-                                          style: CustomStyles.dark10TextStyle())
-                                    ])),
+                                        alignment: Alignment.centerRight,
+                                        child: Text(
+                                            '등록일 : ' +
+                                                StringUtils.checkedString(_data[
+                                                    APIConstants
+                                                        .productionCasting_addDate]),
+                                            style: CustomStyles
+                                                .dark10TextStyle())),
                                     Visibility(
                                         child: GestureDetector(
                                       onTap: () {
@@ -633,6 +634,7 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
   Widget tabCastingContractedList() {
     return Container(
         alignment: Alignment.center,
+        margin: EdgeInsets.only(bottom: 70, top: 10),
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Wrap(children: [
             ListView.separated(
@@ -660,58 +662,51 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
                                   EdgeInsets.only(left: 15, right: 15, top: 15),
                               child: Column(children: [
                                 Container(
-                                    margin: EdgeInsets.only(bottom: 5),
+                                    margin: EdgeInsets.only(bottom: 10),
                                     alignment: Alignment.centerLeft,
                                     child: Text(
                                         StringUtils.checkedString(
                                             _data[APIConstants.casting_name]),
                                         style: CustomStyles.dark20TextStyle())),
                                 Container(
-                                    child: Row(children: [
-                                  Text(
-                                      '작성일 : ' +
-                                          StringUtils.checkedString(_data[
-                                              APIConstants
-                                                  .productionCasting_addDate]),
-                                      style: CustomStyles.dark10TextStyle())
-                                ])),
-                                GestureDetector(
-                                  onTap: () {},
-                                  child: Container(
-                                    margin: EdgeInsets.only(top: 10),
+                                    alignment: Alignment.centerRight,
+                                    child: Text(
+                                        '등록일 : ' +
+                                            StringUtils.checkedString(_data[
+                                                APIConstants
+                                                    .productionCasting_addDate]),
+                                        style: CustomStyles.dark10TextStyle())),
+                                Container(
+                                    margin: EdgeInsets.only(top: 15),
                                     padding: EdgeInsets.only(
                                         top: 10,
                                         bottom: 10,
                                         left: 10,
                                         right: 10),
                                     decoration: BoxDecoration(
-                                      borderRadius:
-                                          CustomStyles.circle7BorderRadius(),
-                                      border: Border.all(
-                                          width: 1,
-                                          color:
-                                              CustomColors.colorFontLightGrey),
-                                    ),
+                                        borderRadius:
+                                            CustomStyles.circle7BorderRadius(),
+                                        border: Border.all(
+                                            width: 1,
+                                            color: CustomColors
+                                                .colorFontLightGrey)),
                                     child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
-                                          child: Text('캐스팅',
-                                              style: CustomStyles
-                                                  .dark10TextStyle()),
-                                        ),
-                                        Container(
-                                          child: Text(
-                                              StringUtils.checkedString(_data[
-                                                  APIConstants.casting_name]),
-                                              style: CustomStyles
-                                                  .dark20TextStyle()),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                )
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Container(
+                                            child: Text('캐스팅',
+                                                style: CustomStyles
+                                                    .dark10TextStyle()),
+                                          ),
+                                          Container(
+                                            child: Text(
+                                                StringUtils.checkedString(_data[
+                                                    APIConstants.actor_name]),
+                                                style: CustomStyles
+                                                    .dark20TextStyle()),
+                                          )
+                                        ]))
                               ]))));
                 },
                 separatorBuilder: (context, index) {
@@ -727,6 +722,7 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
   Widget tabCastingOffList() {
     return Container(
         alignment: Alignment.center,
+        margin: EdgeInsets.only(bottom: 70, top: 10),
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Wrap(children: [
             ListView.separated(
@@ -750,70 +746,55 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
                           },
                           child: Container(
                               alignment: Alignment.center,
-                              padding:
-                                  EdgeInsets.only(left: 15, right: 15, top: 15),
+                              padding: EdgeInsets.only(
+                                  left: 15, right: 15, top: 15, bottom: 15),
                               child: Column(children: [
                                 Container(
-                                    margin: EdgeInsets.only(bottom: 5),
+                                    margin: EdgeInsets.only(bottom: 10),
                                     alignment: Alignment.centerLeft,
                                     child: Text(
                                         StringUtils.checkedString(
                                             _data[APIConstants.casting_name]),
                                         style: CustomStyles.dark20TextStyle())),
                                 Container(
-                                    child: Row(children: [
-                                  Text(
-                                      '작성일 : ' +
-                                          StringUtils.checkedString(_data[
-                                              APIConstants
-                                                  .productionCasting_addDate]),
-                                      style: CustomStyles.dark10TextStyle())
-                                ])),
-                                /*GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ActorDetail()),
-                                        );
-                                      },
-                                      child: Container(
-                                        margin: EdgeInsets.only(top: 10),
-                                        padding: EdgeInsets.only(
-                                            top: 10,
-                                            bottom: 10,
-                                            left: 10,
-                                            right: 10),
-                                        decoration: BoxDecoration(
-                                          borderRadius: CustomStyles
-                                              .circle7BorderRadius(),
-                                          border: Border.all(
-                                              width: 1,
-                                              color: CustomColors
-                                                  .colorFontLightGrey),
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Container(
-                                              child: Text('캐스팅',
-                                                  style: CustomStyles
-                                                      .dark10TextStyle()),
-                                            ),
-                                            Container(
-                                              child: Text(
-                                                  StringUtils.checkedString(
-                                                      _data[APIConstants
-                                                          .casting_name]),
-                                                  style: CustomStyles
-                                                      .dark20TextStyle()),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    )*/
+                                    alignment: Alignment.centerRight,
+                                    child: Text(
+                                        '등록일 : ' +
+                                            StringUtils.checkedString(_data[
+                                                APIConstants
+                                                    .productionCasting_addDate]),
+                                        style: CustomStyles.dark10TextStyle())),
+                                Container(
+                                    margin: EdgeInsets.only(top: 15),
+                                    padding: EdgeInsets.only(
+                                        top: 10,
+                                        bottom: 10,
+                                        left: 10,
+                                        right: 10),
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            CustomStyles.circle7BorderRadius(),
+                                        border: Border.all(
+                                            width: 1,
+                                            color: CustomColors
+                                                .colorFontLightGrey)),
+                                    child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Container(
+                                            child: Text('캐스팅',
+                                                style: CustomStyles
+                                                    .dark10TextStyle()),
+                                          ),
+                                          Container(
+                                            child: Text(
+                                                StringUtils.checkedString(_data[
+                                                    APIConstants.actor_name]),
+                                                style: CustomStyles
+                                                    .dark20TextStyle()),
+                                          )
+                                        ]))
                               ]))));
                 },
                 separatorBuilder: (context, index) {
@@ -842,144 +823,142 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
               children: [
                 Container(
                     child: RefreshIndicator(
-                      onRefresh: _refreshPage,
-                      child: SingleChildScrollView(
-                          controller: _scrollController,
-                          physics: AlwaysScrollableScrollPhysics(),
-                          key: ObjectKey(_castingStateList.length > 0 ? _castingStateList[0] : ""),
-                          child: Container(
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      margin: EdgeInsets.only(top: 30.0, bottom: 10),
-                                      padding: EdgeInsets.only(left: 16, right: 16),
-                                      child: Text(_projectName,
-                                          style: CustomStyles.normal24TextStyle()),
-                                    ),
-                                    Container(
-                                      margin: EdgeInsets.only(top: 10, left: 15, right: 15),
-                                      alignment: Alignment.centerRight,
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) =>
-                                                DialogRegisterAuditionRole(
-                                                    onClickedAddCertainRole: () {
-                                                      Navigator.pop(context);
-                                                      replaceView(
-                                                          context,
-                                                          RegisterMainRoleAudition(
-                                                            projectSeq: _projectSeq,
-                                                            projectName: _projectName,
-                                                          ));
-                                                    }, onClickedAddLargeRole: () {
-                                                  Navigator.pop(context);
-                                                  replaceView(
-                                                      context,
-                                                      RegisterSubRoleAudition(
-                                                        projectSeq: _projectSeq,
-                                                        projectName: _projectName,
-                                                      ));
-                                                }),
-                                          );
-                                        },
-                                        child: Text('+ 배역 추가',
-                                            style: CustomStyles.blue16TextStyle()),
-                                      ),
-                                    ),
-                                    Container(
-                                        padding: EdgeInsets.only(right: 15),
-                                        width: MediaQuery.of(context).size.width * 0.8,
-                                        color: CustomColors.colorWhite,
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                                child: TabBar(
-                                                  controller: _tabController,
-                                                  indicatorSize: TabBarIndicatorSize.label,
-                                                  indicatorPadding: EdgeInsets.zero,
-                                                  labelStyle: CustomStyles.bold14TextStyle(),
-                                                  unselectedLabelStyle:
-                                                  CustomStyles.normal14TextStyle(),
-                                                  tabs: [
-                                                    Tab(text: '진행중'),
-                                                    Tab(text: '계약완료'),
-                                                    Tab(text: '마감')
-                                                  ],
-                                                ),
-                                                flex: 1)
-                                          ],
-                                        )),
-                                    Visibility(
-                                        child: Container(
-                                          margin:
-                                          EdgeInsets.only(left: 15, right: 15, top: 15),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment: MainAxisAlignment.end,
-                                            children: [
-                                              SizedBox(
-                                                  width: 24,
-                                                  height: 24,
-                                                  child: Radio<int>(
-                                                    value: _isNotPayment,
-                                                    groupValue: 1,
-                                                    toggleable: true,
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        if (_isNotPayment == 0) {
-                                                          _isNotPayment = 1;
-                                                        } else {
-                                                          _isNotPayment = 0;
-                                                        }
+                  onRefresh: _refreshPage,
+                  child: SingleChildScrollView(
+                      controller: _scrollController,
+                      physics: AlwaysScrollableScrollPhysics(),
+                      key: ObjectKey(_castingStateList.length > 0
+                          ? _castingStateList[0]
+                          : ""),
+                      child: Container(
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                            Container(
+                              margin: EdgeInsets.only(top: 30.0, bottom: 10),
+                              padding: EdgeInsets.only(left: 16, right: 16),
+                              child: Text(_projectName,
+                                  style: CustomStyles.normal24TextStyle()),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(left: 15, right: 15),
+                              alignment: Alignment.centerRight,
+                              child: GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) =>
+                                          DialogRegisterAuditionRole(
+                                              onClickedAddCertainRole: () {
+                                            Navigator.pop(context);
+                                            replaceView(
+                                                context,
+                                                RegisterMainRoleAudition(
+                                                  projectSeq: _projectSeq,
+                                                  projectName: _projectName,
+                                                ));
+                                          }, onClickedAddLargeRole: () {
+                                            Navigator.pop(context);
+                                            replaceView(
+                                                context,
+                                                RegisterSubRoleAudition(
+                                                  projectSeq: _projectSeq,
+                                                  projectName: _projectName,
+                                                ));
+                                          }));
+                                },
+                                child: Text('+ 배역 추가',
+                                    style: CustomStyles.blue16TextStyle()),
+                              ),
+                            ),
+                            Container(
+                                width: MediaQuery.of(context).size.width,
+                                color: CustomColors.colorWhite,
+                                child: DecoratedTabBar(
+                                  decoration: BoxDecoration(
+                                      border: Border(
+                                          bottom: BorderSide(
+                                              color: CustomColors.colorBgGrey,
+                                              width: 1.0))),
+                                  tabBar: TabBar(
+                                    controller: _tabController,
+                                    indicatorWeight: 2,
+                                    indicatorPadding: EdgeInsets.zero,
+                                    labelStyle: CustomStyles.bold14TextStyle(),
+                                    unselectedLabelStyle:
+                                        CustomStyles.normal14TextStyle(),
+                                    tabs: [
+                                      Tab(text: '진행중'),
+                                      Tab(text: '계약완료'),
+                                      Tab(text: '마감')
+                                    ],
+                                  ),
+                                )),
+                            Visibility(
+                                child: Container(
+                                    margin: EdgeInsets.only(
+                                        left: 15, right: 15, top: 15),
+                                    child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          SizedBox(
+                                              width: 24,
+                                              height: 24,
+                                              child: Radio<int>(
+                                                value: _isNotPayment,
+                                                groupValue: 1,
+                                                toggleable: true,
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    if (_isNotPayment == 0) {
+                                                      _isNotPayment = 1;
+                                                    } else {
+                                                      _isNotPayment = 0;
+                                                    }
 
-                                                        _total = 0;
-                                                        _castingStateList = [];
-                                                        _apiKey =
-                                                            APIConstants.SEL_PCT_CMPLIST;
+                                                    _total = 0;
+                                                    _castingStateList = [];
+                                                    _apiKey = APIConstants
+                                                        .SEL_PCT_CMPLIST;
 
-                                                        requestCastingStateList(context);
-                                                      });
-                                                    },
-                                                    materialTapTargetSize:
-                                                    MaterialTapTargetSize.shrinkWrap,
-                                                  )),
-                                              Text('미지급만 보기',
-                                                  style: CustomStyles.dark16TextStyle())
-                                            ],
-                                          ),
-                                        ),
-                                        visible: _tabIndex == 1 ? true : false),
-                                    Container(
-                                      margin: EdgeInsets.only(top: 10),
-                                      child: Divider(
-                                        height: 0.1,
-                                        color: CustomColors.colorFontLightGrey,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      flex: 0,
-                                      child: [
-                                        tabCastingList(),
-                                        tabCastingContractedList(),
-                                        tabCastingOffList()
-                                      ][_tabIndex],
-                                    ),
-                                    Visibility(
-                                        child: Container(
-                                          alignment: Alignment.center,
-                                          margin: EdgeInsets.only(top: 50),
-                                          child: Text(
-                                            '등록된 오디션이 없습니다.',
-                                            style: CustomStyles.normal16TextStyle(),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ),
-                                        visible: _castingStateList.length > 0 ? false : true),
-                                  ]))),
-                    )),
+                                                    requestCastingStateList(
+                                                        context);
+                                                  });
+                                                },
+                                                materialTapTargetSize:
+                                                    MaterialTapTargetSize
+                                                        .shrinkWrap,
+                                              )),
+                                          Text('미지급만 보기',
+                                              style: CustomStyles
+                                                  .dark16TextStyle())
+                                        ])),
+                                visible: _tabIndex == 1 ? true : false),
+                            Expanded(
+                              flex: 0,
+                              child: [
+                                tabCastingList(),
+                                tabCastingContractedList(),
+                                tabCastingOffList()
+                              ][_tabIndex],
+                            ),
+                            Visibility(
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  margin: EdgeInsets.only(top: 50),
+                                  child: Text(
+                                    '등록된 오디션이 없습니다.',
+                                    style: CustomStyles.normal16TextStyle(),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                visible: _castingStateList.length > 0
+                                    ? false
+                                    : true),
+                          ]))),
+                )),
                 Visibility(
                   child: Container(
                       color: Colors.black38,

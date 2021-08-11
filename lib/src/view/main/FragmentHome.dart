@@ -597,7 +597,7 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
                 // 이용안내
                 Container(
                     margin: EdgeInsets.only(
-                        top: 25, left: 15, right: 15, bottom: 30),
+                        top: 25, left: 15, right: 15, bottom: 80),
                     alignment: Alignment.topLeft,
                     child: CustomStyles.underline16TextButtonStyle('이용안내', () {
                       addView(context, UsageGuide());

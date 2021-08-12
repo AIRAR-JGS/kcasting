@@ -78,8 +78,10 @@ class _ActorDetail extends State<ActorDetail>
     Map<String, dynamic> targetData = new Map();
     targetData[APIConstants.actor_seq] = _seq;
     targetData[APIConstants.actor_profile_seq] = _actorProfileSeq;
-    if(KCastingAppData().myInfo[APIConstants.member_type] == APIConstants.member_type_product) {
-      targetData[APIConstants.production_seq] = KCastingAppData().myInfo[APIConstants.seq];
+    if (KCastingAppData().myInfo[APIConstants.member_type] ==
+        APIConstants.member_type_product) {
+      targetData[APIConstants.production_seq] =
+          KCastingAppData().myInfo[APIConstants.seq];
     }
 
     Map<String, dynamic> params = new Map();
@@ -323,11 +325,12 @@ class _ActorDetail extends State<ActorDetail>
 
     // 배우 북마크 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetDate = new Map();
-    targetDate[APIConstants.production_seq] = KCastingAppData().myInfo[APIConstants.seq];
+    targetDate[APIConstants.production_seq] =
+        KCastingAppData().myInfo[APIConstants.seq];
     targetDate[APIConstants.actor_seq] = _seq;
 
     Map<String, dynamic> params = new Map();
-    if(_actorProfile[APIConstants.isProductionActorScrap] == 1) {
+    if (_actorProfile[APIConstants.isProductionActorScrap] == 1) {
       params[APIConstants.key] = APIConstants.DEA_PAS_INFO;
     } else {
       params[APIConstants.key] = APIConstants.INS_PAS_INFO;
@@ -342,16 +345,13 @@ class _ActorDetail extends State<ActorDetail>
           try {
             // 배우 북마크 성공
             setState(() {
-
               setState(() {
-                if(_actorProfile[APIConstants.isProductionActorScrap] == 1) {
+                if (_actorProfile[APIConstants.isProductionActorScrap] == 1) {
                   _actorProfile[APIConstants.isProductionActorScrap] = 0;
                 } else {
                   _actorProfile[APIConstants.isProductionActorScrap] = 1;
                 }
               });
-
-
             });
           } catch (e) {}
         }
@@ -376,60 +376,66 @@ class _ActorDetail extends State<ActorDetail>
                   flex: 1,
                   child: SingleChildScrollView(
                       child: Container(
+                          padding: EdgeInsets.only(bottom: 200),
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                        ActorProfileWidget.mainImageWidget(
-                            context, false, _actorProfile, null),
-                        ActorProfileWidget.profileWidget(
-                            context,
-                            _myKeywordTagStateKey,
-                            _actorProfile,
-                            _actorAgeStr,
-                            _actorEducationStr,
-                            _actordialectStr,
-                            _actorLanguageStr,
-                            _actorAbilityStr,
-                            _actorKwdList),
-                        Container(
-                            margin: EdgeInsets.only(top: 20),
-                            child: Divider(
-                              height: 1,
-                              color: CustomColors.colorFontLightGrey,
-                            )),
-                        ActorProfileWidget.profileTabBarWidget(_tabController),
-                        Expanded(
-                          flex: 0,
-                          child: [
-                            Container(
-                                margin: EdgeInsets.only(bottom: 30),
-                                child: Column(children: [
-                                  Container(
-                                      padding: EdgeInsets.only(
-                                          top: 20,
-                                          left: 20,
-                                          right: 20,
-                                          bottom: 15),
-                                      child: Row(children: [
-                                        Expanded(
-                                            flex: 1,
-                                            child: Text(
-                                                '출연 작품: ' +
-                                                    _actorFilmorgraphy.length
-                                                        .toString(),
-                                                style: CustomStyles
-                                                    .normal14TextStyle()))
-                                      ])),
-                                  ActorProfileWidget.filmorgraphyListWidget(
-                                      false, _actorFilmorgraphy, (index) {})
-                                ])),
-                            ActorProfileWidget.imageTabItemWidget(
-                                false, _actorImage, null),
-                            ActorProfileWidget.videoTabItemWidget(
-                                false, _actorVideo, null)
-                          ][_tabIndex],
-                        )
-                      ])))),
+                                ActorProfileWidget.mainImageWidget(
+                                    context, false, _actorProfile, null),
+                                ActorProfileWidget.profileWidget(
+                                    context,
+                                    _myKeywordTagStateKey,
+                                    _actorProfile,
+                                    _actorAgeStr,
+                                    _actorEducationStr,
+                                    _actordialectStr,
+                                    _actorLanguageStr,
+                                    _actorAbilityStr,
+                                    _actorKwdList),
+                                Container(
+                                    margin: EdgeInsets.only(top: 20),
+                                    child: Divider(
+                                      height: 1,
+                                      color: CustomColors.colorFontLightGrey,
+                                    )),
+                                ActorProfileWidget.profileTabBarWidget(
+                                    _tabController),
+                                Expanded(
+                                  flex: 0,
+                                  child: [
+                                    Container(
+                                        margin: EdgeInsets.only(bottom: 30),
+                                        child: Column(children: [
+                                          Container(
+                                              padding: EdgeInsets.only(
+                                                  top: 20,
+                                                  left: 20,
+                                                  right: 20,
+                                                  bottom: 15),
+                                              child: Row(children: [
+                                                Expanded(
+                                                    flex: 1,
+                                                    child: Text(
+                                                        '출연 작품: ' +
+                                                            _actorFilmorgraphy
+                                                                .length
+                                                                .toString(),
+                                                        style: CustomStyles
+                                                            .normal14TextStyle()))
+                                              ])),
+                                          ActorProfileWidget
+                                              .filmorgraphyListWidget(
+                                                  false,
+                                                  _actorFilmorgraphy,
+                                                  (index) {})
+                                        ])),
+                                    ActorProfileWidget.imageTabItemWidget(
+                                        false, _actorImage, null),
+                                    ActorProfileWidget.videoTabItemWidget(
+                                        false, _actorVideo, null)
+                                  ][_tabIndex],
+                                )
+                              ])))),
               Visibility(
                 child: Container(
                     height: 55,
@@ -439,8 +445,8 @@ class _ActorDetail extends State<ActorDetail>
                           flex: 1,
                           child: Container(
                               height: 55,
-                              child: CustomStyles.blueBGSquareButtonStyle(
-                                  '오디션 제안', () {
+                              child:
+                                  CustomStyles.applyButtonStyle('오디션 제안', () {
                                 addView(
                                     context,
                                     ProposeAudition(
@@ -452,29 +458,32 @@ class _ActorDetail extends State<ActorDetail>
                                             APIConstants.main_img_url]));
                               }))),
                       GestureDetector(
-                        onTap: () {
-                          requestActorBookmarkEditApi(context);
-                        },
-                        child: Visibility(
-                          child: Container(
-                              height: 55,
-                              width: 55,
-                              padding: EdgeInsets.only(left: 15, right: 15),
-                              alignment: Alignment.center,
-                              child: _actorProfile[APIConstants.isProductionActorScrap] == 1 ? Image.asset(
-                                'assets/images/toggle_like_on.png',
-                                width: 20,
-                                color: CustomColors.colorAccent
-                              ) : Image.asset(
-                            'assets/images/toggle_like_off.png',
-                            width: 20,
-                          )),
-                          visible:  KCastingAppData().myInfo[APIConstants.member_type] ==
-                              APIConstants.member_type_product
-                              ? true
-                              : false
-                        )
-                      )
+                          onTap: () {
+                            requestActorBookmarkEditApi(context);
+                          },
+                          child: Visibility(
+                              child: Container(
+                                  height: 55,
+                                  width: 55,
+                                  padding: EdgeInsets.only(left: 15, right: 15),
+                                  alignment: Alignment.center,
+                                  child: _actorProfile[APIConstants
+                                              .isProductionActorScrap] ==
+                                          1
+                                      ? Image.asset(
+                                          'assets/images/toggle_like_on.png',
+                                          width: 20,
+                                          color: CustomColors.colorAccent
+                                              .withAlpha(200))
+                                      : Image.asset(
+                                          'assets/images/toggle_like_off.png',
+                                          width: 20,
+                                        )),
+                              visible: KCastingAppData()
+                                          .myInfo[APIConstants.member_type] ==
+                                      APIConstants.member_type_product
+                                  ? true
+                                  : false))
                     ])),
                 visible: KCastingAppData().myInfo[APIConstants.member_type] ==
                         APIConstants.member_type_product

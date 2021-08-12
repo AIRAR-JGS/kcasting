@@ -33,10 +33,22 @@ class AuditionListItem extends StatelessWidget with BaseUtilMixin {
           Wrap(children: [
             Container(
                 width: MediaQuery.of(context).size.width * 0.9,
-                decoration: BoxDecoration(
+                /*decoration: BoxDecoration(
                     border: Border.all(
                         width: 0.5, color: CustomColors.colorFontLightGrey),
-                    borderRadius: CustomStyles.circle7BorderRadius()),
+                    borderRadius: CustomStyles.circle7BorderRadius()),*/
+                decoration: BoxDecoration(
+                    color: CustomColors.colorWhite,
+                    borderRadius: CustomStyles.circle7BorderRadius(),
+                    boxShadow: [
+                      BoxShadow(
+                        color: CustomColors.colorFontLightGrey
+                            .withAlpha(100),
+                        blurRadius: 2.0,
+                        spreadRadius: 2.0,
+                        offset: Offset(2, 1),
+                      )
+                    ]),
                 child: Column(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,

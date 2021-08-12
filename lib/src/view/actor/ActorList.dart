@@ -678,7 +678,7 @@ class _ActorList extends State<ActorList> with BaseUtilMixin {
                                 crossAxisCount: 2,
                                 crossAxisSpacing: 10,
                                 mainAxisSpacing: 5,
-                                childAspectRatio: (0.76),
+                                childAspectRatio: (0.6),
                                 children:
                                     List.generate(_actorList.length, (index) {
                                   return ActorListItem(data: _actorList[index]);

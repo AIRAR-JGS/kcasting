@@ -67,53 +67,48 @@ class _ProposedAuditionDetail extends State<ProposedAuditionDetail>
                                             CrossAxisAlignment.center,
                                         children: [
                                           Expanded(
-                                            flex: 0,
-                                            child: Container(
-                                                width: 67,
-                                                height: 67,
+                                              flex: 0,
+                                              child: Container(
+                                                decoration: new BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    gradient:
+                                                        LinearGradient(colors: [
+                                                      CustomColors.colorPrimary,
+                                                      CustomColors.colorAccent
+                                                    ])),
+                                                padding: EdgeInsets.all(3),
                                                 margin:
-                                                    EdgeInsets.only(right: 5),
-                                                child: (_scoutData[APIConstants
-                                                            .main_img_url] !=
-                                                        null
-                                                    ? ClipOval(
-                                                        child:
-                                                            CachedNetworkImage(
-                                                              placeholder: (context, url) => Container(
-                                                                  alignment: Alignment.center,
-                                                                  child: CircularProgressIndicator()),
-                                                        fit: BoxFit.cover,
-                                                        imageUrl: _scoutData[
-                                                            APIConstants
-                                                                .main_img_url],
-                                                        errorWidget: (context,
-                                                                url, error) =>
-                                                            Image.asset(
-                                                                'assets/images/btn_mypage.png',
+                                                    EdgeInsets.only(right: 10),
+                                                alignment: Alignment.topCenter,
+                                                child: Container(
+                                                    alignment: Alignment.center,
+                                                    width: 67,
+                                                    height: 67,
+                                                    decoration: new BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        color: CustomColors
+                                                            .colorWhite),
+                                                    padding:
+                                                        EdgeInsets.all(2.0),
+                                                    child: ClipOval(
+                                                        child: (_scoutData[
+                                                                    APIConstants
+                                                                        .main_img_url] !=
+                                                                null)
+                                                            ? CachedNetworkImage(
                                                                 fit: BoxFit
                                                                     .cover,
-                                                                color: CustomColors
-                                                                    .colorBgGrey),
-                                                      ))
-                                                    : Image.asset(
-                                                        'assets/images/btn_mypage.png',
-                                                        fit: BoxFit.cover,
-                                                        color: CustomColors
-                                                            .colorBgGrey)),
-                                                decoration: BoxDecoration(
-                                                  color:
-                                                      CustomColors.colorWhite,
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(
-                                                              50.0)),
-                                                  border: Border.all(
-                                                    color: CustomColors
-                                                        .colorAccent,
-                                                    width: 2.0,
-                                                  ),
-                                                )),
-                                          ),
+                                                                placeholder: (context,
+                                                                        url) =>
+                                                                    Container(
+                                                                        alignment: Alignment.center,
+                                                                        child: CircularProgressIndicator()),
+                                                                imageUrl: _scoutData[APIConstants.main_img_url],
+                                                                errorWidget: (context, url, error) => Image.asset('assets/images/btn_mypage.png', fit: BoxFit.contain, width: 67, color: CustomColors.colorBgGrey),
+                                                                width: 67,
+                                                                height: 67)
+                                                            : Image.asset('assets/images/btn_mypage.png', fit: BoxFit.contain, width: 67, color: CustomColors.colorBgGrey))),
+                                              )),
                                           Expanded(
                                               flex: 1,
                                               child: Text(
@@ -121,7 +116,7 @@ class _ProposedAuditionDetail extends State<ProposedAuditionDetail>
                                                     _scoutData[APIConstants
                                                         .actor_name]),
                                                 style: CustomStyles
-                                                    .normal16TextStyle(),
+                                                    .bold20TextStyle(),
                                                 maxLines: 1,
                                                 overflow: TextOverflow.ellipsis,
                                               ))
@@ -134,7 +129,7 @@ class _ProposedAuditionDetail extends State<ProposedAuditionDetail>
                                           alignment: Alignment.centerLeft,
                                           child: Text('제안 답변',
                                               style: CustomStyles
-                                                  .normal14TextStyle())),
+                                                  .bold14TextStyle())),
                                     ),
                                     Visibility(
                                         child: Container(
@@ -142,12 +137,19 @@ class _ProposedAuditionDetail extends State<ProposedAuditionDetail>
                                             padding: EdgeInsets.all(15),
                                             width: double.infinity,
                                             decoration: BoxDecoration(
+                                                color: CustomColors.colorWhite,
                                                 borderRadius: CustomStyles
                                                     .circle7BorderRadius(),
-                                                border: Border.all(
-                                                    width: 1,
+                                                boxShadow: [
+                                                  BoxShadow(
                                                     color: CustomColors
-                                                        .colorFontLightGrey)),
+                                                        .colorFontLightGrey
+                                                        .withAlpha(100),
+                                                    blurRadius: 2.0,
+                                                    spreadRadius: 2.0,
+                                                    offset: Offset(2, 1),
+                                                  )
+                                                ]),
                                             child: Text(
                                                 _scoutData[APIConstants
                                                             .audition_prps_state_type] ==
@@ -156,25 +158,32 @@ class _ProposedAuditionDetail extends State<ProposedAuditionDetail>
                                                     : StringUtils.checkedString(
                                                         _scoutData[APIConstants
                                                             .audition_prps_reply_contents]),
-                                                style:
-                                                    CustomStyles.normal14TextStyle()))),
+                                                style: CustomStyles
+                                                    .normal14TextStyle()))),
                                     Container(
                                         margin: EdgeInsets.only(top: 15),
                                         alignment: Alignment.centerLeft,
                                         child: Text('제안 내용',
                                             style: CustomStyles
-                                                .normal14TextStyle())),
+                                                .bold14TextStyle())),
                                     Container(
                                         margin: EdgeInsets.only(top: 10),
                                         padding: EdgeInsets.all(15),
                                         width: double.infinity,
                                         decoration: BoxDecoration(
+                                            color: CustomColors.colorWhite,
                                             borderRadius: CustomStyles
                                                 .circle7BorderRadius(),
-                                            border: Border.all(
-                                                width: 1,
+                                            boxShadow: [
+                                              BoxShadow(
                                                 color: CustomColors
-                                                    .colorFontLightGrey)),
+                                                    .colorFontLightGrey
+                                                    .withAlpha(100),
+                                                blurRadius: 2.0,
+                                                spreadRadius: 2.0,
+                                                offset: Offset(2, 1),
+                                              )
+                                            ]),
                                         child: Text(
                                             StringUtils.checkedString(
                                                 _scoutData[APIConstants
@@ -187,26 +196,32 @@ class _ProposedAuditionDetail extends State<ProposedAuditionDetail>
                                         alignment: Alignment.centerLeft,
                                         child: Text('제안한 오디션',
                                             style: CustomStyles
-                                                .normal14TextStyle())),
-                                    Container(
-                                        padding: EdgeInsets.all(15),
-                                        decoration: BoxDecoration(
-                                            borderRadius: CustomStyles
-                                                .circle7BorderRadius(),
-                                            border: Border.all(
-                                                width: 1,
-                                                color: CustomColors
-                                                    .colorFontLightGrey)),
-                                        child: GestureDetector(
-                                            onTap: () {
-                                              addView(
-                                                  context,
-                                                  AuditionDetail(
-                                                    castingSeq: _scoutData[
-                                                        APIConstants
-                                                            .casting_seq],
-                                                  ));
-                                            },
+                                                .bold14TextStyle())),
+                                    GestureDetector(
+                                        onTap: () {
+                                          addView(
+                                              context,
+                                              AuditionDetail(
+                                                castingSeq: _scoutData[
+                                                    APIConstants.casting_seq],
+                                              ));
+                                        },
+                                        child: Container(
+                                            padding: EdgeInsets.all(15),
+                                            decoration: BoxDecoration(
+                                                color: CustomColors.colorWhite,
+                                                borderRadius: CustomStyles
+                                                    .circle7BorderRadius(),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: CustomColors
+                                                        .colorFontLightGrey
+                                                        .withAlpha(100),
+                                                    blurRadius: 2.0,
+                                                    spreadRadius: 2.0,
+                                                    offset: Offset(2, 1),
+                                                  )
+                                                ]),
                                             child: Row(children: [
                                               Expanded(
                                                 flex: 1,
@@ -221,7 +236,7 @@ class _ProposedAuditionDetail extends State<ProposedAuditionDetail>
                                                             _scoutData[APIConstants
                                                                 .project_name]),
                                                         style: CustomStyles
-                                                            .dark12TextStyle()),
+                                                            .greyBold14TextStyle()),
                                                     Container(
                                                         margin: EdgeInsets.only(
                                                             top: 10),
@@ -231,7 +246,7 @@ class _ProposedAuditionDetail extends State<ProposedAuditionDetail>
                                                                     APIConstants
                                                                         .casting_name]),
                                                             style: CustomStyles
-                                                                .dark24TextStyle()))
+                                                                .bold20TextStyle()))
                                                   ],
                                                 ),
                                               ),
@@ -242,7 +257,7 @@ class _ProposedAuditionDetail extends State<ProposedAuditionDetail>
                                                           left: 10),
                                                       child: Text('공고보기',
                                                           style: CustomStyles
-                                                              .normal14TextStyle())))
+                                                              .bold14TextStyle())))
                                             ])))
                                   ]))))
                 ])),

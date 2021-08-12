@@ -154,8 +154,9 @@ class _BookmarkedAgencyAuditionList extends State<BookmarkedAgencyAuditionList>
                                 child: Text('마이 스크랩',
                                     style: CustomStyles.normal24TextStyle())),
                             Container(
-                              padding: EdgeInsets.only(left: 15, right: 15, bottom: 15),
-                              alignment: Alignment.topLeft,
+                              padding:
+                              EdgeInsets.only(left: 15, right: 15, bottom: 10),
+                              alignment: Alignment.bottomRight,
                               child: RichText(
                                   text: new TextSpan(
                                     style: CustomStyles.dark16TextStyle(),
@@ -178,7 +179,7 @@ class _BookmarkedAgencyAuditionList extends State<BookmarkedAgencyAuditionList>
                                   itemCount: _castingBoardList.length,
                                   itemBuilder: (BuildContext context, int index) {
                                     return Container(
-                                        margin: EdgeInsets.only(bottom: 10),
+                                        margin: EdgeInsets.only(bottom: 15),
                                         alignment: Alignment.center,
                                         child: AuditionListItem(
                                           castingItem: _castingBoardList[index],

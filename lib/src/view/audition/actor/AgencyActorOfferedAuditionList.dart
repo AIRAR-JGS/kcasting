@@ -76,7 +76,6 @@ class _AgencyActorOfferedAuditionList
   }
 
   Future<void> _refreshPage() async {
-
     setState(() {
       _total = 0;
 
@@ -97,7 +96,7 @@ class _AgencyActorOfferedAuditionList
     Map<String, dynamic> targetData = new Map();
     targetData[APIConstants.management_seq] =
         KCastingAppData().myInfo[APIConstants.management_seq];
-    if(actorName != null) {
+    if (actorName != null) {
       targetData[APIConstants.actor_name] = actorName;
     }
 
@@ -151,8 +150,20 @@ class _AgencyActorOfferedAuditionList
                           actorSeq: _data[APIConstants.actor_seq]));
                 },
                 child: Container(
+                    margin: EdgeInsets.only(bottom: 15),
                     padding: EdgeInsets.only(
-                        top: 10, bottom: 10, left: 5, right: 10),
+                        top: 15, bottom: 15, left: 15, right: 15),
+                    decoration: BoxDecoration(
+                        color: CustomColors.colorWhite,
+                        borderRadius: CustomStyles.circle7BorderRadius(),
+                        boxShadow: [
+                          BoxShadow(
+                              color: CustomColors.colorFontLightGrey
+                                  .withAlpha(100),
+                              blurRadius: 2.0,
+                              spreadRadius: 2.0,
+                              offset: Offset(2, 1))
+                        ]),
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -161,35 +172,46 @@ class _AgencyActorOfferedAuditionList
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  _data[APIConstants.main_img_url] != null
-                                      ? ClipOval(
-                                          child: CachedNetworkImage(
-                                              placeholder: (context, url) => Container(
-                                                  alignment: Alignment.center,
-                                                  child: CircularProgressIndicator()),
-                                              imageUrl: _data[
-                                                  APIConstants.main_img_url],
-                                              fit: BoxFit.cover,
-                                              width: 50.0,
-                                              height: 50.0,
-                                              errorWidget:
-                                                  (context, url, error) => Icon(
-                                                        Icons.account_circle,
-                                                        color: CustomColors
-                                                            .colorFontLightGrey,
-                                                        size: 50,
-                                                      )))
-                                      : ClipOval(
-                                          child: Icon(
-                                          Icons.account_circle,
-                                          color:
-                                              CustomColors.colorFontLightGrey,
-                                          size: 50,
-                                        )),
+                                  Container(
+                                      decoration: new BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          gradient: LinearGradient(colors: [
+                                            CustomColors.colorPrimary,
+                                            CustomColors.colorAccent
+                                          ])),
+                                      padding: EdgeInsets.all(2),
+                                      alignment: Alignment.topCenter,
+                                      child: Container(
+                                          alignment: Alignment.center,
+                                          width: 60,
+                                          height: 60,
+                                          decoration: new BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: CustomColors.colorWhite),
+                                          padding: EdgeInsets.all(1.0),
+                                          child: ClipOval(
+                                              child: CachedNetworkImage(
+                                                  width: 60,
+                                                  height: 60,
+                                                  fit: BoxFit.cover,
+                                                  placeholder: (context, url) =>
+                                                      Container(
+                                                          alignment:
+                                                              Alignment.center,
+                                                          child:
+                                                              CircularProgressIndicator()),
+                                                  imageUrl: _data[APIConstants
+                                                      .main_img_url],
+                                                  errorWidget: (context, url, error) => Image.asset(
+                                                      'assets/images/btn_mypage.png',
+                                                      color:
+                                                          CustomColors.colorBgGrey,
+                                                      width: 60,
+                                                      fit: BoxFit.contain))))),
                                   Container(
                                     margin: EdgeInsets.only(left: 10),
                                     child: Text(_data[APIConstants.actor_name],
-                                        style: CustomStyles.dark16TextStyle()),
+                                        style: CustomStyles.bold17TextStyle()),
                                   )
                                 ],
                               )),
@@ -201,7 +223,7 @@ class _AgencyActorOfferedAuditionList
                                     children: [
                                       Text('받은 제안',
                                           style:
-                                              CustomStyles.normal14TextStyle()),
+                                              CustomStyles.dark12TextStyle()),
                                       Container(
                                         margin: EdgeInsets.only(top: 5),
                                         child: Text(
@@ -231,75 +253,90 @@ class _AgencyActorOfferedAuditionList
           body: NotificationListener<ScrollNotification>(
             child: Stack(
               children: [
-                RefreshIndicator(child: SingleChildScrollView(
-                    controller: _scrollController,
-                    physics: AlwaysScrollableScrollPhysics(),
-                    key: ObjectKey(_actorList.length > 0 ? _actorList[0] : ""),
-                    child: Column(
-                      children: [
-                        Container(
-                            margin: EdgeInsets.only(
-                                top: 30, left: 15, right: 15, bottom: 20),
-                            padding: EdgeInsets.only(left: 10, right: 10),
-                            height: 50,
-                            decoration: BoxDecoration(
-                                borderRadius:
-                                CustomStyles.circle7BorderRadius(),
-                                border: Border.all(
-                                    width: 1,
-                                    color: CustomColors.colorFontLightGrey)),
-                            child: Row(children: [
-                              Flexible(
-                                  child: TextField(
-                                      controller: _txtFieldSearch,
-                                      decoration: InputDecoration(
-                                          isDense: true,
-                                          border: InputBorder.none,
-                                          contentPadding: EdgeInsets.symmetric(
-                                              vertical: 0, horizontal: 0),
-                                          hintText: "배우를 검색해보세요",
-                                          hintStyle:
-                                          CustomStyles.normal16TextStyle()),
-                                      style: CustomStyles.dark16TextStyle())),
-                              Padding(
-                                  padding: EdgeInsets.only(left: 10),
-                                  child: GestureDetector(
-                                      onTap: () {
-                                        _actorList.clear();
+                RefreshIndicator(
+                    child: SingleChildScrollView(
+                        controller: _scrollController,
+                        physics: AlwaysScrollableScrollPhysics(),
+                        key: ObjectKey(
+                            _actorList.length > 0 ? _actorList[0] : ""),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                                margin: EdgeInsets.only(top: 30.0, bottom: 10),
+                                padding: EdgeInsets.only(left: 16, right: 16),
+                                child: Text('받은 제안',
+                                    style: CustomStyles.normal24TextStyle())),
+                            Container(
+                                margin: EdgeInsets.only(
+                                    top: 30, left: 15, right: 15, bottom: 20),
+                                padding: EdgeInsets.only(left: 10, right: 10),
+                                height: 50,
+                                decoration: BoxDecoration(
+                                    color: CustomColors.colorWhite,
+                                    borderRadius:
+                                        CustomStyles.circle7BorderRadius(),
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: CustomColors.colorButtonDefault
+                                              .withAlpha(100),
+                                          blurRadius: 2.0,
+                                          spreadRadius: 2.0,
+                                          offset: Offset(2, 1))
+                                    ]),
+                                child: Row(children: [
+                                  Flexible(
+                                      child: TextField(
+                                          controller: _txtFieldSearch,
+                                          decoration: InputDecoration(
+                                              isDense: true,
+                                              border: InputBorder.none,
+                                              contentPadding:
+                                                  EdgeInsets.symmetric(
+                                                      vertical: 0,
+                                                      horizontal: 0),
+                                              hintText: "배우를 검색해보세요",
+                                              hintStyle: CustomStyles
+                                                  .normal16TextStyle()),
+                                          style:
+                                              CustomStyles.dark16TextStyle())),
+                                  Padding(
+                                      padding: EdgeInsets.only(left: 10),
+                                      child: GestureDetector(
+                                          onTap: () {
+                                            _actorList.clear();
 
-                                        actorName = _txtFieldSearch.text;
-                                        requestActorListApi(context);
-                                      },
-                                      child: Image.asset(
-                                          'assets/images/btn_search.png',
-                                          width: 20,
-                                          fit: BoxFit.contain)))
-                            ])),
-                        Divider(),
-                        _actorList.length > 0
-                            ? Container(
-                            child: ListView.separated(
-                                shrinkWrap: true,
-                                primary: false,
-                                physics: NeverScrollableScrollPhysics(),
-                                padding: EdgeInsets.only(
-                                    left: 15, right: 15, bottom: 30),
-                                itemCount: _actorList.length,
-                                itemBuilder:
-                                    (BuildContext context, int index) {
-                                  Map<String, dynamic> _data =
-                                  _actorList[index];
-                                  return listItem(_data);
-                                },
-                                separatorBuilder: (context, index) {
-                                  return Divider();
-                                }))
-                            : Container(
-                            margin: EdgeInsets.only(top: 30),
-                            child: Text('보유배우의 지원현황이 없습니다.',
-                                style: CustomStyles.normal16TextStyle()))
-                      ],
-                    )), onRefresh: _refreshPage),
+                                            actorName = _txtFieldSearch.text;
+                                            requestActorListApi(context);
+                                          },
+                                          child: Image.asset(
+                                              'assets/images/btn_search.png',
+                                              width: 20,
+                                              fit: BoxFit.contain)))
+                                ])),
+                            _actorList.length > 0
+                                ? Container(
+                                    child: ListView.builder(
+                                        shrinkWrap: true,
+                                        primary: false,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        padding: EdgeInsets.only(
+                                            left: 15, right: 15, bottom: 30),
+                                        itemCount: _actorList.length,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          Map<String, dynamic> _data =
+                                              _actorList[index];
+                                          return listItem(_data);
+                                        }))
+                                : Container(
+                                    margin: EdgeInsets.only(top: 30),
+                                    child: Text('보유배우의 지원현황이 없습니다.',
+                                        style:
+                                            CustomStyles.normal16TextStyle()))
+                          ],
+                        )),
+                    onRefresh: _refreshPage),
                 Visibility(
                   child: Container(
                       color: Colors.black38,

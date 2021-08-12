@@ -166,68 +166,80 @@ class _AgencyProfile extends State<AgencyProfile>
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                       Container(
+                          decoration: new BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  stops: [
+                                    0,
+                                    1
+                                  ],
+                                  colors: [
+                                    CustomColors.colorPrimary,
+                                    CustomColors.colorAccent
+                                  ])),
+                          padding: EdgeInsets.all(3),
                           margin: EdgeInsets.only(top: 30, bottom: 15),
                           child: GestureDetector(
-                            onTap: () async {
-                              if (_kIsWeb) {
-                                showSnackBar(
-                                    context, APIConstants.use_mobile_app);
-                              } else {
-                                var status = Platform.isAndroid
-                                    ? await Permission.storage.request()
-                                    : await Permission.photos.request();
-                                if (status.isGranted) {
-                                  getImageFromGallery();
+                              onTap: () async {
+                                if (_kIsWeb) {
+                                  showSnackBar(
+                                      context, APIConstants.use_mobile_app);
                                 } else {
-                                  showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) =>
-                                          CupertinoAlertDialog(
-                                              title: Text('저장공간 접근권한'),
-                                              content: Text(
-                                                  '사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
-                                              actions: <Widget>[
-                                                CupertinoDialogAction(
-                                                  child: Text('거부'),
-                                                  onPressed: () =>
-                                                      Navigator.of(context)
-                                                          .pop(),
-                                                ),
-                                                CupertinoDialogAction(
-                                                    child: Text('허용'),
+                                  var status = Platform.isAndroid
+                                      ? await Permission.storage.request()
+                                      : await Permission.photos.request();
+                                  if (status.isGranted) {
+                                    getImageFromGallery();
+                                  } else {
+                                    showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) =>
+                                            CupertinoAlertDialog(
+                                                title: Text('저장공간 접근권한'),
+                                                content: Text(
+                                                    '사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
+                                                actions: <Widget>[
+                                                  CupertinoDialogAction(
+                                                    child: Text('거부'),
                                                     onPressed: () =>
-                                                        openAppSettings())
-                                              ]));
+                                                        Navigator.of(context)
+                                                            .pop(),
+                                                  ),
+                                                  CupertinoDialogAction(
+                                                      child: Text('허용'),
+                                                      onPressed: () =>
+                                                          openAppSettings())
+                                                ]));
+                                  }
                                 }
-                              }
-                            },
-                            child: KCastingAppData().myInfo[
-                                        APIConstants.management_logo_img_url] ==
-                                    null
-                                ? Icon(
-                                    Icons.account_circle,
-                                    color: CustomColors.colorFontLightGrey,
-                                    size: 100,
-                                  )
-                                : ClipOval(
-                                    child: CachedNetworkImage(
-                                        placeholder: (context, url) => Container(
-                                            alignment: Alignment.center,
-                                            child: CircularProgressIndicator()),
-                                        imageUrl: KCastingAppData().myInfo[
-                                            APIConstants
-                                                .management_logo_img_url],
-                                        fit: BoxFit.cover,
-                                        width: 100.0,
-                                        height: 100.0,
-                                        errorWidget: (context, url, error) =>
-                                            Icon(
-                                              Icons.account_circle,
-                                              color: CustomColors
-                                                  .colorFontLightGrey,
-                                              size: 100,
-                                            ))),
-                          )),
+                              },
+                              child: Container(
+                                  alignment: Alignment.center,
+                                  width: 100.0,
+                                  height: 100.0,
+                                  decoration: new BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: CustomColors.colorWhite),
+                                  padding: EdgeInsets.all(2.0),
+                                  child: KCastingAppData().myInfo[APIConstants.management_logo_img_url] == null
+                                      ? Image.asset('assets/images/btn_mypage.png',
+                                          color: CustomColors.colorBgGrey,
+                                          width: 100,
+                                          fit: BoxFit.contain)
+                                      : ClipOval(
+                                          child: CachedNetworkImage(
+                                              placeholder: (context, url) => Container(
+                                                  alignment: Alignment.center,
+                                                  child:
+                                                      CircularProgressIndicator()),
+                                              imageUrl: KCastingAppData()
+                                                  .myInfo[APIConstants.management_logo_img_url],
+                                              fit: BoxFit.cover,
+                                              width: 100.0,
+                                              height: 100.0,
+                                              errorWidget: (context, url, error) => Image.asset('assets/images/btn_mypage.png', color: CustomColors.colorBgGrey, width: 100, fit: BoxFit.contain)))))),
                       Container(
                           margin: EdgeInsets.only(bottom: 30),
                           child: Text(
@@ -289,14 +301,7 @@ class _AgencyProfile extends State<AgencyProfile>
                                   ? '-'
                                   : KCastingAppData()
                                       .myInfo[APIConstants.management_email],
-                              style: CustomStyles.dark14TextStyle())),
-                      Container(
-                          margin: EdgeInsets.only(top: 30),
-                          child: Divider(
-                            height: 1,
-                            color: CustomColors.colorFontLightGrey,
-                          ))
-                      ////
+                              style: CustomStyles.dark14TextStyle()))
                     ])))),
                 Visibility(
                   child: Container(

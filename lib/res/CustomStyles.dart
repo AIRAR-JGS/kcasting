@@ -10,7 +10,7 @@ class CustomStyles {
     return ThemeData(
         primaryColor: CustomColors.colorPrimary,
         canvasColor: CustomColors.colorWhite,
-        accentColor: CustomColors.colorAccent,
+        secondaryHeaderColor: CustomColors.colorAccent,
         fontFamily: Constants.appFont);
   }
 
@@ -33,15 +33,7 @@ class CustomStyles {
             ]),
       )),
       automaticallyImplyLeading: false,
-      title:
-          /*Text(
-        txtTitle,
-        style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: CustomColors.colorWhite),
-      )*/
-          Image.asset('assets/images/logo_white.png', width: 80),
+      title: Image.asset('assets/images/logo_white.png', width: 80),
       centerTitle: true,
       actions: <Widget>[
         IconButton(
@@ -361,167 +353,194 @@ class CustomStyles {
   }
 
   // 배경 있는 사각형 텍스트 버튼
-  static RaisedButton lightGreyBGSquareButtonStyle(
+  static ElevatedButton lightGreyBGSquareButtonStyle(
       String txtButton, VoidCallback onClickEvent) {
-    return RaisedButton(
-      elevation: 0.0,
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+              //모서리를 둥글게
+              borderRadius: BorderRadius.circular(0)),
+          primary: CustomColors.colorButtonLightGrey,
+          alignment: Alignment.center),
       onPressed: () {
         onClickEvent();
       },
-      padding: EdgeInsets.all(10.0),
-      color: CustomColors.colorButtonLightGrey,
-      textColor: CustomColors.colorWhite,
       child: Text(txtButton, style: bold17TextStyle()),
     );
   }
 
   // 배경 있는 사각형 텍스트 버튼 - 회색
-  static RaisedButton greyBGSquareButtonStyle(
+  static ElevatedButton greyBGSquareButtonStyle(
       String txtButton, VoidCallback onClickEvent) {
-    return RaisedButton(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-      elevation: 0.0,
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+          padding: EdgeInsets.only(top: 15, bottom: 15),
+          shape: RoundedRectangleBorder(
+              //모서리를 둥글게
+              borderRadius: BorderRadius.circular(0)),
+          primary: CustomColors.colorButtonDefault,
+          alignment: Alignment.center),
       onPressed: () {
         onClickEvent();
       },
-      padding: EdgeInsets.all(10.0),
-      color: CustomColors.colorButtonGrey,
       child: Text(txtButton, style: whiteBold16TextStyle()),
     );
   }
 
   // 배경 있는 사각형 텍스트 버튼 - 진한 회색
-  static RaisedButton darkGreyBGSquareButtonStyle(
+  static ElevatedButton darkGreyBGSquareButtonStyle(
       String txtButton, VoidCallback onClickEvent) {
-    return RaisedButton(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-      elevation: 0.0,
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+          padding: EdgeInsets.only(top: 15, bottom: 15),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+          primary: CustomColors.colorButtonPurple,
+          alignment: Alignment.center),
       onPressed: () {
         onClickEvent();
       },
-      padding: EdgeInsets.all(10.0),
-      color: CustomColors.colorFontDarkGrey,
       child: Text(txtButton, style: whiteBold16TextStyle()),
     );
   }
 
   // 배경 있는 사각형 텍스트 버튼 - 파란색
-  static RaisedButton blueBGSquareButtonStyle(
+  static ElevatedButton applyButtonStyle(
       String txtButton, VoidCallback onClickEvent) {
-    return RaisedButton(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-      elevation: 0.0,
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+          elevation: 0.0,
+          padding: EdgeInsets.only(top: 15, bottom: 15),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                  bottomRight: Radius.circular(30),
+                  topRight: Radius.circular(30))),
+          primary: CustomColors.colorPrimary,
+          alignment: Alignment.center),
       onPressed: () {
         onClickEvent();
       },
-      padding: EdgeInsets.all(10.0),
-      color: CustomColors.colorPrimary,
+      child: Text(txtButton, style: whiteBold16TextStyle()),
+    );
+  }
+
+  static ElevatedButton blueBGSquareButtonStyle(
+      String txtButton, VoidCallback onClickEvent) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+          elevation: 0.0,
+          padding: EdgeInsets.only(top: 15, bottom: 15),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(0))),
+          primary: CustomColors.colorPrimary,
+          alignment: Alignment.center),
+      onPressed: () {
+        onClickEvent();
+      },
       child: Text(txtButton, style: whiteBold16TextStyle()),
     );
   }
 
   // 배경 있는 라운드 텍스트 버튼
-  static RaisedButton greyBGRound7ButtonStyle(
+  static ElevatedButton greyBGRound7ButtonStyle(
       String txtButton, VoidCallback onClickEvent) {
-    return RaisedButton(
-      elevation: 0.0,
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+          padding: EdgeInsets.only(top: 15, bottom: 15),
+          shape: RoundedRectangleBorder(borderRadius: circle7BorderRadius()),
+          primary: CustomColors.colorButtonLightGrey,
+          alignment: Alignment.center),
       onPressed: () {
         onClickEvent();
       },
-      padding: EdgeInsets.all(10.0),
-      color: CustomColors.colorButtonLightGrey,
-      textColor: CustomColors.colorWhite,
-      shape: RoundedRectangleBorder(borderRadius: circle7BorderRadius()),
       child: Text(txtButton, style: normal16TextStyle()),
     );
   }
 
   // 테두리있는 라운드 텍스트 버튼
-  static RaisedButton greyBorderRound7ButtonStyle(
+  static ElevatedButton greyBorderRound7ButtonStyle(
       String txtButton, VoidCallback onClickEvent) {
-    return RaisedButton(
-      elevation: 0.0,
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+          padding: EdgeInsets.only(top: 15, bottom: 15),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(7),
+              side: BorderSide(color: CustomColors.colorButtonDefault)),
+          primary: CustomColors.colorWhite,
+          alignment: Alignment.center),
       onPressed: () {
         onClickEvent();
       },
-      padding: EdgeInsets.all(10.0),
-      color: CustomColors.colorWhite,
-      textColor: CustomColors.colorFontGrey,
-      shape: RoundedRectangleBorder(
-          borderRadius: circle7BorderRadius(),
-          side: BorderSide(color: CustomColors.colorFontGrey)),
       child: Text(txtButton, style: normal16TextStyle()),
     );
   }
 
-  static RaisedButton greyBorderRound7ButtonStyleNoPadding(
+  static ElevatedButton greyBorderRound7ButtonStyleNoPadding(
       String txtButton, VoidCallback onClickEvent) {
-    return RaisedButton(
-      elevation: 0.0,
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+          padding: EdgeInsets.only(top: 15, bottom: 15),
+          shape: RoundedRectangleBorder(
+              borderRadius: circle7BorderRadius(),
+              side: BorderSide(color: CustomColors.colorFontGrey)),
+          primary: CustomColors.colorWhite,
+          alignment: Alignment.center),
       onPressed: () {
         onClickEvent();
       },
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      padding: EdgeInsets.all(0.0),
-      color: CustomColors.colorWhite,
-      textColor: CustomColors.colorFontGrey,
-      shape: RoundedRectangleBorder(
-          borderRadius: circle7BorderRadius(),
-          side: BorderSide(color: CustomColors.colorFontGrey)),
       child: Text(txtButton, style: normal16TextStyle()),
     );
   }
 
   // 테두리있는 라운드 텍스트 버튼 - 21
-  static RaisedButton greyBorderRound21ButtonStyle(
+  static ElevatedButton greyBorderRound21ButtonStyle(
       String txtButton, VoidCallback onClickEvent) {
-    return RaisedButton(
-      elevation: 0.0,
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+          padding: EdgeInsets.only(top: 15, bottom: 15, left: 30, right: 30),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(50.0),
+              side: BorderSide(color: CustomColors.colorFontGrey)),
+          primary: CustomColors.colorWhite,
+          alignment: Alignment.center),
       onPressed: () {
         onClickEvent();
       },
-      padding: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
-      color: CustomColors.colorWhite,
-      textColor: CustomColors.colorFontGrey,
-      shape: RoundedRectangleBorder(
-          borderRadius: circle21BorderRadius(),
-          side: BorderSide(color: CustomColors.colorFontGrey)),
       child: Text(txtButton, style: dark16TextStyle()),
     );
   }
 
   // 파란색 테두리있는 라운드 텍스트 버튼 - 21
-  static RaisedButton blueBorderRound21ButtonStyle(
+  static ElevatedButton blueBorderRound21ButtonStyle(
       String txtButton, VoidCallback onClickEvent) {
-    return RaisedButton(
-      elevation: 0.0,
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+          padding: EdgeInsets.only(top: 15, bottom: 15, left: 30, right: 30),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(50.0),
+              side: BorderSide(color: CustomColors.colorPrimary)),
+          primary: CustomColors.colorWhite,
+          alignment: Alignment.center),
       onPressed: () {
         onClickEvent();
       },
-      padding: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
-      color: CustomColors.colorWhite,
-      textColor: CustomColors.colorPrimary,
-      shape: RoundedRectangleBorder(
-          borderRadius: circle21BorderRadius(),
-          side: BorderSide(color: CustomColors.colorPrimary)),
       child: Text(txtButton, style: blue16TextStyle()),
     );
   }
 
   // 보라색 테두리있는 라운드 텍스트 버튼 - 21
-  static RaisedButton purpleBorderRound21ButtonStyle(
+  static ElevatedButton purpleBorderRound21ButtonStyle(
       String txtButton, VoidCallback onClickEvent) {
-    return RaisedButton(
-      elevation: 0.0,
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+          padding: EdgeInsets.only(top: 15, bottom: 15, left: 30, right: 30),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(50.0),
+              side: BorderSide(color: CustomColors.colorAccent)),
+          primary: CustomColors.colorWhite,
+          alignment: Alignment.center),
       onPressed: () {
         onClickEvent();
       },
-      padding: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
-      color: CustomColors.colorWhite,
-      textColor: CustomColors.colorAccent,
-      shape: RoundedRectangleBorder(
-          borderRadius: circle21BorderRadius(),
-          side: BorderSide(color: CustomColors.colorAccent)),
       child: Text(txtButton, style: purple16TextStyle()),
     );
   }
@@ -529,6 +548,10 @@ class CustomStyles {
   //===========================================================================
   // 레디어스 스타일
   //===========================================================================
+
+  static BorderRadius circle3BorderRadius() {
+    return BorderRadius.circular(3.0);
+  }
 
   static BorderRadius circle4BorderRadius() {
     return BorderRadius.circular(4.0);
@@ -548,7 +571,7 @@ class CustomStyles {
 
   static ClipRRect defalutImg() {
     return ClipRRect(
-        borderRadius: circle7BorderRadius(),
+        borderRadius: circle3BorderRadius(),
         child: Container(
           color: CustomColors.colorBgGrey,
         ));
@@ -659,6 +682,13 @@ class CustomStyles {
         fontWeight: FontWeight.normal);
   }
 
+  static TextStyle greyBold14TextStyle() {
+    return TextStyle(
+        fontSize: 14,
+        color: CustomColors.colorFontGrey,
+        fontWeight: FontWeight.bold);
+  }
+
   static TextStyle light14TextStyle() {
     return TextStyle(
         fontSize: 14,
@@ -698,7 +728,7 @@ class CustomStyles {
   static TextStyle bold16TextStyle() {
     return TextStyle(
         fontSize: 16,
-        color: CustomColors.colorFontGrey,
+        color: CustomColors.colorFontTitle,
         fontWeight: FontWeight.bold);
   }
 
@@ -752,6 +782,20 @@ class CustomStyles {
         fontWeight: FontWeight.bold);
   }
 
+  static TextStyle bold20TextStyle() {
+    return TextStyle(
+        fontSize: 20,
+        color: CustomColors.colorFontGrey,
+        fontWeight: FontWeight.bold);
+  }
+
+  static TextStyle bold24TextStyle() {
+    return TextStyle(
+        fontSize: 24,
+        color: CustomColors.colorFontGrey,
+        fontWeight: FontWeight.bold);
+  }
+
   static TextStyle normal20TextStyle() {
     return TextStyle(
         fontSize: 20,
@@ -777,7 +821,7 @@ class CustomStyles {
     return TextStyle(
         fontSize: 24,
         color: CustomColors.colorFontTitle,
-        fontWeight: FontWeight.normal);
+        fontWeight: FontWeight.bold);
   }
 
   static TextStyle dark24TextStyle() {

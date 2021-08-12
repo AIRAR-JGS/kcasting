@@ -270,10 +270,11 @@ class _AuditionApplyList extends State<AuditionApplyList>
   Widget tabMyApplyStatus() {
     return Container(
         alignment: Alignment.center,
-        margin: EdgeInsets.only(bottom: 70),
+        margin: EdgeInsets.only(bottom: 70, top: 30),
+        padding: EdgeInsets.only(left: 15, right: 15),
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Wrap(children: [
-            ListView.separated(
+            ListView.builder(
                 primary: false,
                 physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
@@ -289,8 +290,35 @@ class _AuditionApplyList extends State<AuditionApplyList>
                       },
                       child: Container(
                           padding: EdgeInsets.only(left: 15, right: 15),
-                          margin: EdgeInsets.only(bottom: 20, top: 10),
+                          margin: EdgeInsets.only(bottom: 10),
                           alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                              color: CustomColors.colorWhite,
+                              border: Border(
+                                  left: BorderSide(
+                                      color: _auditionList[index]
+                                                  [APIConstants.state]
+                                              .toString()
+                                              .contains(' 합격')
+                                          ? CustomColors.colorBlue
+                                              .withAlpha(200)
+                                          : _auditionList[index]
+                                                      [APIConstants.state]
+                                                  .toString()
+                                                  .contains(' 불합격')
+                                              ? CustomColors.colorPurple
+                                                  .withAlpha(200)
+                                              : CustomColors.colorBgGrey,
+                                      width: 5)),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: CustomColors.colorFontLightGrey
+                                      .withAlpha(100),
+                                  blurRadius: 2.0,
+                                  spreadRadius: 2.0,
+                                  offset: Offset(2, 1),
+                                )
+                              ]),
                           child: Container(
                               decoration: BoxDecoration(
                                   color: CustomColors.colorWhite,
@@ -301,13 +329,12 @@ class _AuditionApplyList extends State<AuditionApplyList>
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Container(
-                                        margin:
-                                            EdgeInsets.only(top: 10, bottom: 5),
+                                        margin: EdgeInsets.only(top: 15),
                                         child: Text(
                                             _auditionList[index]
                                                 [APIConstants.project_name],
                                             style: CustomStyles
-                                                .dark10TextStyle())),
+                                                .dark12TextStyle())),
                                     Container(
                                         margin: EdgeInsets.only(bottom: 15),
                                         child: Text(
@@ -317,87 +344,105 @@ class _AuditionApplyList extends State<AuditionApplyList>
                                                 .dark20TextStyle())),
                                     Visibility(
                                         child: Container(
-                                            child: Row(children: [
-                                          Text(
-                                              '지원일: ' +
-                                                  _auditionList[index]
-                                                      [APIConstants.addDate],
-                                              style: CustomStyles
-                                                  .dark10TextStyle()),
-                                          Padding(
-                                              padding:
-                                                  EdgeInsets.only(right: 5)),
-                                          CustomStyles
-                                              .underline10TextButtonStyle(
-                                                  '지원취소', () {
-                                            // 지원취소 버튼 클릭
-                                            showDialog(
-                                              context: context,
-                                              builder:
-                                                  (BuildContext _context) =>
-                                                      DialogAuditionApplyCancel(
-                                                onClickedAgree: () {
-                                                  requestCancelApplyAuditionApi(
-                                                      context,
-                                                      _auditionList[index][
-                                                          APIConstants
-                                                              .auditionApply_seq]);
-                                                },
-                                              ),
-                                            );
-                                          })
-                                        ])),
+                                            child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                              Expanded(
+                                                  flex: 0,
+                                                  child: Row(children: [
+                                                    Text(
+                                                        '지원일: ' +
+                                                            _auditionList[index]
+                                                                [APIConstants
+                                                                    .addDate],
+                                                        style: CustomStyles
+                                                            .dark10TextStyle()),
+                                                    Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                right: 5)),
+                                                    CustomStyles
+                                                        .underline10TextButtonStyle(
+                                                            '지원취소', () {
+                                                      // 지원취소 버튼 클릭
+                                                      showDialog(
+                                                          context: context,
+                                                          builder: (BuildContext
+                                                                  _context) =>
+                                                              DialogAuditionApplyCancel(
+                                                                  onClickedAgree:
+                                                                      () {
+                                                                requestCancelApplyAuditionApi(
+                                                                    context,
+                                                                    _auditionList[
+                                                                            index]
+                                                                        [
+                                                                        APIConstants
+                                                                            .auditionApply_seq]);
+                                                              }));
+                                                    })
+                                                  ])),
+                                              Expanded(
+                                                  flex: 1,
+                                                  child: Container(
+                                                      alignment:
+                                                          Alignment.centerRight,
+                                                      margin: EdgeInsets.only(
+                                                          bottom: 15),
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      child: Text(
+                                                          StringUtils.checkedString(
+                                                              _auditionList[
+                                                                      index][
+                                                                  APIConstants
+                                                                      .state]),
+                                                          style: CustomStyles
+                                                              .dark12TextStyle())))
+                                            ])),
                                         visible: _tabIndex == 0 ? true : false),
                                     Visibility(
                                         child: Container(
-                                            child: Row(children: [
-                                          Text(
-                                              '지원일: ' +
-                                                  _auditionList[index]
-                                                      [APIConstants.addDate],
-                                              style: CustomStyles
-                                                  .dark10TextStyle())
-                                        ])),
-                                        visible: _tabIndex != 0 ? true : false),
-                                    Container(
-                                        decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: CustomColors.colorBgGrey,
-                                                width: 1.0),
-                                            borderRadius: CustomStyles
-                                                .circle7BorderRadius()),
-                                        alignment: Alignment.centerRight,
-                                        margin: EdgeInsets.only(top: 15),
-                                        padding: EdgeInsets.only(
-                                            left: 15,
-                                            right: 15,
-                                            bottom: 10,
-                                            top: 10),
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        child: Text(
-                                          StringUtils.checkedString(
-                                              _auditionList[index]
-                                                  [APIConstants.state]),
-                                          style: _auditionList[index]
-                                                      [APIConstants.state]
-                                                  .toString()
-                                                  .contains(' 합격')
-                                              ? CustomStyles.blue16TextStyle()
-                                              : _auditionList[index]
-                                                          [APIConstants.state]
-                                                      .toString()
-                                                      .contains(' 불합격')
-                                                  ? CustomStyles
-                                                      .red16TextStyle()
-                                                  : CustomStyles
-                                                      .dark16TextStyle(),
-                                        ))
+                                            child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                              Expanded(
+                                                  flex: 0,
+                                                  child: Text(
+                                                      '지원일: ' +
+                                                          _auditionList[index][
+                                                              APIConstants
+                                                                  .addDate],
+                                                      style: CustomStyles
+                                                          .dark10TextStyle())),
+                                              Expanded(
+                                                  flex: 1,
+                                                  child: Container(
+                                                      alignment:
+                                                          Alignment.centerRight,
+                                                      margin: EdgeInsets.only(
+                                                          bottom: 15),
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      child: Text(
+                                                        StringUtils
+                                                            .checkedString(
+                                                                _auditionList[
+                                                                        index][
+                                                                    APIConstants
+                                                                        .state]),
+                                                        style: CustomStyles
+                                                            .dark12TextStyle(),
+                                                      )))
+                                            ])),
+                                        visible: _tabIndex != 0 ? true : false)
                                   ]))));
-                },
-                separatorBuilder: (context, index) {
-                  return Divider(
-                      height: 0.1, color: CustomColors.colorFontLightGrey);
                 })
           ])
         ]));
@@ -445,20 +490,8 @@ class _AuditionApplyList extends State<AuditionApplyList>
                                   margin:
                                       EdgeInsets.only(top: 30.0, bottom: 20),
                                   padding: EdgeInsets.only(left: 15, right: 15),
-                                  child: RichText(
-                                      text: TextSpan(
-                                          style:
-                                              CustomStyles.normal24TextStyle(),
-                                          children: <TextSpan>[
-                                        TextSpan(text: actorName),
-                                        TextSpan(
-                                            style: CustomStyles
-                                                .normal16TextStyle(),
-                                            text: '님의 지원 현황')
-                                      ]))
-                                  /*Text('$actorName님의 지원 현황',
-                                    style: CustomStyles.normal24TextStyle()),*/
-                                  ),
+                                  child: Text('지원 현황',
+                                      style: CustomStyles.normal24TextStyle())),
                               Container(
                                   width: MediaQuery.of(context).size.width,
                                   color: CustomColors.colorWhite,
@@ -472,11 +505,13 @@ class _AuditionApplyList extends State<AuditionApplyList>
                                       tabBar: TabBar(
                                           controller: _tabController,
                                           indicatorPadding: EdgeInsets.zero,
+                                          indicatorColor:
+                                              CustomColors.colorAccent.withAlpha(200),
                                           labelStyle:
-                                              CustomStyles.bold14TextStyle(),
-                                          indicatorWeight: 2,
+                                              CustomStyles.bold16TextStyle(),
+                                          indicatorWeight: 3,
                                           unselectedLabelStyle:
-                                              CustomStyles.normal14TextStyle(),
+                                              CustomStyles.normal16TextStyle(),
                                           tabs: [
                                             Tab(text: '진행중($applyIngCnt)'),
                                             Tab(

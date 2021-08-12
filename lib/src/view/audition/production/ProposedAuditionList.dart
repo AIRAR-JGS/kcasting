@@ -70,7 +70,6 @@ class _ProposedAuditionList extends State<ProposedAuditionList>
   }
 
   Future<void> _refreshPage() async {
-
     setState(() {
       _total = 0;
 
@@ -137,17 +136,18 @@ class _ProposedAuditionList extends State<ProposedAuditionList>
 
   Widget tabItem() {
     return Container(
+        alignment: Alignment.center,
+        margin: EdgeInsets.only(bottom: 70, top: 30),
+        padding: EdgeInsets.only(left: 15, right: 15),
         child: Column(children: [
-      Wrap(children: [
-        ListView.separated(
-            physics: NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            primary: false,
-            itemCount: _proposalList.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Container(
-                  alignment: Alignment.center,
-                  child: GestureDetector(
+          Wrap(children: [
+            ListView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                primary: false,
+                itemCount: _proposalList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return GestureDetector(
                       onTap: () {
                         addView(
                             context,
@@ -156,12 +156,39 @@ class _ProposedAuditionList extends State<ProposedAuditionList>
                       },
                       child: Container(
                           alignment: Alignment.center,
-                          padding: EdgeInsets.only(
-                              left: 16, right: 16, top: 10, bottom: 10),
-                          child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
+                          margin: EdgeInsets.only(bottom: 15),
+                          decoration: BoxDecoration(
+                              color: CustomColors.colorWhite,
+                              border: Border(
+                                  left: BorderSide(
+                                      color: StringUtils.checkedString(
+                                                  _proposalList[index][APIConstants
+                                                      .audition_prps_state_type])
+                                              .contains('수락')
+                                          ? CustomColors.colorBlue
+                                              .withAlpha(200)
+                                          : StringUtils.checkedString(
+                                                      _proposalList[index][
+                                                          APIConstants
+                                                              .audition_prps_state_type])
+                                                  .contains('거절')
+                                              ? CustomColors.colorPurple
+                                                  .withAlpha(200)
+                                              : CustomColors.colorBgGrey,
+                                      width: 5)),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: CustomColors.colorFontLightGrey
+                                      .withAlpha(100),
+                                  blurRadius: 2.0,
+                                  spreadRadius: 2.0,
+                                  offset: Offset(2, 1),
+                                )
+                              ]),
+                          child: Container(
+                              alignment: Alignment.center,
+                              padding: EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 10),
+                              child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
                                 Container(
                                     margin:
                                         EdgeInsets.only(top: 10, bottom: 15),
@@ -172,55 +199,39 @@ class _ProposedAuditionList extends State<ProposedAuditionList>
                                             CrossAxisAlignment.start,
                                         children: [
                                           Expanded(
-                                            flex: 0,
-                                            child: Container(
-                                                width: 30,
-                                                height: 30,
-                                                margin:
-                                                    EdgeInsets.only(right: 5),
-                                                child: (_proposalList[index][
-                                                            APIConstants
-                                                                .main_img_url] !=
-                                                        null
-                                                    ? ClipOval(
-                                                        child:
-                                                            CachedNetworkImage(
-                                                              placeholder: (context, url) => Container(
-                                                                  alignment: Alignment.center,
-                                                                  child: CircularProgressIndicator()),
-                                                        fit: BoxFit.cover,
-                                                        imageUrl: _proposalList[
-                                                                index][
-                                                            APIConstants
-                                                                .main_img_url],
-                                                        errorWidget: (context,
-                                                                url, error) =>
-                                                            Image.asset(
-                                                                'assets/images/btn_mypage.png',
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                                color: CustomColors
-                                                                    .colorBgGrey),
-                                                      ))
-                                                    : Image.asset(
-                                                        'assets/images/btn_mypage.png',
-                                                        fit: BoxFit.cover,
-                                                        color: CustomColors
-                                                            .colorBgGrey)),
-                                                decoration: BoxDecoration(
-                                                  color:
-                                                      CustomColors.colorWhite,
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(
-                                                              50.0)),
-                                                  border: Border.all(
-                                                    color: CustomColors
-                                                        .colorAccent,
-                                                    width: 1.0,
-                                                  ),
-                                                )),
-                                          ),
+                                              flex: 0,
+                                              child: Container(
+                                                  decoration: new BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      gradient: LinearGradient(
+                                                          colors: [CustomColors.colorPrimary, CustomColors.colorAccent])),
+                                                  padding: EdgeInsets.all(2),
+                                                  margin: EdgeInsets.only(
+                                                      right: 15),
+                                                  alignment:
+                                                      Alignment.topCenter,
+                                                  child: Container(
+                                                      alignment:
+                                                          Alignment.center,
+                                                      width: 30,
+                                                      height: 30,
+                                                      decoration: new BoxDecoration(
+                                                          shape:
+                                                              BoxShape.circle,
+                                                          color: CustomColors
+                                                              .colorWhite),
+                                                      padding:
+                                                          EdgeInsets.all(1.0),
+                                                      child: ClipOval(
+                                                          child: CachedNetworkImage(
+                                                              width: 30,
+                                                              height: 30,
+                                                              fit: BoxFit.cover,
+                                                              placeholder:
+                                                                  (context, url) =>
+                                                                      Container(alignment: Alignment.center, child: CircularProgressIndicator()),
+                                                              imageUrl: _proposalList[index][APIConstants.main_img_url],
+                                                              errorWidget: (context, url, error) => Image.asset('assets/images/btn_mypage.png', color: CustomColors.colorBgGrey, width: 30, fit: BoxFit.contain)))))),
                                           Expanded(
                                               flex: 1,
                                               child: Column(children: [
@@ -234,7 +245,7 @@ class _ProposedAuditionList extends State<ProposedAuditionList>
                                                                 [APIConstants
                                                                     .actor_name]),
                                                         style: CustomStyles
-                                                            .normal16TextStyle(),
+                                                            .bold16TextStyle(),
                                                         maxLines: 1,
                                                         overflow: TextOverflow
                                                             .ellipsis,
@@ -248,14 +259,14 @@ class _ProposedAuditionList extends State<ProposedAuditionList>
                                                                 [APIConstants
                                                                     .audition_prps_state_type]),
                                                         style: CustomStyles
-                                                            .normal16TextStyle(),
+                                                            .bold17TextStyle(),
                                                       ),
                                                     )
                                                   ],
                                                 ),
                                                 Container(
                                                     margin: EdgeInsets.only(
-                                                        top: 10),
+                                                        top: 5, left: 3),
                                                     alignment:
                                                         Alignment.centerLeft,
                                                     child: Text(
@@ -264,26 +275,20 @@ class _ProposedAuditionList extends State<ProposedAuditionList>
                                                               APIConstants
                                                                   .audition_prps_contents]),
                                                       style: CustomStyles
-                                                          .normal14TextStyle(),
+                                                          .grey14TextStyle(),
                                                       maxLines: 2,
                                                       overflow:
                                                           TextOverflow.ellipsis,
                                                     ))
                                               ]))
                                         ])),
+                                Divider(),
                                 Container(
                                     padding:
                                         EdgeInsets.only(left: 10, right: 10),
-                                    margin: EdgeInsets.only(bottom: 10),
                                     alignment: Alignment.centerLeft,
                                     width: MediaQuery.of(context).size.width,
                                     height: 40,
-                                    decoration: BoxDecoration(
-                                        borderRadius:
-                                            CustomStyles.circle7BorderRadius(),
-                                        border: Border.all(
-                                            width: 0.5,
-                                            color: CustomColors.colorBgGrey)),
                                     child: Row(children: [
                                       Expanded(
                                         child: Text(
@@ -291,7 +296,7 @@ class _ProposedAuditionList extends State<ProposedAuditionList>
                                                 _proposalList[index][
                                                     APIConstants.project_name]),
                                             style:
-                                                CustomStyles.dark12TextStyle()),
+                                                CustomStyles.bold14TextStyle()),
                                       ),
                                       Expanded(
                                           flex: 0,
@@ -301,16 +306,12 @@ class _ProposedAuditionList extends State<ProposedAuditionList>
                                                       APIConstants
                                                           .casting_name]),
                                               style: CustomStyles
-                                                  .normal14TextStyle()))
+                                                  .bold16TextStyle()))
                                     ]))
                               ]))));
-            },
-            separatorBuilder: (context, index) {
-              return Divider(
-                  height: 0.1, color: CustomColors.colorFontLightGrey);
-            })
-      ])
-    ]));
+                })
+          ])
+        ]));
   }
 
   /*
@@ -329,31 +330,34 @@ class _ProposedAuditionList extends State<ProposedAuditionList>
               children: [
                 Container(
                     child: RefreshIndicator(
-                      onRefresh: _refreshPage,
-                      child: SingleChildScrollView(
-                          controller: _scrollController,
-                          physics: AlwaysScrollableScrollPhysics(),
-                          key: ObjectKey(_proposalList.length > 0 ? _proposalList[0] : ""),
-                          child: Container(
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                        margin: EdgeInsets.only(top: 30.0, bottom: 30),
-                                        padding: EdgeInsets.only(left: 16, right: 16),
-                                        child: Text('제안한 오디션',
-                                            style: CustomStyles.normal24TextStyle())),
-                                    Expanded(flex: 0, child: tabItem()),
-                                    Visibility(
-                                        child: Container(
-                                            alignment: Alignment.center,
-                                            margin: EdgeInsets.only(top: 50),
-                                            child: Text('제안한 오디션이 없습니다.\n배우들에게 오디션 제안을 해보세요!',
-                                                style: CustomStyles.normal16TextStyle(),
-                                                textAlign: TextAlign.center)),
-                                        visible: _proposalList.length > 0 ? false : true)
-                                  ]))),
-                    )),
+                  onRefresh: _refreshPage,
+                  child: SingleChildScrollView(
+                      controller: _scrollController,
+                      physics: AlwaysScrollableScrollPhysics(),
+                      key: ObjectKey(
+                          _proposalList.length > 0 ? _proposalList[0] : ""),
+                      child: Container(
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                            Container(
+                                margin: EdgeInsets.only(top: 30.0, bottom: 10),
+                                padding: EdgeInsets.only(left: 16, right: 16),
+                                child: Text('제안한 오디션',
+                                    style: CustomStyles.normal24TextStyle())),
+                            Expanded(flex: 0, child: tabItem()),
+                            Visibility(
+                                child: Container(
+                                    alignment: Alignment.center,
+                                    margin: EdgeInsets.only(top: 50),
+                                    child: Text(
+                                        '제안한 오디션이 없습니다.\n배우들에게 오디션 제안을 해보세요!',
+                                        style: CustomStyles.normal16TextStyle(),
+                                        textAlign: TextAlign.center)),
+                                visible:
+                                    _proposalList.length > 0 ? false : true)
+                          ]))),
+                )),
                 Visibility(
                   child: Container(
                       color: Colors.black38,

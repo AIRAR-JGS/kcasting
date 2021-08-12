@@ -91,9 +91,8 @@ class _AgencyMemberPage extends State<AgencyMemberPage> with BaseUtilMixin {
 
   Widget _headerView() {
     return Container(
-      child: Column(
-        children: [
-          Container(
+        child: Column(children: [
+      /*Container(
               margin: EdgeInsets.only(top: 30, bottom: 15),
               child: KCastingAppData().myInfo == null
                   ? Icon(
@@ -123,85 +122,123 @@ class _AgencyMemberPage extends State<AgencyMemberPage> with BaseUtilMixin {
                           Icons.account_circle,
                           color: CustomColors.colorFontLightGrey,
                           size: 100,
-                        ))),
-          Container(
-              margin: EdgeInsets.only(bottom: 15),
-              child: Text(
-                  StringUtils.checkedString(
-                      KCastingAppData().myInfo[APIConstants.management_name]),
-                  style: CustomStyles.normal32TextStyle())),
-          Container(
-            margin: EdgeInsets.only(bottom: 20),
-            child: Row(
+                        ))),*/
+      Container(
+          decoration: new BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, stops: [
+                0,
+                1
+              ], colors: [
+                CustomColors.colorPrimary,
+                CustomColors.colorAccent
+              ])),
+          padding: EdgeInsets.all(3),
+          margin: EdgeInsets.only(top: 40, bottom: 20),
+          child: Container(
+              alignment: Alignment.center,
+              width: 100.0,
+              height: 100.0,
+              decoration: new BoxDecoration(
+                  shape: BoxShape.circle, color: CustomColors.colorWhite),
+              padding: EdgeInsets.all(2.0),
+              child: KCastingAppData().myProfile == null
+                  ? Image.asset('assets/images/btn_mypage.png',
+                      color: CustomColors.colorBgGrey,
+                      width: 100,
+                      fit: BoxFit.contain)
+                  : (KCastingAppData().myInfo[APIConstants.management_logo_img_url] != null
+                      ? ClipOval(
+                          child: CachedNetworkImage(
+                              width: 100.0,
+                              height: 100.0,
+                              placeholder: (context, url) => Container(
+                                  alignment: Alignment.center,
+                                  child: CircularProgressIndicator()),
+                              imageUrl: KCastingAppData()
+                                  .myInfo[APIConstants.management_logo_img_url],
+                              fit: BoxFit.cover,
+                              errorWidget: (context, url, error) => Image.asset('assets/images/btn_mypage.png',
+                                  color: CustomColors.colorBgGrey,
+                                  width: 100,
+                                  fit: BoxFit.contain)))
+                      : Image.asset('assets/images/btn_mypage.png', color: CustomColors.colorBgGrey, width: 100, fit: BoxFit.contain)))),
+      Container(
+          margin: EdgeInsets.only(bottom: 15),
+          child: Text(
+              StringUtils.checkedString(
+                  KCastingAppData().myInfo[APIConstants.management_name]),
+              style: CustomStyles.normal32TextStyle())),
+      Container(
+          margin: EdgeInsets.only(bottom: 20),
+          child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  child: Column(
-                    children: [
-                      Container(
-                          child: Text('지원현황',
-                              style: CustomStyles.dark16TextStyle())),
-                      Container(
+                    child: Column(children: [
+                  Container(
+                      child:
+                          Text('지원현황', style: CustomStyles.dark16TextStyle())),
+                  GestureDetector(
+                      onTap: () {
+                        // 지원현황 페이지 이동
+                        addView(context, AgencyActorAuditionApplyList());
+                      },
+                      child: Container(
                           margin: EdgeInsets.only(top: 5),
                           child: Text(
                               StringUtils.checkedString(
                                   _stateData[APIConstants.applyCnt]),
-                              style: CustomStyles.dark24TextStyle()))
-                    ],
-                  ),
-                ),
+                              style: CustomStyles.normal24TextStyle())))
+                ])),
                 Container(
-                  height: 45,
-                  margin: EdgeInsets.only(bottom: 5, left: 5, right: 5),
-                  child: VerticalDivider(
-                    color: CustomColors.colorFontLightGrey,
-                  ),
-                ),
+                    height: 45,
+                    margin: EdgeInsets.only(bottom: 5, left: 5, right: 5),
+                    child: VerticalDivider(
+                        color: CustomColors.colorFontLightGrey)),
                 Container(
-                  child: Column(
-                    children: [
-                      Container(
-                          child: Text('받은 제안',
-                              style: CustomStyles.dark16TextStyle())),
-                      Container(
+                    child: Column(children: [
+                  Container(
+                      child:
+                          Text('받은 제안', style: CustomStyles.dark16TextStyle())),
+                  GestureDetector(
+                      onTap: () {
+                        // 받은 제안 페이지 이동
+                        addView(context, AgencyActorOfferedAuditionList());
+                      },
+                      child: Container(
                           margin: EdgeInsets.only(top: 5),
                           child: Text(
                               StringUtils.checkedString(
                                   _stateData[APIConstants.proposalCnt]),
-                              style: CustomStyles.dark24TextStyle()))
-                    ],
-                  ),
-                ),
+                              style: CustomStyles.normal24TextStyle())))
+                ])),
                 Container(
-                  height: 45,
-                  margin: EdgeInsets.only(bottom: 5, left: 5, right: 5),
-                  child: VerticalDivider(
-                    color: CustomColors.colorFontLightGrey,
-                  ),
-                ),
+                    height: 45,
+                    margin: EdgeInsets.only(bottom: 5, left: 5, right: 5),
+                    child: VerticalDivider(
+                        color: CustomColors.colorFontLightGrey)),
                 Container(
-                  child: Column(
-                    children: [
-                      Container(
-                          child: Text('보유 배우',
-                              style: CustomStyles.dark16TextStyle())),
-                      Container(
+                    child: Column(children: [
+                  Container(
+                      child:
+                          Text('보유 배우', style: CustomStyles.dark16TextStyle())),
+                  GestureDetector(
+                      onTap: () {
+                        // 보유 배우 페이지 이동
+                        addView(context, AgencyActorList());
+                      },
+                      child: Container(
                           margin: EdgeInsets.only(top: 5),
                           child: Text(
                               StringUtils.checkedString(
                                   _stateData[APIConstants.actorCnt]),
-                              style: CustomStyles.dark24TextStyle()))
-                    ],
-                  ),
-                )
-              ],
-            ),
-          )
-        ],
-      ),
-    );
+                              style: CustomStyles.normal24TextStyle())))
+                ]))
+              ]))
+    ]));
   }
 
   Widget _listItemView(int idx) {
@@ -246,9 +283,9 @@ class _AgencyMemberPage extends State<AgencyMemberPage> with BaseUtilMixin {
                           case 1:
                             // 프로필 관리 페이지 이동
                             Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => AgencyProfile()))
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => AgencyProfile()))
                                 .then((value) => {initData()});
 
                             //addView(context, AgencyProfile());

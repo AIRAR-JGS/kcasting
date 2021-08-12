@@ -205,32 +205,58 @@ class _ProjectList extends State<ProjectList>
                           },
                           child: Container(
                               decoration: BoxDecoration(
+                                  color: CustomColors.colorWhite,
                                   borderRadius:
                                       CustomStyles.circle7BorderRadius(),
-                                  border: Border.all(
-                                      width: 0.5,
-                                      color: CustomColors.colorBgGrey)),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: CustomColors.colorFontLightGrey
+                                          .withAlpha(100),
+                                      blurRadius: 2.0,
+                                      spreadRadius: 2.0,
+                                      offset: Offset(2, 1),
+                                    )
+                                  ]),
                               alignment: Alignment.center,
-                              padding: EdgeInsets.only(
-                                  left: 15, right: 15, top: 15, bottom: 15),
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                              child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Container(
-                                        margin: EdgeInsets.only(bottom: 15),
+                                        padding: EdgeInsets.only(
+                                            left: 15,
+                                            right: 15,
+                                            top: 20,
+                                            bottom: 20),
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.only(
+                                                bottomLeft: Radius.circular(7),
+                                                topLeft: Radius.circular(7)),
+                                            color: CustomColors.colorButtonDefault
+                                                .withAlpha(60)),
+                                        margin: EdgeInsets.only(right: 10),
+                                        child: Column(children: [
+                                          Text('오디션',
+                                              style: CustomStyles
+                                                  .light12TextStyle()),
+                                          Container(
+                                              margin: EdgeInsets.only(top: 5),
+                                              child: Text(
+                                                  _data[APIConstants
+                                                          .casting_cnt]
+                                                      .toString(),
+                                                  style: CustomStyles
+                                                      .bold16TextStyle()))
+                                        ])),
+                                    Container(
+                                        padding: EdgeInsets.only(
+                                            left: 5,
+                                            right: 15,
+                                            top: 15,
+                                            bottom: 20),
                                         child: Text(
                                             _data[APIConstants.project_name],
-                                            style: CustomStyles
-                                                .dark20TextStyle())),
-                                    Container(
-                                        child: Row(children: [
-                                      Text(
-                                          '오디션 ' +
-                                              _data[APIConstants.casting_cnt]
-                                                  .toString() +
-                                              '개',
-                                          style: CustomStyles.dark12TextStyle())
-                                    ]))
+                                            style:
+                                                CustomStyles.dark20TextStyle()))
                                   ]))));
                 })
           ]),
@@ -296,7 +322,7 @@ class _ProjectList extends State<ProjectList>
                                             CustomStyles.blue16TextStyle()))),
                             Container(
                                 margin: EdgeInsets.only(
-                                    top: 15, left: 15, right: 15),
+                                    top: 10, left: 15, right: 15),
                                 padding: EdgeInsets.only(left: 10, right: 10),
                                 height: 50,
                                 decoration: BoxDecoration(
@@ -358,11 +384,13 @@ class _ProjectList extends State<ProjectList>
                                     tabBar: TabBar(
                                         controller: _tabController,
                                         indicatorPadding: EdgeInsets.zero,
+                                        indicatorColor: CustomColors.colorAccent
+                                            .withAlpha(200),
                                         labelStyle:
-                                            CustomStyles.bold14TextStyle(),
-                                        indicatorWeight: 2,
+                                            CustomStyles.bold16TextStyle(),
+                                        indicatorWeight: 3,
                                         unselectedLabelStyle:
-                                            CustomStyles.normal14TextStyle(),
+                                            CustomStyles.normal16TextStyle(),
                                         tabs: [
                                           Tab(text: '영화'),
                                           Tab(text: '드라마')

@@ -188,444 +188,452 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
 
   Widget tabCastingList() {
     return Container(
-        margin: EdgeInsets.only(bottom: 70, top: 10),
+        margin: EdgeInsets.only(bottom: 70, top: 30),
         alignment: Alignment.center,
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Wrap(children: [
-            ListView.separated(
+            ListView.builder(
                 physics: NeverScrollableScrollPhysics(),
                 primary: false,
                 shrinkWrap: true,
                 itemCount: _castingStateList.length,
                 itemBuilder: (BuildContext context, int index) {
                   Map<String, dynamic> _data = _castingStateList[index];
-
-                  return Container(
-                      margin: EdgeInsets.only(bottom: 15),
-                      alignment: Alignment.center,
-                      child: GestureDetector(
-                          onTap: () {
-                            addView(
-                                context,
-                                RegisteredAuditionDetail(
-                                    castingSeq:
-                                        _data[APIConstants.casting_seq]));
-                          },
-                          child: Container(
-                              alignment: Alignment.center,
-                              padding: EdgeInsets.only(
-                                  left: 15, right: 15, top: 15, bottom: 15),
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                        margin: EdgeInsets.only(bottom: 10),
-                                        child: Text(
-                                            StringUtils.checkedString(_data[
-                                                APIConstants.casting_name]),
-                                            style: CustomStyles
-                                                .dark20TextStyle())),
-                                    Container(
-                                        alignment: Alignment.centerRight,
-                                        child: Text(
-                                            '등록일 : ' +
-                                                StringUtils.checkedString(_data[
-                                                    APIConstants
-                                                        .productionCasting_addDate]),
-                                            style: CustomStyles
-                                                .dark10TextStyle())),
-                                    Visibility(
-                                        child: GestureDetector(
-                                      onTap: () {
-                                        addView(
-                                            context,
-                                            RegisteredAuditionDetail(
-                                                castingSeq: _data[
-                                                    APIConstants.casting_seq]));
-                                      },
-                                      child: Container(
-                                        margin: EdgeInsets.only(top: 10),
-                                        padding: EdgeInsets.only(
-                                            top: 10,
-                                            bottom: 10,
-                                            left: 10,
-                                            right: 10),
-                                        decoration: BoxDecoration(
-                                          borderRadius: CustomStyles
-                                              .circle7BorderRadius(),
-                                          border: Border.all(
-                                              width: 1,
+                  return GestureDetector(
+                      onTap: () {
+                        addView(
+                            context,
+                            RegisteredAuditionDetail(
+                                castingSeq: _data[APIConstants.casting_seq]));
+                      },
+                      child: Container(
+                          alignment: Alignment.center,
+                          margin:
+                              EdgeInsets.only(left: 15, right: 15, bottom: 20),
+                          padding: EdgeInsets.only(
+                              left: 15, right: 15, top: 20, bottom: 25),
+                          decoration: BoxDecoration(
+                              color: CustomColors.colorWhite,
+                              borderRadius: CustomStyles.circle7BorderRadius(),
+                              boxShadow: [
+                                BoxShadow(
+                                    color: CustomColors.colorFontLightGrey
+                                        .withAlpha(100),
+                                    blurRadius: 2.0,
+                                    spreadRadius: 2.0,
+                                    offset: Offset(2, 1))
+                              ]),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                    margin: EdgeInsets.only(bottom: 20),
+                                    child: Text(
+                                        StringUtils.checkedString(
+                                            _data[APIConstants.casting_name]),
+                                        style: CustomStyles.bold20TextStyle())),
+                                Container(
+                                    decoration: BoxDecoration(
+                                        color: CustomColors.colorWhite,
+                                        borderRadius:
+                                            CustomStyles.circle7BorderRadius(),
+                                        boxShadow: [
+                                          BoxShadow(
                                               color: CustomColors
-                                                  .colorFontLightGrey),
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Container(
-                                                child: Column(
-                                              children: [
+                                                  .colorFontLightGrey
+                                                  .withAlpha(100),
+                                              blurRadius: 1.0,
+                                              spreadRadius: 1.0,
+                                              offset: Offset(1, 1))
+                                        ]),
+                                    child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Container(
+                                              width: 70,
+                                              padding: EdgeInsets.only(
+                                                  left: 10,
+                                                  right: 10,
+                                                  top: 10,
+                                                  bottom: 10),
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.only(
+                                                          bottomLeft: Radius
+                                                              .circular(7),
+                                                          topLeft:
+                                                              Radius.circular(
+                                                                  7)),
+                                                  color: CustomColors.colorButtonDefault
+                                                      .withAlpha(60)),
+                                              child: Column(children: [
                                                 Text('1차 오디션',
                                                     style: CustomStyles
-                                                        .dark14TextStyle()),
+                                                        .dark10TextStyle()),
                                                 Container(
-                                                  margin:
-                                                      EdgeInsets.only(top: 5),
-                                                  child: Text(
-                                                      StringUtils.checkedString(
-                                                                  _data[APIConstants
-                                                                      .firstAudition_state_type]) ==
-                                                              "진행중"
-                                                          ? DateTileUtils
-                                                              .getDDayFromString(
-                                                                  _data[APIConstants
-                                                                      .firstAudition_endDate])
-                                                          : "마감",
-                                                      style: CustomStyles
-                                                          .dark14TextStyle()),
-                                                )
-                                              ],
-                                            )),
-                                            Container(
-                                                child: Column(
-                                              children: [
-                                                Text('지원자',
-                                                    style: CustomStyles
-                                                        .dark14TextStyle()),
-                                                Container(
-                                                  margin:
-                                                      EdgeInsets.only(top: 5),
-                                                  child: Text(
-                                                      StringUtils.checkedString(
-                                                          _data[APIConstants
-                                                                  .firstAuditionTarget_cnt]
-                                                              .toString()),
-                                                      style: CustomStyles
-                                                          .dark14TextStyle()),
-                                                )
-                                              ],
-                                            )),
-                                            Container(
-                                                child: Column(
-                                              children: [
-                                                Text('합격',
-                                                    style: CustomStyles
-                                                        .dark14TextStyle()),
-                                                Container(
-                                                  margin:
-                                                      EdgeInsets.only(top: 5),
-                                                  child: Text(
-                                                      StringUtils.checkedString(
-                                                          _data[APIConstants
-                                                                  .firstAuditionTarget_pass_cnt]
-                                                              .toString()),
-                                                      style: CustomStyles
-                                                          .dark14TextStyle()),
-                                                )
-                                              ],
-                                            )),
-                                            Container(
-                                                child: Column(
-                                              children: [
-                                                Text('불합격',
-                                                    style: CustomStyles
-                                                        .dark14TextStyle()),
-                                                Container(
-                                                  margin:
-                                                      EdgeInsets.only(top: 5),
-                                                  child: Text(
-                                                      StringUtils.checkedString(
-                                                          _data[APIConstants
-                                                                  .firstAuditionTarget_fail_cnt]
-                                                              .toString()),
-                                                      style: CustomStyles
-                                                          .dark14TextStyle()),
-                                                )
-                                              ],
-                                            ))
-                                          ],
-                                        ),
-                                      ),
-                                    )),
-                                    Visibility(
-                                        visible: _data[APIConstants
-                                                    .secondAudition_state_type] ==
-                                                null
-                                            ? false
-                                            : true,
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            addView(
-                                                context,
-                                                RegisteredAuditionDetail(
-                                                    castingSeq: _data[
-                                                        APIConstants
-                                                            .casting_seq]));
-                                          },
-                                          child: Container(
-                                            margin: EdgeInsets.only(top: 10),
-                                            padding: EdgeInsets.only(
-                                                top: 10,
-                                                bottom: 10,
-                                                left: 10,
-                                                right: 10),
-                                            decoration: BoxDecoration(
-                                              borderRadius: CustomStyles
-                                                  .circle7BorderRadius(),
-                                              border: Border.all(
-                                                  width: 1,
-                                                  color: CustomColors
-                                                      .colorFontLightGrey),
-                                            ),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Container(
-                                                    child: Column(
+                                                    child: Text(
+                                                        StringUtils.checkedString(_data[
+                                                                    APIConstants
+                                                                        .firstAudition_state_type]) ==
+                                                                "진행중"
+                                                            ? DateTileUtils
+                                                                .getDDayFromString(_data[
+                                                                    APIConstants
+                                                                        .firstAudition_endDate])
+                                                            : "마감",
+                                                        style: CustomStyles
+                                                            .dark14TextStyle()))
+                                              ])),
+                                          Expanded(
+                                              flex: 1,
+                                              child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
                                                   children: [
+                                                    Expanded(
+                                                        flex: 1,
+                                                        child: Column(
+                                                            children: [
+                                                              Text('지원자',
+                                                                  style: CustomStyles
+                                                                      .dark12TextStyle()),
+                                                              Container(
+                                                                  margin: EdgeInsets
+                                                                      .only(
+                                                                          top:
+                                                                              5),
+                                                                  child: Text(
+                                                                      StringUtils.checkedString(
+                                                                          _data[APIConstants.firstAuditionTarget_cnt]
+                                                                              .toString()),
+                                                                      style: CustomStyles
+                                                                          .dark14TextStyle()))
+                                                            ])),
+                                                    Expanded(
+                                                        flex: 1,
+                                                        child: Column(
+                                                            children: [
+                                                              Text('합격',
+                                                                  style: CustomStyles
+                                                                      .dark12TextStyle()),
+                                                              Container(
+                                                                  margin: EdgeInsets
+                                                                      .only(
+                                                                          top:
+                                                                              5),
+                                                                  child: Text(
+                                                                      StringUtils.checkedString(
+                                                                          _data[APIConstants.firstAuditionTarget_pass_cnt]
+                                                                              .toString()),
+                                                                      style: CustomStyles
+                                                                          .dark14TextStyle()))
+                                                            ])),
+                                                    Expanded(
+                                                        flex: 1,
+                                                        child: Column(
+                                                            children: [
+                                                              Text('불합격',
+                                                                  style: CustomStyles
+                                                                      .dark12TextStyle()),
+                                                              Container(
+                                                                  margin: EdgeInsets
+                                                                      .only(
+                                                                          top:
+                                                                              5),
+                                                                  child: Text(
+                                                                      StringUtils.checkedString(
+                                                                          _data[APIConstants.firstAuditionTarget_fail_cnt]
+                                                                              .toString()),
+                                                                      style: CustomStyles
+                                                                          .dark14TextStyle()))
+                                                            ]))
+                                                  ]))
+                                        ])),
+                                Visibility(
+                                    visible: _data[APIConstants
+                                                .secondAudition_state_type] ==
+                                            null
+                                        ? false
+                                        : true,
+                                    child: Container(
+                                        margin: EdgeInsets.only(
+                                            top: 10, bottom: 10),
+                                        decoration: BoxDecoration(
+                                            color: CustomColors.colorWhite,
+                                            borderRadius: CustomStyles
+                                                .circle7BorderRadius(),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                  color: CustomColors
+                                                      .colorFontLightGrey
+                                                      .withAlpha(100),
+                                                  blurRadius: 1.0,
+                                                  spreadRadius: 1.0,
+                                                  offset: Offset(1, 1))
+                                            ]),
+                                        child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Container(
+                                                  width: 70,
+                                                  padding: EdgeInsets.only(
+                                                      left: 10,
+                                                      right: 10,
+                                                      top: 10,
+                                                      bottom: 10),
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.only(
+                                                              bottomLeft: Radius
+                                                                  .circular(7),
+                                                              topLeft: Radius
+                                                                  .circular(7)),
+                                                      color: CustomColors
+                                                          .colorButtonDefault
+                                                          .withAlpha(120)),
+                                                  child: Column(children: [
                                                     Text('2차 오디션',
                                                         style: CustomStyles
-                                                            .dark14TextStyle()),
+                                                            .dark10TextStyle()),
                                                     Container(
-                                                      margin: EdgeInsets.only(
-                                                          top: 5),
-                                                      child: Text(
-                                                          StringUtils.checkedString(_data[
-                                                                      APIConstants
-                                                                          .secondAudition_state_type]) ==
-                                                                  "진행중"
-                                                              ? DateTileUtils
-                                                                  .getDDayFromString(_data[
-                                                                      APIConstants
-                                                                          .secondAudition_endDate])
-                                                              : "마감",
-                                                          style: CustomStyles
-                                                              .dark14TextStyle()),
-                                                    )
-                                                  ],
-                                                )),
-                                                Container(
-                                                    child: Column(
-                                                  children: [
-                                                    Text('1차 합격자',
-                                                        style: CustomStyles
-                                                            .dark14TextStyle()),
-                                                    Container(
-                                                      margin: EdgeInsets.only(
-                                                          top: 5),
-                                                      child: Text(
-                                                          StringUtils.checkedString(
-                                                              _data[APIConstants
-                                                                      .secondAuditionTarget_cnt]
-                                                                  .toString()),
-                                                          style: CustomStyles
-                                                              .dark14TextStyle()),
-                                                    )
-                                                  ],
-                                                )),
-                                                Container(
-                                                    child: Column(
-                                                  children: [
-                                                    Text('제출',
-                                                        style: CustomStyles
-                                                            .dark14TextStyle()),
-                                                    Container(
-                                                      margin: EdgeInsets.only(
-                                                          top: 5),
-                                                      child: Text(
-                                                          StringUtils.checkedString(
-                                                              _data[APIConstants
-                                                                      .secondAuditionTarget_isSubmit]
-                                                                  .toString()),
-                                                          style: CustomStyles
-                                                              .dark14TextStyle()),
-                                                    )
-                                                  ],
-                                                )),
-                                                Container(
-                                                    child: Column(
-                                                  children: [
-                                                    Text('미제출',
-                                                        style: CustomStyles
-                                                            .dark14TextStyle()),
-                                                    Container(
-                                                      margin: EdgeInsets.only(
-                                                          top: 5),
-                                                      child: Text(
-                                                          StringUtils.checkedString(
-                                                              _data[APIConstants
-                                                                      .secondAuditionTarget_isNotSubmit]
-                                                                  .toString()),
-                                                          style: CustomStyles
-                                                              .dark14TextStyle()),
-                                                    )
-                                                  ],
-                                                )),
-                                                Container(
-                                                    child: Column(
-                                                  children: [
-                                                    Text('합격',
-                                                        style: CustomStyles
-                                                            .dark14TextStyle()),
-                                                    Container(
-                                                      margin: EdgeInsets.only(
-                                                          top: 5),
-                                                      child: Text(
-                                                          StringUtils.checkedString(
-                                                              _data[APIConstants
-                                                                      .secondAuditionTarget_pass_cnt]
-                                                                  .toString()),
-                                                          style: CustomStyles
-                                                              .dark14TextStyle()),
-                                                    )
-                                                  ],
-                                                ))
-                                              ],
-                                            ),
-                                          ),
-                                        )),
-                                    Visibility(
-                                        visible: _data[APIConstants
-                                                    .thirdAudition_state_type] ==
-                                                null
-                                            ? false
-                                            : true,
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            addView(
-                                                context,
-                                                RegisteredAuditionDetail(
-                                                    castingSeq: _data[
-                                                        APIConstants
-                                                            .casting_seq]));
-                                          },
-                                          child: Container(
-                                            margin: EdgeInsets.only(top: 10),
-                                            padding: EdgeInsets.only(
-                                                top: 10,
-                                                bottom: 10,
-                                                left: 10,
-                                                right: 10),
-                                            decoration: BoxDecoration(
-                                              borderRadius: CustomStyles
-                                                  .circle7BorderRadius(),
-                                              border: Border.all(
-                                                  width: 1,
+                                                        margin: EdgeInsets.only(
+                                                            top: 5),
+                                                        child: Text(
+                                                            StringUtils.checkedString(_data[
+                                                                        APIConstants
+                                                                            .secondAudition_state_type]) ==
+                                                                    "진행중"
+                                                                ? DateTileUtils
+                                                                    .getDDayFromString(_data[
+                                                                        APIConstants
+                                                                            .secondAudition_endDate])
+                                                                : "마감",
+                                                            style: CustomStyles
+                                                                .dark14TextStyle()))
+                                                  ])),
+                                              Expanded(
+                                                  flex: 1,
+                                                  child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Expanded(
+                                                            flex: 1,
+                                                            child: Column(
+                                                                children: [
+                                                                  Text('지원자',
+                                                                      style: CustomStyles
+                                                                          .dark12TextStyle()),
+                                                                  Container(
+                                                                      margin: EdgeInsets.only(
+                                                                          top:
+                                                                              5),
+                                                                      child: Text(
+                                                                          StringUtils.checkedString(_data[APIConstants.secondAuditionTarget_cnt]
+                                                                              .toString()),
+                                                                          style:
+                                                                              CustomStyles.dark14TextStyle()))
+                                                                ])),
+                                                        Expanded(
+                                                            flex: 1,
+                                                            child: Column(
+                                                                children: [
+                                                                  Text('제출',
+                                                                      style: CustomStyles
+                                                                          .dark12TextStyle()),
+                                                                  Container(
+                                                                      margin: EdgeInsets.only(
+                                                                          top:
+                                                                              5),
+                                                                      child: Text(
+                                                                          StringUtils.checkedString(_data[APIConstants.secondAuditionTarget_isSubmit]
+                                                                              .toString()),
+                                                                          style:
+                                                                              CustomStyles.dark14TextStyle()))
+                                                                ])),
+                                                        Expanded(
+                                                            flex: 1,
+                                                            child: Column(
+                                                                children: [
+                                                                  Text('미제출',
+                                                                      style: CustomStyles
+                                                                          .dark12TextStyle()),
+                                                                  Container(
+                                                                      margin: EdgeInsets.only(
+                                                                          top:
+                                                                              5),
+                                                                      child: Text(
+                                                                          StringUtils.checkedString(_data[APIConstants.secondAuditionTarget_isNotSubmit]
+                                                                              .toString()),
+                                                                          style:
+                                                                              CustomStyles.dark14TextStyle()))
+                                                                ])),
+                                                        Expanded(
+                                                            flex: 1,
+                                                            child: Column(
+                                                                children: [
+                                                                  Text('합격',
+                                                                      style: CustomStyles
+                                                                          .dark12TextStyle()),
+                                                                  Container(
+                                                                      margin: EdgeInsets.only(
+                                                                          top:
+                                                                              5),
+                                                                      child: Text(
+                                                                          StringUtils.checkedString(_data[APIConstants.secondAuditionTarget_pass_cnt]
+                                                                              .toString()),
+                                                                          style:
+                                                                              CustomStyles.dark14TextStyle()))
+                                                                ]))
+                                                      ]))
+                                            ]))),
+                                Visibility(
+                                    visible: _data[APIConstants
+                                                .thirdAudition_state_type] ==
+                                            null
+                                        ? false
+                                        : true,
+                                    child: Container(
+                                        decoration: BoxDecoration(
+                                            color: CustomColors.colorWhite,
+                                            borderRadius: CustomStyles
+                                                .circle7BorderRadius(),
+                                            boxShadow: [
+                                              BoxShadow(
                                                   color: CustomColors
-                                                      .colorFontLightGrey),
-                                            ),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Container(
-                                                    child: Column(
-                                                  children: [
+                                                      .colorFontLightGrey
+                                                      .withAlpha(100),
+                                                  blurRadius: 1.0,
+                                                  spreadRadius: 1.0,
+                                                  offset: Offset(1, 1))
+                                            ]),
+                                        child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Container(
+                                                  width: 70,
+                                                  padding: EdgeInsets.only(
+                                                      left: 10,
+                                                      right: 10,
+                                                      top: 10,
+                                                      bottom: 10),
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.only(
+                                                              bottomLeft: Radius
+                                                                  .circular(7),
+                                                              topLeft: Radius
+                                                                  .circular(7)),
+                                                      color: CustomColors
+                                                          .colorButtonDefault
+                                                          .withAlpha(180)),
+                                                  child: Column(children: [
                                                     Text('3차 오디션',
                                                         style: CustomStyles
-                                                            .dark14TextStyle()),
+                                                            .dark10TextStyle()),
                                                     Container(
-                                                      margin: EdgeInsets.only(
-                                                          top: 5),
-                                                      child: Text(
-                                                          StringUtils.checkedString(
-                                                              _data[APIConstants
-                                                                  .thirdAudition_state_type]),
-                                                          style: CustomStyles
-                                                              .dark14TextStyle()),
-                                                    )
-                                                  ],
-                                                )),
-                                                Container(
-                                                    child: Column(
-                                                  children: [
-                                                    Text('2차 합격자',
-                                                        style: CustomStyles
-                                                            .dark14TextStyle()),
-                                                    Container(
-                                                      margin: EdgeInsets.only(
-                                                          top: 5),
-                                                      child: Text(
-                                                          StringUtils.checkedString(
-                                                              _data[APIConstants
-                                                                      .thirdAuditionTarget_cnt]
-                                                                  .toString()),
-                                                          style: CustomStyles
-                                                              .dark14TextStyle()),
-                                                    )
-                                                  ],
-                                                )),
-                                                Container(
-                                                    child: Column(
-                                                  children: [
-                                                    Text('면접완료',
-                                                        style: CustomStyles
-                                                            .dark14TextStyle()),
-                                                    Container(
-                                                      margin: EdgeInsets.only(
-                                                          top: 5),
-                                                      child: Text(
-                                                          StringUtils.checkedString(
-                                                              _data[APIConstants
-                                                                      .thirdAuditionTarget_interviewFin]
-                                                                  .toString()),
-                                                          style: CustomStyles
-                                                              .dark14TextStyle()),
-                                                    )
-                                                  ],
-                                                )),
-                                                Container(
-                                                    child: Column(
-                                                  children: [
-                                                    Text('최종합격',
-                                                        style: CustomStyles
-                                                            .dark14TextStyle()),
-                                                    Container(
-                                                      margin: EdgeInsets.only(
-                                                          top: 5),
-                                                      child: Text(
-                                                          StringUtils.checkedString(
-                                                              _data[APIConstants
-                                                                      .thirdAuditionTarget_pass]
-                                                                  .toString()),
-                                                          style: CustomStyles
-                                                              .dark14TextStyle()),
-                                                    )
-                                                  ],
-                                                )),
-                                                Container(
-                                                    child: Column(
-                                                  children: [
-                                                    Text('불합격',
-                                                        style: CustomStyles
-                                                            .dark14TextStyle()),
-                                                    Container(
-                                                      margin: EdgeInsets.only(
-                                                          top: 5),
-                                                      child: Text(
-                                                          StringUtils.checkedString(
-                                                              _data[APIConstants
-                                                                      .thirdAuditionTarget_fail]
-                                                                  .toString()),
-                                                          style: CustomStyles
-                                                              .dark14TextStyle()),
-                                                    )
-                                                  ],
-                                                ))
-                                              ],
-                                            ),
-                                          ),
-                                        ))
-                                  ]))));
-                },
-                separatorBuilder: (context, index) {
-                  return Divider(
-                    height: 0.1,
-                    color: CustomColors.colorFontLightGrey,
-                  );
+                                                        margin: EdgeInsets.only(
+                                                            top: 5),
+                                                        child: Text(
+                                                            StringUtils.checkedString(
+                                                                _data[APIConstants
+                                                                    .thirdAudition_state_type]),
+                                                            style: CustomStyles
+                                                                .dark14TextStyle()))
+                                                  ])),
+                                              Expanded(
+                                                  flex: 1,
+                                                  child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Expanded(
+                                                            flex: 1,
+                                                            child: Column(
+                                                                children: [
+                                                                  Text('지원자',
+                                                                      style: CustomStyles
+                                                                          .dark12TextStyle()),
+                                                                  Container(
+                                                                      margin: EdgeInsets.only(
+                                                                          top:
+                                                                              5),
+                                                                      child: Text(
+                                                                          StringUtils.checkedString(_data[APIConstants.thirdAuditionTarget_cnt]
+                                                                              .toString()),
+                                                                          style:
+                                                                              CustomStyles.dark14TextStyle()))
+                                                                ])),
+                                                        Expanded(
+                                                            flex: 1,
+                                                            child: Column(
+                                                                children: [
+                                                                  Text('면접완료',
+                                                                      style: CustomStyles
+                                                                          .dark12TextStyle()),
+                                                                  Container(
+                                                                      margin: EdgeInsets.only(
+                                                                          top:
+                                                                              5),
+                                                                      child: Text(
+                                                                          StringUtils.checkedString(_data[APIConstants.thirdAuditionTarget_interviewFin]
+                                                                              .toString()),
+                                                                          style:
+                                                                              CustomStyles.dark14TextStyle()))
+                                                                ])),
+                                                        Expanded(
+                                                            flex: 1,
+                                                            child: Column(
+                                                                children: [
+                                                                  Text('최종합격',
+                                                                      style: CustomStyles
+                                                                          .dark12TextStyle()),
+                                                                  Container(
+                                                                      margin: EdgeInsets.only(
+                                                                          top:
+                                                                              5),
+                                                                      child: Text(
+                                                                          StringUtils.checkedString(_data[APIConstants.thirdAuditionTarget_pass]
+                                                                              .toString()),
+                                                                          style:
+                                                                              CustomStyles.dark14TextStyle()))
+                                                                ])),
+                                                        Expanded(
+                                                            flex: 1,
+                                                            child: Column(
+                                                                children: [
+                                                                  Text('불합격',
+                                                                      style: CustomStyles
+                                                                          .dark12TextStyle()),
+                                                                  Container(
+                                                                      margin: EdgeInsets.only(
+                                                                          top:
+                                                                              5),
+                                                                      child: Text(
+                                                                          StringUtils.checkedString(_data[APIConstants.thirdAuditionTarget_fail]
+                                                                              .toString()),
+                                                                          style:
+                                                                              CustomStyles.dark14TextStyle()))
+                                                                ]))
+                                                      ]))
+                                            ]))),
+                                Container(
+                                    alignment: Alignment.centerRight,
+                                    margin: EdgeInsets.only(top: 10),
+                                    child: Text(
+                                        '등록일 : ' +
+                                            StringUtils.checkedString(_data[
+                                                APIConstants
+                                                    .productionCasting_addDate]),
+                                        style:
+                                            CustomStyles.light12TextStyle())),
+                              ])));
                 })
           ])
         ]));
@@ -634,10 +642,10 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
   Widget tabCastingContractedList() {
     return Container(
         alignment: Alignment.center,
-        margin: EdgeInsets.only(bottom: 70, top: 10),
+        margin: EdgeInsets.only(bottom: 70, top: 30),
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Wrap(children: [
-            ListView.separated(
+            ListView.builder(
                 physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: _castingStateList.length,
@@ -658,62 +666,89 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
                           },
                           child: Container(
                               alignment: Alignment.center,
-                              padding:
-                                  EdgeInsets.only(left: 15, right: 15, top: 15),
-                              child: Column(children: [
-                                Container(
-                                    margin: EdgeInsets.only(bottom: 10),
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                        StringUtils.checkedString(
-                                            _data[APIConstants.casting_name]),
-                                        style: CustomStyles.dark20TextStyle())),
-                                Container(
-                                    alignment: Alignment.centerRight,
-                                    child: Text(
-                                        '등록일 : ' +
-                                            StringUtils.checkedString(_data[
-                                                APIConstants
-                                                    .productionCasting_addDate]),
-                                        style: CustomStyles.dark10TextStyle())),
-                                Container(
-                                    margin: EdgeInsets.only(top: 15),
-                                    padding: EdgeInsets.only(
-                                        top: 10,
-                                        bottom: 10,
-                                        left: 10,
-                                        right: 10),
-                                    decoration: BoxDecoration(
-                                        borderRadius:
-                                            CustomStyles.circle7BorderRadius(),
-                                        border: Border.all(
-                                            width: 1,
-                                            color: CustomColors
-                                                .colorFontLightGrey)),
-                                    child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Container(
-                                            child: Text('캐스팅',
-                                                style: CustomStyles
-                                                    .dark10TextStyle()),
-                                          ),
-                                          Container(
-                                            child: Text(
-                                                StringUtils.checkedString(_data[
-                                                    APIConstants.actor_name]),
-                                                style: CustomStyles
-                                                    .dark20TextStyle()),
-                                          )
-                                        ]))
-                              ]))));
-                },
-                separatorBuilder: (context, index) {
-                  return Divider(
-                    height: 0.1,
-                    color: CustomColors.colorFontLightGrey,
-                  );
+                              margin: EdgeInsets.only(left: 15, right: 15),
+                              decoration: BoxDecoration(
+                                  color: CustomColors.colorWhite,
+                                  borderRadius:
+                                      CustomStyles.circle7BorderRadius(),
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color: CustomColors.colorFontLightGrey
+                                            .withAlpha(100),
+                                        blurRadius: 2.0,
+                                        spreadRadius: 2.0,
+                                        offset: Offset(2, 1))
+                                  ]),
+                              child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: 70,
+                                      padding: EdgeInsets.only(
+                                          left: 10,
+                                          right: 10,
+                                          top: 30,
+                                          bottom: 30),
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.only(
+                                              bottomLeft: Radius.circular(7),
+                                              topLeft: Radius.circular(7)),
+                                          color: CustomColors.colorButtonDefault
+                                              .withAlpha(60)),
+                                      child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              margin:
+                                                  EdgeInsets.only(bottom: 5),
+                                              child: Text('캐스팅',
+                                                  style: CustomStyles
+                                                      .dark10TextStyle()),
+                                            ),
+                                            Container(
+                                              child: Text(
+                                                  StringUtils.checkedString(
+                                                      _data[APIConstants
+                                                          .actor_name]),
+                                                  style: CustomStyles
+                                                      .dark14TextStyle()),
+                                            )
+                                          ]),
+                                    ),
+                                    Expanded(
+                                        flex: 1,
+                                        child: Container(
+                                            padding: EdgeInsets.only(
+                                                left: 10, right: 15),
+                                            child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Container(
+                                                      margin: EdgeInsets.only(
+                                                          bottom: 10),
+                                                      alignment:
+                                                          Alignment.centerLeft,
+                                                      child: Text(
+                                                          StringUtils.checkedString(
+                                                              _data[APIConstants
+                                                                  .casting_name]),
+                                                          maxLines: 2,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: CustomStyles
+                                                              .bold17TextStyle())),
+                                                  Container(
+                                                      child: Text(
+                                                          '등록일 : ' +
+                                                              StringUtils.checkedString(
+                                                                  _data[APIConstants
+                                                                      .productionCasting_addDate]),
+                                                          style: CustomStyles
+                                                              .dark10TextStyle()))
+                                                ])))
+                                  ]))));
                 })
           ])
         ]));
@@ -722,10 +757,10 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
   Widget tabCastingOffList() {
     return Container(
         alignment: Alignment.center,
-        margin: EdgeInsets.only(bottom: 70, top: 10),
+        margin: EdgeInsets.only(bottom: 70, top: 30),
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Wrap(children: [
-            ListView.separated(
+            ListView.builder(
                 physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: _castingStateList.length,
@@ -746,62 +781,89 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
                           },
                           child: Container(
                               alignment: Alignment.center,
-                              padding: EdgeInsets.only(
-                                  left: 15, right: 15, top: 15, bottom: 15),
-                              child: Column(children: [
-                                Container(
-                                    margin: EdgeInsets.only(bottom: 10),
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                        StringUtils.checkedString(
-                                            _data[APIConstants.casting_name]),
-                                        style: CustomStyles.dark20TextStyle())),
-                                Container(
-                                    alignment: Alignment.centerRight,
-                                    child: Text(
-                                        '등록일 : ' +
-                                            StringUtils.checkedString(_data[
-                                                APIConstants
-                                                    .productionCasting_addDate]),
-                                        style: CustomStyles.dark10TextStyle())),
-                                Container(
-                                    margin: EdgeInsets.only(top: 15),
-                                    padding: EdgeInsets.only(
-                                        top: 10,
-                                        bottom: 10,
-                                        left: 10,
-                                        right: 10),
-                                    decoration: BoxDecoration(
-                                        borderRadius:
-                                            CustomStyles.circle7BorderRadius(),
-                                        border: Border.all(
-                                            width: 1,
-                                            color: CustomColors
-                                                .colorFontLightGrey)),
-                                    child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Container(
-                                            child: Text('캐스팅',
-                                                style: CustomStyles
-                                                    .dark10TextStyle()),
-                                          ),
-                                          Container(
-                                            child: Text(
-                                                StringUtils.checkedString(_data[
-                                                    APIConstants.actor_name]),
-                                                style: CustomStyles
-                                                    .dark20TextStyle()),
-                                          )
-                                        ]))
-                              ]))));
-                },
-                separatorBuilder: (context, index) {
-                  return Divider(
-                    height: 0.1,
-                    color: CustomColors.colorFontLightGrey,
-                  );
+                              margin: EdgeInsets.only(left: 15, right: 15),
+                              decoration: BoxDecoration(
+                                  color: CustomColors.colorWhite,
+                                  borderRadius:
+                                      CustomStyles.circle7BorderRadius(),
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color: CustomColors.colorFontLightGrey
+                                            .withAlpha(100),
+                                        blurRadius: 2.0,
+                                        spreadRadius: 2.0,
+                                        offset: Offset(2, 1))
+                                  ]),
+                              child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: 70,
+                                      padding: EdgeInsets.only(
+                                          left: 10,
+                                          right: 10,
+                                          top: 30,
+                                          bottom: 30),
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.only(
+                                              bottomLeft: Radius.circular(7),
+                                              topLeft: Radius.circular(7)),
+                                          color: CustomColors.colorButtonDefault
+                                              .withAlpha(60)),
+                                      child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              margin:
+                                                  EdgeInsets.only(bottom: 5),
+                                              child: Text('캐스팅',
+                                                  style: CustomStyles
+                                                      .dark10TextStyle()),
+                                            ),
+                                            Container(
+                                              child: Text(
+                                                  StringUtils.checkedString(
+                                                      _data[APIConstants
+                                                          .actor_name]),
+                                                  style: CustomStyles
+                                                      .dark14TextStyle()),
+                                            )
+                                          ]),
+                                    ),
+                                    Expanded(
+                                        flex: 1,
+                                        child: Container(
+                                            padding: EdgeInsets.only(
+                                                left: 10, right: 15),
+                                            child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Container(
+                                                      margin: EdgeInsets.only(
+                                                          bottom: 10),
+                                                      alignment:
+                                                          Alignment.centerLeft,
+                                                      child: Text(
+                                                          StringUtils.checkedString(
+                                                              _data[APIConstants
+                                                                  .casting_name]),
+                                                          maxLines: 2,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: CustomStyles
+                                                              .bold17TextStyle())),
+                                                  Container(
+                                                      child: Text(
+                                                          '등록일 : ' +
+                                                              StringUtils.checkedString(
+                                                                  _data[APIConstants
+                                                                      .productionCasting_addDate]),
+                                                          style: CustomStyles
+                                                              .dark10TextStyle()))
+                                                ])))
+                                  ]))));
                 })
           ])
         ]));
@@ -841,7 +903,8 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
                                   style: CustomStyles.normal24TextStyle()),
                             ),
                             Container(
-                              margin: EdgeInsets.only(left: 15, right: 15),
+                              margin: EdgeInsets.only(
+                                  left: 15, right: 15, bottom: 10),
                               alignment: Alignment.centerRight,
                               child: GestureDetector(
                                 onTap: () {
@@ -875,25 +938,26 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
                                 width: MediaQuery.of(context).size.width,
                                 color: CustomColors.colorWhite,
                                 child: DecoratedTabBar(
-                                  decoration: BoxDecoration(
-                                      border: Border(
-                                          bottom: BorderSide(
-                                              color: CustomColors.colorBgGrey,
-                                              width: 1.0))),
-                                  tabBar: TabBar(
-                                    controller: _tabController,
-                                    indicatorWeight: 2,
-                                    indicatorPadding: EdgeInsets.zero,
-                                    labelStyle: CustomStyles.bold14TextStyle(),
-                                    unselectedLabelStyle:
-                                        CustomStyles.normal14TextStyle(),
-                                    tabs: [
-                                      Tab(text: '진행중'),
-                                      Tab(text: '계약완료'),
-                                      Tab(text: '마감')
-                                    ],
-                                  ),
-                                )),
+                                    decoration: BoxDecoration(
+                                        border: Border(
+                                            bottom: BorderSide(
+                                                color: CustomColors.colorBgGrey,
+                                                width: 1.0))),
+                                    tabBar: TabBar(
+                                        controller: _tabController,
+                                        indicatorPadding: EdgeInsets.zero,
+                                        indicatorColor: CustomColors.colorAccent
+                                            .withAlpha(200),
+                                        labelStyle:
+                                            CustomStyles.bold16TextStyle(),
+                                        indicatorWeight: 3,
+                                        unselectedLabelStyle:
+                                            CustomStyles.normal16TextStyle(),
+                                        tabs: [
+                                          Tab(text: '진행중'),
+                                          Tab(text: '계약완료'),
+                                          Tab(text: '마감')
+                                        ]))),
                             Visibility(
                                 child: Container(
                                     margin: EdgeInsets.only(

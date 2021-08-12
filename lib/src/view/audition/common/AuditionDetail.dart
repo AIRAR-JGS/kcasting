@@ -1036,7 +1036,7 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
                             flex: 1,
                             child: Container(
                                 height: 55,
-                                child: CustomStyles.blueBGSquareButtonStyle(
+                                child: CustomStyles.applyButtonStyle(
                                     '지원하기 D-56', () {
                                   if (KCastingAppData()
                                           .myInfo[APIConstants.member_type] ==
@@ -1099,7 +1099,7 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
                                         ? Image.asset(
                                             'assets/images/toggle_like_on.png',
                                             width: 20,
-                                            color: CustomColors.colorAccent)
+                                            color: CustomColors.colorAccent.withAlpha(200))
                                         : Image.asset(
                                             'assets/images/toggle_like_off.png',
                                             width: 20))),

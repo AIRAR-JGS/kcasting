@@ -36,37 +36,34 @@ class _ActorListItem extends State<ActorListItem> with BaseUtilMixin {
   @override
   Widget build(BuildContext context) {
     return Center(
-        child: Container(
-            width: MediaQuery.of(context).size.width,
-            child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ActorDetail(
-                            seq: _data[APIConstants.actor_seq],
-                            actorProfileSeq:
-                                _data[APIConstants.actorProfile_seq])),
-                  ).then((value) =>
-                      {if (_onClickedBookmark != null) _onClickedBookmark()});
-
-                  /*addView(
-                      context,
-                      ActorDetail(
-                          seq: _data[APIConstants.actor_seq],
-                          actorProfileSeq:
-                              _data[APIConstants.actorProfile_seq]));*/
-                },
+        child: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ActorDetail(
+                        seq: _data[APIConstants.actor_seq],
+                        actorProfileSeq: _data[APIConstants.actorProfile_seq])),
+              ).then((value) =>
+                  {if (_onClickedBookmark != null) _onClickedBookmark()});
+            },
+            child: Container(
+                width: MediaQuery.of(context).size.width,
                 child: Column(children: <Widget>[
                   Container(
                       decoration: BoxDecoration(
-                          color: CustomColors.colorBgGrey,
-                    border: Border.all(
-                        width: 0.5,
-                        color: CustomColors.colorFontLightGrey),
-                          borderRadius: CustomStyles.circle7BorderRadius()),
+                          color: CustomColors.colorWhite,
+                          borderRadius: CustomStyles.circle7BorderRadius(),
+                          boxShadow: [
+                            BoxShadow(
+                              color: CustomColors.colorFontLightGrey,
+                              blurRadius: 2.0,
+                              spreadRadius: 2.0,
+                              offset: Offset(2, 1),
+                            )
+                          ]),
                       width: (MediaQuery.of(context).size.width / 2),
-                      height: (MediaQuery.of(context).size.width / 2),
+                      height: (MediaQuery.of(context).size.width / 2)*1.2,
                       child: _data[APIConstants.main_img_url] != null
                           ? ClipRRect(
                               borderRadius: CustomStyles.circle7BorderRadius(),

@@ -161,8 +161,8 @@ class _BookmarkedActorList extends State<BookmarkedActorList>
                                       style: CustomStyles.normal24TextStyle())),
                               Container(
                                   padding:
-                                  EdgeInsets.only(left: 15, right: 15, bottom: 15),
-                                  alignment: Alignment.topLeft,
+                                  EdgeInsets.only(left: 15, right: 15, bottom: 10),
+                                  alignment: Alignment.bottomRight,
                                   child: RichText(
                                       text: new TextSpan(
                                           style: CustomStyles.dark16TextStyle(),
@@ -177,14 +177,14 @@ class _BookmarkedActorList extends State<BookmarkedActorList>
                                   ? Wrap(children: [
                                 GridView.count(
                                     padding: EdgeInsets.only(
-                                        left: 16, right: 16, bottom: 50),
+                                        left: 15, right: 15, bottom: 70),
                                     primary: false,
                                     physics: NeverScrollableScrollPhysics(),
                                     shrinkWrap: true,
                                     crossAxisCount: 2,
                                     crossAxisSpacing: 10,
                                     mainAxisSpacing: 5,
-                                    childAspectRatio: (0.76),
+                                    childAspectRatio: (0.6),
                                     children:
                                     List.generate(_actorList.length, (index) {
                                       return ActorListItem(data: _actorList[index],

@@ -268,18 +268,16 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
             width: MediaQuery.of(context).size.width,
             margin: EdgeInsets.symmetric(horizontal: 5.0),
             decoration: BoxDecoration(
+                color: CustomColors.colorWhite,
                 borderRadius: CustomStyles.circle7BorderRadius(),
-                gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    stops: [
-                      0,
-                      1
-                    ],
-                    colors: [
-                      CustomColors.colorPrimary,
-                      CustomColors.colorAccent
-                    ])),
+                boxShadow: [
+                  BoxShadow(
+                    color: CustomColors.colorFontLightGrey.withAlpha(100),
+                    blurRadius: 1.0,
+                    spreadRadius: 1.0,
+                    offset: Offset(1, 1),
+                  )
+                ]),
             child: _bannerList[idx][APIConstants.project_file_url] != null
                 ? ClipRRect(
                     borderRadius: CustomStyles.circle7BorderRadius(),
@@ -487,7 +485,7 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
                     crossAxisCount: 2,
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 5,
-                    childAspectRatio: (0.76),
+                    childAspectRatio: (0.6),
                     children: List.generate(_actorList.length, (index) {
                       return ActorListItem(data: _actorList[index]);
                     }))
@@ -496,7 +494,7 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
 
           Visibility(
               child: Container(
-                  margin: EdgeInsets.only(bottom: 15, top: 20),
+                  margin: EdgeInsets.only(bottom: 15),
                   alignment: Alignment.center,
                   child:
                       CustomStyles.blueBorderRound21ButtonStyle('남배우 더보기', () {
@@ -544,7 +542,7 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
                     crossAxisCount: 2,
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 5,
-                    childAspectRatio: (0.76),
+                    childAspectRatio: (0.6),
                     children: List.generate(_actressList.length, (index) {
                       return ActorListItem(data: _actressList[index]);
                     }))
@@ -553,7 +551,7 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
 
           Visibility(
               child: Container(
-                  margin: EdgeInsets.only(bottom: 10, top: 20),
+                  margin: EdgeInsets.only(bottom: 10),
                   alignment: Alignment.center,
                   child: CustomStyles.purpleBorderRound21ButtonStyle('여배우 더보기',
                       () {

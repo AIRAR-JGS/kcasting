@@ -161,220 +161,195 @@ class _OfferedAuditionList extends State<OfferedAuditionList>
   Widget tabItem() {
     return Container(
         alignment: Alignment.center,
-        margin: EdgeInsets.only(bottom: 70),
-        child: Column(
-          children: [
-            Wrap(
-              children: [
-                ListView.separated(
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  primary: false,
-                  itemCount: _scoutList.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Container(
-                        alignment: Alignment.center,
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => OfferedAuditionDetail(
-                                      seq: _scoutList[index]
-                                          [APIConstants.auditionProposal_seq])),
-                            ).then((value) => {
-                                  _total = 0,
-                                  _scoutList = [],
-                                  requestMyApplyListApi(context)
-                                });
-                          },
+        margin: EdgeInsets.only(bottom: 70, top: 30),
+        padding: EdgeInsets.only(left: 15, right: 15),
+        child: Column(children: [
+          Wrap(children: [
+            ListView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                primary: false,
+                itemCount: _scoutList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => OfferedAuditionDetail(
+                                  seq: _scoutList[index]
+                                      [APIConstants.auditionProposal_seq])),
+                        ).then((value) => {
+                              _total = 0,
+                              _scoutList = [],
+                              requestMyApplyListApi(context)
+                            });
+                      },
+                      child: Container(
+                          alignment: Alignment.center,
+                          margin: EdgeInsets.only(bottom: 15),
+                          decoration: BoxDecoration(
+                              color: CustomColors.colorWhite,
+                              border: Border(
+                                  left: BorderSide(
+                                      color: StringUtils.checkedString(
+                                                  _scoutList[index]
+                                                      [APIConstants.state_type])
+                                              .contains('수락')
+                                          ? CustomColors.colorBlue
+                                              .withAlpha(200)
+                                          : StringUtils.checkedString(_scoutList[
+                                                          index]
+                                                      [APIConstants.state_type])
+                                                  .contains('거절')
+                                              ? CustomColors.colorPurple
+                                                  .withAlpha(200)
+                                              : CustomColors.colorBgGrey,
+                                      width: 5)),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: CustomColors.colorFontLightGrey
+                                      .withAlpha(100),
+                                  blurRadius: 2.0,
+                                  spreadRadius: 2.0,
+                                  offset: Offset(2, 1),
+                                )
+                              ]),
                           child: Container(
                               alignment: Alignment.center,
                               padding: EdgeInsets.only(
-                                  left: 16, right: 16, top: 10, bottom: 10),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
+                                  left: 15, right: 15, top: 10, bottom: 10),
+                              child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                Container(
                                     margin:
                                         EdgeInsets.only(top: 10, bottom: 15),
                                     child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          flex: 0,
-                                          child: Container(
-                                              decoration: new BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  gradient:
-                                                      LinearGradient(colors: [
-                                                    CustomColors.colorPrimary,
-                                                    CustomColors.colorAccent
-                                                  ])),
-                                              padding: EdgeInsets.all(2),
-                                              margin: EdgeInsets.only(right: 5),
-                                              alignment: Alignment.topCenter,
-                                              child: Container(
-                                                alignment: Alignment.center,
-                                                width: 30,
-                                                height: 30,
-                                                decoration: new BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    color: CustomColors
-                                                        .colorWhite),
-                                                padding: EdgeInsets.all(1.0),
-                                                child: ClipOval(
-                                                    child: CachedNetworkImage(
-                                                        width: 30,
-                                                        height: 30,
-                                                        fit: BoxFit.cover,
-                                                        placeholder: (context, url) =>
-                                                            Container(
-                                                                alignment: Alignment
-                                                                    .center,
-                                                                child:
-                                                                    CircularProgressIndicator()),
-                                                        imageUrl: _scoutList[index]
-                                                            [APIConstants
-                                                                .production_img_url],
-                                                        errorWidget: (context,
-                                                                url, error) =>
-                                                            Image.asset(
-                                                                'assets/images/btn_mypage.png',
-                                                                color: CustomColors
-                                                                    .colorBgGrey,
-                                                                width: 30,
-                                                                fit: BoxFit.contain))),
-                                              )),
-                                        ),
-                                        Expanded(
-                                            flex: 1,
-                                            child: Column(
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                    Expanded(
-                                                      flex: 1,
-                                                      child: Text(
-                                                        StringUtils.checkedString(
-                                                            _scoutList[index][
-                                                                APIConstants
-                                                                    .production_name]),
-                                                        style: CustomStyles
-                                                            .normal16TextStyle(),
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      flex: 0,
-                                                      child: Text(
-                                                        StringUtils.checkedString(
-                                                            _scoutList[index][
-                                                                APIConstants
-                                                                    .state_type]),
-                                                        style: StringUtils.checkedString(
-                                                                    _scoutList[
-                                                                            index]
-                                                                        [
-                                                                        APIConstants
-                                                                            .state_type])
-                                                                .contains('수락')
-                                                            ? CustomStyles
-                                                                .blue16TextStyle()
-                                                            : StringUtils.checkedString(_scoutList[
-                                                                            index]
-                                                                        [
-                                                                        APIConstants
-                                                                            .state_type])
-                                                                    .contains(
-                                                                        '거절')
-                                                                ? CustomStyles
-                                                                    .red16TextStyle()
-                                                                : CustomStyles
-                                                                    .normal16TextStyle(),
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                                Container(
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  margin:
-                                                      EdgeInsets.only(top: 10),
-                                                  child: Text(
-                                                    StringUtils.checkedString(
-                                                        _scoutList[index][
-                                                            APIConstants
-                                                                .audition_prps_contents]),
-                                                    style: CustomStyles
-                                                        .normal14TextStyle(),
-                                                    maxLines: 2,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                )
-                                              ],
-                                            ))
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                      padding:
-                                          EdgeInsets.only(left: 10, right: 10),
-                                      margin: EdgeInsets.only(bottom: 10),
-                                      alignment: Alignment.centerLeft,
-                                      width: MediaQuery.of(context).size.width,
-                                      height: 40,
-                                      decoration: BoxDecoration(
-                                          borderRadius: CustomStyles
-                                              .circle7BorderRadius(),
-                                          border: Border.all(
-                                              width: 0.5,
-                                              color: CustomColors.colorBgGrey)),
-                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Expanded(
-                                            child: Text(
-                                                StringUtils.checkedString(
-                                                    _scoutList[index][
-                                                        APIConstants
-                                                            .project_name]),
-                                                style: CustomStyles
-                                                    .dark12TextStyle()),
+                                            flex: 0,
+                                            child: Container(
+                                                decoration: new BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    gradient:
+                                                        LinearGradient(colors: [
+                                                      CustomColors.colorPrimary,
+                                                      CustomColors.colorAccent
+                                                    ])),
+                                                padding: EdgeInsets.all(2),
+                                                margin: EdgeInsets.only(
+                                                    right: 15),
+                                                alignment: Alignment.topCenter,
+                                                child: Container(
+                                                  alignment: Alignment.center,
+                                                  width: 30,
+                                                  height: 30,
+                                                  decoration: new BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color: CustomColors
+                                                          .colorWhite),
+                                                  padding: EdgeInsets.all(1.0),
+                                                  child: ClipOval(
+                                                      child: CachedNetworkImage(
+                                                          width: 30,
+                                                          height: 30,
+                                                          fit: BoxFit.cover,
+                                                          placeholder: (context,
+                                                                  url) =>
+                                                              Container(
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .center,
+                                                                  child:
+                                                                      CircularProgressIndicator()),
+                                                          imageUrl: _scoutList[index]
+                                                              [APIConstants
+                                                                  .production_img_url],
+                                                          errorWidget: (context,
+                                                                  url, error) =>
+                                                              Image.asset(
+                                                                  'assets/images/btn_mypage.png',
+                                                                  color: CustomColors.colorBgGrey,
+                                                                  width: 30,
+                                                                  fit: BoxFit.contain))),
+                                                )),
                                           ),
                                           Expanded(
-                                            flex: 0,
-                                            child: Text(
-                                                StringUtils.checkedString(
-                                                    _scoutList[index][
-                                                        APIConstants
-                                                            .casting_name]),
-                                                style: CustomStyles
-                                                    .normal14TextStyle()),
-                                          ),
-                                        ],
-                                      ))
-                                ],
-                              )),
-                        ));
-                  },
-                  separatorBuilder: (context, index) {
-                    return Divider(
-                      height: 0.1,
-                      color: CustomColors.colorFontLightGrey,
-                    );
-                  },
-                )
-              ],
-            ),
-          ],
-        ));
+                                              flex: 1,
+                                              child: Column(children: [
+                                                Row(children: [
+                                                  Expanded(
+                                                    flex: 1,
+                                                    child: Text(
+                                                      StringUtils.checkedString(
+                                                          _scoutList[index][
+                                                              APIConstants
+                                                                  .production_name]),
+                                                      style: CustomStyles
+                                                          .bold16TextStyle(),
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                      flex: 0,
+                                                      child: Text(
+                                                          StringUtils.checkedString(
+                                                              _scoutList[index][
+                                                                  APIConstants
+                                                                      .state_type]),
+                                                          style: CustomStyles
+                                                              .bold17TextStyle()))
+                                                ]),
+                                                Container(
+                                                    alignment:
+                                                        Alignment.centerLeft,
+                                                    margin: EdgeInsets.only(
+                                                        top: 5, left: 3),
+                                                    child: Text(
+                                                        StringUtils.checkedString(
+                                                            _scoutList[index][
+                                                                APIConstants
+                                                                    .audition_prps_contents]),
+                                                        style: CustomStyles
+                                                            .grey14TextStyle(),
+                                                        maxLines: 2,
+                                                        overflow: TextOverflow
+                                                            .ellipsis))
+                                              ]))
+                                        ])),
+                                Divider(),
+                                Container(
+                                    padding:
+                                        EdgeInsets.only(left: 10, right: 10),
+                                    alignment: Alignment.centerLeft,
+                                    width: MediaQuery.of(context).size.width,
+                                    height: 40,
+                                    child: Row(children: [
+                                      Expanded(
+                                          child: Text(
+                                              StringUtils.checkedString(
+                                                  _scoutList[index][APIConstants
+                                                      .project_name]),
+                                              style: CustomStyles
+                                                  .bold14TextStyle())),
+                                      Expanded(
+                                          flex: 0,
+                                          child: Text(
+                                              StringUtils.checkedString(
+                                                  _scoutList[index][APIConstants
+                                                      .casting_name]),
+                                              style: CustomStyles
+                                                  .bold16TextStyle()))
+                                    ]))
+                              ]))));
+                })
+          ])
+        ]));
   }
 
   Future<void> _refreshPage() async {
@@ -435,11 +410,14 @@ class _OfferedAuditionList extends State<OfferedAuditionList>
                                           tabBar: TabBar(
                                               controller: _tabController,
                                               indicatorPadding: EdgeInsets.zero,
+                                              indicatorColor: CustomColors
+                                                  .colorAccent
+                                                  .withAlpha(200),
                                               labelStyle: CustomStyles
-                                                  .bold14TextStyle(),
-                                              indicatorWeight: 2,
+                                                  .bold16TextStyle(),
+                                              indicatorWeight: 3,
                                               unselectedLabelStyle: CustomStyles
-                                                  .normal14TextStyle(),
+                                                  .normal16TextStyle(),
                                               tabs: [
                                                 Tab(text: '전체'),
                                                 Tab(text: '수락'),

@@ -52,7 +52,6 @@ class ActorProfileWidget {
                                   style: CustomStyles.dark20TextStyle()),
                             ))),
             Container(
-                color: CustomColors.colorFontGrey.withAlpha(200),
                 padding: EdgeInsets.all(5),
                 child: GestureDetector(
                     onTap: () async {
@@ -184,8 +183,8 @@ class ActorProfileWidget {
               Expanded(
                   flex: 3,
                   child: Container(
-                      child:
-                          Text('생년월일', style: CustomStyles.normal14TextStyle()))),
+                      child: Text('생년월일',
+                          style: CustomStyles.normal14TextStyle()))),
               Expanded(
                   flex: 7,
                   child: Container(
@@ -384,7 +383,8 @@ class ActorProfileWidget {
               controller: tabController,
               indicatorPadding: EdgeInsets.zero,
               labelStyle: CustomStyles.bold14TextStyle(),
-              indicatorWeight: 2,
+              indicatorColor: CustomColors.colorAccent.withAlpha(200),
+              indicatorWeight: 3,
               unselectedLabelStyle: CustomStyles.normal14TextStyle(),
               tabs: [
                 Tab(text: '필모그래피'),

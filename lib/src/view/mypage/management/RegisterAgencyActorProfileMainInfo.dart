@@ -199,7 +199,8 @@ class _RegisterAgencyActorProfileMainInfo
       data: CustomStyles.defaultTheme(),
       child: Scaffold(
         appBar: CustomStyles.defaultAppBar('프로필 편집', () {
-          addView(context, AgencyActorList());
+          //addView(context, AgencyActorList());
+          Navigator.pop(context);
         }),
         body: Container(
           child:

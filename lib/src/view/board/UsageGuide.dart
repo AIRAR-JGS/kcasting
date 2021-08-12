@@ -172,13 +172,19 @@ class _UsageGuide extends State<UsageGuide>
                               });
                         },
                         child: Container(
-                            margin: EdgeInsets.only(bottom: 10),
+                            margin: EdgeInsets.only(bottom: 15),
                             decoration: BoxDecoration(
-                                borderRadius:
-                                    CustomStyles.circle7BorderRadius(),
-                                border: Border.all(
-                                    width: 0.5,
-                                    color: CustomColors.colorBgGrey)),
+                                color: CustomColors.colorWhite,
+                                borderRadius: CustomStyles.circle7BorderRadius(),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: CustomColors.colorFontLightGrey
+                                        .withAlpha(100),
+                                    blurRadius: 2.0,
+                                    spreadRadius: 2.0,
+                                    offset: Offset(2, 1),
+                                  )
+                                ]),
                             alignment: Alignment.centerLeft,
                             child: Container(
                                 alignment: Alignment.centerLeft,
@@ -253,11 +259,13 @@ class _UsageGuide extends State<UsageGuide>
                                       tabBar: TabBar(
                                           controller: _tabController,
                                           indicatorPadding: EdgeInsets.zero,
+                                          indicatorColor:
+                                          CustomColors.colorAccent.withAlpha(200),
                                           labelStyle:
-                                              CustomStyles.bold14TextStyle(),
-                                          indicatorWeight: 2,
+                                          CustomStyles.bold14TextStyle(),
+                                          indicatorWeight: 3,
                                           unselectedLabelStyle:
-                                              CustomStyles.normal14TextStyle(),
+                                          CustomStyles.normal14TextStyle(),
                                           tabs: [
                                             Tab(text: '배우회원'),
                                             Tab(text: '제작사회원'),

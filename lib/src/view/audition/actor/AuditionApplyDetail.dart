@@ -1545,8 +1545,9 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                                         tabBar: TabBar(
                                             controller: _tabController,
                                             indicatorPadding: EdgeInsets.zero,
-                                            indicatorColor:
-                                                CustomColors.colorPrimary,
+                                            indicatorColor: CustomColors
+                                                .colorAccent
+                                                .withAlpha(200),
                                             labelStyle:
                                                 CustomStyles.bold14TextStyle(),
                                             indicatorWeight: 3,

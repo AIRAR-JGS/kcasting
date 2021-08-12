@@ -231,8 +231,7 @@ class _ProjectList extends State<ProjectList>
                                             borderRadius: BorderRadius.only(
                                                 bottomLeft: Radius.circular(7),
                                                 topLeft: Radius.circular(7)),
-                                            color: CustomColors.colorButtonDefault
-                                                .withAlpha(60)),
+                                            color: CustomColors.colorGreyPurple.withAlpha(100)),
                                         margin: EdgeInsets.only(right: 10),
                                         child: Column(children: [
                                           Text('오디션',

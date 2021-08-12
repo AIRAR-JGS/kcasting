@@ -265,7 +265,7 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
                                                           topLeft:
                                                               Radius.circular(
                                                                   7)),
-                                                  color: CustomColors.colorButtonDefault
+                                                  color: CustomColors.colorGreyPurple
                                                       .withAlpha(60)),
                                               child: Column(children: [
                                                 Text('1차 오디션',
@@ -392,7 +392,7 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
                                                               topLeft: Radius
                                                                   .circular(7)),
                                                       color: CustomColors
-                                                          .colorButtonDefault
+                                                          .colorGreyPurple
                                                           .withAlpha(120)),
                                                   child: Column(children: [
                                                     Text('2차 오디션',
@@ -530,7 +530,7 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
                                                               topLeft: Radius
                                                                   .circular(7)),
                                                       color: CustomColors
-                                                          .colorButtonDefault
+                                                          .colorGreyPurple
                                                           .withAlpha(180)),
                                                   child: Column(children: [
                                                     Text('3차 오디션',
@@ -693,7 +693,7 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
                                           borderRadius: BorderRadius.only(
                                               bottomLeft: Radius.circular(7),
                                               topLeft: Radius.circular(7)),
-                                          color: CustomColors.colorButtonDefault
+                                          color: CustomColors.colorGreyPurple
                                               .withAlpha(60)),
                                       child: Column(
                                           mainAxisAlignment:
@@ -808,7 +808,7 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
                                           borderRadius: BorderRadius.only(
                                               bottomLeft: Radius.circular(7),
                                               topLeft: Radius.circular(7)),
-                                          color: CustomColors.colorButtonDefault
+                                          color: CustomColors.colorGreyPurple
                                               .withAlpha(60)),
                                       child: Column(
                                           mainAxisAlignment:

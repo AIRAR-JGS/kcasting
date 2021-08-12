@@ -6,6 +6,7 @@ class CustomColors {
   static const Color colorAccent = Color(0xffA657FF);
   static const Color colorBlue = Color(0xff5d94f9);
   static const Color colorPurple = Color(0xffa458ff);
+  static const Color colorGreyPurple = Color(0xffdedcee);
 
   static const Color colorWhite = Color(0xffffffff);
   static const Color colorBlack = Color(0xff000000);

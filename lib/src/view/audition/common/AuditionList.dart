@@ -778,7 +778,7 @@ class _AuditionList extends State<AuditionList> with BaseUtilMixin {
                           itemCount: _castingBoardList.length,
                           itemBuilder: (BuildContext context, int index) {
                             return Container(
-                                margin: EdgeInsets.only(bottom: 10),
+                                margin: EdgeInsets.only(bottom: 15),
                                 alignment: Alignment.center,
                                 child: AuditionListItem(
                                   castingItem: _castingBoardList[index],

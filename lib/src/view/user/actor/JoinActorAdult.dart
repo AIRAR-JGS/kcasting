@@ -708,10 +708,6 @@ class _JoinActorAdult extends State<JoinActorAdult> with BaseUtilMixin {
     targetDatas[APIConstants.guardian_RR_url] = "";
     targetDatas[APIConstants.guardian_COH_url] = "";
     targetDatas[APIConstants.guardian_COFR_url] = "";
-    targetDatas[APIConstants.actor_bank_code] = "";
-    targetDatas[APIConstants.actor_account_number] = "";
-    targetDatas[APIConstants.actor_account_holder] = "";
-    targetDatas[APIConstants.actor_account_holder_birth] = "";
     targetDatas[APIConstants.actor_birth] = _birthDate;
     targetDatas[APIConstants.sex_type] = _userGender == 0
         ? APIConstants.actor_sex_female

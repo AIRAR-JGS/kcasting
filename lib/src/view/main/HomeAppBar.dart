@@ -36,10 +36,7 @@ class HomeAppBar extends StatelessWidget
           gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.topRight,
-              colors: [
-                CustomColors.colorPrimary,
-                CustomColors.colorAccent,
-              ]),
+              colors: [CustomColors.colorPrimary, CustomColors.colorAccent]),
         )),
 
         // 앱 타이틀(로고)
@@ -55,85 +52,82 @@ class HomeAppBar extends StatelessWidget
 
         // 메뉴 버튼
         leading: IconButton(
-          icon: Image.asset('assets/images/btn_menu.png', width: 24),
-          onPressed: () {
-            onClickedOpenDrawer();
-          },
-        ),
+            icon: Image.asset('assets/images/btn_menu.png', width: 24),
+            onPressed: () {
+              onClickedOpenDrawer();
+            }),
 
         // 앱 오른쪽 상단 액션 버튼
         actions: <Widget>[
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // 알림 버튼
-              Container(
-                  width: 25,
-                  height: 25,
-                  margin: EdgeInsets.only(right: 10),
-                  padding: const EdgeInsets.all(0.0),
-                  child: GestureDetector(
-                      onTap: () {
-                        addView(context,
-                            PushNotification(onClickedHome: onClickedOpenHome));
-                      },
-                      child: (KCastingAppData()
-                                      .myInfo[APIConstants.newAlertCnt] !=
-                                  null &&
-                              KCastingAppData()
-                                      .myInfo[APIConstants.newAlertCnt] >
-                                  0)
-                          ? Badge(
-                              badgeContent: Text(
-                                  KCastingAppData()
-                                      .myInfo[APIConstants.newAlertCnt]
-                                      .toString(),
-                                  style: TextStyle(color: Colors.white)),
-                              badgeColor: CustomColors.colorAccent,
-                              child: Image.asset('assets/images/btn_push.png',
-                                  fit: BoxFit.fitHeight))
-                          : Image.asset('assets/images/btn_push.png',
-                              fit: BoxFit.fitHeight))),
+          Row(mainAxisSize: MainAxisSize.min, children: [
+            // 알림 버튼
+            Container(
+                width: 25,
+                height: 25,
+                margin: EdgeInsets.only(right: 10),
+                padding: const EdgeInsets.all(0.0),
+                child: GestureDetector(
+                    onTap: () {
+                      addView(context,
+                          PushNotification(onClickedHome: onClickedOpenHome));
+                    },
+                    child: (KCastingAppData()
+                                    .myInfo[APIConstants.newAlertCnt] !=
+                                null &&
+                            KCastingAppData().myInfo[APIConstants.newAlertCnt] >
+                                0)
+                        ? Badge(
+                            badgeContent: Text(
+                                KCastingAppData()
+                                    .myInfo[APIConstants.newAlertCnt]
+                                    .toString(),
+                                style: TextStyle(color: Colors.white)),
+                            badgeColor: CustomColors.colorAccent,
+                            child: Image.asset('assets/images/btn_push.png',
+                                fit: BoxFit.fitHeight))
+                        : Image.asset('assets/images/btn_push.png',
+                            fit: BoxFit.fitHeight))),
 
-              // 마이페이지 버튼
-              Container(
-                  margin: EdgeInsets.only(right: 10),
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                          width: 1.5, color: CustomColors.colorWhite)),
-                  padding: EdgeInsets.all(1),
-                  alignment: Alignment.center,
-                  width: 30,
-                  height: 30,
-                  child: GestureDetector(
-                      onTap: () {
-                        onClickedOpenMyPage();
-                      },
-                      child: KCastingAppData().myInfo[APIConstants.member_type] ==
-                              APIConstants.member_type_actor
-                          ? (KCastingAppData().myProfile != null
-                              ? (KCastingAppData().myProfile[APIConstants.main_img_url] != null
-                                  ? ClipOval(
-                                      child: CachedNetworkImage(
-                                          placeholder: (context, url) => Container(
-                                              alignment: Alignment.center,
-                                              child:
-                                                  CircularProgressIndicator()),
-                                          imageUrl: KCastingAppData().myProfile[
-                                              APIConstants.main_img_url],
-                                          fit: BoxFit.cover,
-                                          errorWidget: (context, url, error) =>
-                                              Image.asset(
-                                                  'assets/images/btn_mypage.png',
-                                                  fit: BoxFit.fitHeight)))
-                                  : Image.asset('assets/images/btn_mypage.png', fit: BoxFit.fitHeight))
-                              : Image.asset('assets/images/btn_mypage.png', fit: BoxFit.fitHeight))
-                          : KCastingAppData().myInfo[APIConstants.member_type] == APIConstants.member_type_product
-                              ? (KCastingAppData().myInfo != null ? (KCastingAppData().myInfo[APIConstants.production_img_url] != null ? ClipOval(child: CachedNetworkImage(placeholder: (context, url) => Container(alignment: Alignment.center, child: CircularProgressIndicator()), imageUrl: KCastingAppData().myInfo[APIConstants.production_img_url], fit: BoxFit.cover, width: 40.0, height: 40.0, errorWidget: (context, url, error) => Image.asset('assets/images/btn_mypage.png', fit: BoxFit.fitHeight))) : Image.asset('assets/images/btn_mypage.png', fit: BoxFit.fitHeight)) : Image.asset('assets/images/btn_mypage.png', fit: BoxFit.fitHeight))
-                              : (KCastingAppData().myInfo != null ? (KCastingAppData().myInfo[APIConstants.management_logo_img_url] != null ? ClipOval(child: CachedNetworkImage(placeholder: (context, url) => Container(alignment: Alignment.center, child: CircularProgressIndicator()), imageUrl: KCastingAppData().myInfo[APIConstants.management_logo_img_url], fit: BoxFit.cover, width: 40.0, height: 40.0, errorWidget: (context, url, error) => Image.asset('assets/images/btn_mypage.png', fit: BoxFit.fitHeight))) : Image.asset('assets/images/btn_mypage.png', fit: BoxFit.fitHeight)) : Image.asset('assets/images/btn_mypage.png', fit: BoxFit.fitHeight))))
-            ],
-          )
+            // 마이페이지 버튼
+            Container(
+                margin: EdgeInsets.only(right: 10),
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border:
+                        Border.all(width: 1.5, color: CustomColors.colorWhite)),
+                padding: EdgeInsets.all(1),
+                alignment: Alignment.center,
+                width: 30,
+                height: 30,
+                child: GestureDetector(
+                    onTap: () {
+                      onClickedOpenMyPage();
+                    },
+                    child: KCastingAppData().myInfo[APIConstants.member_type] ==
+                            APIConstants.member_type_actor
+                        ? (KCastingAppData().myProfile != null
+                            ? (KCastingAppData().myProfile[APIConstants.main_img_url] != null
+                                ? ClipOval(
+                                    child: CachedNetworkImage(
+                                        placeholder: (context, url) => Container(
+                                            alignment: Alignment.center,
+                                            child: CircularProgressIndicator()),
+                                        imageUrl: KCastingAppData().myProfile[
+                                            APIConstants.main_img_url],
+                                        fit: BoxFit.cover,
+                                        width: 30,
+                                        height: 30,
+                                        errorWidget: (context, url, error) =>
+                                            Image.asset(
+                                                'assets/images/btn_mypage.png',
+                                                fit: BoxFit.fitHeight)))
+                                : Image.asset('assets/images/btn_mypage.png',
+                                    fit: BoxFit.fitHeight))
+                            : Image.asset('assets/images/btn_mypage.png', fit: BoxFit.fitHeight))
+                        : KCastingAppData().myInfo[APIConstants.member_type] == APIConstants.member_type_product
+                            ? (KCastingAppData().myInfo != null ? (KCastingAppData().myInfo[APIConstants.production_img_url] != null ? ClipOval(child: CachedNetworkImage(placeholder: (context, url) => Container(alignment: Alignment.center, child: CircularProgressIndicator()), imageUrl: KCastingAppData().myInfo[APIConstants.production_img_url], fit: BoxFit.cover, width: 40.0, height: 40.0, errorWidget: (context, url, error) => Image.asset('assets/images/btn_mypage.png', fit: BoxFit.fitHeight))) : Image.asset('assets/images/btn_mypage.png', fit: BoxFit.fitHeight)) : Image.asset('assets/images/btn_mypage.png', fit: BoxFit.fitHeight))
+                            : (KCastingAppData().myInfo != null ? (KCastingAppData().myInfo[APIConstants.management_logo_img_url] != null ? ClipOval(child: CachedNetworkImage(placeholder: (context, url) => Container(alignment: Alignment.center, child: CircularProgressIndicator()), imageUrl: KCastingAppData().myInfo[APIConstants.management_logo_img_url], fit: BoxFit.cover, width: 40.0, height: 40.0, errorWidget: (context, url, error) => Image.asset('assets/images/btn_mypage.png', fit: BoxFit.fitHeight))) : Image.asset('assets/images/btn_mypage.png', fit: BoxFit.fitHeight)) : Image.asset('assets/images/btn_mypage.png', fit: BoxFit.fitHeight))))
+          ])
         ]);
   }
 

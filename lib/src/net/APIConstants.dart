@@ -3,7 +3,9 @@ class APIConstants {
   * 서버 URL 변수
   * */
   //static const String BASE_URL = "https://k-casting.com/v1/index.php/Api/";
-  static const String BASE_URL = "https://k-casting.com/t1/index.php/Api/";
+  //static const String BASE_URL = "https://k-casting.com/v2/index.php/Api/";
+  static const String BASE_URL = "https://k-casting.com/t2/index.php/Api/";
+  //static const String BASE_URL = "https://k-casting.com/t1/index.php/Api/";
 
   //static const String URL_MAIN_CONTROL = "mainControl";
   static const String URL_MAIN_CONTROL = "newMainControl";

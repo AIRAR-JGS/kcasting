@@ -345,9 +345,9 @@ class ActorProfileWidget {
                       final item = actorKwdList[index];
                       return ItemTags(
                         textStyle: CustomStyles.dark14TextStyle(),
-                        textColor: CustomColors.colorFontGrey,
-                        activeColor: CustomColors.colorFontGrey,
-                        textActiveColor: CustomColors.colorWhite,
+                        textColor: CustomColors.colorFontTitle,
+                        activeColor: CustomColors.colorBgGrey,
+                        color: CustomColors.colorBgGrey,
                         key: Key(index.toString()),
                         index: index,
                         title: item,
@@ -357,7 +357,7 @@ class ActorProfileWidget {
                             left: 7, right: 7, top: 3, bottom: 5),
                         combine: ItemTagsCombine.withTextBefore,
                         elevation: 0.0,
-                        borderRadius: BorderRadius.circular(50),
+                        borderRadius: BorderRadius.circular(3),
                       );
                     },
                   ),
@@ -373,7 +373,6 @@ class ActorProfileWidget {
   * */
   static Widget profileTabBarWidget(TabController tabController) {
     return Container(
-        color: CustomColors.colorWhite,
         child: DecoratedTabBar(
           decoration: BoxDecoration(
               border: Border(
@@ -385,6 +384,7 @@ class ActorProfileWidget {
               labelStyle: CustomStyles.bold14TextStyle(),
               indicatorColor: CustomColors.colorAccent.withAlpha(200),
               indicatorWeight: 3,
+              labelColor: CustomColors.colorFontTitle,
               unselectedLabelStyle: CustomStyles.normal14TextStyle(),
               tabs: [
                 Tab(text: '필모그래피'),

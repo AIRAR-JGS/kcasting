@@ -5,6 +5,7 @@ import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/net/RestClientInterface.dart';
 import 'package:casting_call/src/view/audition/actor/AuditionApplyDetail.dart';
 import 'package:casting_call/src/view/audition/actor/OfferedAuditionDetail.dart';
+import 'package:casting_call/src/view/audition/production/ProposedAuditionList.dart';
 import 'package:casting_call/src/view/audition/production/RegisteredAuditionDetail.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -318,13 +319,8 @@ class _PushNotification extends State<PushNotification> with BaseUtilMixin {
                                                     case APIConstants
                                                         .UPD_PRD_PPS:
                                                       // 제작사가 제안한 오디션에 배우가 수락 또는 거절함
-                                                      addView(
-                                                          context,
-                                                          OfferedAuditionDetail(
-                                                              seq: _data[
-                                                                  APIConstants
-                                                                      .type_seq]));
-
+                                                      addView(context,
+                                                          ProposedAuditionList());
                                                       break;
                                                   }
                                                 }

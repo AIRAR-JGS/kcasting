@@ -411,9 +411,9 @@ class AuditionListItem extends StatelessWidget with BaseUtilMixin {
                             castingItem[APIConstants.project_type]) ==
                         '드라마'
                     ? Image.asset('assets/images/ic_movie.png',
-                        color: CustomColors.colorBlack.withAlpha(200))
+                        color: CustomColors.colorRed)
                     : Image.asset('assets/images/ic_movie.png',
-                        color: CustomColors.colorBlack.withAlpha(200)),
+                        color: CustomColors.colorRed),
                 Container(
                     margin: EdgeInsets.only(top: 3),
                     child: Center(

@@ -1534,7 +1534,6 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                                                   ]))
                                         ])),
                                 Container(
-                                    color: CustomColors.colorWhite,
                                     child: DecoratedTabBar(
                                         decoration: BoxDecoration(
                                             border: Border(
@@ -1551,6 +1550,7 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                                             labelStyle:
                                                 CustomStyles.bold14TextStyle(),
                                             indicatorWeight: 3,
+                                            labelColor: CustomColors.colorFontTitle,
                                             unselectedLabelStyle: CustomStyles
                                                 .normal14TextStyle(),
                                             tabs: [

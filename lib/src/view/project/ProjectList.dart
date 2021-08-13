@@ -373,7 +373,6 @@ class _ProjectList extends State<ProjectList>
                             Container(
                                 padding: EdgeInsets.only(top: 5),
                                 width: MediaQuery.of(context).size.width,
-                                color: CustomColors.colorWhite,
                                 child: DecoratedTabBar(
                                     decoration: BoxDecoration(
                                         border: Border(
@@ -388,6 +387,7 @@ class _ProjectList extends State<ProjectList>
                                         labelStyle:
                                             CustomStyles.bold16TextStyle(),
                                         indicatorWeight: 3,
+                                        labelColor: CustomColors.colorFontTitle,
                                         unselectedLabelStyle:
                                             CustomStyles.normal16TextStyle(),
                                         tabs: [

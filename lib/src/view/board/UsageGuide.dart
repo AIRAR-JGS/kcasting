@@ -149,72 +149,65 @@ class _UsageGuide extends State<UsageGuide>
     return Column(children: [
       Container(
           padding: EdgeInsets.only(left: 15, right: 15, top: 20, bottom: 70),
-          child: (_infoList.length > 0
-              ? ListView.builder(
-                  primary: false,
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: _infoList.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    Map<String, dynamic> _data = _infoList[index];
-                    return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => UsageGuideDetail(
-                                    seq: _infoList[index]
-                                        [APIConstants.useInfo_seq])),
-                          ).then((value) => {
-                                _total = 0,
-                                _infoList = [],
-                                requestInfoListApi(context)
-                              });
-                        },
+          child: (ListView.builder(
+              primary: false,
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: _infoList.length,
+              itemBuilder: (BuildContext context, int index) {
+                Map<String, dynamic> _data = _infoList[index];
+                return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => UsageGuideDetail(
+                                seq: _infoList[index]
+                                    [APIConstants.useInfo_seq])),
+                      ).then((value) => {
+                            _total = 0,
+                            _infoList = [],
+                            requestInfoListApi(context)
+                          });
+                    },
+                    child: Container(
+                        margin: EdgeInsets.only(bottom: 15),
+                        decoration: BoxDecoration(
+                            color: CustomColors.colorWhite,
+                            borderRadius: CustomStyles.circle7BorderRadius(),
+                            boxShadow: [
+                              BoxShadow(
+                                color: CustomColors.colorFontLightGrey
+                                    .withAlpha(100),
+                                blurRadius: 2.0,
+                                spreadRadius: 2.0,
+                                offset: Offset(2, 1),
+                              )
+                            ]),
+                        alignment: Alignment.centerLeft,
                         child: Container(
-                            margin: EdgeInsets.only(bottom: 15),
-                            decoration: BoxDecoration(
-                                color: CustomColors.colorWhite,
-                                borderRadius: CustomStyles.circle7BorderRadius(),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: CustomColors.colorFontLightGrey
-                                        .withAlpha(100),
-                                    blurRadius: 2.0,
-                                    spreadRadius: 2.0,
-                                    offset: Offset(2, 1),
-                                  )
-                                ]),
                             alignment: Alignment.centerLeft,
-                            child: Container(
-                                alignment: Alignment.centerLeft,
-                                padding: EdgeInsets.only(
-                                    left: 15, right: 15, top: 15, bottom: 15),
-                                child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                          margin: EdgeInsets.only(bottom: 5),
-                                          child: Text(
-                                              _data[APIConstants
-                                                  .use_infomation_name],
-                                              style: CustomStyles
-                                                  .normal20TextStyle())),
-                                      Container(
-                                          /*alignment: Alignment.centerRight,*/
-                                          margin: EdgeInsets.only(top: 15),
-                                          child: Text(
-                                              '등록일: ' +
-                                                  _data[APIConstants.addDate],
-                                              style: CustomStyles
-                                                  .light12TextStyle()))
-                                    ]))));
-                  })
-              : Container(
-                  alignment: Alignment.center,
-                  child: Text('알림이 없습니다.',
-                      style: CustomStyles.normal16TextStyle()))))
+                            padding: EdgeInsets.only(
+                                left: 15, right: 15, top: 15, bottom: 15),
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                      margin: EdgeInsets.only(bottom: 5),
+                                      child: Text(
+                                          _data[
+                                              APIConstants.use_infomation_name],
+                                          style: CustomStyles
+                                              .normal20TextStyle())),
+                                  Container(
+                                      /*alignment: Alignment.centerRight,*/
+                                      margin: EdgeInsets.only(top: 15),
+                                      child: Text(
+                                          '등록일: ' + _data[APIConstants.addDate],
+                                          style:
+                                              CustomStyles.light12TextStyle()))
+                                ]))));
+              })))
     ]);
   }
 
@@ -248,7 +241,6 @@ class _UsageGuide extends State<UsageGuide>
                               ),
                               Container(
                                   width: MediaQuery.of(context).size.width,
-                                  color: CustomColors.colorWhite,
                                   child: DecoratedTabBar(
                                       decoration: BoxDecoration(
                                           border: Border(
@@ -259,13 +251,15 @@ class _UsageGuide extends State<UsageGuide>
                                       tabBar: TabBar(
                                           controller: _tabController,
                                           indicatorPadding: EdgeInsets.zero,
-                                          indicatorColor:
-                                          CustomColors.colorAccent.withAlpha(200),
+                                          indicatorColor: CustomColors
+                                              .colorAccent
+                                              .withAlpha(200),
                                           labelStyle:
-                                          CustomStyles.bold14TextStyle(),
+                                              CustomStyles.bold14TextStyle(),
                                           indicatorWeight: 3,
+                                          labelColor: CustomColors.colorFontTitle,
                                           unselectedLabelStyle:
-                                          CustomStyles.normal14TextStyle(),
+                                              CustomStyles.normal14TextStyle(),
                                           tabs: [
                                             Tab(text: '배우회원'),
                                             Tab(text: '제작사회원'),

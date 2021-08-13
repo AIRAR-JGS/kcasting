@@ -300,15 +300,14 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
       alignment: WrapAlignment.start,
       itemCount: tagData.length,
       runSpacing: 5,
-      spacing: 1.5,
+      spacing: 5,
       itemBuilder: (int index) {
         final item = tagData[index];
         return ItemTags(
             textStyle: CustomStyles.dark14TextStyle(),
-            textColor:
-                isMan ? CustomColors.colorPrimary : CustomColors.colorAccent,
-            activeColor:
-                isMan ? CustomColors.colorPrimary : CustomColors.colorAccent,
+            textColor: CustomColors.colorFontTitle,
+            activeColor: CustomColors.colorBgGrey,
+            color: CustomColors.colorBgGrey,
             alignment: MainAxisAlignment.center,
             padding: EdgeInsets.only(left: 7, right: 7, top: 3, bottom: 5),
             key: Key(index.toString()),
@@ -318,7 +317,7 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
             pressEnabled: false,
             combine: ItemTagsCombine.withTextBefore,
             elevation: 0.0,
-            borderRadius: BorderRadius.circular(50));
+            borderRadius: BorderRadius.circular(3));
       },
     );
   }
@@ -354,7 +353,6 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
           // 새로운 캐스팅
           Visibility(
               child: Container(
-                  margin: EdgeInsets.only(top: 10),
                   padding: EdgeInsets.only(left: 16, right: 16),
                   alignment: Alignment.centerLeft,
                   child:
@@ -364,7 +362,7 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
           // 새로운 캐스팅 목록
           Visibility(
               child: Container(
-                  margin: EdgeInsets.only(bottom: 20, left: 16, top: 10),
+                  margin: EdgeInsets.only(bottom: 10, left: 16, top: 5),
                   height: 180,
                   child: ListView.builder(
                       scrollDirection: Axis.horizontal,
@@ -394,7 +392,6 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
           // 마감임박 캐스팅
           Visibility(
               child: Container(
-                  margin: EdgeInsets.only(top: 10),
                   padding: EdgeInsets.only(left: 16, right: 16),
                   alignment: Alignment.centerLeft,
                   child:
@@ -404,7 +401,7 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
           // 마감임박 캐스팅 목록
           Visibility(
               child: Container(
-                  margin: EdgeInsets.only(bottom: 10, left: 16, top: 10),
+                  margin: EdgeInsets.only(left: 16, top: 5),
                   height: 180,
                   child: ListView.builder(
                       scrollDirection: Axis.horizontal,
@@ -434,7 +431,7 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
           // 캐스팅 더보기
           Visibility(
               child: Container(
-                  margin: EdgeInsets.only(bottom: 20, top: 10),
+                  margin: EdgeInsets.only(bottom: 10, top: 10),
                   alignment: Alignment.center,
                   child:
                       CustomStyles.greyBorderRound21ButtonStyle('캐스팅 더보기', () {
@@ -454,7 +451,7 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
           // 남배우 프로필
           Visibility(
               child: Container(
-                  margin: EdgeInsets.only(bottom: 20, top: 15),
+                  margin: EdgeInsets.only(bottom: 10, top: 5),
                   padding: EdgeInsets.only(left: 16, right: 16),
                   alignment: Alignment.centerLeft,
                   child:
@@ -485,7 +482,7 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
                     crossAxisCount: 2,
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 5,
-                    childAspectRatio: (0.6),
+                    childAspectRatio: (0.64),
                     children: List.generate(_actorList.length, (index) {
                       return ActorListItem(data: _actorList[index]);
                     }))
@@ -494,10 +491,10 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
 
           Visibility(
               child: Container(
-                  margin: EdgeInsets.only(bottom: 15),
+                  margin: EdgeInsets.only(bottom: 10),
                   alignment: Alignment.center,
                   child:
-                      CustomStyles.blueBorderRound21ButtonStyle('남배우 더보기', () {
+                      CustomStyles.greyBorderRound21ButtonStyle('남배우 더보기', () {
                     widget
                         .onClickedOpenCastingActor(APIConstants.actor_sex_male);
                   })),
@@ -511,7 +508,7 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
           // 여배우 프로필
           Visibility(
               child: Container(
-                  margin: EdgeInsets.only(bottom: 20, top: 15),
+                  margin: EdgeInsets.only(bottom: 10),
                   padding: EdgeInsets.only(left: 15, right: 15),
                   alignment: Alignment.centerLeft,
                   child:
@@ -542,7 +539,7 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
                     crossAxisCount: 2,
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 5,
-                    childAspectRatio: (0.6),
+                    childAspectRatio: (0.64),
                     children: List.generate(_actressList.length, (index) {
                       return ActorListItem(data: _actressList[index]);
                     }))
@@ -553,7 +550,7 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
               child: Container(
                   margin: EdgeInsets.only(bottom: 10),
                   alignment: Alignment.center,
-                  child: CustomStyles.purpleBorderRound21ButtonStyle('여배우 더보기',
+                  child: CustomStyles.greyBorderRound21ButtonStyle('여배우 더보기',
                       () {
                     widget.onClickedOpenCastingActor(
                         APIConstants.actor_sex_female);

@@ -494,7 +494,6 @@ class _AuditionApplyList extends State<AuditionApplyList>
                                       style: CustomStyles.normal24TextStyle())),
                               Container(
                                   width: MediaQuery.of(context).size.width,
-                                  color: CustomColors.colorWhite,
                                   child: DecoratedTabBar(
                                       decoration: BoxDecoration(
                                           border: Border(
@@ -510,6 +509,7 @@ class _AuditionApplyList extends State<AuditionApplyList>
                                           labelStyle:
                                               CustomStyles.bold16TextStyle(),
                                           indicatorWeight: 3,
+                                          labelColor: CustomColors.colorFontTitle,
                                           unselectedLabelStyle:
                                               CustomStyles.normal16TextStyle(),
                                           tabs: [

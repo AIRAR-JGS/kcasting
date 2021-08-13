@@ -1684,7 +1684,6 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                                               ? true
                                               : false),
                                       Container(
-                                          color: CustomColors.colorWhite,
                                           child: DecoratedTabBar(
                                             decoration: BoxDecoration(
                                                 border: Border(
@@ -1702,6 +1701,7 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
                                                 labelStyle: CustomStyles
                                                     .bold14TextStyle(),
                                                 indicatorWeight: 3,
+                                                labelColor: CustomColors.colorFontTitle,
                                                 unselectedLabelStyle:
                                                     CustomStyles
                                                         .normal14TextStyle(),

@@ -37,7 +37,10 @@ class _DialogAddActor extends State<DialogAddActor> with BaseUtilMixin {
         elevation: 0.0,
         backgroundColor: Colors.transparent,
         child: Theme(
-            data: ThemeData(fontFamily: Constants.appFont),
+            data: ThemeData(
+
+                canvasColor: CustomColors.colorCanvas,
+                fontFamily: Constants.appFont),
             child: Stack(children: <Widget>[
               Container(
                   decoration: new BoxDecoration(

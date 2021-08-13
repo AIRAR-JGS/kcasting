@@ -182,39 +182,7 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
       }
     }
 
-    for (int i = 0; i < KCastingAppData().commonCodeK01.length; i++) {
-      var commonCode = KCastingAppData().commonCodeK01[i];
-
-      _castingKeyword.add(new CommonCodeModel(commonCode[APIConstants.seq],
-          commonCode[APIConstants.child_name], false));
-    }
-
-    for (int i = 0; i < _castingKeyword.length; i++) {
-      for (int j = 0; j < KCastingAppData().myCastingKwd.length; j++) {
-        var commonCode = KCastingAppData().myCastingKwd[j];
-
-        if (_castingKeyword[i].seq == commonCode[APIConstants.code_seq]) {
-          _castingKeyword[i].isSelected = true;
-        }
-      }
-    }
-
-    for (int i = 0; i < KCastingAppData().commonCodeK02.length; i++) {
-      var commonCode = KCastingAppData().commonCodeK02[i];
-
-      _lookKeyword.add(new CommonCodeModel(commonCode[APIConstants.seq],
-          commonCode[APIConstants.child_name], false));
-    }
-
-    for (int i = 0; i < _lookKeyword.length; i++) {
-      for (int j = 0; j < KCastingAppData().myLookKwd.length; j++) {
-        var commonCode = KCastingAppData().myLookKwd[j];
-
-        if (_lookKeyword[i].seq == commonCode[APIConstants.code_seq]) {
-          _lookKeyword[i].isSelected = true;
-        }
-      }
-    }
+    requestCommonCodeK01ListApi(context);
 
     _tabController = TabController(length: 4, vsync: this);
     _tabController.addListener(_handleTabSelection);
@@ -226,6 +194,99 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
         _tabIndex = _tabController.index;
       });
     }
+  }
+
+  /*
+  *공통코드조회 - 배역 특징 유형
+  * */
+  void requestCommonCodeK01ListApi(BuildContext context) {
+    final dio = Dio();
+
+    // 공통코드조회 api 호출 시 보낼 파라미터
+    Map<String, dynamic> target = new Map();
+    target[APIConstants.parentCode] = APIConstants.k01;
+
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.SEL_CCD_LIST;
+    params[APIConstants.target] = target;
+
+    // 공통코드조회 api 호출
+    RestClient(dio).postRequestMainControl(params).then((value) async {
+      if (value != null) {
+        if (value[APIConstants.resultVal]) {
+          // 공통코드조회 성공
+          var _responseList = value[APIConstants.data];
+          KCastingAppData().commonCodeK01 = _responseList[APIConstants.list];
+        }
+      }
+
+      setState(() {
+        for (int i = 0; i < KCastingAppData().commonCodeK01.length; i++) {
+          var commonCode = KCastingAppData().commonCodeK01[i];
+
+          _castingKeyword.add(new CommonCodeModel(commonCode[APIConstants.seq],
+              commonCode[APIConstants.child_name], false));
+        }
+
+        for (int i = 0; i < _castingKeyword.length; i++) {
+          for (int j = 0; j < KCastingAppData().myCastingKwd.length; j++) {
+            var commonCode = KCastingAppData().myCastingKwd[j];
+
+            if (_castingKeyword[i].seq == commonCode[APIConstants.code_seq]) {
+              _castingKeyword[i].isSelected = true;
+            }
+          }
+        }
+      });
+
+      // 외모 특징 유형 공통 코드 조회 api 호출
+      requestCommonCodeK02ListApi(context);
+    });
+  }
+
+  /*
+  공통코드조회 - 외모 특징 유형
+  * */
+  void requestCommonCodeK02ListApi(BuildContext context) {
+    final dio = Dio();
+
+    // 공통코드조회 api 호출 시 보낼 파라미터
+    Map<String, dynamic> target = new Map();
+    target[APIConstants.parentCode] = APIConstants.k02;
+
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.SEL_CCD_LIST;
+    params[APIConstants.target] = target;
+
+    // 공통코드조회 api 호출
+    RestClient(dio).postRequestMainControl(params).then((value) async {
+      if (value != null) {
+        if (value[APIConstants.resultVal]) {
+          // 공통코드조회 성공
+          var _responseList = value[APIConstants.data];
+          KCastingAppData().commonCodeK02 = _responseList[APIConstants.list];
+        }
+      }
+
+      setState(() {
+        for (int i = 0; i < KCastingAppData().commonCodeK02.length; i++) {
+          var commonCode = KCastingAppData().commonCodeK02[i];
+
+          _lookKeyword.add(new CommonCodeModel(commonCode[APIConstants.seq],
+              commonCode[APIConstants.child_name], false));
+        }
+
+        for (int i = 0; i < _lookKeyword.length; i++) {
+          for (int j = 0; j < KCastingAppData().myLookKwd.length; j++) {
+            var commonCode = KCastingAppData().myLookKwd[j];
+
+            if (_lookKeyword[i].seq == commonCode[APIConstants.code_seq]) {
+              _lookKeyword[i].isSelected = true;
+            }
+          }
+        }
+      });
+    });
   }
 
   Widget tabSpecialityMusic() {
@@ -560,7 +621,6 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
                                 Container(
                                     margin: EdgeInsets.only(top: 5),
                                     width: MediaQuery.of(context).size.width,
-                                    color: CustomColors.colorWhite,
                                     child: DecoratedTabBar(
                                       decoration: BoxDecoration(
                                           border: Border(
@@ -573,7 +633,12 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
                                           indicatorPadding: EdgeInsets.zero,
                                           labelStyle:
                                               CustomStyles.bold14TextStyle(),
-                                          indicatorWeight: 2,
+                                          indicatorWeight: 3,
+                                          indicatorColor: CustomColors
+                                              .colorAccent
+                                              .withAlpha(200),
+                                          labelColor:
+                                              CustomColors.colorFontTitle,
                                           unselectedLabelStyle:
                                               CustomStyles.normal14TextStyle(),
                                           tabs: [
@@ -630,7 +695,7 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
                                   ),
                                   child: Tags(
                                     runSpacing: 5,
-                                    spacing: 1.5,
+                                    spacing: 5,
                                     alignment: WrapAlignment.start,
                                     key: _characterTagStateKey,
                                     itemCount: _castingKeyword.length,
@@ -639,11 +704,11 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
                                       return ItemTags(
                                           textStyle:
                                               CustomStyles.dark14TextStyle(),
-                                          textColor: CustomColors.colorFontGrey,
-                                          activeColor: CustomColors.colorPrimary
-                                              .withAlpha(200),
+                                          textColor:
+                                              CustomColors.colorFontTitle,
+                                          activeColor: CustomColors.colorBgGrey,
                                           textActiveColor:
-                                              CustomColors.colorWhite,
+                                              CustomColors.colorFontTitle,
                                           key: Key(index.toString()),
                                           index: index,
                                           title: item.childName,
@@ -657,7 +722,7 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
                                               top: 3,
                                               bottom: 5),
                                           borderRadius:
-                                              BorderRadius.circular(50),
+                                              BorderRadius.circular(7),
                                           onPressed: (item) {
                                             _castingKeyword[index].isSelected =
                                                 item.active;
@@ -674,14 +739,14 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
                                         style: CustomStyles.bold14TextStyle())),
                                 Container(
                                   alignment: Alignment.topLeft,
-                                  margin: EdgeInsets.only(top: 10),
+                                  margin: EdgeInsets.only(top: 10, bottom: 70),
                                   padding: EdgeInsets.only(
                                     left: 15,
                                     right: 15,
                                   ),
                                   child: Tags(
                                     runSpacing: 5,
-                                    spacing: 1.5,
+                                    spacing: 5,
                                     alignment: WrapAlignment.start,
                                     key: _appearanceTagStateKey,
                                     itemCount: _lookKeyword.length,
@@ -690,11 +755,10 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
                                       return ItemTags(
                                         textStyle:
                                             CustomStyles.dark14TextStyle(),
-                                        textColor: CustomColors.colorFontGrey,
-                                        activeColor: CustomColors.colorPrimary
-                                            .withAlpha(200),
+                                        textColor: CustomColors.colorFontTitle,
+                                        activeColor: CustomColors.colorBgGrey,
                                         textActiveColor:
-                                            CustomColors.colorWhite,
+                                            CustomColors.colorFontTitle,
                                         key: Key(index.toString()),
                                         index: index,
                                         title: item.childName,
@@ -706,7 +770,7 @@ class _ActorProfileModifySubInfo extends State<ActorProfileModifySubInfo>
                                             right: 7,
                                             top: 3,
                                             bottom: 5),
-                                        borderRadius: BorderRadius.circular(50),
+                                        borderRadius: BorderRadius.circular(7),
                                         onPressed: (item) {
                                           _lookKeyword[index].isSelected =
                                               item.active;

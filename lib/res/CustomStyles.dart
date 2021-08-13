@@ -9,7 +9,7 @@ class CustomStyles {
   static ThemeData defaultTheme() {
     return ThemeData(
         primaryColor: CustomColors.colorPrimary,
-        canvasColor: CustomColors.colorWhite,
+        canvasColor: CustomColors.colorCanvas,
         secondaryHeaderColor: CustomColors.colorAccent,
         fontFamily: Constants.appFont);
   }
@@ -465,7 +465,7 @@ class CustomStyles {
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(7),
               side: BorderSide(color: CustomColors.colorButtonDefault)),
-          primary: CustomColors.colorWhite,
+          primary: CustomColors.colorCanvas,
           alignment: Alignment.center),
       onPressed: () {
         onClickEvent();
@@ -496,16 +496,16 @@ class CustomStyles {
       String txtButton, VoidCallback onClickEvent) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.only(top: 15, bottom: 15, left: 30, right: 30),
+          padding: EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(50.0),
-              side: BorderSide(color: CustomColors.colorFontGrey)),
-          primary: CustomColors.colorWhite,
+              borderRadius: BorderRadius.circular(7.0),
+              side: BorderSide(color: CustomColors.colorBgGrey)),
+          primary: CustomColors.colorCanvas,
           alignment: Alignment.center),
       onPressed: () {
         onClickEvent();
       },
-      child: Text(txtButton, style: dark16TextStyle()),
+      child: Text(txtButton, style: dark14TextStyle()),
     );
   }
 
@@ -514,16 +514,16 @@ class CustomStyles {
       String txtButton, VoidCallback onClickEvent) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.only(top: 15, bottom: 15, left: 30, right: 30),
+          padding: EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(50.0),
-              side: BorderSide(color: CustomColors.colorPrimary)),
-          primary: CustomColors.colorWhite,
+              borderRadius: BorderRadius.circular(7.0),
+              side: BorderSide(color: CustomColors.colorBgGrey)),
+          primary: CustomColors.colorCanvas,
           alignment: Alignment.center),
       onPressed: () {
         onClickEvent();
       },
-      child: Text(txtButton, style: blue16TextStyle()),
+      child: Text(txtButton, style: dark14TextStyle()),
     );
   }
 

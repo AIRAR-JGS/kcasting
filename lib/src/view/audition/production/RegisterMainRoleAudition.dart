@@ -1351,7 +1351,6 @@ class _RegisterMainRoleAudition extends State<RegisterMainRoleAudition>
                                               width: MediaQuery.of(context)
                                                   .size
                                                   .width,
-                                              color: CustomColors.colorWhite,
                                               child: TabBar(
                                                   controller: _tabController,
                                                   indicatorSize:
@@ -1360,6 +1359,7 @@ class _RegisterMainRoleAudition extends State<RegisterMainRoleAudition>
                                                       EdgeInsets.zero,
                                                   labelStyle: CustomStyles
                                                       .bold14TextStyle(),
+                                                  labelColor: CustomColors.colorFontTitle,
                                                   unselectedLabelStyle:
                                                       CustomStyles
                                                           .normal14TextStyle(),

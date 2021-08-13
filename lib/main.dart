@@ -38,6 +38,7 @@ class MyApp extends StatelessWidget {
 
       // 앱 테마(컬러 및 폰트 지정)
       theme: ThemeData(
+        canvasColor: CustomColors.colorCanvas,
         primaryColor: CustomColors.colorPrimary,
         fontFamily: Constants.appFont,
       ),

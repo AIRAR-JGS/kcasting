@@ -3,6 +3,7 @@ import 'package:casting_call/KCastingAppData.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/view/mypage/actor/ActorProfile.dart';
+import 'package:casting_call/src/view/mypage/management/AgencyActorList.dart';
 import 'package:casting_call/src/view/project/ProjectList.dart';
 import 'package:flutter/material.dart';
 
@@ -48,7 +49,7 @@ class _JoinComplete extends State<JoinComplete> with BaseUtilMixin {
             _userName = KCastingAppData().myInfo[APIConstants.management_name];
             _msg = '캐스팅을 위한 보유배우를 추가해 주세요.';
             _btnName = "보유배우";
-            _nextWidget = ProjectList();
+            _nextWidget = AgencyActorList();
             break;
         }
       } catch (e) {}

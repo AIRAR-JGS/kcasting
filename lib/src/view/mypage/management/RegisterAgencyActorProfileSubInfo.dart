@@ -7,6 +7,7 @@ import 'package:casting_call/src/model/CommonCodeModel.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/net/RestClientInterface.dart';
 import 'package:casting_call/src/view/mypage/actor/ActorProfileModifyMainInfo.dart';
+import 'package:casting_call/src/view/mypage/management/RegisterAgencyActorProfileMainInfo.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +20,11 @@ import 'AgencyActorList.dart';
 * */
 class RegisterAgencyActorProfileSubInfo extends StatefulWidget {
   final Map<String, dynamic> targetData;
+  final String name;
+  final String gender;
+  final String phone;
 
-  const RegisterAgencyActorProfileSubInfo({Key key, this.targetData})
+  const RegisterAgencyActorProfileSubInfo({Key key, this.targetData, this.name, this.gender, this.phone})
       : super(key: key);
 
   @override
@@ -34,6 +38,9 @@ class _RegisterAgencyActorProfileSubInfo
   bool _isUpload = false;
 
   Map<String, dynamic> _targetData;
+  String _name;
+  String _gender;
+  String _phone;
 
   TabController _tabController;
   int _tabIndex = 0;
@@ -56,6 +63,9 @@ class _RegisterAgencyActorProfileSubInfo
     super.initState();
 
     _targetData = widget.targetData;
+    _name = widget.name;
+    _gender = widget.gender;
+    _phone = widget.phone;
 
     _languages.add(new CheckboxItemModel('영어', false));
     _languages.add(new CheckboxItemModel('중국어', false));
@@ -188,39 +198,7 @@ class _RegisterAgencyActorProfileSubInfo
       }
     }
 
-    for (int i = 0; i < KCastingAppData().commonCodeK01.length; i++) {
-      var commonCode = KCastingAppData().commonCodeK01[i];
-
-      _castingKeyword.add(new CommonCodeModel(commonCode[APIConstants.seq],
-          commonCode[APIConstants.child_name], false));
-    }
-
-    for (int i = 0; i < _castingKeyword.length; i++) {
-      for (int j = 0; j < KCastingAppData().myCastingKwd.length; j++) {
-        var commonCode = KCastingAppData().myCastingKwd[j];
-
-        if (_castingKeyword[i].seq == commonCode[APIConstants.code_seq]) {
-          _castingKeyword[i].isSelected = true;
-        }
-      }
-    }
-
-    for (int i = 0; i < KCastingAppData().commonCodeK02.length; i++) {
-      var commonCode = KCastingAppData().commonCodeK02[i];
-
-      _lookKeyword.add(new CommonCodeModel(commonCode[APIConstants.seq],
-          commonCode[APIConstants.child_name], false));
-    }
-
-    for (int i = 0; i < _lookKeyword.length; i++) {
-      for (int j = 0; j < KCastingAppData().myLookKwd.length; j++) {
-        var commonCode = KCastingAppData().myLookKwd[j];
-
-        if (_lookKeyword[i].seq == commonCode[APIConstants.code_seq]) {
-          _lookKeyword[i].isSelected = true;
-        }
-      }
-    }
+    requestCommonCodeK01ListApi(context);
 
     _tabController = TabController(length: 4, vsync: this);
     _tabController.addListener(_handleTabSelection);
@@ -232,6 +210,99 @@ class _RegisterAgencyActorProfileSubInfo
         _tabIndex = _tabController.index;
       });
     }
+  }
+
+  /*
+  *공통코드조회 - 배역 특징 유형
+  * */
+  void requestCommonCodeK01ListApi(BuildContext context) {
+    final dio = Dio();
+
+    // 공통코드조회 api 호출 시 보낼 파라미터
+    Map<String, dynamic> target = new Map();
+    target[APIConstants.parentCode] = APIConstants.k01;
+
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.SEL_CCD_LIST;
+    params[APIConstants.target] = target;
+
+    // 공통코드조회 api 호출
+    RestClient(dio).postRequestMainControl(params).then((value) async {
+      if (value != null) {
+        if (value[APIConstants.resultVal]) {
+          // 공통코드조회 성공
+          var _responseList = value[APIConstants.data];
+          KCastingAppData().commonCodeK01 = _responseList[APIConstants.list];
+        }
+      }
+
+      setState(() {
+        for (int i = 0; i < KCastingAppData().commonCodeK01.length; i++) {
+          var commonCode = KCastingAppData().commonCodeK01[i];
+
+          _castingKeyword.add(new CommonCodeModel(commonCode[APIConstants.seq],
+              commonCode[APIConstants.child_name], false));
+        }
+
+        for (int i = 0; i < _castingKeyword.length; i++) {
+          for (int j = 0; j < KCastingAppData().myCastingKwd.length; j++) {
+            var commonCode = KCastingAppData().myCastingKwd[j];
+
+            if (_castingKeyword[i].seq == commonCode[APIConstants.code_seq]) {
+              _castingKeyword[i].isSelected = true;
+            }
+          }
+        }
+      });
+
+      // 외모 특징 유형 공통 코드 조회 api 호출
+      requestCommonCodeK02ListApi(context);
+    });
+  }
+
+  /*
+  공통코드조회 - 외모 특징 유형
+  * */
+  void requestCommonCodeK02ListApi(BuildContext context) {
+    final dio = Dio();
+
+    // 공통코드조회 api 호출 시 보낼 파라미터
+    Map<String, dynamic> target = new Map();
+    target[APIConstants.parentCode] = APIConstants.k02;
+
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.SEL_CCD_LIST;
+    params[APIConstants.target] = target;
+
+    // 공통코드조회 api 호출
+    RestClient(dio).postRequestMainControl(params).then((value) async {
+      if (value != null) {
+        if (value[APIConstants.resultVal]) {
+          // 공통코드조회 성공
+          var _responseList = value[APIConstants.data];
+          KCastingAppData().commonCodeK02 = _responseList[APIConstants.list];
+        }
+      }
+
+      setState(() {
+        for (int i = 0; i < KCastingAppData().commonCodeK02.length; i++) {
+          var commonCode = KCastingAppData().commonCodeK02[i];
+
+          _lookKeyword.add(new CommonCodeModel(commonCode[APIConstants.seq],
+              commonCode[APIConstants.child_name], false));
+        }
+
+        for (int i = 0; i < _lookKeyword.length; i++) {
+          for (int j = 0; j < KCastingAppData().myLookKwd.length; j++) {
+            var commonCode = KCastingAppData().myLookKwd[j];
+
+            if (_lookKeyword[i].seq == commonCode[APIConstants.code_seq]) {
+              _lookKeyword[i].isSelected = true;
+            }
+          }
+        }
+      });
+    });
   }
 
   Widget tabSpecialityMusic() {
@@ -253,6 +324,9 @@ class _RegisterAgencyActorProfileSubInfo
                     width: 24,
                     height: 24,
                     child: Checkbox(
+                      side:
+                          BorderSide(width: 2, color: CustomColors.colorBgGrey),
+                      activeColor: CustomColors.colorAccent.withAlpha(200),
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       value: _secialityMusic[index].isSelected,
                       onChanged: (value) {
@@ -294,6 +368,9 @@ class _RegisterAgencyActorProfileSubInfo
                     width: 24,
                     height: 24,
                     child: Checkbox(
+                      side:
+                          BorderSide(width: 2, color: CustomColors.colorBgGrey),
+                      activeColor: CustomColors.colorAccent.withAlpha(200),
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       value: _secialityDance[index].isSelected,
                       onChanged: (value) {
@@ -335,6 +412,9 @@ class _RegisterAgencyActorProfileSubInfo
                     width: 24,
                     height: 24,
                     child: Checkbox(
+                      side:
+                          BorderSide(width: 2, color: CustomColors.colorBgGrey),
+                      activeColor: CustomColors.colorAccent.withAlpha(200),
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       value: _secialitySports[index].isSelected,
                       onChanged: (value) {
@@ -376,6 +456,9 @@ class _RegisterAgencyActorProfileSubInfo
                     width: 24,
                     height: 24,
                     child: Checkbox(
+                      side:
+                          BorderSide(width: 2, color: CustomColors.colorBgGrey),
+                      activeColor: CustomColors.colorAccent.withAlpha(200),
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       value: _secialityEtc[index].isSelected,
                       onChanged: (value) {
@@ -453,6 +536,13 @@ class _RegisterAgencyActorProfileSubInfo
                                                   width: 24,
                                                   height: 24,
                                                   child: Checkbox(
+                                                    side: BorderSide(
+                                                        width: 2,
+                                                        color: CustomColors
+                                                            .colorBgGrey),
+                                                    activeColor: CustomColors
+                                                        .colorAccent
+                                                        .withAlpha(200),
                                                     materialTapTargetSize:
                                                         MaterialTapTargetSize
                                                             .shrinkWrap,
@@ -507,6 +597,13 @@ class _RegisterAgencyActorProfileSubInfo
                                                   width: 24,
                                                   height: 24,
                                                   child: Checkbox(
+                                                    side: BorderSide(
+                                                        width: 2,
+                                                        color: CustomColors
+                                                            .colorBgGrey),
+                                                    activeColor: CustomColors
+                                                        .colorAccent
+                                                        .withAlpha(200),
                                                     materialTapTargetSize:
                                                         MaterialTapTargetSize
                                                             .shrinkWrap,
@@ -552,14 +649,16 @@ class _RegisterAgencyActorProfileSubInfo
                                         margin: EdgeInsets.only(top: 5),
                                         width:
                                             MediaQuery.of(context).size.width,
-                                        color: CustomColors.colorWhite,
                                         child: TabBar(
                                             controller: _tabController,
-                                            indicatorSize:
-                                                TabBarIndicatorSize.label,
                                             indicatorPadding: EdgeInsets.zero,
                                             labelStyle:
                                                 CustomStyles.bold14TextStyle(),
+                                            indicatorWeight: 3,
+                                            labelColor: CustomColors.colorFontTitle,
+                                            indicatorColor: CustomColors
+                                                .colorAccent
+                                                .withAlpha(200),
                                             unselectedLabelStyle: CustomStyles
                                                 .normal14TextStyle(),
                                             tabs: [
@@ -618,20 +717,20 @@ class _RegisterAgencyActorProfileSubInfo
                                       ),
                                       child: Tags(
                                         runSpacing: 5,
+                                        spacing: 5,
                                         alignment: WrapAlignment.start,
                                         key: _characterTagStateKey,
                                         itemCount: _castingKeyword.length,
                                         itemBuilder: (int index) {
                                           final item = _castingKeyword[index];
                                           return ItemTags(
-                                              textStyle: CustomStyles
-                                                  .dark14TextStyle(),
-                                              textColor: CustomColors
-                                                  .colorFontDarkGrey,
-                                              activeColor:
-                                                  CustomColors.colorPrimary,
+                                              textStyle:
+                                              CustomStyles.dark14TextStyle(),
+                                              textColor:
+                                              CustomColors.colorFontTitle,
+                                              activeColor: CustomColors.colorBgGrey,
                                               textActiveColor:
-                                                  CustomColors.colorWhite,
+                                              CustomColors.colorFontTitle,
                                               key: Key(index.toString()),
                                               index: index,
                                               title: item.childName,
@@ -639,8 +738,13 @@ class _RegisterAgencyActorProfileSubInfo
                                               combine: ItemTagsCombine
                                                   .withTextBefore,
                                               elevation: 0.0,
+                                              padding: EdgeInsets.only(
+                                                  left: 7,
+                                                  right: 7,
+                                                  top: 3,
+                                                  bottom: 5),
                                               borderRadius:
-                                                  BorderRadius.circular(50),
+                                                  BorderRadius.circular(7),
                                               onPressed: (item) {
                                                 _castingKeyword[index]
                                                     .isSelected = item.active;
@@ -658,13 +762,15 @@ class _RegisterAgencyActorProfileSubInfo
                                                 .bold14TextStyle())),
                                     Container(
                                       alignment: Alignment.topLeft,
-                                      margin: EdgeInsets.only(top: 10),
+                                      margin:
+                                          EdgeInsets.only(top: 10, bottom: 70),
                                       padding: EdgeInsets.only(
                                         left: 15,
                                         right: 15,
                                       ),
                                       child: Tags(
                                         runSpacing: 5,
+                                        spacing: 5,
                                         alignment: WrapAlignment.start,
                                         key: _appearanceTagStateKey,
                                         itemCount: _lookKeyword.length,
@@ -672,13 +778,12 @@ class _RegisterAgencyActorProfileSubInfo
                                           final item = _lookKeyword[index];
                                           return ItemTags(
                                             textStyle:
-                                                CustomStyles.dark14TextStyle(),
+                                            CustomStyles.dark14TextStyle(),
                                             textColor:
-                                                CustomColors.colorFontDarkGrey,
-                                            activeColor:
-                                                CustomColors.colorPrimary,
+                                            CustomColors.colorFontTitle,
+                                            activeColor: CustomColors.colorBgGrey,
                                             textActiveColor:
-                                                CustomColors.colorWhite,
+                                            CustomColors.colorFontTitle,
                                             key: Key(index.toString()),
                                             index: index,
                                             title: item.childName,
@@ -686,8 +791,13 @@ class _RegisterAgencyActorProfileSubInfo
                                             combine:
                                                 ItemTagsCombine.withTextBefore,
                                             elevation: 0.0,
+                                            padding: EdgeInsets.only(
+                                                left: 7,
+                                                right: 7,
+                                                top: 3,
+                                                bottom: 5),
                                             borderRadius:
-                                                BorderRadius.circular(50),
+                                                BorderRadius.circular(7),
                                             onPressed: (item) {
                                               _lookKeyword[index].isSelected =
                                                   item.active;
@@ -711,7 +821,11 @@ class _RegisterAgencyActorProfileSubInfo
                                   child: CustomStyles.greyBGSquareButtonStyle(
                                       '이전', () {
                                     replaceView(
-                                        context, ActorProfileModifyMainInfo());
+                                        context, RegisterAgencyActorProfileMainInfo(
+                                      name: _name,
+                                      gender: _gender,
+                                      phone: _phone,
+                                    ));
                                   }))),
                           Expanded(
                               child: Container(

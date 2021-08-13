@@ -291,6 +291,7 @@ class _AgencyActorList extends State<AgencyActorList>
                                                   CustomStyles
                                                       .bold16TextStyle(),
                                                   indicatorWeight: 3,
+                                                  labelColor: CustomColors.colorFontTitle,
                                                   unselectedLabelStyle:
                                                   CustomStyles
                                                       .normal16TextStyle(),
@@ -533,7 +534,7 @@ class _AgencyActorList extends State<AgencyActorList>
                                       crossAxisCount: 2,
                                       crossAxisSpacing: 10,
                                       mainAxisSpacing: 5,
-                                      childAspectRatio: (0.6),
+                                      childAspectRatio: (0.64),
                                       children: List.generate(_actorList.length,
                                               (index) {
                                             Map<String, dynamic> _data =
@@ -768,6 +769,7 @@ class _AgencyActorList extends State<AgencyActorList>
                                           }))
                                 ])
                                     : Container(
+                                    alignment: Alignment.center,
                                     margin: EdgeInsets.only(top: 30),
                                     child: Text('배우가 없습니다.',
                                         style: CustomStyles

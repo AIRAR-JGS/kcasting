@@ -646,6 +646,9 @@ class _RegisterAgencyActorProfileMainInfo
     }
 
     replaceView(
-        context, RegisterAgencyActorProfileSubInfo(targetData: actorProfile));
+        context, RegisterAgencyActorProfileSubInfo(targetData: actorProfile,
+    name: _name,
+      gender: _gender,
+      phone: _phone,));
   }
 }

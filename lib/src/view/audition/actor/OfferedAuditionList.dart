@@ -399,7 +399,6 @@ class _OfferedAuditionList extends State<OfferedAuditionList>
                                   ),
                                   Container(
                                       width: MediaQuery.of(context).size.width,
-                                      color: CustomColors.colorWhite,
                                       child: DecoratedTabBar(
                                           decoration: BoxDecoration(
                                               border: Border(
@@ -416,6 +415,7 @@ class _OfferedAuditionList extends State<OfferedAuditionList>
                                               labelStyle: CustomStyles
                                                   .bold16TextStyle(),
                                               indicatorWeight: 3,
+                                              labelColor: CustomColors.colorFontTitle,
                                               unselectedLabelStyle: CustomStyles
                                                   .normal16TextStyle(),
                                               tabs: [

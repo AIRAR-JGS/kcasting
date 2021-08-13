@@ -4,13 +4,18 @@ class CustomColors {
   // 앱 기본 컬러
   static const Color colorPrimary = Color(0xff45d9fd);
   static const Color colorAccent = Color(0xffA657FF);
+  /*static const Color colorPrimary = Color(0xff92b2fd);
+  static const Color colorAccent = Color(0xffad7ffb);*/
+  static const Color colorCanvas = Color(0xfff9fafe);
+
   static const Color colorBlue = Color(0xff5d94f9);
   static const Color colorPurple = Color(0xffa458ff);
   static const Color colorGreyPurple = Color(0xffdedcee);
 
   static const Color colorWhite = Color(0xffffffff);
   static const Color colorBlack = Color(0xff000000);
-  static const Color colorRed = Color(0xffF42206);
+  //static const Color colorRed = Color(0xffd93025);
+  static const Color colorRed = Color(0xfff594b7);
 
   // 앱 폰트 컬러
   static const Color colorFontLightGrey = Color(0xffD0D3D4);
@@ -26,7 +31,8 @@ class CustomColors {
   static const Color colorButtonPurple = Color(0xffA593E0);
 
   // 앱 배경 컬러
-  static const Color colorBgGrey = Color(0xffEDEFEF);
+  //static const Color colorBgGrey = Color(0xffEDEFEF);
+  static const Color colorBgGrey = Color(0xffe9eaec);
 
   static const Color colorTextFieldBgGrey = Color(0xffF4F4F4);
 }

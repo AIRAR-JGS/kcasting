@@ -5,7 +5,6 @@ import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/view/user/actor/JoinActorSelectType.dart';
 import 'package:casting_call/src/view/user/common/CompanyAuth.dart';
 import 'package:casting_call/src/view/user/common/Login.dart';
-import 'package:casting_call/src/view/user/common/SelfAuth.dart';
 import 'package:flutter/material.dart';
 
 /*

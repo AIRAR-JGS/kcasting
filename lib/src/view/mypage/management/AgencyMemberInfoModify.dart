@@ -424,7 +424,7 @@ class _AgencyMemberInfoModify extends State<AgencyMemberInfoModify>
 
     final encryptor = Encrypter(RSA(publicKey: publicKey));
     final encrypted =
-        encryptor.encrypt(StringUtils.trimmedString(_txtFieldPW.text));
+        encryptor.encrypt(StringUtils.trimmedString(_txtFieldNewPW.text));
 
     // 회원가입 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetDatas = new Map();

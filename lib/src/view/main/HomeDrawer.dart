@@ -119,7 +119,7 @@ class HomeDrawer extends StatelessWidget {
             margin: EdgeInsets.only(top: 20, bottom: 20),
             child: Divider(height: 0.1, color: CustomColors.colorFontLightGrey),
           ),
-          GestureDetector(
+          /*GestureDetector(
               onTap: () async {
                 await LaunchApp.openApp(
                     androidPackageName: 'us.zoom.videomeetings',
@@ -136,7 +136,7 @@ class HomeDrawer extends StatelessWidget {
           Container(
               margin: EdgeInsets.only(top: 20, bottom: 20),
               child:
-                  Divider(height: 0.1, color: CustomColors.colorFontLightGrey))
+                  Divider(height: 0.1, color: CustomColors.colorFontLightGrey))*/
         ])));
   }
 }

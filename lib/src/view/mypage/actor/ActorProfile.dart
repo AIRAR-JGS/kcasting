@@ -1125,6 +1125,14 @@ class _ActorProfile extends State<ActorProfile>
                                               ),
                                               visible: _isVideoListEditMode,
                                             ),
+                                            Container(
+                                              margin: EdgeInsets.only(left: 20, right: 20),
+                                              child: Text(
+                                                '* 비디오 업로드는 시간이 소요될 수 있습니다. 업로드하신 비디오 페이지를 찾을 수 없다고 표시되는 경우에는 잠시 후에 다시 실행해 주세요.',
+                                                style: CustomStyles
+                                                    .dark12TextStyle(),
+                                              ),
+                                            ),
                                             ActorProfileWidget
                                                 .videoTabItemWidget(
                                                     _isVideoListEditMode,

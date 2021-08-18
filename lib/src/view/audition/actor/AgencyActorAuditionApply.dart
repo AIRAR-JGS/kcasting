@@ -156,9 +156,12 @@ class _AgencyActorAuditionApply extends State<AgencyActorAuditionApply>
                                           padding: const EdgeInsets.all(0.0),
                                           child: ClipOval(
                                             child: CachedNetworkImage(
-                                                placeholder: (context, url) => Container(
-                                                    alignment: Alignment.center,
-                                                    child: CircularProgressIndicator()),
+                                                placeholder: (context, url) =>
+                                                    Container(
+                                                        alignment:
+                                                            Alignment.center,
+                                                        child:
+                                                            CircularProgressIndicator()),
                                                 imageUrl: _data[
                                                     APIConstants.main_img_url],
                                                 fit: BoxFit.cover,
@@ -295,6 +298,7 @@ class _AgencyActorAuditionApply extends State<AgencyActorAuditionApply>
                                       return Divider();
                                     }))
                             : Container(
+                                alignment: Alignment.center,
                                 margin: EdgeInsets.only(top: 30),
                                 child: Text('보유배우의 지원현황이 없습니다.',
                                     style: CustomStyles.normal16TextStyle()))
@@ -344,8 +348,13 @@ class _AgencyActorAuditionApply extends State<AgencyActorAuditionApply>
                                               castingSeq: _castingSeq,
                                               projectName: _projectName,
                                               castingName: _castingName,
-                                              actorSeq: _actorList[_selectActorIdx][APIConstants.actor_seq],
-                                          actorProfileSeq: _actorList[_selectActorIdx][APIConstants.actorProfile_seq])));
+                                              actorSeq:
+                                                  _actorList[_selectActorIdx]
+                                                      [APIConstants.actor_seq],
+                                              actorProfileSeq:
+                                                  _actorList[_selectActorIdx][
+                                                      APIConstants
+                                                          .actorProfile_seq])));
                             }))),
                   ]))
             ],

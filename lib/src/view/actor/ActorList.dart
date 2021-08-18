@@ -685,6 +685,7 @@ class _ActorList extends State<ActorList> with BaseUtilMixin {
                                 }))
                           ])
                         : Container(
+                            alignment: Alignment.center,
                             margin: EdgeInsets.only(top: 30),
                             child: Text('배우가 없습니다.',
                                 style: CustomStyles.normal16TextStyle()))

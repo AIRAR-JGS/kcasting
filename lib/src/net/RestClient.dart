@@ -25,7 +25,7 @@ class _RestClient implements RestClient {
     _data.addAll(params);
     _data.removeWhere((k, v) => v == null);
 
-    printWrapped(jsonEncode(_data));
+    //printWrapped(jsonEncode(_data));
 
     Map<String, dynamic> _result;
 
@@ -42,7 +42,7 @@ class _RestClient implements RestClient {
               extra: _extra),
           data: _data);
 
-      printWrapped(_response.data.toString());
+      //printWrapped(_response.data.toString());
 
       if (_response.data != null) {
         // api 호출 리턴값
@@ -54,7 +54,7 @@ class _RestClient implements RestClient {
         _result = null;
       }
     } catch (e) {
-      print(e.toString());
+      //print(e.toString());
       _result = null;
     }
 
@@ -63,7 +63,7 @@ class _RestClient implements RestClient {
 
   @override
   Future<Map<String, dynamic>> postRequestMainControlFormData(Map<String, dynamic> params) async {
-    print(params);
+    //print(params);
 
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -83,7 +83,7 @@ class _RestClient implements RestClient {
               extra: _extra),
           data: _data);
 
-      printWrapped(_response.data.toString());
+      //printWrapped(_response.data.toString());
 
       if (_response.data != null) {
         // api 호출 리턴값
@@ -92,7 +92,7 @@ class _RestClient implements RestClient {
         _result = null;
       }
     } catch (e) {
-      print(e.toString());
+      //print(e.toString());
       _result = null;
     }
 

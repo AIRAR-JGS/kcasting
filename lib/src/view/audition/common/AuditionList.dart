@@ -800,6 +800,7 @@ class _AuditionList extends State<AuditionList> with BaseUtilMixin {
                           })
                     ]))
                         : Container(
+                        alignment: Alignment.center,
                         margin: EdgeInsets.only(top: 30),
                         child: Text('캐스팅이 없습니다.',
                             style: CustomStyles.normal16TextStyle()))

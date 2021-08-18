@@ -330,8 +330,9 @@ class _AgencyActorOfferedAuditionList
                                           return listItem(_data);
                                         }))
                                 : Container(
+                                    alignment: Alignment.center,
                                     margin: EdgeInsets.only(top: 30),
-                                    child: Text('보유배우의 지원현황이 없습니다.',
+                                    child: Text('보유배우가 없습니다.',
                                         style:
                                             CustomStyles.normal16TextStyle()))
                           ],

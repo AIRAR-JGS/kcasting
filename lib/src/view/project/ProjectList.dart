@@ -261,6 +261,7 @@ class _ProjectList extends State<ProjectList>
           ]),
           Visibility(
             child: Container(
+              alignment: Alignment.center,
               margin: EdgeInsets.only(top: 100),
               child: Text('등록된 프로젝트가 없습니다.'),
             ),

@@ -201,9 +201,15 @@ class _AgencyActorList extends State<AgencyActorList>
             var _responseList = _responseData[APIConstants.list] as List;
 
             setState(() {
-              if (_responseList != null && _responseList.length > 0) {
-                _actorList = _responseList;
-                _originalActorList = _responseList;
+              if (_responseList != null) {
+                if(_responseList.length > 0) {
+                  _actorList = _responseList;
+                  _originalActorList = _responseList;
+                } else {
+                  _actorList = [];
+                  _originalActorList = [];
+                }
+
               }
             });
           } else {

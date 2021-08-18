@@ -197,6 +197,7 @@ class _BookmarkedActorList extends State<BookmarkedActorList>
                                     }))
                               ])
                                   : Container(
+                                  alignment: Alignment.center,
                                   margin: EdgeInsets.only(top: 30),
                                   child: Text('스크랩한 배우가 없습니다.',
                                       style: CustomStyles.normal16TextStyle()))

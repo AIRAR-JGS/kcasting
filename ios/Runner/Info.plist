@@ -32,9 +32,9 @@
         <true/>
     </dict>
 	<key>NSCameraUsageDescription</key>
-	<string>사진 또는 비디오를 업로드하려면 사진앱에 접근할 수 있어야 합니다.</string>
+	<string>사진 또는 비디오를 업로드하려면 사진앱에 접근할 수 있어야 합니다. 업로드한 사진 또는 비디오는 다른 배우 회원 및 제작사 회원에게 보여집니다. 특히 배우회원이 등록한 이미지의 경우 제작사가 보고, 오디션 제안을 할 수 있으므로, 자신을 잘 나타낼 수 있는 사진을 등록해 주세요. 또한, 등록한 사진 및 비디오는 오디션 지원 시에 사용할 수 있습니다.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>사진 또는 비디오를 업로드하려면 사진앱에 접근할 수 있어야 합니다.</string>
+	<string>사진 또는 비디오를 업로드하려면 사진앱에 접근할 수 있어야 합니다. 업로드한 사진 또는 비디오는 다른 배우 회원 및 제작사 회원에게 보여집니다. 특히 배우회원이 등록한 이미지의 경우 제작사가 보고, 오디션 제안을 할 수 있으므로, 자신을 잘 나타낼 수 있는 사진을 등록해 주세요.  또한, 등록한 사진 및 비디오는 오디션 지원 시에 사용할 수 있습니다.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

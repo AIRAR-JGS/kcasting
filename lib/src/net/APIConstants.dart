@@ -4,10 +4,10 @@ class APIConstants {
   * */
   // 라이브서버
   //static const String BASE_URL = "https://k-casting.com/v1/index.php/Api/";
-  static const String BASE_URL = "https://k-casting.com/v2/index.php/Api/";
+  //static const String BASE_URL = "https://k-casting.com/v2/index.php/Api/";
 
   // 테스트서버
-  //static const String BASE_URL = "https://k-casting.com/t2/index.php/Api/";
+  static const String BASE_URL = "https://k-casting.com/t2/index.php/Api/";
   //static const String BASE_URL = "https://k-casting.com/t1/index.php/Api/";
 
   //static const String URL_MAIN_CONTROL = "mainControl";

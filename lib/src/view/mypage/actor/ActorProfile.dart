@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/KCastingAppData.dart';
@@ -14,6 +16,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags/flutter_tags.dart';
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -32,11 +36,11 @@ class _ActorProfile extends State<ActorProfile>
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   bool _isUpload = false;
-  bool _kIsWeb;
 
   final GlobalKey<TagsState> _myKeywordTagStateKey = GlobalKey<TagsState>();
 
   File _profileImgFile;
+  Uint8List _profileImgBytes;
   final picker = ImagePicker();
 
   TabController _tabController;
@@ -67,16 +71,6 @@ class _ActorProfile extends State<ActorProfile>
   @override
   void initState() {
     super.initState();
-
-    try {
-      if (Platform.isAndroid || Platform.isIOS) {
-        _kIsWeb = false;
-      } else {
-        _kIsWeb = true;
-      }
-    } catch (e) {
-      _kIsWeb = true;
-    }
 
     _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(() {
@@ -272,6 +266,86 @@ class _ActorProfile extends State<ActorProfile>
     });
   }
 
+  void requestUpdateActorProfileWeb(BuildContext context, Uint8List profileFile,
+      String mimeType, String fileName) async {
+    setState(() {
+      _isUpload = true;
+    });
+
+    try {
+      print('path: ' + fileName);
+
+      var uri = Uri.parse(APIConstants.getURL(APIConstants.URL_MAIN_CONTROL));
+
+      http.MultipartRequest request = new http.MultipartRequest('POST', uri);
+      request.fields['key'] = 'UPD_APR_MAINIMG_FormData';
+      request.fields['target[seq]'] =
+          KCastingAppData().myInfo[APIConstants.actorProfile_seq].toString();
+
+      //요청에 이미지 파일 추가
+      List<String> mimeTypeArr = mimeType.split('/');
+      List<int> _selectedFile = profileFile;
+      request.files.add(http.MultipartFile.fromBytes(
+          APIConstants.target_files_array, _selectedFile,
+          contentType: new MediaType(mimeTypeArr[0], mimeTypeArr[1]),
+          filename: fileName));
+
+      /*for (int i = 0; i < 1; i++) {
+        request.files.add(
+            http.MultipartFile.fromBytes(
+                'target_files[$i]', _selectedFile,
+                contentType: new MediaType(mimeTypeArr[0], mimeTypeArr[1]), filename: "file_up")
+        );
+      }*/
+
+      request.send().then((response) {
+        if (response.statusCode == 200) {
+          print("Uploaded!");
+          response.stream.transform(utf8.decoder).listen((value) {
+            print(value);
+
+            Map<String, dynamic> responseMap = jsonDecode(value);
+            if (responseMap == null) {
+              // 에러 - 데이터 널
+              showSnackBar(context, APIConstants.error_msg_server_not_response);
+            } else {
+              if (responseMap[APIConstants.resultVal]) {
+                // 제작사 로고 이미지 수정 성공
+                var _responseData = responseMap[APIConstants.data];
+                var _responseList = _responseData[APIConstants.list] as List;
+
+                setState(() {
+                  // 수정된 회원정보 전역변수에 저장
+                  if (_responseList.length > 0) {
+                    var newProfileData = _responseList[0];
+
+                    if (newProfileData[APIConstants.main_img_url] != null) {
+                      KCastingAppData().myProfile[APIConstants.main_img_url] =
+                          newProfileData[APIConstants.main_img_url];
+                    }
+                  }
+                });
+              } else {
+                // 제작사 로고 이미지 수정 실패
+                showSnackBar(context, APIConstants.error_msg_try_again);
+              }
+            }
+          });
+        } else {
+          // 제작사 로고 이미지 수정 실패
+          showSnackBar(context, APIConstants.error_msg_try_again);
+        }
+      });
+    } catch (e) {
+      // 제작사 로고 이미지 수정 실패
+      showSnackBar(context, APIConstants.error_msg_try_again);
+    } finally {
+      setState(() {
+        _isUpload = false;
+      });
+    }
+  }
+
   /*
   *배우 필모그래피 삭제
   * */
@@ -386,6 +460,84 @@ class _ActorProfile extends State<ActorProfile>
         });
       }
     });
+  }
+
+  void requestAddActorImageWeb(BuildContext context, Uint8List profileFile,
+      String mimeType, String fileName) async {
+    setState(() {
+      _isUpload = true;
+    });
+
+    try {
+      print('path: ' + fileName);
+
+      var uri = Uri.parse(APIConstants.getURL(APIConstants.URL_MAIN_CONTROL));
+
+      http.MultipartRequest request = new http.MultipartRequest('POST', uri);
+      request.fields['key'] = 'INS_AIM_LIST_FormData';
+      request.fields['target[actor_seq]'] =
+      KCastingAppData().myInfo[APIConstants.seq].toString();
+
+      //요청에 이미지 파일 추가
+      List<String> mimeTypeArr = mimeType.split('/');
+      List<int> _selectedFile = profileFile;
+      request.files.add(http.MultipartFile.fromBytes(
+          APIConstants.target_files_array, _selectedFile,
+          contentType: new MediaType(mimeTypeArr[0], mimeTypeArr[1]),
+          filename: fileName));
+
+      /*for (int i = 0; i < 1; i++) {
+        request.files.add(
+            http.MultipartFile.fromBytes(
+                'target_files[$i]', _selectedFile,
+                contentType: new MediaType(mimeTypeArr[0], mimeTypeArr[1]), filename: "file_up")
+        );
+      }*/
+
+      request.send().then((response) {
+        if (response.statusCode == 200) {
+          print("Uploaded!");
+          response.stream.transform(utf8.decoder).listen((value) {
+            print(value);
+
+            Map<String, dynamic> responseMap = jsonDecode(value);
+            if (responseMap == null) {
+              // 에러 - 데이터 널
+              showSnackBar(context, APIConstants.error_msg_server_not_response);
+            } else {
+              if (responseMap[APIConstants.resultVal]) {
+                // 제작사 로고 이미지 수정 성공
+                var _responseData = responseMap[APIConstants.data];
+                var _responseList = _responseData[APIConstants.list] as List;
+
+                setState(() {
+                  // 수정된 회원정보 전역변수에 저장
+                  if (_responseList.length > 0) {
+                    KCastingAppData().myImage = _responseList;
+
+                    _myPhotos = _responseList;
+                    _originalMyPhotos = _responseList;
+                  }
+                });
+              } else {
+                // 제작사 로고 이미지 수정 실패
+                showSnackBar(context, APIConstants.error_msg_try_again);
+              }
+            }
+          });
+        } else {
+          // 제작사 로고 이미지 수정 실패
+          showSnackBar(context, APIConstants.error_msg_try_again);
+        }
+      });
+    } catch (e) {
+      // 제작사 로고 이미지 수정 실패
+      showSnackBar(context, APIConstants.error_msg_try_again);
+    } finally {
+      setState(() {
+        _isUpload = false;
+      });
+    }
   }
 
   /*
@@ -569,8 +721,44 @@ class _ActorProfile extends State<ActorProfile>
 
   // 갤러리에서 이미지 가져오기
   Future getImageFromGallery(int type) async {
-    if (_kIsWeb) {
-      showSnackBar(context, APIConstants.use_mobile_app);
+    if (KCastingAppData().isWeb) {
+      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+      if (pickedFile != null) {
+        if (type == 0) {
+          pickedFile.readAsBytes().then((value) {
+            final size = value.lengthInBytes;
+            final kb = size / 1024;
+            final mb = kb / 1024;
+
+            if (mb > 100) {
+              showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
+            } else {
+              _profileImgBytes = value;
+
+              requestUpdateActorProfileWeb(context, _profileImgBytes,
+                  pickedFile.mimeType, pickedFile.name);
+            }
+          });
+        } else {
+          pickedFile.readAsBytes().then((value) {
+            final size = value.lengthInBytes;
+            final kb = size / 1024;
+            final mb = kb / 1024;
+
+            if (mb > 100) {
+              showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
+            } else {
+              _profileImgBytes = value;
+
+              requestAddActorImageWeb(context, _profileImgBytes,
+                  pickedFile.mimeType, pickedFile.name);
+            }
+          });
+        }
+      } else {
+        showSnackBar(context, "선택된 이미지가 없습니다.");
+      }
     } else {
       final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
@@ -600,7 +788,7 @@ class _ActorProfile extends State<ActorProfile>
   }
 
   Future getVideoFromGallery() async {
-    if (_kIsWeb) {
+    if (KCastingAppData().isWeb) {
       showSnackBar(context, APIConstants.use_mobile_app);
     } else {
       final pickedFile = await picker.pickVideo(source: ImageSource.gallery);
@@ -1017,7 +1205,8 @@ class _ActorProfile extends State<ActorProfile>
                                                                       '추가',
                                                                       () async {
                                                                 try {
-                                                                  if (_kIsWeb) {
+                                                                  if (KCastingAppData()
+                                                                      .isWeb) {
                                                                     var status = Platform.isAndroid
                                                                         ? await Permission
                                                                             .storage

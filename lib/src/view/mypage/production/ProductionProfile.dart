@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:casting_call/BaseWidget.dart';
@@ -14,6 +16,8 @@ import 'package:casting_call/src/view/mypage/production/ProductionFilmoListItem.
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -27,9 +31,9 @@ class _ProductionProfile extends State<ProductionProfile>
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   bool _isUpload = false;
-  bool _kIsWeb;
 
   File _profileImgFile;
+  Uint8List _profileImgBytes;
   final picker = ImagePicker();
 
   // 필모그래피 리스트 관련 변수
@@ -44,16 +48,6 @@ class _ProductionProfile extends State<ProductionProfile>
     super.initState();
 
     requestProductionFilmorgraphyListApi(context);
-
-    try {
-      if (Platform.isAndroid || Platform.isIOS) {
-        _kIsWeb = false;
-      } else {
-        _kIsWeb = true;
-      }
-    } catch (e) {
-      _kIsWeb = true;
-    }
   }
 
   /*
@@ -116,6 +110,88 @@ class _ProductionProfile extends State<ProductionProfile>
         });
       }
     });
+  }
+
+  void requestUpdateProductionProfileWeb(
+      BuildContext context, Uint8List profileFile, String mimeType, String fileName) async {
+    setState(() {
+      _isUpload = true;
+    });
+
+    try {
+      print('path: ' + fileName);
+
+      var uri = Uri.parse(APIConstants.getURL(APIConstants.URL_MAIN_CONTROL));
+
+      http.MultipartRequest request = new http.MultipartRequest('POST', uri);
+      request.fields['key'] = 'UDF_PRD_LOGO_FormData';
+      request.fields['target[seq]'] =
+          KCastingAppData().myInfo[APIConstants.seq].toString();
+
+      //요청에 이미지 파일 추가
+      List<String> mimeTypeArr = mimeType.split('/');
+      List<int> _selectedFile = profileFile;
+      request.files.add(http.MultipartFile.fromBytes(
+          APIConstants.target_files_array, _selectedFile,
+          contentType: new MediaType(mimeTypeArr[0], mimeTypeArr[1]),
+          filename: fileName));
+
+      /*for (int i = 0; i < 1; i++) {
+        request.files.add(
+            http.MultipartFile.fromBytes(
+                'target_files[$i]', _selectedFile,
+                contentType: new MediaType(mimeTypeArr[0], mimeTypeArr[1]), filename: "file_up")
+        );
+      }*/
+
+      request.send().then((response) {
+        if (response.statusCode == 200) {
+          print("Uploaded!");
+          response.stream.transform(utf8.decoder).listen((value) {
+            print(value);
+
+            Map<String, dynamic> responseMap = jsonDecode(value);
+            if (responseMap == null) {
+              // 에러 - 데이터 널
+              showSnackBar(context, APIConstants.error_msg_server_not_response);
+            } else {
+              if (responseMap[APIConstants.resultVal]) {
+                // 제작사 로고 이미지 수정 성공
+                var _responseData = responseMap[APIConstants.data];
+                var _responseList = _responseData[APIConstants.list] as List;
+
+                setState(() {
+                  // 수정된 회원정보 전역변수에 저장
+                  if (_responseList.length > 0) {
+                    var newProfileData = _responseList[0];
+
+                    if (newProfileData[APIConstants.production_img_url] !=
+                        null) {
+                      KCastingAppData()
+                              .myInfo[APIConstants.production_img_url] =
+                          newProfileData[APIConstants.production_img_url];
+                    }
+                  }
+                });
+              } else {
+                // 제작사 로고 이미지 수정 실패
+                showSnackBar(context, APIConstants.error_msg_try_again);
+              }
+            }
+          });
+        } else {
+          // 제작사 로고 이미지 수정 실패
+          showSnackBar(context, APIConstants.error_msg_try_again);
+        }
+      });
+    } catch (e) {
+      // 제작사 로고 이미지 수정 실패
+      showSnackBar(context, APIConstants.error_msg_try_again);
+    } finally {
+      setState(() {
+        _isUpload = false;
+      });
+    }
   }
 
   /*
@@ -217,8 +293,25 @@ class _ProductionProfile extends State<ProductionProfile>
 
   // 갤러리에서 이미지 가져오기
   Future getImageFromGallery() async {
-    if (_kIsWeb) {
-      showSnackBar(context, APIConstants.use_mobile_app);
+    if (KCastingAppData().isWeb) {
+      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+      pickedFile.readAsBytes().then((value) {
+        print("value.lengthInBytes: " + value.lengthInBytes.toString());
+
+        final size = value.lengthInBytes;
+        final kb = size / 1024;
+        final mb = kb / 1024;
+
+        if (mb > 100) {
+          showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
+        } else {
+          _profileImgBytes = value;
+
+          requestUpdateProductionProfileWeb(
+              context, _profileImgBytes, pickedFile.mimeType, pickedFile.name);
+        }
+      });
     } else {
       final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
@@ -458,9 +551,8 @@ class _ProductionProfile extends State<ProductionProfile>
                                   margin: EdgeInsets.only(top: 30, bottom: 15),
                                   child: GestureDetector(
                                       onTap: () async {
-                                        if (_kIsWeb) {
-                                          showSnackBar(context,
-                                              APIConstants.use_mobile_app);
+                                        if (KCastingAppData().isWeb) {
+                                          getImageFromGallery();
                                         } else {
                                           var status = Platform.isAndroid
                                               ? await Permission.storage
@@ -472,28 +564,25 @@ class _ProductionProfile extends State<ProductionProfile>
                                           } else {
                                             showDialog(
                                                 context: context,
-                                                builder:
-                                                    (BuildContext context) =>
-                                                        CupertinoAlertDialog(
-                                                          title:
-                                                              Text('저장공간 접근권한'),
-                                                          content: Text(
-                                                              '사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
-                                                          actions: <Widget>[
-                                                            CupertinoDialogAction(
+                                                builder: (BuildContext
+                                                        context) =>
+                                                    CupertinoAlertDialog(
+                                                        title:
+                                                            Text('저장공간 접근권한'),
+                                                        content: Text(
+                                                            '사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
+                                                        actions: <Widget>[
+                                                          CupertinoDialogAction(
                                                               child: Text('거부'),
                                                               onPressed: () =>
                                                                   Navigator.of(
                                                                           context)
-                                                                      .pop(),
-                                                            ),
-                                                            CupertinoDialogAction(
+                                                                      .pop()),
+                                                          CupertinoDialogAction(
                                                               child: Text('허용'),
                                                               onPressed: () =>
-                                                                  openAppSettings(),
-                                                            ),
-                                                          ],
-                                                        ));
+                                                                  openAppSettings())
+                                                        ]));
                                           }
                                           //
                                         }

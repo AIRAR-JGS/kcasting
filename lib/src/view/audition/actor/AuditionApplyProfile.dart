@@ -11,6 +11,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tags/flutter_tags.dart';
 
+import '../../../../KCastingAppData.dart';
+
 /*
 * 오디션 지원 시 제출한 프로필
 * */
@@ -168,25 +170,22 @@ class _AuditionApplyProfile extends State<AuditionApplyProfile>
               }
             });
           } else {
-            if(value[APIConstants.resultMsg] == 'this actor has left.') {
+            if (value[APIConstants.resultMsg] == 'this actor has left.') {
               // 탈퇴한 배우 제출 프로필
               //showSnackBar(context, value[APIConstants.resultMsg]);
 
               showDialog(
                 context: context,
-                builder: (BuildContext context) =>
-                    DialogLeaveMemberProfile(
-                      onClickedAgree: () async {
-                        Navigator.pop(context);
-                      },
-                    ),
+                builder: (BuildContext context) => DialogLeaveMemberProfile(
+                  onClickedAgree: () async {
+                    Navigator.pop(context);
+                  },
+                ),
               );
             } else {
               // 배우 오디션 제출 프로필 조회 실패
               showSnackBar(context, APIConstants.error_msg_try_again);
             }
-
-
           }
         }
       } catch (e) {
@@ -206,86 +205,97 @@ class _AuditionApplyProfile extends State<AuditionApplyProfile>
   Widget build(BuildContext context) {
     return Theme(
         data: CustomStyles.defaultTheme(),
-        child: Scaffold(
-            key: _scaffoldKey,
-            appBar: CustomStyles.defaultAppBar('프로필 관리', () {
-              Navigator.pop(context);
-            }),
-            body: Stack(children: [
-              Container(
-                  child: Column(children: [
-                Expanded(
-                    flex: 1,
-                    child: SingleChildScrollView(
+        child: Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+                width: KCastingAppData().isWeb
+                    ? CustomStyles.appWidth
+                    : double.infinity,
+                child: Scaffold(
+                    key: _scaffoldKey,
+                    appBar: CustomStyles.defaultAppBar('프로필 관리', () {
+                      Navigator.pop(context);
+                    }),
+                    body: Stack(children: [
+                      Container(
+                          child: Column(children: [
+                        Expanded(
+                            flex: 1,
+                            child: SingleChildScrollView(
+                                child: Container(
+                                    child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                  ActorProfileWidget.mainImageWidget(
+                                      context, false, _actorProfile, null),
+                                  ActorProfileWidget.profileWidget(
+                                      context,
+                                      _myKeywordTagStateKey,
+                                      _actorProfile,
+                                      "",
+                                      StringUtils.checkedString(_actorProfile[
+                                          APIConstants.actor_education]),
+                                      StringUtils.checkedString(_actorProfile[
+                                          APIConstants.actor_languge]),
+                                      StringUtils.checkedString(_actorProfile[
+                                          APIConstants.actor_dialect]),
+                                      StringUtils.checkedString(_actorProfile[
+                                          APIConstants.actor_ability]),
+                                      _actorKwdList),
+                                  Container(
+                                    margin: EdgeInsets.only(top: 20),
+                                    child: Divider(
+                                      height: 1,
+                                      color: CustomColors.colorFontLightGrey,
+                                    ),
+                                  ),
+                                  ActorProfileWidget.profileTabBarWidget(
+                                      _tabController),
+                                  Expanded(
+                                    flex: 0,
+                                    child: [
+                                      Container(
+                                          margin: EdgeInsets.only(bottom: 30),
+                                          child: Column(children: [
+                                            Container(
+                                                padding: EdgeInsets.only(
+                                                    top: 20,
+                                                    left: 20,
+                                                    right: 20,
+                                                    bottom: 15),
+                                                child: Row(children: [
+                                                  Expanded(
+                                                      flex: 1,
+                                                      child: Text(
+                                                          '출연 작품: ' +
+                                                              _actorFilmorgraphy
+                                                                  .length
+                                                                  .toString(),
+                                                          style: CustomStyles
+                                                              .normal14TextStyle()))
+                                                ])),
+                                            ActorProfileWidget
+                                                .filmorgraphyListWidget(
+                                                    false,
+                                                    _actorFilmorgraphy,
+                                                    (index) {})
+                                          ])),
+                                      ActorProfileWidget.imageTabItemWidget(
+                                          false, _actorImage, null),
+                                      ActorProfileWidget.videoTabItemWidget(
+                                          false, _actorVideo, null)
+                                    ][_tabIndex],
+                                  )
+                                ]))))
+                      ])),
+                      Visibility(
                         child: Container(
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                          ActorProfileWidget.mainImageWidget(
-                              context, false, _actorProfile, null),
-                          ActorProfileWidget.profileWidget(
-                              context,
-                              _myKeywordTagStateKey,
-                              _actorProfile,
-                              "",
-                              StringUtils.checkedString(
-                                  _actorProfile[APIConstants.actor_education]),
-                              StringUtils.checkedString(
-                                  _actorProfile[APIConstants.actor_languge]),
-                              StringUtils.checkedString(
-                                  _actorProfile[APIConstants.actor_dialect]),
-                              StringUtils.checkedString(
-                                  _actorProfile[APIConstants.actor_ability]),
-                              _actorKwdList),
-                          Container(
-                            margin: EdgeInsets.only(top: 20),
-                            child: Divider(
-                              height: 1,
-                              color: CustomColors.colorFontLightGrey,
-                            ),
-                          ),
-                          ActorProfileWidget.profileTabBarWidget(
-                              _tabController),
-                          Expanded(
-                            flex: 0,
-                            child: [
-                              Container(
-                                  margin: EdgeInsets.only(bottom: 30),
-                                  child: Column(children: [
-                                    Container(
-                                        padding: EdgeInsets.only(
-                                            top: 20,
-                                            left: 20,
-                                            right: 20,
-                                            bottom: 15),
-                                        child: Row(children: [
-                                          Expanded(
-                                              flex: 1,
-                                              child: Text(
-                                                  '출연 작품: ' +
-                                                      _actorFilmorgraphy.length
-                                                          .toString(),
-                                                  style: CustomStyles
-                                                      .normal14TextStyle()))
-                                        ])),
-                                    ActorProfileWidget.filmorgraphyListWidget(
-                                        false, _actorFilmorgraphy, (index) {})
-                                  ])),
-                              ActorProfileWidget.imageTabItemWidget(
-                                  false, _actorImage, null),
-                              ActorProfileWidget.videoTabItemWidget(
-                                  false, _actorVideo, null)
-                            ][_tabIndex],
-                          )
-                        ]))))
-              ])),
-              Visibility(
-                child: Container(
-                    color: Colors.black38,
-                    alignment: Alignment.center,
-                    child: CircularProgressIndicator()),
-                visible: _isUpload,
-              )
-            ])));
+                            color: Colors.black38,
+                            alignment: Alignment.center,
+                            child: CircularProgressIndicator()),
+                        visible: _isUpload,
+                      )
+                    ])))));
   }
 }

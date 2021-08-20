@@ -15,6 +15,8 @@ import 'package:flutter_tags/flutter_tags.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../KCastingAppData.dart';
+
 /*
 * 배우 프로필 관련 위젯 모음
 * */
@@ -30,8 +32,12 @@ class ActorProfileWidget {
     return isEditable
         ? Stack(alignment: Alignment.bottomRight, children: [
             Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.width * 0.625,
+                width: (KCastingAppData().isWeb)
+                    ? CustomStyles.appWidth
+                    : MediaQuery.of(context).size.width,
+                height: (KCastingAppData().isWeb)
+                    ? CustomStyles.appWidth * 0.625
+                    : MediaQuery.of(context).size.width * 0.625,
                 decoration: BoxDecoration(color: CustomColors.colorBgGrey),
                 child: (actorProfile == null ||
                         actorProfile[APIConstants.main_img_url] == null)
@@ -93,8 +99,12 @@ class ActorProfileWidget {
                         color: CustomColors.colorWhite, size: 30)))
           ])
         : Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.width * 0.625,
+            width: (KCastingAppData().isWeb)
+                ? CustomStyles.appWidth
+                : MediaQuery.of(context).size.width,
+            height: (KCastingAppData().isWeb)
+                ? CustomStyles.appWidth * 0.625
+                : MediaQuery.of(context).size.width * 0.625,
             decoration: BoxDecoration(color: CustomColors.colorBgGrey),
             child: actorProfile[APIConstants.main_img_url] != null
                 ? CachedNetworkImage(
@@ -374,24 +384,23 @@ class ActorProfileWidget {
   static Widget profileTabBarWidget(TabController tabController) {
     return Container(
         child: DecoratedTabBar(
-          decoration: BoxDecoration(
-              border: Border(
-                  bottom:
-                      BorderSide(color: CustomColors.colorBgGrey, width: 1.0))),
-          tabBar: TabBar(
-              controller: tabController,
-              indicatorPadding: EdgeInsets.zero,
-              labelStyle: CustomStyles.bold14TextStyle(),
-              indicatorColor: CustomColors.colorAccent.withAlpha(200),
-              indicatorWeight: 3,
-              labelColor: CustomColors.colorFontTitle,
-              unselectedLabelStyle: CustomStyles.normal14TextStyle(),
-              tabs: [
-                Tab(text: '필모그래피'),
-                Tab(text: '이미지'),
-                Tab(text: '비디오'),
-              ]),
-        ));
+      decoration: BoxDecoration(
+          border: Border(
+              bottom: BorderSide(color: CustomColors.colorBgGrey, width: 1.0))),
+      tabBar: TabBar(
+          controller: tabController,
+          indicatorPadding: EdgeInsets.zero,
+          labelStyle: CustomStyles.bold14TextStyle(),
+          indicatorColor: CustomColors.colorAccent.withAlpha(200),
+          indicatorWeight: 3,
+          labelColor: CustomColors.colorFontTitle,
+          unselectedLabelStyle: CustomStyles.normal14TextStyle(),
+          tabs: [
+            Tab(text: '필모그래피'),
+            Tab(text: '이미지'),
+            Tab(text: '비디오'),
+          ]),
+    ));
   }
 
   /*
@@ -416,7 +425,9 @@ class ActorProfileWidget {
                       onClickEvent(index);
                     },
                     background: Container(
-                        width: MediaQuery.of(context).size.width,
+                        width: (KCastingAppData().isWeb)
+                            ? CustomStyles.appWidth
+                            : MediaQuery.of(context).size.width,
                         alignment: Alignment.centerRight,
                         color: CustomColors.colorWhite,
                         child: Container(
@@ -587,7 +598,9 @@ class ActorProfileWidget {
                           alignment: Alignment.topRight,
                           children: <Widget>[
                             Container(
-                              width: MediaQuery.of(context).size.width,
+                              width: (KCastingAppData().isWeb)
+                                  ? CustomStyles.appWidth
+                                  : MediaQuery.of(context).size.width,
                               margin: EdgeInsets.only(bottom: 10),
                               height: 200,
                               child: ClipRRect(
@@ -629,7 +642,9 @@ class ActorProfileWidget {
                           alignment: Alignment.center,
                           children: <Widget>[
                             Container(
-                              width: MediaQuery.of(context).size.width,
+                              width: (KCastingAppData().isWeb)
+                                  ? CustomStyles.appWidth
+                                  : MediaQuery.of(context).size.width,
                               margin: EdgeInsets.only(bottom: 10),
                               height: 200,
                               child: ClipRRect(

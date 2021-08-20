@@ -244,127 +244,158 @@ class _AgencyActorOfferedAuditionList
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: CustomStyles.defaultTheme(),
-      child: Scaffold(
-          key: _scaffoldKey,
-          appBar: CustomStyles.defaultAppBar('보유 배우 지원 현황', () {
-            Navigator.pop(context);
-          }),
-          body: NotificationListener<ScrollNotification>(
-            child: Stack(
-              children: [
-                RefreshIndicator(
-                    child: SingleChildScrollView(
-                        controller: _scrollController,
-                        physics: AlwaysScrollableScrollPhysics(),
-                        key: ObjectKey(
-                            _actorList.length > 0 ? _actorList[0] : ""),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+        data: CustomStyles.defaultTheme(),
+        child: Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+                width: KCastingAppData().isWeb
+                    ? CustomStyles.appWidth
+                    : double.infinity,
+                child: Scaffold(
+                    key: _scaffoldKey,
+                    appBar: CustomStyles.defaultAppBar('보유 배우 지원 현황', () {
+                      Navigator.pop(context);
+                    }),
+                    body: NotificationListener<ScrollNotification>(
+                        child: Stack(
                           children: [
-                            Container(
-                                margin: EdgeInsets.only(top: 30.0, bottom: 10),
-                                padding: EdgeInsets.only(left: 16, right: 16),
-                                child: Text('받은 제안',
-                                    style: CustomStyles.normal24TextStyle())),
-                            Container(
-                                margin: EdgeInsets.only(
-                                    top: 30, left: 15, right: 15, bottom: 20),
-                                padding: EdgeInsets.only(left: 10, right: 10),
-                                height: 50,
-                                decoration: BoxDecoration(
-                                    color: CustomColors.colorWhite,
-                                    borderRadius:
-                                        CustomStyles.circle7BorderRadius(),
-                                    boxShadow: [
-                                      BoxShadow(
-                                          color: CustomColors.colorButtonDefault
-                                              .withAlpha(100),
-                                          blurRadius: 2.0,
-                                          spreadRadius: 2.0,
-                                          offset: Offset(2, 1))
-                                    ]),
-                                child: Row(children: [
-                                  Flexible(
-                                      child: TextField(
-                                          controller: _txtFieldSearch,
-                                          decoration: InputDecoration(
-                                              isDense: true,
-                                              border: InputBorder.none,
-                                              contentPadding:
-                                                  EdgeInsets.symmetric(
-                                                      vertical: 0,
-                                                      horizontal: 0),
-                                              hintText: "배우를 검색해보세요",
-                                              hintStyle: CustomStyles
-                                                  .normal16TextStyle()),
-                                          style:
-                                              CustomStyles.dark16TextStyle())),
-                                  Padding(
-                                      padding: EdgeInsets.only(left: 10),
-                                      child: GestureDetector(
-                                          onTap: () {
-                                            _actorList.clear();
+                            RefreshIndicator(
+                                child: SingleChildScrollView(
+                                    controller: _scrollController,
+                                    physics: AlwaysScrollableScrollPhysics(),
+                                    key: ObjectKey(_actorList.length > 0
+                                        ? _actorList[0]
+                                        : ""),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                            margin: EdgeInsets.only(
+                                                top: 30.0, bottom: 10),
+                                            padding: EdgeInsets.only(
+                                                left: 16, right: 16),
+                                            child: Text('받은 제안',
+                                                style: CustomStyles
+                                                    .normal24TextStyle())),
+                                        Container(
+                                            margin: EdgeInsets.only(
+                                                top: 30,
+                                                left: 15,
+                                                right: 15,
+                                                bottom: 20),
+                                            padding: EdgeInsets.only(
+                                                left: 10, right: 10),
+                                            height: 50,
+                                            decoration: BoxDecoration(
+                                                color: CustomColors.colorWhite,
+                                                borderRadius: CustomStyles
+                                                    .circle7BorderRadius(),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                      color: CustomColors
+                                                          .colorButtonDefault
+                                                          .withAlpha(100),
+                                                      blurRadius: 2.0,
+                                                      spreadRadius: 2.0,
+                                                      offset: Offset(2, 1))
+                                                ]),
+                                            child: Row(children: [
+                                              Flexible(
+                                                  child: TextField(
+                                                      controller:
+                                                          _txtFieldSearch,
+                                                      decoration: InputDecoration(
+                                                          isDense: true,
+                                                          border: InputBorder
+                                                              .none,
+                                                          contentPadding:
+                                                              EdgeInsets
+                                                                  .symmetric(
+                                                                      vertical:
+                                                                          0,
+                                                                      horizontal:
+                                                                          0),
+                                                          hintText:
+                                                              "배우를 검색해보세요",
+                                                          hintStyle: CustomStyles
+                                                              .normal16TextStyle()),
+                                                      style: CustomStyles
+                                                          .dark16TextStyle())),
+                                              Padding(
+                                                  padding:
+                                                      EdgeInsets.only(left: 10),
+                                                  child: GestureDetector(
+                                                      onTap: () {
+                                                        _actorList.clear();
 
-                                            actorName = _txtFieldSearch.text;
-                                            requestActorListApi(context);
-                                          },
-                                          child: Image.asset(
-                                              'assets/images/btn_search.png',
-                                              width: 20,
-                                              fit: BoxFit.contain)))
-                                ])),
-                            _actorList.length > 0
-                                ? Container(
-                                    child: ListView.builder(
-                                        shrinkWrap: true,
-                                        primary: false,
-                                        physics: NeverScrollableScrollPhysics(),
-                                        padding: EdgeInsets.only(
-                                            left: 15, right: 15, bottom: 30),
-                                        itemCount: _actorList.length,
-                                        itemBuilder:
-                                            (BuildContext context, int index) {
-                                          Map<String, dynamic> _data =
-                                              _actorList[index];
-                                          return listItem(_data);
-                                        }))
-                                : Container(
-                                    alignment: Alignment.center,
-                                    margin: EdgeInsets.only(top: 30),
-                                    child: Text('보유배우가 없습니다.',
-                                        style:
-                                            CustomStyles.normal16TextStyle()))
+                                                        actorName =
+                                                            _txtFieldSearch
+                                                                .text;
+                                                        requestActorListApi(
+                                                            context);
+                                                      },
+                                                      child: Image.asset(
+                                                          'assets/images/btn_search.png',
+                                                          width: 20,
+                                                          fit: BoxFit.contain)))
+                                            ])),
+                                        _actorList.length > 0
+                                            ? Container(
+                                                child: ListView.builder(
+                                                    shrinkWrap: true,
+                                                    primary: false,
+                                                    physics:
+                                                        NeverScrollableScrollPhysics(),
+                                                    padding: EdgeInsets.only(
+                                                        left: 15,
+                                                        right: 15,
+                                                        bottom: 30),
+                                                    itemCount:
+                                                        _actorList.length,
+                                                    itemBuilder:
+                                                        (BuildContext context,
+                                                            int index) {
+                                                      Map<String, dynamic>
+                                                          _data =
+                                                          _actorList[index];
+                                                      return listItem(_data);
+                                                    }))
+                                            : Container(
+                                                alignment: Alignment.center,
+                                                margin:
+                                                    EdgeInsets.only(top: 30),
+                                                child: Text('보유배우가 없습니다.',
+                                                    style: CustomStyles
+                                                        .normal16TextStyle()))
+                                      ],
+                                    )),
+                                onRefresh: _refreshPage),
+                            Visibility(
+                              child: Container(
+                                  color: Colors.black38,
+                                  alignment: Alignment.center,
+                                  child: CircularProgressIndicator()),
+                              visible: _isUpload,
+                            )
                           ],
-                        )),
-                    onRefresh: _refreshPage),
-                Visibility(
-                  child: Container(
-                      color: Colors.black38,
-                      alignment: Alignment.center,
-                      child: CircularProgressIndicator()),
-                  visible: _isUpload,
-                )
-              ],
-            ),
-            onNotification: (ScrollNotification scrollInfo) {
-              if (scrollInfo is ScrollStartNotification) {
-                if (scrollInfo.metrics.pixels ==
-                    scrollInfo.metrics.maxScrollExtent) {
-                  if (_total != 0 || _actorList.length < _total) {
-                    setState(() {
-                      _isLoading = true;
+                        ),
+                        onNotification: (ScrollNotification scrollInfo) {
+                          if (scrollInfo is ScrollStartNotification) {
+                            if (scrollInfo.metrics.pixels ==
+                                scrollInfo.metrics.maxScrollExtent) {
+                              if (_total != 0 || _actorList.length < _total) {
+                                setState(() {
+                                  _isLoading = true;
 
-                      if (_isLoading) {
-                        requestActorListApi(context);
-                      }
-                    });
-                  }
-                }
-              }
-              return true;
-            },
-          )),
-    );
+                                  if (_isLoading) {
+                                    requestActorListApi(context);
+                                  }
+                                });
+                              }
+                            }
+                          }
+                          return true;
+                        })))));
   }
 }

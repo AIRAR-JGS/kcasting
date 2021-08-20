@@ -109,88 +109,97 @@ class _ProductionMemberPage extends State<ProductionMemberPage>
   * */
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Container(
-      alignment: Alignment.center,
-      child: ListView.separated(
-        scrollDirection: Axis.vertical,
-        itemCount: 7,
-        itemBuilder: (context, index) {
-          return (index == 0)
-              ? _headerView()
-              : GestureDetector(
-                  onTap: () {
-                    switch (index) {
-                      // 프로필 관리
-                      case 1:
-                        // 프로필 관리 페이지 이동
-                        Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ProductionProfile()))
-                            .then((value) => {initData()});
+    return Align(
+        alignment: Alignment.topCenter,
+        child: Container(
+            width: KCastingAppData().isWeb
+                ? CustomStyles.appWidth
+                : double.infinity,
+            child: Scaffold(
+                body: Container(
+                    alignment: Alignment.center,
+                    child: ListView.separated(
+                        scrollDirection: Axis.vertical,
+                        itemCount: 7,
+                        itemBuilder: (context, index) {
+                          return (index == 0)
+                              ? _headerView()
+                              : GestureDetector(
+                                  onTap: () {
+                                    switch (index) {
+                                      // 프로필 관리
+                                      case 1:
+                                        // 프로필 관리 페이지 이동
+                                        Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ProductionProfile()))
+                                            .then((value) => {initData()});
 
-                        //addView(context, ProductionProfile());
-                        break;
+                                        //addView(context, ProductionProfile());
+                                        break;
 
-                      // 오디션 관리
-                      case 2:
-                        // 오디션 관리 페이지 이동
-                        addView(context, ProjectList());
-                        break;
+                                      // 오디션 관리
+                                      case 2:
+                                        // 오디션 관리 페이지 이동
+                                        addView(context, ProjectList());
+                                        break;
 
-                      // 제안한 오디션
-                      case 3:
-                        // 제안한 오디션 페이지 이동
-                        addView(context, ProposedAuditionList());
-                        break;
+                                      // 제안한 오디션
+                                      case 3:
+                                        // 제안한 오디션 페이지 이동
+                                        addView(
+                                            context, ProposedAuditionList());
+                                        break;
 
-                      // 마이스크랩
-                      case 4:
-                        // 마이스크랩 페이지 이동
-                        addView(context, BookmarkedActorList());
-                        break;
+                                      // 마이스크랩
+                                      case 4:
+                                        // 마이스크랩 페이지 이동
+                                        addView(context, BookmarkedActorList());
+                                        break;
 
-                      // 개인정보 관리
-                      case 5:
-                        // 개인정보 관리 페이지 이동
-                        addView(context, ProductionMemberInfo());
-                        break;
+                                      // 개인정보 관리
+                                      case 5:
+                                        // 개인정보 관리 페이지 이동
+                                        addView(
+                                            context, ProductionMemberInfo());
+                                        break;
 
-                      // 로그아웃
-                      case 6:
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) =>
-                              DialogMemberLogoutConfirm(
-                            onClickedAgree: () async {
-                              KCastingAppData().clearData();
+                                      // 로그아웃
+                                      case 6:
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) =>
+                                              DialogMemberLogoutConfirm(
+                                            onClickedAgree: () async {
+                                              KCastingAppData().clearData();
 
-                              final SharedPreferences prefs =
-                                  await SharedPreferences.getInstance();
-                              prefs.remove(APIConstants.autoLogin);
-                              prefs.remove(APIConstants.id);
-                              prefs.remove(APIConstants.pwd);
+                                              final SharedPreferences prefs =
+                                                  await SharedPreferences
+                                                      .getInstance();
+                                              prefs.remove(
+                                                  APIConstants.autoLogin);
+                                              prefs.remove(APIConstants.id);
+                                              prefs.remove(APIConstants.pwd);
 
-                              // 로그인 페이지 이동
-                              replaceView(context, Login());
-                            },
-                          ),
-                        );
+                                              // 로그인 페이지 이동
+                                              replaceView(context, Login());
+                                            },
+                                          ),
+                                        );
 
-                        break;
+                                        break;
 
-                      default:
-                        break;
-                    }
-                  },
-                  child: _listItemView(index),
-                );
-        },
-        separatorBuilder: (context, index) {
-          return Divider();
-        },
-      ),
-    ));
+                                      default:
+                                        break;
+                                    }
+                                  },
+                                  child: _listItemView(index),
+                                );
+                        },
+                        separatorBuilder: (context, index) {
+                          return Divider();
+                        })))));
   }
 }

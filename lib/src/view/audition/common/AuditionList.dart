@@ -243,7 +243,6 @@ class _AuditionList extends State<AuditionList> with BaseUtilMixin {
   }
 
   Future<void> _refreshPage() async {
-
     setState(() {
       _total = 0;
 
@@ -257,555 +256,717 @@ class _AuditionList extends State<AuditionList> with BaseUtilMixin {
   * */
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        key: _scaffoldKey,
-        body: Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            child: RefreshIndicator(
-              onRefresh: _refreshPage,
-              child: SingleChildScrollView(
-                  controller: _scrollController,
-                  physics: AlwaysScrollableScrollPhysics(),
-                  key: ObjectKey(_castingBoardList.length > 0 ? _castingBoardList[0] : ""),
-                  child: Column(children: [
-                    Expanded(
-                        flex: 0,
-                        child: Column(children: [
-                          Container(
-                              margin: EdgeInsets.only(
-                                  top: 15, left: 16, right: 11, bottom: 5),
-                              child: Row(children: [
-                                Expanded(
-                                    flex: 1,
-                                    child: Tags(
-                                        columns: 1,
-                                        symmetry: false,
-                                        horizontalScroll: true,
-                                        spacing: 2,
-                                        heightHorizontalScroll: 30,
-                                        key: _filterStateKey,
-                                        itemCount: _filterItemList.length,
-                                        itemBuilder: (int index) {
-                                          CastingTypeModel category =
-                                          _filterItemList[index];
-
-                                          return ItemTags(
-                                              textStyle:
-                                              CustomStyles.dark16TextStyle(),
-                                              textColor: CustomColors.colorFontTitle,
-                                              activeColor: CustomColors.colorPrimary,
-                                              textActiveColor:
-                                              CustomColors.colorWhite,
-                                              key: Key(index.toString()),
-                                              index: index,
-                                              title: category.name,
-                                              active: category.isActive,
-                                              combine: ItemTagsCombine.withTextBefore,
-                                              image: ItemTagsImage(
-                                                  child: Visibility(
-                                                    child: Image.asset(
-                                                        'assets/images/btn_close.png',
-                                                        width: 10),
-                                                    visible: category.isActive,
-                                                  )),
-                                              elevation: 0.0,
-                                              padding: EdgeInsets.only(left: 7, right: 4, top: 5, bottom: 4),
-                                              borderRadius: BorderRadius.circular(5),
-                                              onPressed: (item) {
-                                                setState(() {
-                                                  category.isActive =
-                                                  !category.isActive;
-
-                                                  if (index == 0) {
-                                                    for (int i = 0;
-                                                    i < _castingTypeList.length;
-                                                    i++) {
-                                                      _castingTypeList[i].isSelected =
-                                                      false;
-                                                    }
-                                                  }
-
-                                                  if (index == 1) {
-                                                    for (int i = 0;
-                                                    i < _projectTypeList.length;
-                                                    i++) {
-                                                      _projectTypeList[i].isSelected =
-                                                      false;
-                                                    }
-                                                  }
-
-                                                  if (index == 2) {
-                                                    for (int i = 0;
-                                                    i < _sexTypeList.length;
-                                                    i++) {
-                                                      _sexTypeList[i].isSelected =
-                                                      false;
-                                                    }
-                                                  }
-
-                                                  if (index == 3) {
-                                                    if (category.isActive) {
-                                                      _isAgeLimit = 1;
-                                                    } else {
-                                                      _isAgeLimit = 0;
-                                                    }
-                                                  }
-
-                                                  if (index == 4) {
-                                                    if (category.isActive) {
-                                                      _isHeightLimit = 1;
-                                                    } else {
-                                                      _isHeightLimit = 0;
-                                                    }
-                                                  }
-
-                                                  if (index == 5) {
-                                                    if (category.isActive) {
-                                                      _isWeightLimit = 1;
-                                                    } else {
-                                                      _isWeightLimit = 0;
-                                                    }
-                                                  }
-                                                });
-                                              });
-                                        })),
-                                GestureDetector(
-                                  onTap: () {
-                                    _castingBoardList = [];
-                                    _total = 0;
-                                    requestCastingListApi(context);
-                                  },
-                                  child: Container(
-                                      width: 30,
-                                      padding: EdgeInsets.all(5),
-                                      margin: EdgeInsets.only(left: 8),
-                                      child: Image.asset(
-                                          'assets/images/btn_search.png',
-                                          width: 18)),
-                                )
-                              ])),
-
-                          // 배역
-                          // 전체, 조연, 조단역, 단역, 이미지단역, 보조출연
-                          Visibility(
-                            child: Container(
-                                width: MediaQuery.of(context).size.width,
-                                height: 20,
-                                margin: EdgeInsets.only(left: 20, right: 20, top: 10),
-                                child: ListView.separated(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: _castingTypeList.length,
-                                    itemBuilder: (context, index) {
-                                      return Container(
-                                          child: InkWell(
-                                              child: Text(
-                                                  _castingTypeList[index].itemName,
-                                                  style: _castingTypeList[index]
-                                                      .isSelected
-                                                      ? CustomStyles.blue16TextStyle()
-                                                      : CustomStyles
-                                                      .normal16TextStyle()),
-                                              onTap: () {
-                                                setState(() {
-                                                  _castingTypeList[index].isSelected =
-                                                  !_castingTypeList[index]
-                                                      .isSelected;
-
-                                                  for (int i = 0;
-                                                  i < _castingTypeList.length;
-                                                  i++) {
-                                                    if (i != index) {
-                                                      _castingTypeList[i].isSelected =
-                                                      false;
-                                                    }
-                                                  }
-                                                });
-                                              }));
-                                    },
-                                    separatorBuilder: (context, index) {
-                                      return VerticalDivider();
-                                    })),
-                            visible: _filterItemList[0].isActive,
-                          ),
-
-                          // 제작유형
-                          // 전체, 영화, 드라마
-                          Visibility(
-                            child: Container(
-                                width: MediaQuery.of(context).size.width,
-                                height: 20,
-                                margin: EdgeInsets.only(left: 20, right: 20, top: 10),
-                                child: ListView.separated(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: _projectTypeList.length,
-                                    itemBuilder: (context, index) {
-                                      return Container(
-                                          child: InkWell(
-                                              child: Text(
-                                                  _projectTypeList[index].itemName,
-                                                  style: _projectTypeList[index]
-                                                      .isSelected
-                                                      ? CustomStyles.blue16TextStyle()
-                                                      : CustomStyles
-                                                      .normal16TextStyle()),
-                                              onTap: () {
-                                                setState(() {
-                                                  _projectTypeList[index].isSelected =
-                                                  !_projectTypeList[index]
-                                                      .isSelected;
-
-                                                  for (int i = 0;
-                                                  i < _projectTypeList.length;
-                                                  i++) {
-                                                    if (i != index) {
-                                                      _projectTypeList[i].isSelected =
-                                                      false;
-                                                    }
-                                                  }
-                                                });
-                                              }));
-                                    },
-                                    separatorBuilder: (context, index) {
-                                      return VerticalDivider();
-                                    })),
-                            visible: _filterItemList[1].isActive,
-                          ),
-
-                          // 성별
-                          // 성별 무관, 남성, 여성
-                          Visibility(
-                            child: Container(
-                                width: MediaQuery.of(context).size.width,
-                                height: 20,
-                                margin: EdgeInsets.only(left: 20, right: 20, top: 10),
-                                child: ListView.separated(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: _sexTypeList.length,
-                                    itemBuilder: (context, index) {
-                                      return Container(
-                                          child: InkWell(
-                                              child: Text(
-                                                  _sexTypeList[index].itemName,
-                                                  style: _sexTypeList[index]
-                                                      .isSelected
-                                                      ? CustomStyles.blue16TextStyle()
-                                                      : CustomStyles
-                                                      .normal16TextStyle()),
-                                              onTap: () {
-                                                setState(() {
-                                                  _sexTypeList[index].isSelected =
-                                                  !_sexTypeList[index].isSelected;
-
-                                                  for (int i = 0;
-                                                  i < _sexTypeList.length;
-                                                  i++) {
-                                                    if (i != index) {
-                                                      _sexTypeList[i].isSelected =
-                                                      false;
-                                                    }
-                                                  }
-                                                });
-                                              }));
-                                    },
-                                    separatorBuilder: (context, index) {
-                                      return VerticalDivider();
-                                    })),
-                            visible: _filterItemList[2].isActive,
-                          ),
-
-                          // 나이
-                          // 나이 무관, 0~100세
-                          Visibility(
-                            child: Container(
-                                margin: EdgeInsets.only(bottom: 10, top: 10),
-                                padding: EdgeInsets.only(left: 20, right: 20),
+    return Align(
+        alignment: Alignment.topCenter,
+        child: Container(
+            width: KCastingAppData().isWeb
+                ? CustomStyles.appWidth
+                : double.infinity,
+            child: Scaffold(
+                key: _scaffoldKey,
+                body: Container(
+                    width: (KCastingAppData().isWeb)
+                        ? CustomStyles.appWidth
+                        : MediaQuery.of(context).size.width,
+                    child: RefreshIndicator(
+                      onRefresh: _refreshPage,
+                      child: SingleChildScrollView(
+                          controller: _scrollController,
+                          physics: AlwaysScrollableScrollPhysics(),
+                          key: ObjectKey(_castingBoardList.length > 0
+                              ? _castingBoardList[0]
+                              : ""),
+                          child: Column(children: [
+                            Expanded(
+                                flex: 0,
                                 child: Column(children: [
                                   Container(
-                                      margin: EdgeInsets.only(bottom: 5),
+                                      margin: EdgeInsets.only(
+                                          top: 15,
+                                          left: 16,
+                                          right: 11,
+                                          bottom: 5),
+                                      child: Row(children: [
+                                        Expanded(
+                                            flex: 1,
+                                            child: Tags(
+                                                columns: 1,
+                                                symmetry: false,
+                                                horizontalScroll: true,
+                                                spacing: 2,
+                                                heightHorizontalScroll: 30,
+                                                key: _filterStateKey,
+                                                itemCount:
+                                                    _filterItemList.length,
+                                                itemBuilder: (int index) {
+                                                  CastingTypeModel category =
+                                                      _filterItemList[index];
+
+                                                  return ItemTags(
+                                                      textStyle: CustomStyles
+                                                          .dark16TextStyle(),
+                                                      textColor: CustomColors
+                                                          .colorFontTitle,
+                                                      activeColor: CustomColors
+                                                          .colorPrimary,
+                                                      textActiveColor:
+                                                          CustomColors
+                                                              .colorWhite,
+                                                      key:
+                                                          Key(index.toString()),
+                                                      index: index,
+                                                      title: category.name,
+                                                      active: category.isActive,
+                                                      combine: ItemTagsCombine
+                                                          .withTextBefore,
+                                                      image: ItemTagsImage(
+                                                          child: Visibility(
+                                                        child: Image.asset(
+                                                            'assets/images/btn_close.png',
+                                                            width: 10),
+                                                        visible:
+                                                            category.isActive,
+                                                      )),
+                                                      elevation: 0.0,
+                                                      padding: EdgeInsets.only(
+                                                          left: 7,
+                                                          right: 4,
+                                                          top: 5,
+                                                          bottom: 4),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              5),
+                                                      onPressed: (item) {
+                                                        setState(() {
+                                                          category.isActive =
+                                                              !category
+                                                                  .isActive;
+
+                                                          if (index == 0) {
+                                                            for (int i = 0;
+                                                                i <
+                                                                    _castingTypeList
+                                                                        .length;
+                                                                i++) {
+                                                              _castingTypeList[
+                                                                          i]
+                                                                      .isSelected =
+                                                                  false;
+                                                            }
+                                                          }
+
+                                                          if (index == 1) {
+                                                            for (int i = 0;
+                                                                i <
+                                                                    _projectTypeList
+                                                                        .length;
+                                                                i++) {
+                                                              _projectTypeList[
+                                                                          i]
+                                                                      .isSelected =
+                                                                  false;
+                                                            }
+                                                          }
+
+                                                          if (index == 2) {
+                                                            for (int i = 0;
+                                                                i <
+                                                                    _sexTypeList
+                                                                        .length;
+                                                                i++) {
+                                                              _sexTypeList[i]
+                                                                      .isSelected =
+                                                                  false;
+                                                            }
+                                                          }
+
+                                                          if (index == 3) {
+                                                            if (category
+                                                                .isActive) {
+                                                              _isAgeLimit = 1;
+                                                            } else {
+                                                              _isAgeLimit = 0;
+                                                            }
+                                                          }
+
+                                                          if (index == 4) {
+                                                            if (category
+                                                                .isActive) {
+                                                              _isHeightLimit =
+                                                                  1;
+                                                            } else {
+                                                              _isHeightLimit =
+                                                                  0;
+                                                            }
+                                                          }
+
+                                                          if (index == 5) {
+                                                            if (category
+                                                                .isActive) {
+                                                              _isWeightLimit =
+                                                                  1;
+                                                            } else {
+                                                              _isWeightLimit =
+                                                                  0;
+                                                            }
+                                                          }
+                                                        });
+                                                      });
+                                                })),
+                                        GestureDetector(
+                                          onTap: () {
+                                            _castingBoardList = [];
+                                            _total = 0;
+                                            requestCastingListApi(context);
+                                          },
+                                          child: Container(
+                                              width: 30,
+                                              padding: EdgeInsets.all(5),
+                                              margin: EdgeInsets.only(left: 8),
+                                              child: Image.asset(
+                                                  'assets/images/btn_search.png',
+                                                  width: 18)),
+                                        )
+                                      ])),
+
+                                  // 배역
+                                  // 전체, 조연, 조단역, 단역, 이미지단역, 보조출연
+                                  Visibility(
+                                    child: Container(
+                                        width:
+                                        (KCastingAppData().isWeb)
+                                            ? CustomStyles.appWidth
+                                            : MediaQuery.of(context).size.width,
+                                        height: 20,
+                                        margin: EdgeInsets.only(
+                                            left: 20, right: 20, top: 10),
+                                        child: ListView.separated(
+                                            scrollDirection: Axis.horizontal,
+                                            itemCount: _castingTypeList.length,
+                                            itemBuilder: (context, index) {
+                                              return Container(
+                                                  child: InkWell(
+                                                      child: Text(
+                                                          _castingTypeList[
+                                                                  index]
+                                                              .itemName,
+                                                          style: _castingTypeList[
+                                                                      index]
+                                                                  .isSelected
+                                                              ? CustomStyles
+                                                                  .blue16TextStyle()
+                                                              : CustomStyles
+                                                                  .normal16TextStyle()),
+                                                      onTap: () {
+                                                        setState(() {
+                                                          _castingTypeList[
+                                                                      index]
+                                                                  .isSelected =
+                                                              !_castingTypeList[
+                                                                      index]
+                                                                  .isSelected;
+
+                                                          for (int i = 0;
+                                                              i <
+                                                                  _castingTypeList
+                                                                      .length;
+                                                              i++) {
+                                                            if (i != index) {
+                                                              _castingTypeList[
+                                                                          i]
+                                                                      .isSelected =
+                                                                  false;
+                                                            }
+                                                          }
+                                                        });
+                                                      }));
+                                            },
+                                            separatorBuilder: (context, index) {
+                                              return VerticalDivider();
+                                            })),
+                                    visible: _filterItemList[0].isActive,
+                                  ),
+
+                                  // 제작유형
+                                  // 전체, 영화, 드라마
+                                  Visibility(
+                                    child: Container(
+                                        width:
+                                        (KCastingAppData().isWeb)
+                                            ? CustomStyles.appWidth
+                                            : MediaQuery.of(context).size.width,
+                                        height: 20,
+                                        margin: EdgeInsets.only(
+                                            left: 20, right: 20, top: 10),
+                                        child: ListView.separated(
+                                            scrollDirection: Axis.horizontal,
+                                            itemCount: _projectTypeList.length,
+                                            itemBuilder: (context, index) {
+                                              return Container(
+                                                  child: InkWell(
+                                                      child: Text(
+                                                          _projectTypeList[
+                                                                  index]
+                                                              .itemName,
+                                                          style: _projectTypeList[
+                                                                      index]
+                                                                  .isSelected
+                                                              ? CustomStyles
+                                                                  .blue16TextStyle()
+                                                              : CustomStyles
+                                                                  .normal16TextStyle()),
+                                                      onTap: () {
+                                                        setState(() {
+                                                          _projectTypeList[
+                                                                      index]
+                                                                  .isSelected =
+                                                              !_projectTypeList[
+                                                                      index]
+                                                                  .isSelected;
+
+                                                          for (int i = 0;
+                                                              i <
+                                                                  _projectTypeList
+                                                                      .length;
+                                                              i++) {
+                                                            if (i != index) {
+                                                              _projectTypeList[
+                                                                          i]
+                                                                      .isSelected =
+                                                                  false;
+                                                            }
+                                                          }
+                                                        });
+                                                      }));
+                                            },
+                                            separatorBuilder: (context, index) {
+                                              return VerticalDivider();
+                                            })),
+                                    visible: _filterItemList[1].isActive,
+                                  ),
+
+                                  // 성별
+                                  // 성별 무관, 남성, 여성
+                                  Visibility(
+                                    child: Container(
+                                        width:
+                                        (KCastingAppData().isWeb)
+                                            ? CustomStyles.appWidth
+                                            : MediaQuery.of(context).size.width,
+                                        height: 20,
+                                        margin: EdgeInsets.only(
+                                            left: 20, right: 20, top: 10),
+                                        child: ListView.separated(
+                                            scrollDirection: Axis.horizontal,
+                                            itemCount: _sexTypeList.length,
+                                            itemBuilder: (context, index) {
+                                              return Container(
+                                                  child: InkWell(
+                                                      child: Text(
+                                                          _sexTypeList[index]
+                                                              .itemName,
+                                                          style: _sexTypeList[
+                                                                      index]
+                                                                  .isSelected
+                                                              ? CustomStyles
+                                                                  .blue16TextStyle()
+                                                              : CustomStyles
+                                                                  .normal16TextStyle()),
+                                                      onTap: () {
+                                                        setState(() {
+                                                          _sexTypeList[index]
+                                                                  .isSelected =
+                                                              !_sexTypeList[
+                                                                      index]
+                                                                  .isSelected;
+
+                                                          for (int i = 0;
+                                                              i <
+                                                                  _sexTypeList
+                                                                      .length;
+                                                              i++) {
+                                                            if (i != index) {
+                                                              _sexTypeList[i]
+                                                                      .isSelected =
+                                                                  false;
+                                                            }
+                                                          }
+                                                        });
+                                                      }));
+                                            },
+                                            separatorBuilder: (context, index) {
+                                              return VerticalDivider();
+                                            })),
+                                    visible: _filterItemList[2].isActive,
+                                  ),
+
+                                  // 나이
+                                  // 나이 무관, 0~100세
+                                  Visibility(
+                                    child: Container(
+                                        margin: EdgeInsets.only(
+                                            bottom: 10, top: 10),
+                                        padding: EdgeInsets.only(
+                                            left: 20, right: 20),
+                                        child: Column(children: [
+                                          Container(
+                                              margin:
+                                                  EdgeInsets.only(bottom: 5),
+                                              child: Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Container(
+                                                        child: Text(
+                                                            _ageRangeValues
+                                                                    .start
+                                                                    .round()
+                                                                    .toString() +
+                                                                '세',
+                                                            style: CustomStyles
+                                                                .dark16TextStyle())),
+                                                    Container(
+                                                        child: Text(
+                                                            _ageRangeValues.end
+                                                                    .round()
+                                                                    .toString() +
+                                                                '세',
+                                                            style: CustomStyles
+                                                                .dark16TextStyle()))
+                                                  ])),
+                                          SliderTheme(
+                                              data: SliderTheme.of(context)
+                                                  .copyWith(
+                                                      trackHeight: 1,
+                                                      thumbColor: CustomColors
+                                                          .colorAccent,
+                                                      rangeThumbShape:
+                                                          CircleThumbShape(),
+                                                      overlayShape:
+                                                          RoundSliderOverlayShape(
+                                                              overlayRadius:
+                                                                  6.0)),
+                                              child: RangeSlider(
+                                                  inactiveColor:
+                                                      CustomColors.colorBgGrey,
+                                                  activeColor:
+                                                      CustomColors.colorPrimary,
+                                                  values: _ageRangeValues,
+                                                  min: 0,
+                                                  max: 100,
+                                                  divisions: 10,
+                                                  labels: RangeLabels(
+                                                    _ageRangeValues.start
+                                                        .round()
+                                                        .toString(),
+                                                    _ageRangeValues.end
+                                                        .round()
+                                                        .toString(),
+                                                  ),
+                                                  onChanged:
+                                                      (RangeValues values) {
+                                                    setState(() {
+                                                      _ageRangeValues = values;
+                                                    });
+                                                  }))
+                                        ])),
+                                    visible: _filterItemList[3].isActive,
+                                  ),
+
+                                  // 키
+                                  // 키 무관, 0~200
+                                  Visibility(
+                                    child: Container(
+                                        margin: EdgeInsets.only(
+                                            bottom: 10, top: 10),
+                                        padding: EdgeInsets.only(
+                                            left: 20, right: 20),
+                                        child: Column(children: [
+                                          Container(
+                                            margin: EdgeInsets.only(bottom: 5),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.max,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Container(
+                                                    child: Text(
+                                                        _heightRangeValues.start
+                                                                .round()
+                                                                .toString() +
+                                                            'cm',
+                                                        style: CustomStyles
+                                                            .dark16TextStyle())),
+                                                Container(
+                                                    child: Text(
+                                                        _heightRangeValues.end
+                                                                .round()
+                                                                .toString() +
+                                                            'cm',
+                                                        style: CustomStyles
+                                                            .dark16TextStyle())),
+                                              ],
+                                            ),
+                                          ),
+                                          SliderTheme(
+                                              data: SliderTheme.of(context)
+                                                  .copyWith(
+                                                      trackHeight: 1,
+                                                      thumbColor: CustomColors
+                                                          .colorAccent,
+                                                      rangeThumbShape:
+                                                          CircleThumbShape(),
+                                                      overlayShape:
+                                                          RoundSliderOverlayShape(
+                                                              overlayRadius:
+                                                                  6.0)),
+                                              child: RangeSlider(
+                                                  inactiveColor:
+                                                      CustomColors.colorBgGrey,
+                                                  activeColor:
+                                                      CustomColors.colorPrimary,
+                                                  values: _heightRangeValues,
+                                                  min: 0,
+                                                  max: 200,
+                                                  divisions: 20,
+                                                  labels: RangeLabels(
+                                                    _heightRangeValues.start
+                                                        .round()
+                                                        .toString(),
+                                                    _heightRangeValues.end
+                                                        .round()
+                                                        .toString(),
+                                                  ),
+                                                  onChanged:
+                                                      (RangeValues values) {
+                                                    setState(() {
+                                                      _heightRangeValues =
+                                                          values;
+                                                    });
+                                                  }))
+                                        ])),
+                                    visible: _filterItemList[4].isActive,
+                                  ),
+
+                                  // 체중
+                                  // 체중 무관, 0~150
+                                  Visibility(
+                                    child: Container(
+                                        margin: EdgeInsets.only(
+                                            bottom: 10, top: 10),
+                                        padding: EdgeInsets.only(
+                                            left: 20, right: 20),
+                                        child: Column(children: [
+                                          Container(
+                                            margin: EdgeInsets.only(bottom: 5),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.max,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Container(
+                                                    child: Text(
+                                                        _weightRangeValues.start
+                                                                .round()
+                                                                .toString() +
+                                                            'kg',
+                                                        style: CustomStyles
+                                                            .dark16TextStyle())),
+                                                Container(
+                                                    child: Text(
+                                                        _weightRangeValues.end
+                                                                .round()
+                                                                .toString() +
+                                                            'kg',
+                                                        style: CustomStyles
+                                                            .dark16TextStyle())),
+                                              ],
+                                            ),
+                                          ),
+                                          SliderTheme(
+                                              data: SliderTheme.of(context)
+                                                  .copyWith(
+                                                      trackHeight: 1,
+                                                      thumbColor: CustomColors
+                                                          .colorAccent,
+                                                      rangeThumbShape:
+                                                          CircleThumbShape(),
+                                                      overlayShape:
+                                                          RoundSliderOverlayShape(
+                                                              overlayRadius:
+                                                                  6.0)),
+                                              child: RangeSlider(
+                                                  inactiveColor:
+                                                      CustomColors.colorBgGrey,
+                                                  activeColor:
+                                                      CustomColors.colorPrimary,
+                                                  values: _weightRangeValues,
+                                                  min: 0,
+                                                  max: 200,
+                                                  divisions: 20,
+                                                  labels: RangeLabels(
+                                                    _weightRangeValues.start
+                                                        .round()
+                                                        .toString(),
+                                                    _weightRangeValues.end
+                                                        .round()
+                                                        .toString(),
+                                                  ),
+                                                  onChanged:
+                                                      (RangeValues values) {
+                                                    setState(() {
+                                                      _weightRangeValues =
+                                                          values;
+                                                    });
+                                                  }))
+                                        ])),
+                                    visible: _filterItemList[5].isActive,
+                                  ),
+
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 10),
+                                    child: Divider(
+                                      color: CustomColors.colorFontLightGrey,
+                                    ),
+                                  ),
+
+                                  Container(
+                                      margin: EdgeInsets.only(
+                                          left: 15, right: 15, bottom: 15),
                                       child: Row(
                                           mainAxisSize: MainAxisSize.max,
                                           mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
                                             Container(
-                                                child: Text(
-                                                    _ageRangeValues.start
-                                                        .round()
-                                                        .toString() +
-                                                        '세',
-                                                    style: CustomStyles
-                                                        .dark16TextStyle())),
-                                            Container(
-                                                child: Text(
-                                                    _ageRangeValues.end
-                                                        .round()
-                                                        .toString() +
-                                                        '세',
-                                                    style: CustomStyles
-                                                        .dark16TextStyle()))
-                                          ])),
-                                  SliderTheme(
-                                      data: SliderTheme.of(context).copyWith(
-                                          trackHeight: 1,
-                                          thumbColor: CustomColors.colorAccent,
-                                          rangeThumbShape: CircleThumbShape(),
-                                          overlayShape: RoundSliderOverlayShape(
-                                              overlayRadius: 6.0)),
-                                      child: RangeSlider(
-                                          inactiveColor: CustomColors.colorBgGrey,
-                                          activeColor: CustomColors.colorPrimary,
-                                          values: _ageRangeValues,
-                                          min: 0,
-                                          max: 100,
-                                          divisions: 10,
-                                          labels: RangeLabels(
-                                            _ageRangeValues.start.round().toString(),
-                                            _ageRangeValues.end.round().toString(),
-                                          ),
-                                          onChanged: (RangeValues values) {
-                                            setState(() {
-                                              _ageRangeValues = values;
-                                            });
-                                          }))
+                                              child: RichText(
+                                                  text: new TextSpan(
+                                                style: CustomStyles
+                                                    .normal14TextStyle(),
+                                                children: <TextSpan>[
+                                                  new TextSpan(
+                                                      text: _total.toString(),
+                                                      style: CustomStyles
+                                                          .red14TextStyle()),
+                                                  new TextSpan(text: '개의 배역'),
+                                                ],
+                                              )),
+                                            ),
+                                            Row(children: [
+                                              Container(
+                                                  child: (_castingListOrderType ==
+                                                          APIConstants
+                                                              .order_type_fin)
+                                                      ? CustomStyles
+                                                          .blue16TextButtonStyle(
+                                                              '마감임박', () {
+                                                          _castingListOrderType =
+                                                              APIConstants
+                                                                  .order_type_fin;
+                                                          _castingBoardList =
+                                                              [];
+                                                          _total = 0;
+                                                          requestCastingListApi(
+                                                              context);
+                                                        })
+                                                      : CustomStyles
+                                                          .normal16TextButtonStyle(
+                                                              '마감임박', () {
+                                                          _castingListOrderType =
+                                                              APIConstants
+                                                                  .order_type_fin;
+                                                          _castingBoardList =
+                                                              [];
+                                                          _total = 0;
+                                                          requestCastingListApi(
+                                                              context);
+                                                        })),
+                                              Container(
+                                                child: Text(' | '),
+                                              ),
+                                              Container(
+                                                  child: (_castingListOrderType ==
+                                                          APIConstants
+                                                              .order_type_new)
+                                                      ? CustomStyles
+                                                          .blue16TextButtonStyle(
+                                                              '최신등록', () {
+                                                          _castingListOrderType =
+                                                              APIConstants
+                                                                  .order_type_new;
+                                                          _castingBoardList =
+                                                              [];
+                                                          _total = 0;
+                                                          requestCastingListApi(
+                                                              context);
+                                                        })
+                                                      : CustomStyles
+                                                          .normal16TextButtonStyle(
+                                                              '최신등록', () {
+                                                          _castingListOrderType =
+                                                              APIConstants
+                                                                  .order_type_new;
+                                                          _castingBoardList =
+                                                              [];
+                                                          _total = 0;
+                                                          requestCastingListApi(
+                                                              context);
+                                                        }))
+                                            ])
+                                          ]))
                                 ])),
-                            visible: _filterItemList[3].isActive,
-                          ),
-
-                          // 키
-                          // 키 무관, 0~200
-                          Visibility(
-                            child: Container(
-                                margin: EdgeInsets.only(bottom: 10, top: 10),
-                                padding: EdgeInsets.only(left: 20, right: 20),
-                                child: Column(children: [
-                                  Container(
-                                    margin: EdgeInsets.only(bottom: 5),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
-                                            child: Text(
-                                                _heightRangeValues.start
-                                                    .round()
-                                                    .toString() +
-                                                    'cm',
-                                                style:
-                                                CustomStyles.dark16TextStyle())),
-                                        Container(
-                                            child: Text(
-                                                _heightRangeValues.end
-                                                    .round()
-                                                    .toString() +
-                                                    'cm',
-                                                style:
-                                                CustomStyles.dark16TextStyle())),
-                                      ],
-                                    ),
-                                  ),
-                                  SliderTheme(
-                                      data: SliderTheme.of(context).copyWith(
-                                          trackHeight: 1,
-                                          thumbColor: CustomColors.colorAccent,
-                                          rangeThumbShape: CircleThumbShape(),
-                                          overlayShape: RoundSliderOverlayShape(
-                                              overlayRadius: 6.0)),
-                                      child: RangeSlider(
-                                          inactiveColor: CustomColors.colorBgGrey,
-                                          activeColor: CustomColors.colorPrimary,
-                                          values: _heightRangeValues,
-                                          min: 0,
-                                          max: 200,
-                                          divisions: 20,
-                                          labels: RangeLabels(
-                                            _heightRangeValues.start
-                                                .round()
-                                                .toString(),
-                                            _heightRangeValues.end.round().toString(),
-                                          ),
-                                          onChanged: (RangeValues values) {
-                                            setState(() {
-                                              _heightRangeValues = values;
-                                            });
-                                          }))
-                                ])),
-                            visible: _filterItemList[4].isActive,
-                          ),
-
-                          // 체중
-                          // 체중 무관, 0~150
-                          Visibility(
-                            child: Container(
-                                margin: EdgeInsets.only(bottom: 10, top: 10),
-                                padding: EdgeInsets.only(left: 20, right: 20),
-                                child: Column(children: [
-                                  Container(
-                                    margin: EdgeInsets.only(bottom: 5),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
-                                            child: Text(
-                                                _weightRangeValues.start
-                                                    .round()
-                                                    .toString() +
-                                                    'kg',
-                                                style:
-                                                CustomStyles.dark16TextStyle())),
-                                        Container(
-                                            child: Text(
-                                                _weightRangeValues.end
-                                                    .round()
-                                                    .toString() +
-                                                    'kg',
-                                                style:
-                                                CustomStyles.dark16TextStyle())),
-                                      ],
-                                    ),
-                                  ),
-                                  SliderTheme(
-                                      data: SliderTheme.of(context).copyWith(
-                                          trackHeight: 1,
-                                          thumbColor: CustomColors.colorAccent,
-                                          rangeThumbShape: CircleThumbShape(),
-                                          overlayShape: RoundSliderOverlayShape(
-                                              overlayRadius: 6.0)),
-                                      child: RangeSlider(
-                                          inactiveColor: CustomColors.colorBgGrey,
-                                          activeColor: CustomColors.colorPrimary,
-                                          values: _weightRangeValues,
-                                          min: 0,
-                                          max: 200,
-                                          divisions: 20,
-                                          labels: RangeLabels(
-                                            _weightRangeValues.start
-                                                .round()
-                                                .toString(),
-                                            _weightRangeValues.end.round().toString(),
-                                          ),
-                                          onChanged: (RangeValues values) {
-                                            setState(() {
-                                              _weightRangeValues = values;
-                                            });
-                                          }))
-                                ])),
-                            visible: _filterItemList[5].isActive,
-                          ),
-
-                          Container(
-                            margin: EdgeInsets.only(bottom: 10),
-                            child: Divider(
-                              color: CustomColors.colorFontLightGrey,
-                            ),
-                          ),
-
-                          Container(
-                              margin:
-                              EdgeInsets.only(left: 15, right: 15, bottom: 15),
-                              child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Container(
-                                      child: RichText(
-                                          text: new TextSpan(
-                                            style: CustomStyles.normal14TextStyle(),
-                                            children: <TextSpan>[
-                                              new TextSpan(
-                                                  text:
-                                                  _total.toString(),
-                                                  style: CustomStyles.red14TextStyle()),
-                                              new TextSpan(text: '개의 배역'),
-                                            ],
-                                          )),
-                                    ),
-                                    Row(children: [
-                                      Container(
-                                          child: (_castingListOrderType ==
-                                              APIConstants.order_type_fin)
-                                              ? CustomStyles.blue16TextButtonStyle(
-                                              '마감임박', () {
-                                            _castingListOrderType =
-                                                APIConstants.order_type_fin;
-                                            _castingBoardList = [];
-                                            _total = 0;
-                                            requestCastingListApi(context);
-                                          })
-                                              : CustomStyles.normal16TextButtonStyle(
-                                              '마감임박', () {
-                                            _castingListOrderType =
-                                                APIConstants.order_type_fin;
-                                            _castingBoardList = [];
-                                            _total = 0;
-                                            requestCastingListApi(context);
-                                          })),
-                                      Container(
-                                        child: Text(' | '),
-                                      ),
-                                      Container(
-                                          child: (_castingListOrderType ==
-                                              APIConstants.order_type_new)
-                                              ? CustomStyles.blue16TextButtonStyle(
-                                              '최신등록', () {
-                                            _castingListOrderType =
-                                                APIConstants.order_type_new;
-                                            _castingBoardList = [];
-                                            _total = 0;
-                                            requestCastingListApi(context);
-                                          })
-                                              : CustomStyles.normal16TextButtonStyle(
-                                              '최신등록', () {
-                                            _castingListOrderType =
-                                                APIConstants.order_type_new;
-                                            _castingBoardList = [];
-                                            _total = 0;
-                                            requestCastingListApi(context);
-                                          }))
-                                    ])
+                            _castingBoardList.length > 0
+                                ? (Wrap(children: [
+                                    ListView.builder(
+                                        padding: EdgeInsets.only(bottom: 70),
+                                        primary: false,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        shrinkWrap: true,
+                                        itemCount: _castingBoardList.length,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          return Container(
+                                              margin:
+                                                  EdgeInsets.only(bottom: 15),
+                                              alignment: Alignment.center,
+                                              child: AuditionListItem(
+                                                castingItem:
+                                                    _castingBoardList[index],
+                                                isMyScrapList: false,
+                                                onClickedBookmark: () {
+                                                  if (KCastingAppData().myInfo[
+                                                          APIConstants
+                                                              .member_type] ==
+                                                      APIConstants
+                                                          .member_type_actor) {
+                                                    requestActorBookmarkEditApi(
+                                                        context, index);
+                                                  } else if (KCastingAppData()
+                                                              .myInfo[
+                                                          APIConstants
+                                                              .member_type] ==
+                                                      APIConstants
+                                                          .member_type_management) {
+                                                    requestManagementBookmarkEditApi(
+                                                        context, index);
+                                                  }
+                                                },
+                                              ));
+                                        })
                                   ]))
-                        ])),
-                    _castingBoardList.length > 0
-                        ? (Wrap(children: [
-                      ListView.builder(
-                          padding: EdgeInsets.only(bottom: 70),
-                          primary: false,
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: _castingBoardList.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return Container(
-                                margin: EdgeInsets.only(bottom: 15),
-                                alignment: Alignment.center,
-                                child: AuditionListItem(
-                                  castingItem: _castingBoardList[index],
-                                  isMyScrapList: false,
-                                  onClickedBookmark: () {
-                                    if (KCastingAppData()
-                                        .myInfo[APIConstants.member_type] ==
-                                        APIConstants.member_type_actor) {
-                                      requestActorBookmarkEditApi(
-                                          context, index);
-                                    } else if (KCastingAppData()
-                                        .myInfo[APIConstants.member_type] ==
-                                        APIConstants.member_type_management) {
-                                      requestManagementBookmarkEditApi(
-                                          context, index);
-                                    }
-                                  },
-                                ));
-                          })
-                    ]))
-                        : Container(
-                        alignment: Alignment.center,
-                        margin: EdgeInsets.only(top: 30),
-                        child: Text('캐스팅이 없습니다.',
-                            style: CustomStyles.normal16TextStyle()))
-                  ])),
-            )));
+                                : Container(
+                                    alignment: Alignment.center,
+                                    margin: EdgeInsets.only(top: 30),
+                                    child: Text('캐스팅이 없습니다.',
+                                        style:
+                                            CustomStyles.normal16TextStyle()))
+                          ])),
+                    )))));
   }
 
   /*

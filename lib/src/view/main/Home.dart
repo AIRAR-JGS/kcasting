@@ -1,5 +1,6 @@
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/KCastingAppData.dart';
+import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/view/actor/ActorList.dart';
 import 'package:casting_call/src/view/audition/common/AuditionList.dart';
@@ -118,34 +119,40 @@ class _Home extends State<Home> with BaseUtilMixin {
 
           return Future.value(true);
         },
-        child: Scaffold(
-            key: _scaffoldKey,
-            appBar: HomeAppBar(
-              onClickedOpenDrawer: () {
-                _scaffoldKey.currentState.openDrawer();
-              },
-              onClickedOpenHome: () {
-                if (_currentFragmentIndex != 0) {
-                  _onTap(0);
-                } else {
-                  FragmentHome.globalKey.currentState.scrollToTop();
-                }
-              },
-              onClickedOpenMyPage: () {
-                _onTap(3);
-              },
-            ),
-            // 상단 앱바
-            body: body(), // 바디
-            drawer: HomeDrawer(onClickedCloseDrawer: () {
-              _scaffoldKey.currentState.openEndDrawer();
-            }, onClickedOpenHome: () {
-              _onTap(0);
-            }, onClickedOpenCastingBoard: () {
-              _onTap(1);
-            }, onClickedOpenCastingActor: (value) {
-              _actorGenderType = value;
-              _onTap(2);
-            }))); // 네비게이션 드로어
+        child: Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+                width: KCastingAppData().isWeb
+                    ? CustomStyles.appWidth
+                    : double.infinity,
+                child: Scaffold(
+                    key: _scaffoldKey,
+                    appBar: HomeAppBar(
+                      onClickedOpenDrawer: () {
+                        _scaffoldKey.currentState.openDrawer();
+                      },
+                      onClickedOpenHome: () {
+                        if (_currentFragmentIndex != 0) {
+                          _onTap(0);
+                        } else {
+                          FragmentHome.globalKey.currentState.scrollToTop();
+                        }
+                      },
+                      onClickedOpenMyPage: () {
+                        _onTap(3);
+                      },
+                    ),
+                    // 상단 앱바
+                    body: body(),
+                    drawer: HomeDrawer(onClickedCloseDrawer: () {
+                      _scaffoldKey.currentState.openEndDrawer();
+                    }, onClickedOpenHome: () {
+                      _onTap(0);
+                    }, onClickedOpenCastingBoard: () {
+                      _onTap(1);
+                    }, onClickedOpenCastingActor: (value) {
+                      _actorGenderType = value;
+                      _onTap(2);
+                    }))))); // 네비게이션 드로어
   }
 }

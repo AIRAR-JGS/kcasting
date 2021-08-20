@@ -27,7 +27,8 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       // 디버그 배너 숨기기
-      debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner:
+          (APIConstants.BASE_URL.contains('t2') ? true : false),
 
       // 앱 타이틀(앱 이름)
       title: Constants.appName,
@@ -57,6 +58,16 @@ class _MyHomePageState extends State<MyHomePage> with BaseUtilMixin {
   @override
   void initState() {
     super.initState();
+
+    try {
+      if (Platform.isAndroid || Platform.isIOS) {
+        KCastingAppData().isWeb = false;
+      } else {
+        KCastingAppData().isWeb = true;
+      }
+    } catch (e) {
+      KCastingAppData().isWeb = true;
+    }
 
     requestCommonCodeK01ListApi(context);
   }
@@ -396,44 +407,53 @@ class _MyHomePageState extends State<MyHomePage> with BaseUtilMixin {
     });
   }
 
-  //========================================================================================================================
-  // 메인 위젯
-  //========================================================================================================================
+  /*
+  * 메인 위젯
+  * */
   @override
   Widget build(BuildContext context) {
     return Theme(
         data: CustomStyles.defaultTheme(),
         child: AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent, // transparent status bar
-            systemNavigationBarColor: Colors.black, // navigation bar color
-            statusBarIconBrightness: Brightness.dark, // status bar icons' color
-            systemNavigationBarIconBrightness:
-                Brightness.dark, //navigation bar icons' color
-          ),
-          child: Scaffold(
-              body: Container(
-                  width: double.infinity,
-                  height: double.infinity,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        stops: [0, 1],
-                        tileMode: TileMode.clamp,
-                        colors: [
-                          CustomColors.colorPrimary,
-                          CustomColors.colorAccent
-                        ]),
-                  ),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Image.asset('assets/images/logo_white.png',
-                            width: MediaQuery.of(context).size.width * 0.7)
-                      ]))),
-        ));
+            value: SystemUiOverlayStyle(
+              statusBarColor: Colors.transparent,
+              // transparent status bar
+              systemNavigationBarColor: Colors.black,
+              // navigation bar color
+              statusBarIconBrightness: Brightness.dark,
+              // status bar icons' color
+              systemNavigationBarIconBrightness:
+                  Brightness.dark, //navigation bar icons' color
+            ),
+            child: Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                    width: KCastingAppData().isWeb
+                        ? CustomStyles.appWidth
+                        : double.infinity,
+                    child: Scaffold(
+                        extendBody: true,
+                        body: Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    stops: [0, 1],
+                                    tileMode: TileMode.clamp,
+                                    colors: [
+                                      CustomColors.colorPrimary,
+                                      CustomColors.colorAccent
+                                    ])),
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Image.asset('assets/images/logo_white.png',
+                                      width: (KCastingAppData().isWeb)
+                                          ? (CustomStyles.appWidth * 0.7)
+                                          : MediaQuery.of(context).size.width *
+                                          0.7)
+                                ])))))));
   }
 }

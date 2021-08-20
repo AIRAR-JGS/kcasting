@@ -6,7 +6,7 @@ import 'package:casting_call/src/view/user/common/JoinSelectType.dart';
 import 'package:casting_call/src/view/user/common/SelfAuth.dart';
 import 'package:flutter/material.dart';
 
-import 'JoinActorChildParentAgree.dart';
+import '../../../../KCastingAppData.dart';
 
 /*
 * 배우 회원 유형 선택
@@ -37,25 +37,66 @@ class _JoinActorSelectType extends State<JoinActorSelectType>
         },
         child: Theme(
             data: CustomStyles.defaultTheme(),
-            child: Scaffold(
-                key: _scaffoldKey,
-                appBar: CustomStyles.defaultAppBar('회원가입', () {
-                  replaceView(context, JoinSelectType());
-                }),
-                body: Container(
-                    padding: EdgeInsets.only(left: 30, right: 30),
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) =>
-                                      DialogParentAuth(onClickedAgree: () {
-                                        /*replaceView(context,
+            child: Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                    width: KCastingAppData().isWeb
+                        ? CustomStyles.appWidth
+                        : double.infinity,
+                    child: Scaffold(
+                        key: _scaffoldKey,
+                        appBar: CustomStyles.defaultAppBar('회원가입', () {
+                          replaceView(context, JoinSelectType());
+                        }),
+                        body: Container(
+                            padding: EdgeInsets.only(left: 30, right: 30),
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) =>
+                                              DialogParentAuth(
+                                                  onClickedAgree: () {
+                                                /*replaceView(context,
                                             JoinActorChildParentAgree());*/
+                                                replaceView(
+                                                    context,
+                                                    SelfAuth(
+                                                        authRes: '',
+                                                        authName: '',
+                                                        authPhone: '',
+                                                        authBirth: '',
+                                                        authGender: '',
+                                                        memberType: 'C'));
+                                              }));
+                                    },
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      width: double.infinity,
+                                      height:
+                                      (KCastingAppData().isWeb)
+                                          ? CustomStyles.appHeight * 0.2
+                                          : MediaQuery.of(context).size.height *
+                                              0.2,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          border: Border.all(
+                                              width: 0.5,
+                                              color:
+                                                  CustomColors.colorFontGrey)),
+                                      child: Container(
+                                          child: Text('14세 미만 회원가입',
+                                              style: CustomStyles
+                                                  .normal24TextStyle())),
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                      onTap: () {
                                         replaceView(
                                             context,
                                             SelfAuth(
@@ -64,50 +105,29 @@ class _JoinActorSelectType extends State<JoinActorSelectType>
                                                 authPhone: '',
                                                 authBirth: '',
                                                 authGender: '',
-                                                memberType: 'C'));
-                                      }));
-                            },
-                            child: Container(
-                              alignment: Alignment.center,
-                              width: double.infinity,
-                              height: MediaQuery.of(context).size.height * 0.2,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(
-                                      width: 0.5,
-                                      color: CustomColors.colorFontGrey)),
-                              child: Container(
-                                  child: Text('14세 미만 회원가입',
-                                      style: CustomStyles.normal24TextStyle())),
-                            ),
-                          ),
-                          GestureDetector(
-                              onTap: () {
-                                replaceView(
-                                    context,
-                                    SelfAuth(
-                                        authRes: '',
-                                        authName: '',
-                                        authPhone: '',
-                                        authBirth: '',
-                                        authGender: '',
-                                        memberType: 'A'));
-                              },
-                              child: Container(
-                                  margin: EdgeInsets.only(top: 20),
-                                  alignment: Alignment.center,
-                                  width: double.infinity,
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.2,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                          width: 0.5,
-                                          color: CustomColors.colorFontGrey)),
-                                  child: Container(
-                                      child: Text('14세 이상 회원가입',
-                                          style: CustomStyles
-                                              .normal24TextStyle()))))
-                        ])))));
+                                                memberType: 'A'));
+                                      },
+                                      child: Container(
+                                          margin: EdgeInsets.only(top: 20),
+                                          alignment: Alignment.center,
+                                          width: double.infinity,
+                                          height: (KCastingAppData().isWeb)
+                                              ? CustomStyles.appHeight * 0.2
+                                              : MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.2,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              border: Border.all(
+                                                  width: 0.5,
+                                                  color: CustomColors
+                                                      .colorFontGrey)),
+                                          child: Container(
+                                              child: Text('14세 이상 회원가입',
+                                                  style: CustomStyles
+                                                      .normal24TextStyle()))))
+                                ])))))));
   }
 }

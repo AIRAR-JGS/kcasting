@@ -32,11 +32,7 @@ class AuditionListItem extends StatelessWidget with BaseUtilMixin {
         child: Stack(alignment: Alignment.topRight, children: [
           Wrap(children: [
             Container(
-                width: MediaQuery.of(context).size.width * 0.9,
-                /*decoration: BoxDecoration(
-                    border: Border.all(
-                        width: 0.5, color: CustomColors.colorFontLightGrey),
-                    borderRadius: CustomStyles.circle7BorderRadius()),*/
+                width: (KCastingAppData().isWeb) ? (CustomStyles.appWidth * 0.9) : (MediaQuery.of(context).size.width * 0.9),
                 decoration: BoxDecoration(
                     color: CustomColors.colorWhite,
                     borderRadius: CustomStyles.circle7BorderRadius(),

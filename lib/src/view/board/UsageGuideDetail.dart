@@ -7,6 +7,8 @@ import 'package:casting_call/src/util/StringUtils.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
+import '../../../KCastingAppData.dart';
+
 class UsageGuideDetail extends StatefulWidget {
   final int seq;
 
@@ -89,43 +91,55 @@ class _UsageGuideDetail extends State<UsageGuideDetail> with BaseUtilMixin {
   Widget build(BuildContext context) {
     return Theme(
         data: CustomStyles.defaultTheme(),
-        child: Scaffold(
-            appBar: CustomStyles.defaultAppBar('', () {
-              Navigator.pop(context);
-            }),
-            body: SingleChildScrollView(
-                child: Container(
-                    margin: EdgeInsets.only(top: 30, bottom: 70),
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                              margin: EdgeInsets.only(
-                                  bottom: 15, left: 15, right: 15),
-                              child: Text(
-                                  StringUtils.checkedString(_infoData[
-                                      APIConstants.use_infomation_name]),
-                                  style: CustomStyles.normal24TextStyle())),
-                          Container(
-                              margin: EdgeInsets.only(
-                                  bottom: 25, left: 15, right: 15),
-                              child: Text(
-                                  "등록일: " +
-                                      StringUtils.checkedString(
-                                          _infoData[APIConstants.addDate]),
-                                  style: CustomStyles.normal14TextStyle())),
-                          Container(
-                              child: Divider(
-                                  height: 2,
-                                  color: CustomColors.colorFontTitle)),
-                          Container(
-                              margin:
-                                  EdgeInsets.only(left: 15, right: 15, top: 20),
-                              child: Text(
-                                  StringUtils.checkedString(_infoData[
-                                      APIConstants.use_infomation_contents]),
-                                  style: CustomStyles.dark14TextStyle())),
-                        ])))));
+        child: Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+                width: KCastingAppData().isWeb
+                    ? CustomStyles.appWidth
+                    : double.infinity,
+                child: Scaffold(
+                    appBar: CustomStyles.defaultAppBar('', () {
+                      Navigator.pop(context);
+                    }),
+                    body: SingleChildScrollView(
+                        child: Container(
+                            margin: EdgeInsets.only(top: 30, bottom: 70),
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                      margin: EdgeInsets.only(
+                                          bottom: 15, left: 15, right: 15),
+                                      child: Text(
+                                          StringUtils.checkedString(_infoData[
+                                              APIConstants
+                                                  .use_infomation_name]),
+                                          style: CustomStyles
+                                              .normal24TextStyle())),
+                                  Container(
+                                      margin: EdgeInsets.only(
+                                          bottom: 25, left: 15, right: 15),
+                                      child: Text(
+                                          "등록일: " +
+                                              StringUtils.checkedString(
+                                                  _infoData[
+                                                      APIConstants.addDate]),
+                                          style: CustomStyles
+                                              .normal14TextStyle())),
+                                  Container(
+                                      child: Divider(
+                                          height: 2,
+                                          color: CustomColors.colorFontTitle)),
+                                  Container(
+                                      margin: EdgeInsets.only(
+                                          left: 15, right: 15, top: 20),
+                                      child: Text(
+                                          StringUtils.checkedString(_infoData[
+                                              APIConstants
+                                                  .use_infomation_contents]),
+                                          style:
+                                              CustomStyles.dark14TextStyle()))
+                                ])))))));
   }
 }

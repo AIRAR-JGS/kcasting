@@ -213,185 +213,211 @@ class _PushNotification extends State<PushNotification> with BaseUtilMixin {
   Widget build(BuildContext context) {
     return Theme(
         data: CustomStyles.defaultTheme(),
-        child: Scaffold(
-            appBar: CustomStyles.defaultAppBar('', () {
-              Navigator.pop(context);
-            }),
-            body: Stack(children: [
-              RefreshIndicator(
-                  child: SingleChildScrollView(
-                      controller: _scrollController,
-                      physics: AlwaysScrollableScrollPhysics(),
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              margin: EdgeInsets.only(top: 30.0, bottom: 10),
-                              padding: EdgeInsets.only(left: 16, right: 16),
-                              child: Text('알림',
-                                  style: CustomStyles.normal24TextStyle()),
-                            ),
-                            Container(
-                                padding: EdgeInsets.only(
-                                    left: 15, right: 15, top: 20, bottom: 70),
-                                child: ListView.builder(
-                                    primary: false,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    itemCount: _noticeList.length,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      Map<String, dynamic> _data =
-                                          _noticeList[index];
+        child: Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+                width: KCastingAppData().isWeb
+                    ? CustomStyles.appWidth
+                    : double.infinity,
+                child: Scaffold(
+                    appBar: CustomStyles.defaultAppBar('', () {
+                      Navigator.pop(context);
+                    }),
+                    body: Stack(children: [
+                      RefreshIndicator(
+                          child: SingleChildScrollView(
+                              controller: _scrollController,
+                              physics: AlwaysScrollableScrollPhysics(),
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                          top: 30.0, bottom: 10),
+                                      padding:
+                                          EdgeInsets.only(left: 16, right: 16),
+                                      child: Text('알림',
+                                          style:
+                                              CustomStyles.normal24TextStyle()),
+                                    ),
+                                    Container(
+                                        padding: EdgeInsets.only(
+                                            left: 15,
+                                            right: 15,
+                                            top: 20,
+                                            bottom: 70),
+                                        child: ListView.builder(
+                                            primary: false,
+                                            physics:
+                                                NeverScrollableScrollPhysics(),
+                                            shrinkWrap: true,
+                                            itemCount: _noticeList.length,
+                                            itemBuilder: (BuildContext context,
+                                                int index) {
+                                              Map<String, dynamic> _data =
+                                                  _noticeList[index];
 
-                                      return Container(
-                                          alignment: Alignment.centerLeft,
-                                          child: GestureDetector(
-                                              onTap: () {
-                                                if (_data[APIConstants
-                                                            .alert_type] !=
-                                                        null &&
-                                                    _data[APIConstants
-                                                            .type_seq] !=
-                                                        null) {
-                                                  switch (_data[APIConstants
-                                                      .alert_type]) {
-                                                    case APIConstants
-                                                        .ADD_ACT_PRP:
-                                                      // 배우 회원 오디션 제안 받음
-                                                      addView(
-                                                          context,
-                                                          OfferedAuditionDetail(
-                                                              seq: _data[
-                                                                  APIConstants
-                                                                      .type_seq]));
-
-                                                      break;
-
-                                                    case APIConstants
-                                                        .ADD_MNG_PRP:
-                                                      // 매니지먼트 회원 오디션 제안 받음
-                                                      addView(
-                                                          context,
-                                                          OfferedAuditionDetail(
-                                                              seq: _data[
-                                                                  APIConstants
-                                                                      .type_seq]));
-
-                                                      break;
-
-                                                    case APIConstants
-                                                        .UPD_ACT_AAS:
-                                                      // 배우 회원이 지원한 오디션 상태값 변경됨
-                                                      addView(
-                                                          context,
-                                                          AuditionApplyDetail(
-                                                              applySeq: _data[
-                                                                  APIConstants
-                                                                      .type_seq]));
-
-                                                      break;
-
-                                                    case APIConstants
-                                                        .UPD_MNG_AAS:
-                                                      // 매니지먼트 소속 배우 회원이 지원한 오디션 상태값 변경됨
-                                                      addView(
-                                                          context,
-                                                          AuditionApplyDetail(
-                                                              applySeq: _data[
-                                                                  APIConstants
-                                                                      .type_seq]));
-
-                                                      break;
-
-                                                    case APIConstants
-                                                        .ADD_PRD_AAA:
-                                                      // 제작사가 등록한 오디션에 누가 지원함
-                                                      addView(
-                                                          context,
-                                                          RegisteredAuditionDetail(
-                                                              castingSeq: _data[
-                                                                  APIConstants
-                                                                      .type_seq]));
-
-                                                      break;
-
-                                                    case APIConstants
-                                                        .UPD_PRD_PPS:
-                                                      // 제작사가 제안한 오디션에 배우가 수락 또는 거절함
-                                                      addView(context,
-                                                          ProposedAuditionList());
-                                                      break;
-                                                  }
-                                                }
-
-                                                requestCheckNoticeApi(context,
-                                                    _data[APIConstants.seq]);
-                                              },
-                                              child: Container(
-                                                  margin: EdgeInsets.only(
-                                                      bottom: 15),
-                                                  decoration: BoxDecoration(
-                                                      color: CustomColors
-                                                          .colorWhite,
-                                                      borderRadius: CustomStyles
-                                                          .circle7BorderRadius(),
-                                                      boxShadow: [
-                                                        BoxShadow(
-                                                          color: CustomColors
-                                                              .colorFontLightGrey
-                                                              .withAlpha(100),
-                                                          blurRadius: 2.0,
-                                                          spreadRadius: 2.0,
-                                                          offset: Offset(2, 1),
-                                                        )
-                                                      ]),
+                                              return Container(
                                                   alignment:
                                                       Alignment.centerLeft,
-                                                  padding: EdgeInsets.only(
-                                                      left: 15,
-                                                      right: 15,
-                                                      top: 20,
-                                                      bottom: 15),
-                                                  child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Container(
-                                                            margin:
-                                                                EdgeInsets.only(
-                                                                    bottom: 10),
-                                                            child: Text(
-                                                                _data[APIConstants
-                                                                    .alert_contents],
-                                                                style: CustomStyles
-                                                                    .normal16TextStyle())),
-                                                        Container(
-                                                            alignment: Alignment
-                                                                .centerRight,
-                                                            child: Text(
-                                                                _data[APIConstants
-                                                                    .addDate],
-                                                                style: CustomStyles
-                                                                    .normal14TextStyle()))
-                                                      ]))));
-                                    }))
-                          ])),
-                  onRefresh: _refreshPage),
-              Visibility(
-                  child: Container(
-                      alignment: Alignment.center,
-                      child: Text('알림이 없습니다.',
-                          style: CustomStyles.normal16TextStyle())),
-                  visible: _noticeList.length > 0 ? false : true),
-              Visibility(
-                child: Container(
-                    color: Colors.black38,
-                    alignment: Alignment.center,
-                    child: CircularProgressIndicator()),
-                visible: _isUpload,
-              )
-            ])));
+                                                  child: GestureDetector(
+                                                      onTap: () {
+                                                        if (_data[APIConstants
+                                                                    .alert_type] !=
+                                                                null &&
+                                                            _data[APIConstants
+                                                                    .type_seq] !=
+                                                                null) {
+                                                          switch (_data[
+                                                              APIConstants
+                                                                  .alert_type]) {
+                                                            case APIConstants
+                                                                .ADD_ACT_PRP:
+                                                              // 배우 회원 오디션 제안 받음
+                                                              addView(
+                                                                  context,
+                                                                  OfferedAuditionDetail(
+                                                                      seq: _data[
+                                                                          APIConstants
+                                                                              .type_seq]));
+
+                                                              break;
+
+                                                            case APIConstants
+                                                                .ADD_MNG_PRP:
+                                                              // 매니지먼트 회원 오디션 제안 받음
+                                                              addView(
+                                                                  context,
+                                                                  OfferedAuditionDetail(
+                                                                      seq: _data[
+                                                                          APIConstants
+                                                                              .type_seq]));
+
+                                                              break;
+
+                                                            case APIConstants
+                                                                .UPD_ACT_AAS:
+                                                              // 배우 회원이 지원한 오디션 상태값 변경됨
+                                                              addView(
+                                                                  context,
+                                                                  AuditionApplyDetail(
+                                                                      applySeq:
+                                                                          _data[
+                                                                              APIConstants.type_seq]));
+
+                                                              break;
+
+                                                            case APIConstants
+                                                                .UPD_MNG_AAS:
+                                                              // 매니지먼트 소속 배우 회원이 지원한 오디션 상태값 변경됨
+                                                              addView(
+                                                                  context,
+                                                                  AuditionApplyDetail(
+                                                                      applySeq:
+                                                                          _data[
+                                                                              APIConstants.type_seq]));
+
+                                                              break;
+
+                                                            case APIConstants
+                                                                .ADD_PRD_AAA:
+                                                              // 제작사가 등록한 오디션에 누가 지원함
+                                                              addView(
+                                                                  context,
+                                                                  RegisteredAuditionDetail(
+                                                                      castingSeq:
+                                                                          _data[
+                                                                              APIConstants.type_seq]));
+
+                                                              break;
+
+                                                            case APIConstants
+                                                                .UPD_PRD_PPS:
+                                                              // 제작사가 제안한 오디션에 배우가 수락 또는 거절함
+                                                              addView(context,
+                                                                  ProposedAuditionList());
+                                                              break;
+                                                          }
+                                                        }
+
+                                                        requestCheckNoticeApi(
+                                                            context,
+                                                            _data[APIConstants
+                                                                .seq]);
+                                                      },
+                                                      child: Container(
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  bottom: 15),
+                                                          decoration: BoxDecoration(
+                                                              color: CustomColors
+                                                                  .colorWhite,
+                                                              borderRadius:
+                                                                  CustomStyles
+                                                                      .circle7BorderRadius(),
+                                                              boxShadow: [
+                                                                BoxShadow(
+                                                                  color: CustomColors
+                                                                      .colorFontLightGrey
+                                                                      .withAlpha(
+                                                                          100),
+                                                                  blurRadius:
+                                                                      2.0,
+                                                                  spreadRadius:
+                                                                      2.0,
+                                                                  offset:
+                                                                      Offset(
+                                                                          2, 1),
+                                                                )
+                                                              ]),
+                                                          alignment: Alignment
+                                                              .centerLeft,
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  left: 15,
+                                                                  right: 15,
+                                                                  top: 20,
+                                                                  bottom: 15),
+                                                          child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Container(
+                                                                    margin: EdgeInsets.only(
+                                                                        bottom:
+                                                                            10),
+                                                                    child: Text(
+                                                                        _data[APIConstants
+                                                                            .alert_contents],
+                                                                        style: CustomStyles
+                                                                            .normal16TextStyle())),
+                                                                Container(
+                                                                    alignment:
+                                                                        Alignment
+                                                                            .centerRight,
+                                                                    child: Text(
+                                                                        _data[APIConstants
+                                                                            .addDate],
+                                                                        style: CustomStyles
+                                                                            .normal14TextStyle()))
+                                                              ]))));
+                                            }))
+                                  ])),
+                          onRefresh: _refreshPage),
+                      Visibility(
+                          child: Container(
+                              alignment: Alignment.center,
+                              child: Text('알림이 없습니다.',
+                                  style: CustomStyles.normal16TextStyle())),
+                          visible: _noticeList.length > 0 ? false : true),
+                      Visibility(
+                        child: Container(
+                            color: Colors.black38,
+                            alignment: Alignment.center,
+                            child: CircularProgressIndicator()),
+                        visible: _isUpload,
+                      )
+                    ])))));
   }
 }

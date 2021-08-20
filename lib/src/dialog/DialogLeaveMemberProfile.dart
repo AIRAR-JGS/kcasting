@@ -4,6 +4,8 @@ import 'package:casting_call/res/CustomStyles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../KCastingAppData.dart';
+
 class DialogLeaveMemberProfile extends StatelessWidget {
   final VoidCallback onClickedAgree;
 
@@ -14,6 +16,12 @@ class DialogLeaveMemberProfile extends StatelessWidget {
   dialogContent(BuildContext context) {
     return Theme(
       data: ThemeData(fontFamily: Constants.appFont),
+      child: Align(
+      alignment: Alignment.center,
+      child: Container(
+      width: KCastingAppData().isWeb
+      ? CustomStyles.appWidth * 0.8
+          : double.infinity,
       child: Stack(
         children: <Widget>[
           Container(
@@ -75,7 +83,7 @@ class DialogLeaveMemberProfile extends StatelessWidget {
             ),
           ),
         ],
-      ),
+      ),))
     );
   }
 

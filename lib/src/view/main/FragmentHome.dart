@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:casting_call/BaseWidget.dart';
@@ -15,6 +17,15 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_tags/flutter_tags.dart';
+class MyCustomScrollBehavior extends MaterialScrollBehavior {
+  // Override behavior methods and getters like dragDevices
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+    PointerDeviceKind.touch,
+    PointerDeviceKind.mouse,
+    // etc.
+  };
+}
 
 /*
 * 프레그먼트 홈 클래스(메인 화면)
@@ -265,7 +276,9 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
         },
         child: Container(
             alignment: Alignment.center,
-            width: MediaQuery.of(context).size.width,
+            width: (KCastingAppData().isWeb)
+                ? CustomStyles.appWidth
+                : MediaQuery.of(context).size.width,
             margin: EdgeInsets.symmetric(horizontal: 5.0),
             decoration: BoxDecoration(
                 color: CustomColors.colorWhite,
@@ -282,7 +295,9 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
                 ? ClipRRect(
                     borderRadius: CustomStyles.circle7BorderRadius(),
                     child: CachedNetworkImage(
-                        width: MediaQuery.of(context).size.width,
+                        width: (KCastingAppData().isWeb)
+                            ? CustomStyles.appWidth
+                            : MediaQuery.of(context).size.width,
                         placeholder: (context, url) => Container(
                             child: CircularProgressIndicator(),
                             alignment: Alignment.center),
@@ -330,249 +345,255 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
     return SingleChildScrollView(
         controller: _scrollController,
         padding: EdgeInsets.only(top: 20),
-        child: Column(children: [
-          // 메인 배너
-          Visibility(
-            child: Container(
-                margin: EdgeInsets.only(bottom: 20),
-                child: CarouselSlider.builder(
-                  options: CarouselOptions(
-                      height: MediaQuery.of(context).size.height * 0.25,
-                      autoPlay: true,
-                      autoPlayInterval: Duration(seconds: 3),
-                      autoPlayAnimationDuration: Duration(milliseconds: 800),
-                      autoPlayCurve: Curves.fastOutSlowIn,
-                      pauseAutoPlayOnTouch: true),
-                  itemCount: _bannerList.length,
-                  itemBuilder: (context, index, realIndex) =>
-                      _bannerItemWidget(index),
-                )),
-            visible: _bannerList.length > 0 ? true : false,
-          ),
+        child: ScrollConfiguration(
+          behavior: MyCustomScrollBehavior(),
+          child: Column(
+              children: [
+                // 메인 배너
+                Visibility(
+                  child: Container(
+                      margin: EdgeInsets.only(bottom: 20),
+                      child: CarouselSlider.builder(
+                        options: CarouselOptions(
+                            height: (KCastingAppData().isWeb)
+                                ? CustomStyles.appHeight * 0.25
+                                : MediaQuery.of(context).size.height * 0.25,
+                            autoPlay: true,
+                            autoPlayInterval: Duration(seconds: 3),
+                            autoPlayAnimationDuration: Duration(milliseconds: 800),
+                            autoPlayCurve: Curves.fastOutSlowIn,
+                            pauseAutoPlayOnTouch: true),
+                        itemCount: _bannerList.length,
+                        itemBuilder: (context, index, realIndex) =>
+                            _bannerItemWidget(index),
+                      )),
+                  visible: _bannerList.length > 0 ? true : false,
+                ),
 
-          // 새로운 캐스팅
-          Visibility(
-              child: Container(
-                  padding: EdgeInsets.only(left: 16, right: 16),
-                  alignment: Alignment.centerLeft,
-                  child:
-                      Text('새로운 캐스팅', style: CustomStyles.dark14TextStyle())),
-              visible: _newCastingList.length > 0 ? true : false),
+                // 새로운 캐스팅
+                Visibility(
+                    child: Container(
+                        padding: EdgeInsets.only(left: 16, right: 16),
+                        alignment: Alignment.centerLeft,
+                        child:
+                        Text('새로운 캐스팅', style: CustomStyles.dark14TextStyle())),
+                    visible: _newCastingList.length > 0 ? true : false),
 
-          // 새로운 캐스팅 목록
-          Visibility(
-              child: Container(
-                  margin: EdgeInsets.only(bottom: 10, left: 16, top: 5),
-                  height: 180,
-                  child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: _newCastingList.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                            margin: EdgeInsets.only(right: 10),
-                            child: AuditionListItem(
-                                castingItem: _newCastingList[index],
-                                isMyScrapList: false,
-                                onClickedBookmark: () {
-                                  if (KCastingAppData()
+                // 새로운 캐스팅 목록
+                Visibility(
+                    child: Container(
+                      margin: EdgeInsets.only(bottom: 10, left: 16, top: 5),
+                      height: 180,
+                      child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: _newCastingList.length,
+                          itemBuilder: (context, index) {
+                            return Container(
+                                margin: EdgeInsets.only(right: 10),
+                                child: AuditionListItem(
+                                    castingItem: _newCastingList[index],
+                                    isMyScrapList: false,
+                                    onClickedBookmark: () {
+                                      if (KCastingAppData()
                                           .myInfo[APIConstants.member_type] ==
-                                      APIConstants.member_type_actor) {
-                                    requestActorBookmarkEditApi(
-                                        context, index, true);
-                                  } else if (KCastingAppData()
+                                          APIConstants.member_type_actor) {
+                                        requestActorBookmarkEditApi(
+                                            context, index, true);
+                                      } else if (KCastingAppData()
                                           .myInfo[APIConstants.member_type] ==
-                                      APIConstants.member_type_management) {
-                                    requestManagementBookmarkEditApi(
-                                        context, index, true);
-                                  }
-                                }));
-                      })),
-              visible: _newCastingList.length > 0 ? true : false),
+                                          APIConstants.member_type_management) {
+                                        requestManagementBookmarkEditApi(
+                                            context, index, true);
+                                      }
+                                    }));
+                          }),
+                    ),
+                    visible: _newCastingList.length > 0 ? true : false),
 
-          // 마감임박 캐스팅
-          Visibility(
-              child: Container(
-                  padding: EdgeInsets.only(left: 16, right: 16),
-                  alignment: Alignment.centerLeft,
-                  child:
-                      Text('마감임박 캐스팅', style: CustomStyles.dark14TextStyle())),
-              visible: _oldCastingList.length > 0 ? true : false),
+                // 마감임박 캐스팅
+                Visibility(
+                    child: Container(
+                        padding: EdgeInsets.only(left: 16, right: 16),
+                        alignment: Alignment.centerLeft,
+                        child:
+                        Text('마감임박 캐스팅', style: CustomStyles.dark14TextStyle())),
+                    visible: _oldCastingList.length > 0 ? true : false),
 
-          // 마감임박 캐스팅 목록
-          Visibility(
-              child: Container(
-                  margin: EdgeInsets.only(left: 16, top: 5),
-                  height: 180,
-                  child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: _oldCastingList.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                            margin: EdgeInsets.only(right: 10),
-                            child: AuditionListItem(
-                                castingItem: _oldCastingList[index],
-                                isMyScrapList: false,
-                                onClickedBookmark: () {
-                                  if (KCastingAppData()
-                                          .myInfo[APIConstants.member_type] ==
-                                      APIConstants.member_type_actor) {
-                                    requestActorBookmarkEditApi(
-                                        context, index, false);
-                                  } else if (KCastingAppData()
-                                          .myInfo[APIConstants.member_type] ==
-                                      APIConstants.member_type_management) {
-                                    requestManagementBookmarkEditApi(
-                                        context, index, false);
-                                  }
-                                }));
-                      })),
-              visible: _oldCastingList.length > 0 ? true : false),
+                // 마감임박 캐스팅 목록
+                Visibility(
+                    child: Container(
+                        margin: EdgeInsets.only(left: 16, top: 5),
+                        height: 180,
+                        child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: _oldCastingList.length,
+                            itemBuilder: (context, index) {
+                              return Container(
+                                  margin: EdgeInsets.only(right: 10),
+                                  child: AuditionListItem(
+                                      castingItem: _oldCastingList[index],
+                                      isMyScrapList: false,
+                                      onClickedBookmark: () {
+                                        if (KCastingAppData()
+                                            .myInfo[APIConstants.member_type] ==
+                                            APIConstants.member_type_actor) {
+                                          requestActorBookmarkEditApi(
+                                              context, index, false);
+                                        } else if (KCastingAppData()
+                                            .myInfo[APIConstants.member_type] ==
+                                            APIConstants.member_type_management) {
+                                          requestManagementBookmarkEditApi(
+                                              context, index, false);
+                                        }
+                                      }));
+                            })),
+                    visible: _oldCastingList.length > 0 ? true : false),
 
-          // 캐스팅 더보기
-          Visibility(
-              child: Container(
-                  margin: EdgeInsets.only(bottom: 10, top: 10),
-                  alignment: Alignment.center,
-                  child:
-                      CustomStyles.greyBorderRound21ButtonStyle('캐스팅 더보기', () {
-                    widget.onClickedOpenCastingBoard();
-                  })),
-              visible: _oldCastingList.length > 0 || _newCastingList.length > 0
-                  ? true
-                  : false),
+                // 캐스팅 더보기
+                Visibility(
+                    child: Container(
+                        margin: EdgeInsets.only(bottom: 10, top: 10),
+                        alignment: Alignment.center,
+                        child:
+                        CustomStyles.greyBorderRound21ButtonStyle('캐스팅 더보기', () {
+                          widget.onClickedOpenCastingBoard();
+                        })),
+                    visible: _oldCastingList.length > 0 || _newCastingList.length > 0
+                        ? true
+                        : false),
 
-          Visibility(
-              child: Container(
-                  child: Divider(color: CustomColors.colorFontLightGrey)),
-              visible: _oldCastingList.length > 0 || _newCastingList.length > 0
-                  ? true
-                  : false),
+                Visibility(
+                    child: Container(
+                        child: Divider(color: CustomColors.colorFontLightGrey)),
+                    visible: _oldCastingList.length > 0 || _newCastingList.length > 0
+                        ? true
+                        : false),
 
-          // 남배우 프로필
-          Visibility(
-              child: Container(
-                  margin: EdgeInsets.only(bottom: 10, top: 5),
-                  padding: EdgeInsets.only(left: 16, right: 16),
-                  alignment: Alignment.centerLeft,
-                  child:
-                      Text('남배우 프로필', style: CustomStyles.dark14TextStyle())),
-              visible: _actorList.length > 0 ? true : false),
+                // 남배우 프로필
+                Visibility(
+                    child: Container(
+                        margin: EdgeInsets.only(bottom: 10, top: 5),
+                        padding: EdgeInsets.only(left: 16, right: 16),
+                        alignment: Alignment.centerLeft,
+                        child:
+                        Text('남배우 프로필', style: CustomStyles.dark14TextStyle())),
+                    visible: _actorList.length > 0 ? true : false),
 
-          // 남배우 프로필 태그
-          Visibility(
-              child: Container(
-                  alignment: Alignment.topLeft,
-                  margin: EdgeInsets.only(bottom: 10),
-                  padding: EdgeInsets.only(left: 16, right: 16),
-                  child: _tagListWidget(
-                      true, _actorTagStateKey, _actorKeywordList)),
-              visible: _actorList.length > 0 ? true : false),
+                // 남배우 프로필 태그
+                Visibility(
+                    child: Container(
+                        alignment: Alignment.topLeft,
+                        margin: EdgeInsets.only(bottom: 10),
+                        padding: EdgeInsets.only(left: 16, right: 16),
+                        child: _tagListWidget(
+                            true, _actorTagStateKey, _actorKeywordList)),
+                    visible: _actorList.length > 0 ? true : false),
 
-          /*
+                /*
           *  [2021.02.08] Dev Jennie
           *  그리드뷰 스크롤 막고(NeverScrollableScrollPhysics) Wrap으로 감싸면
           *  그리드뷰의 height을 wrapContent으로 설정할 수 있음
           * */
-          Visibility(
-              child: Wrap(children: [
-                GridView.count(
-                    padding: EdgeInsets.only(left: 16, right: 16),
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 5,
-                    childAspectRatio: (0.64),
-                    children: List.generate(_actorList.length, (index) {
-                      return ActorListItem(data: _actorList[index]);
-                    }))
-              ]),
-              visible: _actorList.length > 0 ? true : false),
+                Visibility(
+                    child: Wrap(children: [
+                      GridView.count(
+                          padding: EdgeInsets.only(left: 16, right: 16),
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 5,
+                          childAspectRatio: (0.64),
+                          children: List.generate(_actorList.length, (index) {
+                            return ActorListItem(data: _actorList[index]);
+                          }))
+                    ]),
+                    visible: _actorList.length > 0 ? true : false),
 
-          Visibility(
-              child: Container(
-                  margin: EdgeInsets.only(bottom: 10),
-                  alignment: Alignment.center,
-                  child:
-                      CustomStyles.greyBorderRound21ButtonStyle('남배우 더보기', () {
-                    widget
-                        .onClickedOpenCastingActor(APIConstants.actor_sex_male);
-                  })),
-              visible: _actorList.length > 0 ? true : false),
+                Visibility(
+                    child: Container(
+                        margin: EdgeInsets.only(bottom: 10),
+                        alignment: Alignment.center,
+                        child:
+                        CustomStyles.greyBorderRound21ButtonStyle('남배우 더보기', () {
+                          widget
+                              .onClickedOpenCastingActor(APIConstants.actor_sex_male);
+                        })),
+                    visible: _actorList.length > 0 ? true : false),
 
-          Visibility(
-              child: Container(
-                  child: Divider(color: CustomColors.colorFontLightGrey)),
-              visible: _actorList.length > 0 ? true : false),
+                Visibility(
+                    child: Container(
+                        child: Divider(color: CustomColors.colorFontLightGrey)),
+                    visible: _actorList.length > 0 ? true : false),
 
-          // 여배우 프로필
-          Visibility(
-              child: Container(
-                  margin: EdgeInsets.only(bottom: 10),
-                  padding: EdgeInsets.only(left: 15, right: 15),
-                  alignment: Alignment.centerLeft,
-                  child:
-                      Text('여배우 프로필', style: CustomStyles.dark14TextStyle())),
-              visible: _actressList.length > 0 ? true : false),
+                // 여배우 프로필
+                Visibility(
+                    child: Container(
+                        margin: EdgeInsets.only(bottom: 10),
+                        padding: EdgeInsets.only(left: 15, right: 15),
+                        alignment: Alignment.centerLeft,
+                        child:
+                        Text('여배우 프로필', style: CustomStyles.dark14TextStyle())),
+                    visible: _actressList.length > 0 ? true : false),
 
-          // 여배우 프로필 태그
-          Visibility(
-              child: Container(
-                  alignment: Alignment.topLeft,
-                  margin: EdgeInsets.only(bottom: 10),
-                  padding: EdgeInsets.only(left: 15, right: 15),
-                  child: _tagListWidget(
-                      false, _actressTagStateKey, _actressKeywordList)),
-              visible: _actressList.length > 0 ? true : false),
+                // 여배우 프로필 태그
+                Visibility(
+                    child: Container(
+                        alignment: Alignment.topLeft,
+                        margin: EdgeInsets.only(bottom: 10),
+                        padding: EdgeInsets.only(left: 15, right: 15),
+                        child: _tagListWidget(
+                            false, _actressTagStateKey, _actressKeywordList)),
+                    visible: _actressList.length > 0 ? true : false),
 
-          /*
+                /*
           *  [2021.02.08] Dev Jennie
           *  그리드뷰 스크롤 막고(NeverScrollableScrollPhysics) Wrap으로 감싸면
           *  그리드뷰의 height을 wrapContent으로 설정할 수 있음
           * */
-          Visibility(
-              child: Wrap(children: [
-                GridView.count(
-                    padding: EdgeInsets.only(left: 16, right: 16),
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 5,
-                    childAspectRatio: (0.64),
-                    children: List.generate(_actressList.length, (index) {
-                      return ActorListItem(data: _actressList[index]);
-                    }))
-              ]),
-              visible: _actressList.length > 0 ? true : false),
+                Visibility(
+                    child: Wrap(children: [
+                      GridView.count(
+                          padding: EdgeInsets.only(left: 16, right: 16),
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 5,
+                          childAspectRatio: (0.64),
+                          children: List.generate(_actressList.length, (index) {
+                            return ActorListItem(data: _actressList[index]);
+                          }))
+                    ]),
+                    visible: _actressList.length > 0 ? true : false),
 
-          Visibility(
-              child: Container(
-                  margin: EdgeInsets.only(bottom: 10),
-                  alignment: Alignment.center,
-                  child: CustomStyles.greyBorderRound21ButtonStyle('여배우 더보기',
-                      () {
-                    widget.onClickedOpenCastingActor(
-                        APIConstants.actor_sex_female);
-                  })),
-              visible: _actressList.length > 0 ? true : false),
+                Visibility(
+                    child: Container(
+                        margin: EdgeInsets.only(bottom: 10),
+                        alignment: Alignment.center,
+                        child: CustomStyles.greyBorderRound21ButtonStyle('여배우 더보기',
+                                () {
+                              widget.onClickedOpenCastingActor(
+                                  APIConstants.actor_sex_female);
+                            })),
+                    visible: _actressList.length > 0 ? true : false),
 
-          // 풋터
-          Container(
-              color: CustomColors.colorBgGrey,
-              margin: EdgeInsets.only(top: 20),
-              child: Column(children: [
-                // 회사소개
+                // 풋터
                 Container(
-                    margin: EdgeInsets.only(top: 30, left: 15, right: 15),
-                    alignment: Alignment.topLeft,
-                    child: CustomStyles.normal16TextButtonStyle('회사소개', () {
-                      launchInBrowser(
-                          'https://www.enterrobang.com/entry/companyinfo');
-                    })),
+                    color: CustomColors.colorBgGrey,
+                    margin: EdgeInsets.only(top: 20),
+                    child: Column(children: [
+                      // 회사소개
+                      Container(
+                          margin: EdgeInsets.only(top: 30, left: 15, right: 15),
+                          alignment: Alignment.topLeft,
+                          child: CustomStyles.normal16TextButtonStyle('회사소개', () {
+                            launchInBrowser(
+                                'https://www.enterrobang.com/entry/companyinfo');
+                          })),
 
-                // 회원약관
-                /*Container(
+                      // 회원약관
+                      /*Container(
                     margin: EdgeInsets.only(top: 5, left: 15, right: 15),
                     alignment: Alignment.topLeft,
                     child: CustomStyles.normal16TextButtonStyle('회원약관', () {
@@ -580,26 +601,27 @@ class _FragmentHome extends State<FragmentHome> with BaseUtilMixin {
                           'https://www.enterrobang.com/entry/companyinfo');
                     })),*/
 
-                // 개인정보처리방침
-                Container(
-                    margin: EdgeInsets.only(
-                        top: 10, bottom: 30, left: 15, right: 15),
-                    alignment: Alignment.topLeft,
-                    child: CustomStyles.normal16TextButtonStyle('개인정보처리방침', () {
-                      launchInBrowser(
-                          'https://enterrobang.tistory.com/pages/privacy');
-                    })),
+                      // 개인정보처리방침
+                      Container(
+                          margin: EdgeInsets.only(
+                              top: 10, bottom: 30, left: 15, right: 15),
+                          alignment: Alignment.topLeft,
+                          child: CustomStyles.normal16TextButtonStyle('개인정보처리방침', () {
+                            launchInBrowser(
+                                'https://enterrobang.tistory.com/pages/privacy');
+                          })),
 
-                // 이용안내
-                Container(
-                    margin: EdgeInsets.only(
-                        top: 25, left: 15, right: 15, bottom: 70),
-                    alignment: Alignment.topLeft,
-                    child: CustomStyles.underline16TextButtonStyle('이용안내', () {
-                      addView(context, UsageGuide());
-                    }))
-              ]))
-        ]));
+                      // 이용안내
+                      Container(
+                          margin: EdgeInsets.only(
+                              top: 25, left: 15, right: 15, bottom: 70),
+                          alignment: Alignment.topLeft,
+                          child: CustomStyles.underline16TextButtonStyle('이용안내', () {
+                            addView(context, UsageGuide());
+                          }))
+                    ]))
+              ]),
+        ));
   }
 
   /*

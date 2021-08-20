@@ -9,6 +9,8 @@ import 'package:casting_call/src/view/user/common/AuthWebView.dart';
 import 'package:casting_call/src/view/user/common/JoinSelectType.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../KCastingAppData.dart';
+
 /*
 *  개인 본인인증
 * */
@@ -92,147 +94,160 @@ class _SelfAuth extends State<SelfAuth> with BaseUtilMixin {
         },
         child: Theme(
             data: CustomStyles.defaultTheme(),
-            child: Scaffold(
-                key: _scaffoldKey,
-                appBar: CustomStyles.defaultAppBar('본인 인증', () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => JoinSelectType()),
-                  );
-                }),
-                body: Builder(
-                  builder: (BuildContext context) {
-                    return Stack(
-                      children: [
-                        Container(
-                            child: Column(children: [
-                          Expanded(
-                              flex: 1,
-                              child: SingleChildScrollView(
+            child: Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                    width: KCastingAppData().isWeb
+                        ? CustomStyles.appWidth
+                        : double.infinity,
+                    child: Scaffold(
+                        key: _scaffoldKey,
+                        appBar: CustomStyles.defaultAppBar('본인 인증', () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => JoinSelectType()),
+                          );
+                        }),
+                        body: Builder(builder: (BuildContext context) {
+                          return Stack(children: [
+                            Container(
+                                child: Column(children: [
+                              Expanded(
+                                  flex: 1,
+                                  child: SingleChildScrollView(
+                                      child: Container(
+                                          padding: EdgeInsets.only(
+                                              top: 30, bottom: 50),
+                                          child: Column(
+                                              mainAxisSize: MainAxisSize.max,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                    margin: EdgeInsets.only(
+                                                        bottom: 30),
+                                                    alignment: Alignment.center,
+                                                    child: Text(_title,
+                                                        style: CustomStyles
+                                                            .normal24TextStyle())),
+                                                Visibility(
+                                                    child: Container(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 15,
+                                                                right: 15),
+                                                        margin: EdgeInsets.only(
+                                                            bottom: 30),
+                                                        alignment:
+                                                            Alignment.center,
+                                                        child: Text(_msg,
+                                                            style: CustomStyles
+                                                                .normal16TextStyle())),
+                                                    visible: _authRes == ''
+                                                        ? true
+                                                        : false),
+                                                Visibility(
+                                                    child: Container(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 15,
+                                                                right: 15),
+                                                        margin: EdgeInsets.only(
+                                                            bottom: 30),
+                                                        alignment:
+                                                            Alignment.center,
+                                                        child: Text(
+                                                            '본인인증이 완료되었습니다!\n회원가입을 진행해 주세요.',
+                                                            style: CustomStyles
+                                                                .normal16TextStyle())),
+                                                    visible: _authRes == 'TRUE'
+                                                        ? true
+                                                        : false),
+                                                Visibility(
+                                                    child: Container(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 15,
+                                                                right: 15),
+                                                        margin: EdgeInsets.only(
+                                                            bottom: 30),
+                                                        alignment:
+                                                            Alignment.center,
+                                                        child: Text(
+                                                            '본인인증에 실패하였습니다. 다시 시도해 주세요.',
+                                                            style: CustomStyles
+                                                                .normal16TextStyle())),
+                                                    visible: _authRes == 'FALSE'
+                                                        ? true
+                                                        : false)
+                                              ])))),
+                              Visibility(
                                   child: Container(
-                                      padding:
-                                          EdgeInsets.only(top: 30, bottom: 50),
-                                      child: Column(
-                                          mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                                margin:
-                                                    EdgeInsets.only(bottom: 30),
-                                                alignment: Alignment.center,
-                                                child: Text(_title,
-                                                    style: CustomStyles
-                                                        .normal24TextStyle())),
-                                            Visibility(
-                                                child: Container(
-                                                    padding: EdgeInsets.only(
-                                                        left: 15, right: 15),
-                                                    margin: EdgeInsets.only(
-                                                        bottom: 30),
-                                                    alignment: Alignment.center,
-                                                    child: Text(_msg,
-                                                        style: CustomStyles
-                                                            .normal16TextStyle())),
-                                                visible: _authRes == ''
-                                                    ? true
-                                                    : false),
-                                            Visibility(
-                                                child: Container(
-                                                    padding: EdgeInsets.only(
-                                                        left: 15, right: 15),
-                                                    margin: EdgeInsets.only(
-                                                        bottom: 30),
-                                                    alignment: Alignment.center,
-                                                    child: Text(
-                                                        '본인인증이 완료되었습니다!\n회원가입을 진행해 주세요.',
-                                                        style: CustomStyles
-                                                            .normal16TextStyle())),
-                                                visible: _authRes == 'TRUE'
-                                                    ? true
-                                                    : false),
-                                            Visibility(
-                                                child: Container(
-                                                    padding: EdgeInsets.only(
-                                                        left: 15, right: 15),
-                                                    margin: EdgeInsets.only(
-                                                        bottom: 30),
-                                                    alignment: Alignment.center,
-                                                    child: Text(
-                                                        '본인인증에 실패하였습니다. 다시 시도해 주세요.',
-                                                        style: CustomStyles
-                                                            .normal16TextStyle())),
-                                                visible: _authRes == 'FALSE'
-                                                    ? true
-                                                    : false)
-                                          ])))),
-                          Visibility(
-                              child: Container(
-                                  height: 50,
-                                  width: double.infinity,
-                                  child:
-                                      CustomStyles.lightGreyBGSquareButtonStyle(
-                                          '본인인증하기', () {
-                                    bool isWeb;
-                                    try {
-                                      if (Platform.isAndroid ||
-                                          Platform.isIOS) {
-                                        isWeb = false;
-                                      } else {
-                                        isWeb = true;
-                                      }
-                                    } catch (e) {
-                                      isWeb = true;
-                                    }
+                                      height: 50,
+                                      width: double.infinity,
+                                      child: CustomStyles
+                                          .lightGreyBGSquareButtonStyle(
+                                              '본인인증하기', () {
+                                        bool isWeb;
+                                        try {
+                                          if (Platform.isAndroid ||
+                                              Platform.isIOS) {
+                                            isWeb = false;
+                                          } else {
+                                            isWeb = true;
+                                          }
+                                        } catch (e) {
+                                          isWeb = true;
+                                        }
 
-                                    if (isWeb) {
-                                      showSnackBar(
-                                          context, APIConstants.use_mobile_app);
-                                    } else {
-                                      replaceView(context,
-                                          AuthWebView(memberType: _memberType));
-                                    }
-                                  })),
-                              visible: _authRes == 'TRUE' ? false : true),
-                          Visibility(
-                              child: Container(
-                                  height: 50,
-                                  width: double.infinity,
-                                  child:
-                                      CustomStyles.lightGreyBGSquareButtonStyle(
-                                          '배우 회원가입', () {
-                                    if (_memberType == 'A') {
-                                      replaceView(
-                                          context,
-                                          JoinActorAdult(
-                                              authName: _authName,
-                                              authPhone: _authPhone,
-                                              authBirth: _authBirth,
-                                              authGender: _authGender));
-                                    } else {
-                                      replaceView(
-                                          context, JoinActorChildParentAgree(
-                                          authName: _authName,
-                                          authPhone: _authPhone,
-                                          authBirth: _authBirth,
-                                          authGender: _authGender
-                                      ));
-                                    }
-                                  })),
-                              visible: _authRes == 'TRUE' ? true : false)
-                        ])),
-                        Visibility(
-                          child: Container(
-                              color: Colors.black38,
-                              alignment: Alignment.center,
-                              child: CircularProgressIndicator()),
-                          visible: _isUpload,
-                        )
-                      ],
-                    );
-                  },
-                ))));
+                                        if (isWeb) {
+                                          showSnackBar(context,
+                                              APIConstants.use_mobile_app);
+                                        } else {
+                                          replaceView(
+                                              context,
+                                              AuthWebView(
+                                                  memberType: _memberType));
+                                        }
+                                      })),
+                                  visible: _authRes == 'TRUE' ? false : true),
+                              Visibility(
+                                  child: Container(
+                                      height: 50,
+                                      width: double.infinity,
+                                      child: CustomStyles
+                                          .lightGreyBGSquareButtonStyle(
+                                              '배우 회원가입', () {
+                                        if (_memberType == 'A') {
+                                          replaceView(
+                                              context,
+                                              JoinActorAdult(
+                                                  authName: _authName,
+                                                  authPhone: _authPhone,
+                                                  authBirth: _authBirth,
+                                                  authGender: _authGender));
+                                        } else {
+                                          replaceView(
+                                              context,
+                                              JoinActorChildParentAgree(
+                                                  authName: _authName,
+                                                  authPhone: _authPhone,
+                                                  authBirth: _authBirth,
+                                                  authGender: _authGender));
+                                        }
+                                      })),
+                                  visible: _authRes == 'TRUE' ? true : false)
+                            ])),
+                            Visibility(
+                                child: Container(
+                                    color: Colors.black38,
+                                    alignment: Alignment.center,
+                                    child: CircularProgressIndicator()),
+                                visible: _isUpload)
+                          ]);
+                        }))))));
   }
 }

@@ -287,7 +287,9 @@ class _ProposedAuditionList extends State<ProposedAuditionList>
                                     padding:
                                         EdgeInsets.only(left: 10, right: 10),
                                     alignment: Alignment.centerLeft,
-                                    width: MediaQuery.of(context).size.width,
+                                    width: (KCastingAppData().isWeb)
+                                        ? CustomStyles.appWidth
+                                        : MediaQuery.of(context).size.width,
                                     height: 40,
                                     child: Row(children: [
                                       Expanded(
@@ -321,51 +323,64 @@ class _ProposedAuditionList extends State<ProposedAuditionList>
   Widget build(BuildContext context) {
     return Theme(
         data: CustomStyles.defaultTheme(),
-        child: Scaffold(
-            key: _scaffoldKey,
-            appBar: CustomStyles.defaultAppBar('제안한 오디션', () {
-              Navigator.pop(context);
-            }),
-            body: Stack(
-              children: [
-                Container(
-                    child: RefreshIndicator(
-                  onRefresh: _refreshPage,
-                  child: SingleChildScrollView(
-                      controller: _scrollController,
-                      physics: AlwaysScrollableScrollPhysics(),
-                      key: ObjectKey(
-                          _proposalList.length > 0 ? _proposalList[0] : ""),
-                      child: Container(
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                            Container(
-                                margin: EdgeInsets.only(top: 30.0, bottom: 10),
-                                padding: EdgeInsets.only(left: 16, right: 16),
-                                child: Text('제안한 오디션',
-                                    style: CustomStyles.normal24TextStyle())),
-                            Expanded(flex: 0, child: tabItem()),
-                            Visibility(
-                                child: Container(
-                                    alignment: Alignment.center,
-                                    margin: EdgeInsets.only(top: 50),
-                                    child: Text(
-                                        '제안한 오디션이 없습니다.\n배우들에게 오디션 제안을 해보세요!',
-                                        style: CustomStyles.normal16TextStyle(),
-                                        textAlign: TextAlign.center)),
-                                visible:
-                                    _proposalList.length > 0 ? false : true)
-                          ]))),
-                )),
-                Visibility(
-                  child: Container(
-                      color: Colors.black38,
-                      alignment: Alignment.center,
-                      child: CircularProgressIndicator()),
-                  visible: _isUpload,
-                )
-              ],
-            )));
+        child: Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+                width: KCastingAppData().isWeb
+                    ? CustomStyles.appWidth
+                    : double.infinity,
+                child: Scaffold(
+                    key: _scaffoldKey,
+                    appBar: CustomStyles.defaultAppBar('제안한 오디션', () {
+                      Navigator.pop(context);
+                    }),
+                    body: Stack(
+                      children: [
+                        Container(
+                            child: RefreshIndicator(
+                          onRefresh: _refreshPage,
+                          child: SingleChildScrollView(
+                              controller: _scrollController,
+                              physics: AlwaysScrollableScrollPhysics(),
+                              key: ObjectKey(_proposalList.length > 0
+                                  ? _proposalList[0]
+                                  : ""),
+                              child: Container(
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                    Container(
+                                        margin: EdgeInsets.only(
+                                            top: 30.0, bottom: 10),
+                                        padding: EdgeInsets.only(
+                                            left: 16, right: 16),
+                                        child: Text('제안한 오디션',
+                                            style: CustomStyles
+                                                .normal24TextStyle())),
+                                    Expanded(flex: 0, child: tabItem()),
+                                    Visibility(
+                                        child: Container(
+                                            alignment: Alignment.center,
+                                            margin: EdgeInsets.only(top: 50),
+                                            child: Text(
+                                                '제안한 오디션이 없습니다.\n배우들에게 오디션 제안을 해보세요!',
+                                                style: CustomStyles
+                                                    .normal16TextStyle(),
+                                                textAlign: TextAlign.center)),
+                                        visible: _proposalList.length > 0
+                                            ? false
+                                            : true)
+                                  ]))),
+                        )),
+                        Visibility(
+                          child: Container(
+                              color: Colors.black38,
+                              alignment: Alignment.center,
+                              child: CircularProgressIndicator()),
+                          visible: _isUpload,
+                        )
+                      ],
+                    )))));
   }
 }

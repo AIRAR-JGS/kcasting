@@ -239,420 +239,484 @@ class _ActorProfileModifyMainInfo extends State<ActorProfileModifyMainInfo>
   Widget build(BuildContext context) {
     return Theme(
       data: CustomStyles.defaultTheme(),
-      child: Scaffold(
-        appBar: CustomStyles.defaultAppBar('프로필 편집', () {
-          Navigator.pop(context);
-        }),
-        body: Container(
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Expanded(
-                flex: 1,
-                child: SingleChildScrollView(
-                    child: Container(
-                        padding: EdgeInsets.only(top: 30, bottom: 30),
-                        child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  alignment: Alignment.centerLeft,
-                                  child: Text('자기소개',
-                                      style: CustomStyles.bold14TextStyle())),
-                              Container(
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  margin: EdgeInsets.only(top: 5),
-                                  child: TextField(
-                                    maxLines: 3,
-                                    controller: _txtFieldIntroduce,
-                                    decoration: InputDecoration(
-                                      isDense: true,
-                                      contentPadding: EdgeInsets.symmetric(
-                                          vertical: 15, horizontal: 15),
-                                      hintText: '작품에 대해 성실하게 몰입하고 참여합니다.',
-                                      hintStyle: TextStyle(
-                                          fontSize: 16,
-                                          color:
-                                              CustomColors.colorFontLightGrey),
-                                      border: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: CustomColors.colorFontGrey,
-                                              width: 1.0),
-                                          borderRadius: CustomStyles
-                                              .circle7BorderRadius()),
-                                      focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: CustomColors.colorFontGrey,
-                                              width: 1.0),
-                                          borderRadius: CustomStyles
-                                              .circle7BorderRadius()),
-                                    ),
-                                    style: CustomStyles.normal16TextStyle(),
-                                  )),
-                              Container(
-                                  margin: EdgeInsets.only(top: 15),
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  alignment: Alignment.centerLeft,
-                                  child: Text('드라마 페이',
-                                      style: CustomStyles.bold14TextStyle())),
-                              Container(
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  margin: EdgeInsets.only(top: 5),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                          flex: 1,
-                                          child: CustomStyles
-                                              .greyBorderRound7TextFieldWithOption(
-                                                  _txtFieldDramaPay,
-                                                  TextInputType.number,
-                                                  '')),
-                                      Expanded(
-                                        flex: 0,
-                                        child: Container(
-                                          margin: EdgeInsets.only(left: 5),
-                                          child: Text('만원',
-                                              style: CustomStyles
-                                                  .bold14TextStyle()),
-                                        ),
-                                      )
-                                    ],
-                                  )),
-                              Container(
-                                  margin: EdgeInsets.only(top: 15),
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  alignment: Alignment.centerLeft,
-                                  child: Text('영화 페이',
-                                      style: CustomStyles.bold14TextStyle())),
-                              Container(
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  margin: EdgeInsets.only(top: 5),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                          flex: 1,
-                                          child: CustomStyles
-                                              .greyBorderRound7TextFieldWithOption(
-                                                  _txtFieldMoviePay,
-                                                  TextInputType.number,
-                                                  '')),
-                                      Expanded(
-                                        flex: 0,
-                                        child: Container(
-                                          margin: EdgeInsets.only(left: 5),
-                                          child: Text('만원',
-                                              style: CustomStyles
-                                                  .bold14TextStyle()),
-                                        ),
-                                      )
-                                    ],
-                                  )),
-                              Container(
-                                  margin: EdgeInsets.only(top: 15),
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  alignment: Alignment.centerLeft,
-                                  child: Text('생년월일',
-                                      style: CustomStyles.bold14TextStyle())),
-                              Container(
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  margin: EdgeInsets.only(top: 5),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      showDatePickerForBirthDay(context,
-                                          (date) {
-                                        setState(() {
-                                          _birthY = date.year.toString();
-                                          _birthM = date.month
-                                              .toString()
-                                              .padLeft(2, '0');
-                                          _birthD = date.day
-                                              .toString()
-                                              .padLeft(2, '0');
-
-                                          _birthDate = date.year.toString() +
-                                              '-' +
-                                              date.month.toString() +
-                                              '-' +
-                                              date.day.toString();
-                                        });
-                                      });
-                                    },
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                            child: Container(
-                                                height: 48,
-                                                margin:
-                                                    EdgeInsets.only(right: 5),
-                                                padding: EdgeInsets.all(5),
-                                                decoration: BoxDecoration(
-                                                    borderRadius: CustomStyles
-                                                        .circle7BorderRadius(),
-                                                    border: Border.all(
-                                                        width: 1,
-                                                        color: CustomColors
-                                                            .colorFontGrey)),
-                                                child: GestureDetector(
-                                                  child: Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.max,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Text(_birthY,
-                                                          style: CustomStyles
-                                                              .bold14TextStyle()),
-                                                      Icon(Icons
-                                                          .arrow_drop_down),
-                                                    ],
-                                                  ),
-                                                ))),
-                                        Expanded(
-                                            child: Container(
-                                                height: 48,
-                                                margin:
-                                                    EdgeInsets.only(right: 5),
-                                                padding: EdgeInsets.all(5),
-                                                decoration: BoxDecoration(
-                                                    borderRadius: CustomStyles
-                                                        .circle7BorderRadius(),
-                                                    border: Border.all(
-                                                        width: 1,
-                                                        color: CustomColors
-                                                            .colorFontGrey)),
-                                                child: GestureDetector(
-                                                  child: Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.max,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Text(_birthM,
-                                                          style: CustomStyles
-                                                              .bold14TextStyle()),
-                                                      Icon(Icons
-                                                          .arrow_drop_down),
-                                                    ],
-                                                  ),
-                                                ))),
-                                        Expanded(
-                                            child: Container(
-                                                height: 48,
-                                                padding: EdgeInsets.all(5),
-                                                decoration: BoxDecoration(
-                                                    borderRadius: CustomStyles
-                                                        .circle7BorderRadius(),
-                                                    border: Border.all(
-                                                        width: 1,
-                                                        color: CustomColors
-                                                            .colorFontGrey)),
-                                                child: GestureDetector(
-                                                  child: Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.max,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Text(_birthD,
-                                                          style: CustomStyles
-                                                              .bold14TextStyle()),
-                                                      Icon(Icons
-                                                          .arrow_drop_down),
-                                                    ],
-                                                  ),
-                                                ))),
-                                      ],
-                                    ),
-                                  )),
-                              Container(
-                                margin: EdgeInsets.only(top: 20, bottom: 10),
-                                child: Divider(
-                                  height: 0.1,
-                                  color: CustomColors.colorFontLightGrey,
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(top: 5),
-                                padding: EdgeInsets.only(left: 15, right: 15),
-                                alignment: Alignment.centerLeft,
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                        child: Text('키',
-                                            style: CustomStyles
-                                                .bold14TextStyle())),
-                                    Expanded(
-                                        child: Container(
-                                            margin: EdgeInsets.only(left: 10),
-                                            child: Text('체중',
-                                                style: CustomStyles
-                                                    .bold14TextStyle())))
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  margin: EdgeInsets.only(top: 5),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                          flex: 1,
-                                          child: CustomStyles
-                                              .greyBorderRound7TextFieldWithOption(
-                                                  _txtFieldTall,
-                                                  TextInputType.number,
-                                                  '')),
-                                      Expanded(
-                                        flex: 0,
-                                        child: Container(
-                                          margin: EdgeInsets.only(
-                                              left: 5, right: 5),
-                                          child: Text('cm',
-                                              style: CustomStyles
-                                                  .bold14TextStyle()),
-                                        ),
-                                      ),
-                                      Expanded(
-                                          flex: 1,
-                                          child: Container(
-                                              margin: EdgeInsets.only(left: 5),
-                                              child: CustomStyles
-                                                  .greyBorderRound7TextFieldWithOption(
-                                                      _txtFieldWeight,
-                                                      TextInputType.number,
-                                                      ''))),
-                                      Expanded(
-                                        flex: 0,
-                                        child: Container(
-                                          margin: EdgeInsets.only(left: 5),
-                                          child: Text('kg',
-                                              style: CustomStyles
-                                                  .bold14TextStyle()),
-                                        ),
-                                      )
-                                    ],
-                                  )),
-                              Container(
-                                margin: EdgeInsets.only(top: 20, bottom: 10),
-                                child: Divider(
-                                  height: 0.1,
-                                  color: CustomColors.colorFontLightGrey,
-                                ),
-                              ),
-                              Container(
-                                  margin: EdgeInsets.only(top: 5),
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  alignment: Alignment.centerLeft,
-                                  child: Text('전공여부',
-                                      style: CustomStyles.bold14TextStyle())),
-                              Container(
-                                  width: double.infinity,
-                                  margin: EdgeInsets.only(top: 5),
-                                  padding: EdgeInsets.only(left: 10, right: 15),
-                                  child: Row(
-                                    children: <Widget>[
-                                      Radio(
-                                        visualDensity: VisualDensity.compact,
-                                        materialTapTargetSize:
-                                            MaterialTapTargetSize.shrinkWrap,
-                                        value: 1,
-                                        groupValue: _major,
-                                        onChanged: (_) {
-                                          setState(() {
-                                            _major = 1;
-                                          });
-                                        },
-                                      ),
-                                      Container(
-                                        margin: EdgeInsets.only(right: 10),
-                                        child: Text('전공',
-                                            style:
-                                                CustomStyles.bold14TextStyle()),
-                                      ),
-                                      Radio(
-                                        visualDensity: VisualDensity.compact,
-                                        materialTapTargetSize:
-                                            MaterialTapTargetSize.shrinkWrap,
-                                        value: 0,
-                                        groupValue: _major,
-                                        onChanged: (_) {
-                                          setState(() {
-                                            _major = 0;
-                                          });
-                                        },
-                                      ),
-                                      Text('비전공',
-                                          style: CustomStyles.bold14TextStyle())
-                                    ],
-                                  )),
-
-                              /////
-                              Column(children: _educationWidgets),
-
-                              Container(
-                                margin: EdgeInsets.only(top: 20, bottom: 10),
-                                child: Divider(
-                                  height: 0.1,
-                                  color: CustomColors.colorFontLightGrey,
-                                ),
-                              ),
-                              Container(
-                                  height: 50,
-                                  margin: EdgeInsets.only(
-                                      left: 15, right: 15, top: 15),
-                                  width: double.infinity,
-                                  child:
-                                      CustomStyles.greyBorderRound7ButtonStyle(
-                                          '학력사항 추가', () {
-                                    setState(() {
-                                      UniqueKey _uKey = UniqueKey();
-
-                                      Map<UniqueKey, EducationListModel>
-                                          _eduItem = new Map();
-                                      _eduItem[_uKey] = new EducationListModel(
-                                          "대학교",
-                                          new TextEditingController(),
-                                          new TextEditingController());
-
-                                      _educationList.add(_eduItem);
-
-                                      _educationWidgets
-                                          .add(educationHistory(_uKey));
-                                    });
-                                  })),
-                            ])))),
-            Container(
-                width: double.infinity,
-                height: 50,
-                color: Colors.grey,
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: Container(
+            width: KCastingAppData().isWeb
+                ? CustomStyles.appWidth
+                : double.infinity,
+            child: Scaffold(
+              appBar: CustomStyles.defaultAppBar('프로필 편집', () {
+                Navigator.pop(context);
+              }),
+              body: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                        child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            height: 55,
-                            child:
-                                CustomStyles.greyBGSquareButtonStyle('취소', () {
-                              Navigator.pop(context);
-                            }))),
-                    Expanded(
-                        child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            height: 55,
-                            child:
-                                CustomStyles.blueBGSquareButtonStyle('다음', () {
-                              requestUpdateApi(context);
-                            })))
-                  ],
-                ))
-          ]),
-        ),
+                        flex: 1,
+                        child: SingleChildScrollView(
+                            child: Container(
+                                padding: EdgeInsets.only(top: 30, bottom: 30),
+                                child: Column(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                          padding: EdgeInsets.only(
+                                              left: 15, right: 15),
+                                          alignment: Alignment.centerLeft,
+                                          child: Text('자기소개',
+                                              style: CustomStyles
+                                                  .bold14TextStyle())),
+                                      Container(
+                                          padding: EdgeInsets.only(
+                                              left: 15, right: 15),
+                                          margin: EdgeInsets.only(top: 5),
+                                          child: TextField(
+                                            maxLines: 3,
+                                            controller: _txtFieldIntroduce,
+                                            decoration: InputDecoration(
+                                              isDense: true,
+                                              contentPadding:
+                                                  EdgeInsets.symmetric(
+                                                      vertical: 15,
+                                                      horizontal: 15),
+                                              hintText:
+                                                  '작품에 대해 성실하게 몰입하고 참여합니다.',
+                                              hintStyle: TextStyle(
+                                                  fontSize: 16,
+                                                  color: CustomColors
+                                                      .colorFontLightGrey),
+                                              border: OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: CustomColors
+                                                          .colorFontGrey,
+                                                      width: 1.0),
+                                                  borderRadius: CustomStyles
+                                                      .circle7BorderRadius()),
+                                              focusedBorder: OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: CustomColors
+                                                          .colorFontGrey,
+                                                      width: 1.0),
+                                                  borderRadius: CustomStyles
+                                                      .circle7BorderRadius()),
+                                            ),
+                                            style: CustomStyles
+                                                .normal16TextStyle(),
+                                          )),
+                                      Container(
+                                          margin: EdgeInsets.only(top: 15),
+                                          padding: EdgeInsets.only(
+                                              left: 15, right: 15),
+                                          alignment: Alignment.centerLeft,
+                                          child: Text('드라마 페이',
+                                              style: CustomStyles
+                                                  .bold14TextStyle())),
+                                      Container(
+                                          padding: EdgeInsets.only(
+                                              left: 15, right: 15),
+                                          margin: EdgeInsets.only(top: 5),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                  flex: 1,
+                                                  child: CustomStyles
+                                                      .greyBorderRound7TextFieldWithOption(
+                                                          _txtFieldDramaPay,
+                                                          TextInputType.number,
+                                                          '')),
+                                              Expanded(
+                                                flex: 0,
+                                                child: Container(
+                                                  margin:
+                                                      EdgeInsets.only(left: 5),
+                                                  child: Text('만원',
+                                                      style: CustomStyles
+                                                          .bold14TextStyle()),
+                                                ),
+                                              )
+                                            ],
+                                          )),
+                                      Container(
+                                          margin: EdgeInsets.only(top: 15),
+                                          padding: EdgeInsets.only(
+                                              left: 15, right: 15),
+                                          alignment: Alignment.centerLeft,
+                                          child: Text('영화 페이',
+                                              style: CustomStyles
+                                                  .bold14TextStyle())),
+                                      Container(
+                                          padding: EdgeInsets.only(
+                                              left: 15, right: 15),
+                                          margin: EdgeInsets.only(top: 5),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                  flex: 1,
+                                                  child: CustomStyles
+                                                      .greyBorderRound7TextFieldWithOption(
+                                                          _txtFieldMoviePay,
+                                                          TextInputType.number,
+                                                          '')),
+                                              Expanded(
+                                                flex: 0,
+                                                child: Container(
+                                                  margin:
+                                                      EdgeInsets.only(left: 5),
+                                                  child: Text('만원',
+                                                      style: CustomStyles
+                                                          .bold14TextStyle()),
+                                                ),
+                                              )
+                                            ],
+                                          )),
+                                      Container(
+                                          margin: EdgeInsets.only(top: 15),
+                                          padding: EdgeInsets.only(
+                                              left: 15, right: 15),
+                                          alignment: Alignment.centerLeft,
+                                          child: Text('생년월일',
+                                              style: CustomStyles
+                                                  .bold14TextStyle())),
+                                      Container(
+                                          padding: EdgeInsets.only(
+                                              left: 15, right: 15),
+                                          margin: EdgeInsets.only(top: 5),
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              showDatePickerForBirthDay(context,
+                                                  (date) {
+                                                setState(() {
+                                                  _birthY =
+                                                      date.year.toString();
+                                                  _birthM = date.month
+                                                      .toString()
+                                                      .padLeft(2, '0');
+                                                  _birthD = date.day
+                                                      .toString()
+                                                      .padLeft(2, '0');
+
+                                                  _birthDate = date.year
+                                                          .toString() +
+                                                      '-' +
+                                                      date.month.toString() +
+                                                      '-' +
+                                                      date.day.toString();
+                                                });
+                                              });
+                                            },
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                    child: Container(
+                                                        height: 48,
+                                                        margin: EdgeInsets.only(
+                                                            right: 5),
+                                                        padding:
+                                                            EdgeInsets.all(5),
+                                                        decoration: BoxDecoration(
+                                                            borderRadius:
+                                                                CustomStyles
+                                                                    .circle7BorderRadius(),
+                                                            border: Border.all(
+                                                                width: 1,
+                                                                color: CustomColors
+                                                                    .colorFontGrey)),
+                                                        child: GestureDetector(
+                                                          child: Row(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .max,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              Text(_birthY,
+                                                                  style: CustomStyles
+                                                                      .bold14TextStyle()),
+                                                              Icon(Icons
+                                                                  .arrow_drop_down),
+                                                            ],
+                                                          ),
+                                                        ))),
+                                                Expanded(
+                                                    child: Container(
+                                                        height: 48,
+                                                        margin: EdgeInsets.only(
+                                                            right: 5),
+                                                        padding:
+                                                            EdgeInsets.all(5),
+                                                        decoration: BoxDecoration(
+                                                            borderRadius:
+                                                                CustomStyles
+                                                                    .circle7BorderRadius(),
+                                                            border: Border.all(
+                                                                width: 1,
+                                                                color: CustomColors
+                                                                    .colorFontGrey)),
+                                                        child: GestureDetector(
+                                                          child: Row(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .max,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              Text(_birthM,
+                                                                  style: CustomStyles
+                                                                      .bold14TextStyle()),
+                                                              Icon(Icons
+                                                                  .arrow_drop_down),
+                                                            ],
+                                                          ),
+                                                        ))),
+                                                Expanded(
+                                                    child: Container(
+                                                        height: 48,
+                                                        padding:
+                                                            EdgeInsets.all(5),
+                                                        decoration: BoxDecoration(
+                                                            borderRadius:
+                                                                CustomStyles
+                                                                    .circle7BorderRadius(),
+                                                            border: Border.all(
+                                                                width: 1,
+                                                                color: CustomColors
+                                                                    .colorFontGrey)),
+                                                        child: GestureDetector(
+                                                          child: Row(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .max,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              Text(_birthD,
+                                                                  style: CustomStyles
+                                                                      .bold14TextStyle()),
+                                                              Icon(Icons
+                                                                  .arrow_drop_down),
+                                                            ],
+                                                          ),
+                                                        ))),
+                                              ],
+                                            ),
+                                          )),
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                            top: 20, bottom: 10),
+                                        child: Divider(
+                                          height: 0.1,
+                                          color:
+                                              CustomColors.colorFontLightGrey,
+                                        ),
+                                      ),
+                                      Container(
+                                        margin: EdgeInsets.only(top: 5),
+                                        padding: EdgeInsets.only(
+                                            left: 15, right: 15),
+                                        alignment: Alignment.centerLeft,
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                                child: Text('키',
+                                                    style: CustomStyles
+                                                        .bold14TextStyle())),
+                                            Expanded(
+                                                child: Container(
+                                                    margin: EdgeInsets.only(
+                                                        left: 10),
+                                                    child: Text('체중',
+                                                        style: CustomStyles
+                                                            .bold14TextStyle())))
+                                          ],
+                                        ),
+                                      ),
+                                      Container(
+                                          padding: EdgeInsets.only(
+                                              left: 15, right: 15),
+                                          margin: EdgeInsets.only(top: 5),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                  flex: 1,
+                                                  child: CustomStyles
+                                                      .greyBorderRound7TextFieldWithOption(
+                                                          _txtFieldTall,
+                                                          TextInputType.number,
+                                                          '')),
+                                              Expanded(
+                                                flex: 0,
+                                                child: Container(
+                                                  margin: EdgeInsets.only(
+                                                      left: 5, right: 5),
+                                                  child: Text('cm',
+                                                      style: CustomStyles
+                                                          .bold14TextStyle()),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                  flex: 1,
+                                                  child: Container(
+                                                      margin: EdgeInsets.only(
+                                                          left: 5),
+                                                      child: CustomStyles
+                                                          .greyBorderRound7TextFieldWithOption(
+                                                              _txtFieldWeight,
+                                                              TextInputType
+                                                                  .number,
+                                                              ''))),
+                                              Expanded(
+                                                flex: 0,
+                                                child: Container(
+                                                  margin:
+                                                      EdgeInsets.only(left: 5),
+                                                  child: Text('kg',
+                                                      style: CustomStyles
+                                                          .bold14TextStyle()),
+                                                ),
+                                              )
+                                            ],
+                                          )),
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                            top: 20, bottom: 10),
+                                        child: Divider(
+                                          height: 0.1,
+                                          color:
+                                              CustomColors.colorFontLightGrey,
+                                        ),
+                                      ),
+                                      Container(
+                                          margin: EdgeInsets.only(top: 5),
+                                          padding: EdgeInsets.only(
+                                              left: 15, right: 15),
+                                          alignment: Alignment.centerLeft,
+                                          child: Text('전공여부',
+                                              style: CustomStyles
+                                                  .bold14TextStyle())),
+                                      Container(
+                                          width: double.infinity,
+                                          margin: EdgeInsets.only(top: 5),
+                                          padding: EdgeInsets.only(
+                                              left: 10, right: 15),
+                                          child: Row(
+                                            children: <Widget>[
+                                              Radio(
+                                                visualDensity:
+                                                    VisualDensity.compact,
+                                                materialTapTargetSize:
+                                                    MaterialTapTargetSize
+                                                        .shrinkWrap,
+                                                value: 1,
+                                                groupValue: _major,
+                                                onChanged: (_) {
+                                                  setState(() {
+                                                    _major = 1;
+                                                  });
+                                                },
+                                              ),
+                                              Container(
+                                                margin:
+                                                    EdgeInsets.only(right: 10),
+                                                child: Text('전공',
+                                                    style: CustomStyles
+                                                        .bold14TextStyle()),
+                                              ),
+                                              Radio(
+                                                visualDensity:
+                                                    VisualDensity.compact,
+                                                materialTapTargetSize:
+                                                    MaterialTapTargetSize
+                                                        .shrinkWrap,
+                                                value: 0,
+                                                groupValue: _major,
+                                                onChanged: (_) {
+                                                  setState(() {
+                                                    _major = 0;
+                                                  });
+                                                },
+                                              ),
+                                              Text('비전공',
+                                                  style: CustomStyles
+                                                      .bold14TextStyle())
+                                            ],
+                                          )),
+
+                                      /////
+                                      Column(children: _educationWidgets),
+
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                            top: 20, bottom: 10),
+                                        child: Divider(
+                                          height: 0.1,
+                                          color:
+                                              CustomColors.colorFontLightGrey,
+                                        ),
+                                      ),
+                                      Container(
+                                          height: 50,
+                                          margin: EdgeInsets.only(
+                                              left: 15, right: 15, top: 15),
+                                          width: double.infinity,
+                                          child: CustomStyles
+                                              .greyBorderRound7ButtonStyle(
+                                                  '학력사항 추가', () {
+                                            setState(() {
+                                              UniqueKey _uKey = UniqueKey();
+
+                                              Map<UniqueKey, EducationListModel>
+                                                  _eduItem = new Map();
+                                              _eduItem[_uKey] =
+                                                  new EducationListModel(
+                                                      "대학교",
+                                                      new TextEditingController(),
+                                                      new TextEditingController());
+
+                                              _educationList.add(_eduItem);
+
+                                              _educationWidgets
+                                                  .add(educationHistory(_uKey));
+                                            });
+                                          })),
+                                    ])))),
+                    Container(
+                        width: double.infinity,
+                        height: 50,
+                        color: Colors.grey,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Expanded(
+                                child: Container(
+                                    width: (KCastingAppData().isWeb)
+                                        ? CustomStyles.appWidth
+                                        : MediaQuery.of(context).size.width,
+                                    height: 55,
+                                    child: CustomStyles.greyBGSquareButtonStyle(
+                                        '취소', () {
+                                      Navigator.pop(context);
+                                    }))),
+                            Expanded(
+                                child: Container(
+                                    width: (KCastingAppData().isWeb)
+                                        ? CustomStyles.appWidth
+                                        : MediaQuery.of(context).size.width,
+                                    height: 55,
+                                    child: CustomStyles.blueBGSquareButtonStyle(
+                                        '다음', () {
+                                      requestUpdateApi(context);
+                                    })))
+                          ],
+                        ))
+                  ]),
+            )),
       ),
     );
   }

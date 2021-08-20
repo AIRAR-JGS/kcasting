@@ -2,8 +2,11 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:casting_call/res/CustomStyles.dart';
 import 'package:flutter/material.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
+
+import '../../KCastingAppData.dart';
 
 class ThumbnailRequest {
   final String video;
@@ -114,8 +117,12 @@ class _GenThumbnailImageState extends State<GenThumbnailImage> {
                 height: 1.0,
               ),
               Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.width * 0.625,
+                width: (KCastingAppData().isWeb)
+                    ? (CustomStyles.appWidth)
+                    : MediaQuery.of(context).size.width,
+                height: (KCastingAppData().isWeb)
+                    ? (CustomStyles.appWidth * 0.625)
+                    : MediaQuery.of(context).size.width * 0.625,
                 child: _image,
               ),
             ],

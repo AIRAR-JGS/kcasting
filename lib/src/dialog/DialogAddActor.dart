@@ -5,6 +5,8 @@ import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/util/StringUtils.dart';
 import 'package:flutter/material.dart';
 
+import '../../KCastingAppData.dart';
+
 class DialogAddActor extends StatefulWidget {
   final Function(String, int, String) onClickedAgree;
 
@@ -38,9 +40,14 @@ class _DialogAddActor extends State<DialogAddActor> with BaseUtilMixin {
         backgroundColor: Colors.transparent,
         child: Theme(
             data: ThemeData(
-
                 canvasColor: CustomColors.colorCanvas,
                 fontFamily: Constants.appFont),
+            child: Align(
+            alignment: Alignment.center,
+            child: Container(
+            width: KCastingAppData().isWeb
+            ? CustomStyles.appWidth * 0.8
+                : double.infinity,
             child: Stack(children: <Widget>[
               Container(
                   decoration: new BoxDecoration(
@@ -150,13 +157,14 @@ class _DialogAddActor extends State<DialogAddActor> with BaseUtilMixin {
                                     child: Text('연락처',
                                         textAlign: TextAlign.start,
                                         style:
-                                        CustomStyles.normal16TextStyle())),
+                                            CustomStyles.normal16TextStyle())),
                                 Container(
                                     margin: EdgeInsets.only(bottom: 5),
-                                    child: Text('오디션 결과 연락을 받을 수 있는 정확한 전화번호를 입력해 주세요.',
+                                    child: Text(
+                                        '오디션 결과 연락을 받을 수 있는 정확한 전화번호를 입력해 주세요.',
                                         textAlign: TextAlign.start,
                                         style:
-                                        CustomStyles.normal14TextStyle())),
+                                            CustomStyles.normal14TextStyle())),
                                 Container(
                                   margin: EdgeInsets.only(bottom: 0),
                                   child: TextField(
@@ -169,7 +177,7 @@ class _DialogAddActor extends State<DialogAddActor> with BaseUtilMixin {
                                           vertical: 10, horizontal: 10),
                                       hintText: "전화번호",
                                       hintStyle:
-                                      CustomStyles.light14TextStyle(),
+                                          CustomStyles.light14TextStyle(),
                                       border: OutlineInputBorder(
                                           borderSide: BorderSide(
                                               color: CustomColors
@@ -239,7 +247,8 @@ class _DialogAddActor extends State<DialogAddActor> with BaseUtilMixin {
 
                                         _onClickedAgree(
                                             _txtActorName.text.toString(),
-                                            _actorGender, _txtActorPhone.text.toString());
+                                            _actorGender,
+                                            _txtActorPhone.text.toString());
                                       },
                                       child: Container(
                                           alignment: Alignment.center,
@@ -248,6 +257,6 @@ class _DialogAddActor extends State<DialogAddActor> with BaseUtilMixin {
                                                   .dark16TextStyle()))))
                             ]))
                       ]))
-            ])));
+            ])))));
   }
 }

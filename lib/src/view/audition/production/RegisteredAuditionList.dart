@@ -12,6 +12,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+import '../../../../KCastingAppData.dart';
 import 'RegisterMainRoleAudition.dart';
 import 'RegisterSubRoleAudition.dart';
 import 'RegisteredAuditionDetail.dart';
@@ -265,7 +266,8 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
                                                           topLeft:
                                                               Radius.circular(
                                                                   7)),
-                                                  color: CustomColors.colorGreyPurple
+                                                  color: CustomColors
+                                                      .colorGreyPurple
                                                       .withAlpha(60)),
                                               child: Column(children: [
                                                 Text('1차 오디션',
@@ -876,161 +878,195 @@ class _RegisteredAuditionList extends State<RegisteredAuditionList>
   Widget build(BuildContext context) {
     return Theme(
         data: CustomStyles.defaultTheme(),
-        child: Scaffold(
-            key: _scaffoldKey,
-            appBar: CustomStyles.defaultAppBar('', () {
-              Navigator.pop(context);
-            }),
-            body: Stack(
-              children: [
-                Container(
-                    child: RefreshIndicator(
-                  onRefresh: _refreshPage,
-                  child: SingleChildScrollView(
-                      controller: _scrollController,
-                      physics: AlwaysScrollableScrollPhysics(),
-                      key: ObjectKey(_castingStateList.length > 0
-                          ? _castingStateList[0]
-                          : ""),
-                      child: Container(
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                            Container(
-                              margin: EdgeInsets.only(top: 30.0, bottom: 10),
-                              padding: EdgeInsets.only(left: 16, right: 16),
-                              child: Text(_projectName,
-                                  style: CustomStyles.normal24TextStyle()),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(
-                                  left: 15, right: 15, bottom: 10),
-                              alignment: Alignment.centerRight,
-                              child: GestureDetector(
-                                onTap: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) =>
-                                          DialogRegisterAuditionRole(
-                                              onClickedAddCertainRole: () {
-                                            Navigator.pop(context);
-                                            replaceView(
-                                                context,
-                                                RegisterMainRoleAudition(
-                                                  projectSeq: _projectSeq,
-                                                  projectName: _projectName,
-                                                ));
-                                          }, onClickedAddLargeRole: () {
-                                            Navigator.pop(context);
-                                            replaceView(
-                                                context,
-                                                RegisterSubRoleAudition(
-                                                  projectSeq: _projectSeq,
-                                                  projectName: _projectName,
-                                                ));
-                                          }));
-                                },
-                                child: Text('+ 배역 추가',
-                                    style: CustomStyles.blue16TextStyle()),
-                              ),
-                            ),
-                            Container(
-                                width: MediaQuery.of(context).size.width,
-                                child: DecoratedTabBar(
-                                    decoration: BoxDecoration(
-                                        border: Border(
-                                            bottom: BorderSide(
-                                                color: CustomColors.colorBgGrey,
-                                                width: 1.0))),
-                                    tabBar: TabBar(
-                                        controller: _tabController,
-                                        indicatorPadding: EdgeInsets.zero,
-                                        indicatorColor: CustomColors.colorAccent
-                                            .withAlpha(200),
-                                        labelStyle:
-                                            CustomStyles.bold16TextStyle(),
-                                        indicatorWeight: 3,
-                                        labelColor: CustomColors.colorFontTitle,
-                                        unselectedLabelStyle:
-                                            CustomStyles.normal16TextStyle(),
-                                        tabs: [
-                                          Tab(text: '진행중'),
-                                          Tab(text: '계약완료'),
-                                          Tab(text: '마감')
-                                        ]))),
-                            Visibility(
-                                child: Container(
-                                    margin: EdgeInsets.only(
-                                        left: 15, right: 15, top: 15),
-                                    child: Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          SizedBox(
-                                              width: 24,
-                                              height: 24,
-                                              child: Radio<int>(
-                                                value: _isNotPayment,
-                                                groupValue: 1,
-                                                toggleable: true,
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    if (_isNotPayment == 0) {
-                                                      _isNotPayment = 1;
-                                                    } else {
-                                                      _isNotPayment = 0;
-                                                    }
-
-                                                    _total = 0;
-                                                    _castingStateList = [];
-                                                    _apiKey = APIConstants
-                                                        .SEL_PCT_CMPLIST;
-
-                                                    requestCastingStateList(
-                                                        context);
-                                                  });
-                                                },
-                                                materialTapTargetSize:
-                                                    MaterialTapTargetSize
-                                                        .shrinkWrap,
-                                              )),
-                                          Text('미지급만 보기',
+        child: Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+                width: KCastingAppData().isWeb
+                    ? CustomStyles.appWidth
+                    : double.infinity,
+                child: Scaffold(
+                    key: _scaffoldKey,
+                    appBar: CustomStyles.defaultAppBar('', () {
+                      Navigator.pop(context);
+                    }),
+                    body: Stack(children: [
+                      Container(
+                          child: RefreshIndicator(
+                              onRefresh: _refreshPage,
+                              child: SingleChildScrollView(
+                                  controller: _scrollController,
+                                  physics: AlwaysScrollableScrollPhysics(),
+                                  key: ObjectKey(_castingStateList.length > 0
+                                      ? _castingStateList[0]
+                                      : ""),
+                                  child: Container(
+                                      child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                        Container(
+                                          margin: EdgeInsets.only(
+                                              top: 30.0, bottom: 10),
+                                          padding: EdgeInsets.only(
+                                              left: 16, right: 16),
+                                          child: Text(_projectName,
                                               style: CustomStyles
-                                                  .dark16TextStyle())
-                                        ])),
-                                visible: _tabIndex == 1 ? true : false),
-                            Expanded(
-                              flex: 0,
-                              child: [
-                                tabCastingList(),
-                                tabCastingContractedList(),
-                                tabCastingOffList()
-                              ][_tabIndex],
-                            ),
-                            Visibility(
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  margin: EdgeInsets.only(top: 50),
-                                  child: Text(
-                                    '등록된 오디션이 없습니다.',
-                                    style: CustomStyles.normal16TextStyle(),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                                visible: _castingStateList.length > 0
-                                    ? false
-                                    : true),
-                          ]))),
-                )),
-                Visibility(
-                  child: Container(
-                      color: Colors.black38,
-                      alignment: Alignment.center,
-                      child: CircularProgressIndicator()),
-                  visible: _isUpload,
-                )
-              ],
-            )));
+                                                  .normal24TextStyle()),
+                                        ),
+                                        Container(
+                                          margin: EdgeInsets.only(
+                                              left: 15, right: 15, bottom: 10),
+                                          alignment: Alignment.centerRight,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (BuildContext
+                                                          context) =>
+                                                      DialogRegisterAuditionRole(
+                                                          onClickedAddCertainRole:
+                                                              () {
+                                                        Navigator.pop(context);
+                                                        replaceView(
+                                                            context,
+                                                            RegisterMainRoleAudition(
+                                                              projectSeq:
+                                                                  _projectSeq,
+                                                              projectName:
+                                                                  _projectName,
+                                                            ));
+                                                      }, onClickedAddLargeRole:
+                                                              () {
+                                                        Navigator.pop(context);
+                                                        replaceView(
+                                                            context,
+                                                            RegisterSubRoleAudition(
+                                                              projectSeq:
+                                                                  _projectSeq,
+                                                              projectName:
+                                                                  _projectName,
+                                                            ));
+                                                      }));
+                                            },
+                                            child: Text('+ 배역 추가',
+                                                style: CustomStyles
+                                                    .blue16TextStyle()),
+                                          ),
+                                        ),
+                                        Container(
+                                            width: (KCastingAppData().isWeb)
+                                                ? CustomStyles.appWidth
+                                                : MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            child: DecoratedTabBar(
+                                                decoration: BoxDecoration(
+                                                    border: Border(
+                                                        bottom: BorderSide(
+                                                            color: CustomColors
+                                                                .colorBgGrey,
+                                                            width: 1.0))),
+                                                tabBar: TabBar(
+                                                    controller: _tabController,
+                                                    indicatorPadding:
+                                                        EdgeInsets.zero,
+                                                    indicatorColor: CustomColors
+                                                        .colorAccent
+                                                        .withAlpha(200),
+                                                    labelStyle: CustomStyles
+                                                        .bold16TextStyle(),
+                                                    indicatorWeight: 3,
+                                                    labelColor: CustomColors
+                                                        .colorFontTitle,
+                                                    unselectedLabelStyle:
+                                                        CustomStyles
+                                                            .normal16TextStyle(),
+                                                    tabs: [
+                                                      Tab(text: '진행중'),
+                                                      Tab(text: '계약완료'),
+                                                      Tab(text: '마감')
+                                                    ]))),
+                                        Visibility(
+                                            child: Container(
+                                                margin: EdgeInsets.only(
+                                                    left: 15,
+                                                    right: 15,
+                                                    top: 15),
+                                                child: Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    children: [
+                                                      SizedBox(
+                                                          width: 24,
+                                                          height: 24,
+                                                          child: Radio<int>(
+                                                            value:
+                                                                _isNotPayment,
+                                                            groupValue: 1,
+                                                            toggleable: true,
+                                                            onChanged: (value) {
+                                                              setState(() {
+                                                                if (_isNotPayment ==
+                                                                    0) {
+                                                                  _isNotPayment =
+                                                                      1;
+                                                                } else {
+                                                                  _isNotPayment =
+                                                                      0;
+                                                                }
+
+                                                                _total = 0;
+                                                                _castingStateList =
+                                                                    [];
+                                                                _apiKey =
+                                                                    APIConstants
+                                                                        .SEL_PCT_CMPLIST;
+
+                                                                requestCastingStateList(
+                                                                    context);
+                                                              });
+                                                            },
+                                                            materialTapTargetSize:
+                                                                MaterialTapTargetSize
+                                                                    .shrinkWrap,
+                                                          )),
+                                                      Text('미지급만 보기',
+                                                          style: CustomStyles
+                                                              .dark16TextStyle())
+                                                    ])),
+                                            visible:
+                                                _tabIndex == 1 ? true : false),
+                                        Expanded(
+                                          flex: 0,
+                                          child: [
+                                            tabCastingList(),
+                                            tabCastingContractedList(),
+                                            tabCastingOffList()
+                                          ][_tabIndex],
+                                        ),
+                                        Visibility(
+                                            child: Container(
+                                                alignment: Alignment.center,
+                                                margin:
+                                                    EdgeInsets.only(top: 50),
+                                                child: Text('등록된 오디션이 없습니다.',
+                                                    style: CustomStyles
+                                                        .normal16TextStyle(),
+                                                    textAlign:
+                                                        TextAlign.center)),
+                                            visible:
+                                                _castingStateList.length > 0
+                                                    ? false
+                                                    : true)
+                                      ]))))),
+                      Visibility(
+                          child: Container(
+                              color: Colors.black38,
+                              alignment: Alignment.center,
+                              child: CircularProgressIndicator()),
+                          visible: _isUpload)
+                    ])))));
   }
 }

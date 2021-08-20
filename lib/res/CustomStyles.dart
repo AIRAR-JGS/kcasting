@@ -3,6 +3,9 @@ import 'package:casting_call/res/CustomColors.dart';
 import 'package:flutter/material.dart';
 
 class CustomStyles {
+  static const int appWidth = 900;
+  static const int appHeight = 1000;
+
   //===========================================================================
   // 앱 테마 스타일
   //===========================================================================

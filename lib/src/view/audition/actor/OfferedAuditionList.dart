@@ -80,7 +80,7 @@ class _OfferedAuditionList extends State<OfferedAuditionList>
     if (_total == 0 || _scoutList.length >= _total) return;
 
     if (_scrollController.offset >=
-            _scrollController.position.maxScrollExtent &&
+        _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
       setState(() {
         _isLoading = true;
@@ -176,14 +176,16 @@ class _OfferedAuditionList extends State<OfferedAuditionList>
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => OfferedAuditionDetail(
-                                  seq: _scoutList[index]
+                              builder: (context) =>
+                                  OfferedAuditionDetail(
+                                      seq: _scoutList[index]
                                       [APIConstants.auditionProposal_seq])),
-                        ).then((value) => {
-                              _total = 0,
-                              _scoutList = [],
-                              requestMyApplyListApi(context)
-                            });
+                        ).then((value) =>
+                        {
+                          _total = 0,
+                          _scoutList = [],
+                          requestMyApplyListApi(context)
+                        });
                       },
                       child: Container(
                           alignment: Alignment.center,
@@ -193,18 +195,19 @@ class _OfferedAuditionList extends State<OfferedAuditionList>
                               border: Border(
                                   left: BorderSide(
                                       color: StringUtils.checkedString(
-                                                  _scoutList[index]
-                                                      [APIConstants.state_type])
-                                              .contains('수락')
+                                          _scoutList[index]
+                                          [APIConstants.state_type])
+                                          .contains('수락')
                                           ? CustomColors.colorBlue
-                                              .withAlpha(200)
-                                          : StringUtils.checkedString(_scoutList[
-                                                          index]
-                                                      [APIConstants.state_type])
-                                                  .contains('거절')
-                                              ? CustomColors.colorPurple
-                                                  .withAlpha(200)
-                                              : CustomColors.colorBgGrey,
+                                          .withAlpha(200)
+                                          : StringUtils.checkedString(
+                                          _scoutList[
+                                          index]
+                                          [APIConstants.state_type])
+                                          .contains('거절')
+                                          ? CustomColors.colorPurple
+                                          .withAlpha(200)
+                                          : CustomColors.colorBgGrey,
                                       width: 5)),
                               boxShadow: [
                                 BoxShadow(
@@ -219,134 +222,153 @@ class _OfferedAuditionList extends State<OfferedAuditionList>
                               alignment: Alignment.center,
                               padding: EdgeInsets.only(
                                   left: 15, right: 15, top: 10, bottom: 10),
-                              child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                Container(
-                                    margin:
+                              child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                        margin:
                                         EdgeInsets.only(top: 10, bottom: 15),
-                                    child: Row(
-                                        mainAxisAlignment:
+                                        child: Row(
+                                            mainAxisAlignment:
                                             MainAxisAlignment.start,
-                                        crossAxisAlignment:
+                                            crossAxisAlignment:
                                             CrossAxisAlignment.start,
-                                        children: [
-                                          Expanded(
-                                            flex: 0,
-                                            child: Container(
-                                                decoration: new BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    gradient:
-                                                        LinearGradient(colors: [
-                                                      CustomColors.colorPrimary,
-                                                      CustomColors.colorAccent
-                                                    ])),
-                                                padding: EdgeInsets.all(2),
-                                                margin: EdgeInsets.only(
-                                                    right: 15),
-                                                alignment: Alignment.topCenter,
+                                            children: [
+                                              Expanded(
+                                                flex: 0,
                                                 child: Container(
-                                                  alignment: Alignment.center,
-                                                  width: 30,
-                                                  height: 30,
-                                                  decoration: new BoxDecoration(
-                                                      shape: BoxShape.circle,
-                                                      color: CustomColors
-                                                          .colorWhite),
-                                                  padding: EdgeInsets.all(1.0),
-                                                  child: ClipOval(
-                                                      child: CachedNetworkImage(
-                                                          width: 30,
-                                                          height: 30,
-                                                          fit: BoxFit.cover,
-                                                          placeholder: (context,
+                                                    decoration: new BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        gradient:
+                                                        LinearGradient(colors: [
+                                                          CustomColors
+                                                              .colorPrimary,
+                                                          CustomColors
+                                                              .colorAccent
+                                                        ])),
+                                                    padding: EdgeInsets.all(2),
+                                                    margin: EdgeInsets.only(
+                                                        right: 15),
+                                                    alignment: Alignment
+                                                        .topCenter,
+                                                    child: Container(
+                                                      alignment: Alignment
+                                                          .center,
+                                                      width: 30,
+                                                      height: 30,
+                                                      decoration: new BoxDecoration(
+                                                          shape: BoxShape
+                                                              .circle,
+                                                          color: CustomColors
+                                                              .colorWhite),
+                                                      padding: EdgeInsets.all(
+                                                          1.0),
+                                                      child: ClipOval(
+                                                          child: CachedNetworkImage(
+                                                              width: 30,
+                                                              height: 30,
+                                                              fit: BoxFit.cover,
+                                                              placeholder: (
+                                                                  context,
                                                                   url) =>
-                                                              Container(
-                                                                  alignment:
+                                                                  Container(
+                                                                      alignment:
                                                                       Alignment
                                                                           .center,
-                                                                  child:
+                                                                      child:
                                                                       CircularProgressIndicator()),
-                                                          imageUrl: _scoutList[index]
+                                                              imageUrl: _scoutList[index]
                                                               [APIConstants
                                                                   .production_img_url],
-                                                          errorWidget: (context,
+                                                              errorWidget: (
+                                                                  context,
                                                                   url, error) =>
-                                                              Image.asset(
-                                                                  'assets/images/btn_mypage.png',
-                                                                  color: CustomColors.colorBgGrey,
-                                                                  width: 30,
-                                                                  fit: BoxFit.contain))),
-                                                )),
-                                          ),
-                                          Expanded(
-                                              flex: 1,
-                                              child: Column(children: [
-                                                Row(children: [
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child: Text(
-                                                      StringUtils.checkedString(
-                                                          _scoutList[index][
+                                                                  Image.asset(
+                                                                      'assets/images/btn_mypage.png',
+                                                                      color: CustomColors
+                                                                          .colorBgGrey,
+                                                                      width: 30,
+                                                                      fit: BoxFit
+                                                                          .contain))),
+                                                    )),
+                                              ),
+                                              Expanded(
+                                                  flex: 1,
+                                                  child: Column(children: [
+                                                    Row(children: [
+                                                      Expanded(
+                                                        flex: 1,
+                                                        child: Text(
+                                                          StringUtils
+                                                              .checkedString(
+                                                              _scoutList[index][
                                                               APIConstants
                                                                   .production_name]),
-                                                      style: CustomStyles
-                                                          .bold16TextStyle(),
-                                                      maxLines: 1,
-                                                      overflow:
+                                                          style: CustomStyles
+                                                              .bold16TextStyle(),
+                                                          maxLines: 1,
+                                                          overflow:
                                                           TextOverflow.ellipsis,
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                      flex: 0,
-                                                      child: Text(
-                                                          StringUtils.checkedString(
-                                                              _scoutList[index][
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                          flex: 0,
+                                                          child: Text(
+                                                              StringUtils
+                                                                  .checkedString(
+                                                                  _scoutList[index][
                                                                   APIConstants
                                                                       .state_type]),
-                                                          style: CustomStyles
-                                                              .bold17TextStyle()))
-                                                ]),
-                                                Container(
-                                                    alignment:
+                                                              style: CustomStyles
+                                                                  .bold17TextStyle()))
+                                                    ]),
+                                                    Container(
+                                                        alignment:
                                                         Alignment.centerLeft,
-                                                    margin: EdgeInsets.only(
-                                                        top: 5, left: 3),
-                                                    child: Text(
-                                                        StringUtils.checkedString(
-                                                            _scoutList[index][
+                                                        margin: EdgeInsets.only(
+                                                            top: 5, left: 3),
+                                                        child: Text(
+                                                            StringUtils
+                                                                .checkedString(
+                                                                _scoutList[index][
                                                                 APIConstants
                                                                     .audition_prps_contents]),
-                                                        style: CustomStyles
-                                                            .grey14TextStyle(),
-                                                        maxLines: 2,
-                                                        overflow: TextOverflow
-                                                            .ellipsis))
-                                              ]))
-                                        ])),
-                                Divider(),
-                                Container(
-                                    padding:
+                                                            style: CustomStyles
+                                                                .grey14TextStyle(),
+                                                            maxLines: 2,
+                                                            overflow: TextOverflow
+                                                                .ellipsis))
+                                                  ]))
+                                            ])),
+                                    Divider(),
+                                    Container(
+                                        padding:
                                         EdgeInsets.only(left: 10, right: 10),
-                                    alignment: Alignment.centerLeft,
-                                    width: MediaQuery.of(context).size.width,
-                                    height: 40,
-                                    child: Row(children: [
-                                      Expanded(
-                                          child: Text(
-                                              StringUtils.checkedString(
-                                                  _scoutList[index][APIConstants
-                                                      .project_name]),
-                                              style: CustomStyles
-                                                  .bold14TextStyle())),
-                                      Expanded(
-                                          flex: 0,
-                                          child: Text(
-                                              StringUtils.checkedString(
-                                                  _scoutList[index][APIConstants
-                                                      .casting_name]),
-                                              style: CustomStyles
-                                                  .bold16TextStyle()))
-                                    ]))
-                              ]))));
+                                        alignment: Alignment.centerLeft,
+                                        width: MediaQuery
+                                            .of(context)
+                                            .size
+                                            .width,
+                                        height: 40,
+                                        child: Row(children: [
+                                          Expanded(
+                                              child: Text(
+                                                  StringUtils.checkedString(
+                                                      _scoutList[index][APIConstants
+                                                          .project_name]),
+                                                  style: CustomStyles
+                                                      .bold14TextStyle())),
+                                          Expanded(
+                                              flex: 0,
+                                              child: Text(
+                                                  StringUtils.checkedString(
+                                                      _scoutList[index][APIConstants
+                                                          .casting_name]),
+                                                  style: CustomStyles
+                                                      .bold16TextStyle()))
+                                        ]))
+                                  ]))));
                 })
           ])
         ]));
@@ -368,92 +390,114 @@ class _OfferedAuditionList extends State<OfferedAuditionList>
   Widget build(BuildContext context) {
     return Theme(
         data: CustomStyles.defaultTheme(),
-        child: Scaffold(
-            key: _scaffoldKey,
-            appBar: CustomStyles.defaultAppBar('받은 제안', () {
-              Navigator.pop(context);
-            }),
-            body: Stack(
-              children: [
-                Container(
-                    child: RefreshIndicator(
-                        onRefresh: _refreshPage,
-                        child: SingleChildScrollView(
-                            controller: _scrollController,
-                            physics: AlwaysScrollableScrollPhysics(),
-                            key: ObjectKey(
-                                _scoutList.length > 0 ? _scoutList[0] : ""),
-                            child: Container(
-                                child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                  Container(
-                                    margin:
-                                        EdgeInsets.only(top: 30.0, bottom: 10),
-                                    padding:
-                                        EdgeInsets.only(left: 16, right: 16),
-                                    child: Text('받은 제안',
-                                        style:
-                                            CustomStyles.normal24TextStyle()),
-                                  ),
-                                  Container(
-                                      width: MediaQuery.of(context).size.width,
-                                      child: DecoratedTabBar(
-                                          decoration: BoxDecoration(
-                                              border: Border(
-                                                  bottom: BorderSide(
-                                                      color: CustomColors
-                                                          .colorBgGrey,
-                                                      width: 1.0))),
-                                          tabBar: TabBar(
-                                              controller: _tabController,
-                                              indicatorPadding: EdgeInsets.zero,
-                                              indicatorColor: CustomColors
-                                                  .colorAccent
-                                                  .withAlpha(200),
-                                              labelStyle: CustomStyles
-                                                  .bold16TextStyle(),
-                                              indicatorWeight: 3,
-                                              labelColor: CustomColors.colorFontTitle,
-                                              unselectedLabelStyle: CustomStyles
-                                                  .normal16TextStyle(),
-                                              tabs: [
-                                                Tab(text: '전체'),
-                                                Tab(text: '수락'),
-                                                Tab(text: '거절'),
-                                                Tab(text: '대기')
-                                              ]))),
-                                  Expanded(
-                                      flex: 0,
-                                      child: [
-                                        tabItem(),
-                                        tabItem(),
-                                        tabItem(),
-                                        tabItem()
-                                      ][_tabIndex]),
-                                  Visibility(
+        child: Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+                width: KCastingAppData().isWeb
+                    ? CustomStyles.appWidth
+                    : double.infinity,
+                child: Scaffold(
+                    key: _scaffoldKey,
+                    appBar: CustomStyles.defaultAppBar('받은 제안', () {
+                      Navigator.pop(context);
+                    }),
+                    body: Stack(
+                        children: [
+                          Container(
+                              child: RefreshIndicator(
+                                  onRefresh: _refreshPage,
+                                  child: SingleChildScrollView(
+                                      controller: _scrollController,
+                                      physics: AlwaysScrollableScrollPhysics(),
+                                      key: ObjectKey(
+                                          _scoutList.length > 0
+                                              ? _scoutList[0]
+                                              : ""),
                                       child: Container(
-                                        alignment: Alignment.center,
-                                        margin: EdgeInsets.only(top: 50),
-                                        child: Text(
-                                          '받은 제안이 없습니다.',
-                                          style:
-                                              CustomStyles.normal16TextStyle(),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                      visible:
-                                          _scoutList.length > 0 ? false : true)
-                                ]))))),
-                Visibility(
-                  child: Container(
-                      color: Colors.black38,
-                      alignment: Alignment.center,
-                      child: CircularProgressIndicator()),
-                  visible: _isUpload,
-                )
-              ],
-            )));
+                                          child: Column(
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                  margin:
+                                                  EdgeInsets.only(
+                                                      top: 30.0, bottom: 10),
+                                                  padding:
+                                                  EdgeInsets.only(
+                                                      left: 16, right: 16),
+                                                  child: Text('받은 제안',
+                                                      style:
+                                                      CustomStyles
+                                                          .normal24TextStyle()),
+                                                ),
+                                                Container(
+                                                    width: MediaQuery
+                                                        .of(context)
+                                                        .size
+                                                        .width,
+                                                    child: DecoratedTabBar(
+                                                        decoration: BoxDecoration(
+                                                            border: Border(
+                                                                bottom: BorderSide(
+                                                                    color: CustomColors
+                                                                        .colorBgGrey,
+                                                                    width: 1.0))),
+                                                        tabBar: TabBar(
+                                                            controller: _tabController,
+                                                            indicatorPadding: EdgeInsets
+                                                                .zero,
+                                                            indicatorColor: CustomColors
+                                                                .colorAccent
+                                                                .withAlpha(200),
+                                                            labelStyle: CustomStyles
+                                                                .bold16TextStyle(),
+                                                            indicatorWeight: 3,
+                                                            labelColor: CustomColors
+                                                                .colorFontTitle,
+                                                            unselectedLabelStyle: CustomStyles
+                                                                .normal16TextStyle(),
+                                                            tabs: [
+                                                              Tab(text: '전체'),
+                                                              Tab(text: '수락'),
+                                                              Tab(text: '거절'),
+                                                              Tab(text: '대기')
+                                                            ]))),
+                                                Expanded(
+                                                    flex: 0,
+                                                    child: [
+                                                      tabItem(),
+                                                      tabItem(),
+                                                      tabItem(),
+                                                      tabItem()
+                                                    ][_tabIndex]),
+                                                Visibility(
+                                                    child: Container(
+                                                      alignment: Alignment
+                                                          .center,
+                                                      margin: EdgeInsets.only(
+                                                          top: 50),
+                                                      child: Text(
+                                                        '받은 제안이 없습니다.',
+                                                        style:
+                                                        CustomStyles
+                                                            .normal16TextStyle(),
+                                                        textAlign: TextAlign
+                                                            .center,
+                                                      ),
+                                                    ),
+                                                    visible:
+                                                    _scoutList.length > 0
+                                                        ? false
+                                                        : true)
+                                              ]))))),
+                          Visibility(
+                            child: Container(
+                                color: Colors.black38,
+                                alignment: Alignment.center,
+                                child: CircularProgressIndicator()),
+                            visible: _isUpload,
+                          )
+                        ]
+                    )))));
   }
 }

@@ -58,249 +58,271 @@ class _AgencyMemberInfoModify extends State<AgencyMemberInfoModify>
         },
         child: Theme(
             data: CustomStyles.defaultTheme(),
-            child: Scaffold(
-                key: _scaffoldKey,
-                appBar: CustomStyles.defaultAppBar('개인정보 수정', () {
-                  replaceView(context, AgencyMemberInfo());
-                }),
-                body: Builder(
-                  builder: (BuildContext context) {
-                    return Stack(
-                      children: [
-                        Container(
-                            child: SingleChildScrollView(
-                          child: Container(
-                            padding: EdgeInsets.only(top: 30, bottom: 30),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                    width: KCastingAppData().isWeb
+                        ? CustomStyles.appWidth
+                        : double.infinity,
+                    child: Scaffold(
+                        key: _scaffoldKey,
+                        appBar: CustomStyles.defaultAppBar('개인정보 수정', () {
+                          replaceView(context, AgencyMemberInfo());
+                        }),
+                        body: Builder(
+                          builder: (BuildContext context) {
+                            return Stack(
                               children: [
                                 Container(
-                                    alignment: Alignment.centerLeft,
+                                    child: SingleChildScrollView(
+                                  child: Container(
                                     padding:
-                                        EdgeInsets.only(left: 18, right: 18),
-                                    child: Text('개인정보 수정',
-                                        style:
-                                            CustomStyles.normal24TextStyle())),
-                                Container(
-                                    margin: EdgeInsets.only(top: 30.0),
-                                    padding:
-                                        EdgeInsets.only(left: 18, right: 18),
-                                    child: RichText(
-                                        text: TextSpan(
-                                            style: CustomStyles
-                                                .normal14TextStyle(),
-                                            children: <TextSpan>[
-                                          TextSpan(text: '아이디')
-                                        ]))),
-                                Container(
-                                    margin: EdgeInsets.only(top: 15.0),
-                                    padding:
-                                        EdgeInsets.only(left: 18, right: 18),
-                                    child: Text(
-                                        StringUtils.checkedString(
-                                            KCastingAppData()
-                                                .myInfo[APIConstants.id]),
-                                        style:
-                                            CustomStyles.normal16TextStyle())),
-                                Container(
-                                    margin: EdgeInsets.only(top: 20.0),
-                                    padding:
-                                        EdgeInsets.only(left: 18, right: 18),
-                                    child: RichText(
-                                        text: TextSpan(
-                                            style: CustomStyles
-                                                .normal14TextStyle(),
-                                            children: <TextSpan>[
-                                          TextSpan(text: '현재 비밀번호'),
-                                          TextSpan(
-                                              style: TextStyle(
-                                                  color: CustomColors.colorRed),
-                                              text: '*'),
-                                        ]))),
-                                Container(
-                                    margin: EdgeInsets.only(top: 5),
-                                    padding:
-                                        EdgeInsets.only(left: 18, right: 18),
-                                    child: CustomStyles
-                                        .greyBorderRound7PWDTextField(
-                                            _txtFieldPW,
-                                            '대문자, 소문자, 숫자 조합으로 가능합니다.')),
-                                Container(
-                                    margin: EdgeInsets.only(top: 15.0),
-                                    padding:
-                                        EdgeInsets.only(left: 18, right: 18),
-                                    child: RichText(
-                                        text: TextSpan(
-                                            style: CustomStyles
-                                                .normal14TextStyle(),
-                                            children: <TextSpan>[
-                                          TextSpan(text: '새 비밀번호'),
-                                          TextSpan(
-                                              style: TextStyle(
-                                                  color: CustomColors.colorRed),
-                                              text: '*'),
-                                        ]))),
-                                Container(
-                                    margin: EdgeInsets.only(top: 5),
-                                    padding:
-                                        EdgeInsets.only(left: 18, right: 18),
-                                    child: CustomStyles
-                                        .greyBorderRound7PWDTextField(
-                                            _txtFieldNewPW,
-                                            '대문자, 소문자, 숫자 조합으로 가능합니다.')),
-                                Container(
-                                    margin: EdgeInsets.only(top: 15),
-                                    padding:
-                                        EdgeInsets.only(left: 18, right: 18),
-                                    alignment: Alignment.centerLeft,
-                                    child: RichText(
-                                        text: TextSpan(
-                                            style: CustomStyles
-                                                .normal14TextStyle(),
-                                            children: <TextSpan>[
-                                          TextSpan(text: '비밀번호 확인'),
-                                          TextSpan(
-                                              style: TextStyle(
-                                                  color: CustomColors.colorRed),
-                                              text: '*'),
-                                        ]))),
-                                Container(
-                                    margin: EdgeInsets.only(top: 5),
-                                    padding:
-                                        EdgeInsets.only(left: 18, right: 18),
-                                    child: CustomStyles
-                                        .greyBorderRound7PWDTextField(
-                                            _txtFieldPWCheck,
-                                            '비밀번호를 한번 더 입력해 주세요.')),
-                                Container(
-                                  margin: EdgeInsets.only(top: 30, bottom: 30),
-                                  child: Divider(
-                                    height: 0.1,
-                                    color: CustomColors.colorFontLightGrey,
+                                        EdgeInsets.only(top: 30, bottom: 30),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                            alignment: Alignment.centerLeft,
+                                            padding: EdgeInsets.only(
+                                                left: 18, right: 18),
+                                            child: Text('개인정보 수정',
+                                                style: CustomStyles
+                                                    .normal24TextStyle())),
+                                        Container(
+                                            margin: EdgeInsets.only(top: 30.0),
+                                            padding: EdgeInsets.only(
+                                                left: 18, right: 18),
+                                            child: RichText(
+                                                text: TextSpan(
+                                                    style: CustomStyles
+                                                        .normal14TextStyle(),
+                                                    children: <TextSpan>[
+                                                  TextSpan(text: '아이디')
+                                                ]))),
+                                        Container(
+                                            margin: EdgeInsets.only(top: 15.0),
+                                            padding: EdgeInsets.only(
+                                                left: 18, right: 18),
+                                            child: Text(
+                                                StringUtils.checkedString(
+                                                    KCastingAppData().myInfo[
+                                                        APIConstants.id]),
+                                                style: CustomStyles
+                                                    .normal16TextStyle())),
+                                        Container(
+                                            margin: EdgeInsets.only(top: 20.0),
+                                            padding: EdgeInsets.only(
+                                                left: 18, right: 18),
+                                            child: RichText(
+                                                text: TextSpan(
+                                                    style: CustomStyles
+                                                        .normal14TextStyle(),
+                                                    children: <TextSpan>[
+                                                  TextSpan(text: '현재 비밀번호'),
+                                                  TextSpan(
+                                                      style: TextStyle(
+                                                          color: CustomColors
+                                                              .colorRed),
+                                                      text: '*'),
+                                                ]))),
+                                        Container(
+                                            margin: EdgeInsets.only(top: 5),
+                                            padding: EdgeInsets.only(
+                                                left: 18, right: 18),
+                                            child: CustomStyles
+                                                .greyBorderRound7PWDTextField(
+                                                    _txtFieldPW,
+                                                    '대문자, 소문자, 숫자 조합으로 가능합니다.')),
+                                        Container(
+                                            margin: EdgeInsets.only(top: 15.0),
+                                            padding: EdgeInsets.only(
+                                                left: 18, right: 18),
+                                            child: RichText(
+                                                text: TextSpan(
+                                                    style: CustomStyles
+                                                        .normal14TextStyle(),
+                                                    children: <TextSpan>[
+                                                  TextSpan(text: '새 비밀번호'),
+                                                  TextSpan(
+                                                      style: TextStyle(
+                                                          color: CustomColors
+                                                              .colorRed),
+                                                      text: '*'),
+                                                ]))),
+                                        Container(
+                                            margin: EdgeInsets.only(top: 5),
+                                            padding: EdgeInsets.only(
+                                                left: 18, right: 18),
+                                            child: CustomStyles
+                                                .greyBorderRound7PWDTextField(
+                                                    _txtFieldNewPW,
+                                                    '대문자, 소문자, 숫자 조합으로 가능합니다.')),
+                                        Container(
+                                            margin: EdgeInsets.only(top: 15),
+                                            padding: EdgeInsets.only(
+                                                left: 18, right: 18),
+                                            alignment: Alignment.centerLeft,
+                                            child: RichText(
+                                                text: TextSpan(
+                                                    style: CustomStyles
+                                                        .normal14TextStyle(),
+                                                    children: <TextSpan>[
+                                                  TextSpan(text: '비밀번호 확인'),
+                                                  TextSpan(
+                                                      style: TextStyle(
+                                                          color: CustomColors
+                                                              .colorRed),
+                                                      text: '*'),
+                                                ]))),
+                                        Container(
+                                            margin: EdgeInsets.only(top: 5),
+                                            padding: EdgeInsets.only(
+                                                left: 18, right: 18),
+                                            child: CustomStyles
+                                                .greyBorderRound7PWDTextField(
+                                                    _txtFieldPWCheck,
+                                                    '비밀번호를 한번 더 입력해 주세요.')),
+                                        Container(
+                                          margin: EdgeInsets.only(
+                                              top: 30, bottom: 30),
+                                          child: Divider(
+                                            height: 0.1,
+                                            color:
+                                                CustomColors.colorFontLightGrey,
+                                          ),
+                                        ),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 18, right: 18),
+                                            child: Text('기업명',
+                                                style: CustomStyles
+                                                    .bold14TextStyle())),
+                                        Container(
+                                            margin: EdgeInsets.only(top: 5),
+                                            padding: EdgeInsets.only(
+                                                left: 18, right: 18),
+                                            child: CustomStyles
+                                                .disabledGreyBorderRound7TextField(
+                                                    KCastingAppData().myInfo[
+                                                        APIConstants
+                                                            .management_name])),
+                                        Container(
+                                            margin: EdgeInsets.only(top: 15),
+                                            padding: EdgeInsets.only(
+                                                left: 18, right: 18),
+                                            child: Text('사업자등록번호',
+                                                style: CustomStyles
+                                                    .bold14TextStyle())),
+                                        Container(
+                                            margin: EdgeInsets.only(top: 5),
+                                            padding: EdgeInsets.only(
+                                                left: 18, right: 18),
+                                            child: CustomStyles
+                                                .disabledGreyBorderRound7TextField(
+                                                    StringUtils.checkedString(
+                                                        KCastingAppData()
+                                                                .myInfo[
+                                                            APIConstants
+                                                                .businessRegistration_number]))),
+                                        Container(
+                                            margin: EdgeInsets.only(top: 15),
+                                            padding: EdgeInsets.only(
+                                                left: 18, right: 18),
+                                            child: Text('대표자명',
+                                                style: CustomStyles
+                                                    .bold14TextStyle())),
+                                        Container(
+                                            margin: EdgeInsets.only(top: 5),
+                                            padding: EdgeInsets.only(
+                                                left: 18, right: 18),
+                                            child: CustomStyles
+                                                .disabledGreyBorderRound7TextField(
+                                                    KCastingAppData().myInfo[
+                                                        APIConstants
+                                                            .management_CEO_name])),
+                                        Container(
+                                          margin: EdgeInsets.only(
+                                              top: 30, bottom: 30),
+                                          child: Divider(
+                                            height: 0.1,
+                                            color:
+                                                CustomColors.colorFontLightGrey,
+                                          ),
+                                        ),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 18, right: 18),
+                                            alignment: Alignment.centerLeft,
+                                            child: Text('홈페이지',
+                                                style: CustomStyles
+                                                    .normal14TextStyle())),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 18, right: 18),
+                                            margin: EdgeInsets.only(top: 5),
+                                            child: CustomStyles
+                                                .greyBorderRound7TextFieldWithOption(
+                                                    _txtFieldHomepage,
+                                                    TextInputType.url,
+                                                    '')),
+                                        Container(
+                                            margin: EdgeInsets.only(top: 15),
+                                            padding: EdgeInsets.only(
+                                                left: 18, right: 18),
+                                            alignment: Alignment.centerLeft,
+                                            child: RichText(
+                                                text: TextSpan(
+                                                    style: CustomStyles
+                                                        .normal14TextStyle(),
+                                                    children: <TextSpan>[
+                                                  TextSpan(text: '이메일'),
+                                                  TextSpan(
+                                                      style: TextStyle(
+                                                          color: CustomColors
+                                                              .colorRed),
+                                                      text: '*'),
+                                                ]))),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 18, right: 18),
+                                            margin: EdgeInsets.only(top: 5),
+                                            child: CustomStyles
+                                                .greyBorderRound7TextFieldWithOption(
+                                                    _txtFieldEmail,
+                                                    TextInputType.emailAddress,
+                                                    '')),
+                                        Container(
+                                            height: 50,
+                                            margin: EdgeInsets.only(top: 30.0),
+                                            padding: EdgeInsets.only(
+                                                left: 18, right: 18),
+                                            width: double.infinity,
+                                            child: CustomStyles
+                                                .greyBorderRound7ButtonStyle(
+                                                    '수정완료', () {
+                                              if (checkValidate(context)) {
+                                                requestComparePwdApi(context);
+                                              }
+                                            })),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 18, right: 18),
-                                    child: Text('기업명',
-                                        style: CustomStyles.bold14TextStyle())),
-                                Container(
-                                    margin: EdgeInsets.only(top: 5),
-                                    padding:
-                                        EdgeInsets.only(left: 18, right: 18),
-                                    child: CustomStyles
-                                        .disabledGreyBorderRound7TextField(
-                                            KCastingAppData().myInfo[
-                                                APIConstants.management_name])),
-                                Container(
-                                    margin: EdgeInsets.only(top: 15),
-                                    padding:
-                                        EdgeInsets.only(left: 18, right: 18),
-                                    child: Text('사업자등록번호',
-                                        style: CustomStyles.bold14TextStyle())),
-                                Container(
-                                    margin: EdgeInsets.only(top: 5),
-                                    padding:
-                                        EdgeInsets.only(left: 18, right: 18),
-                                    child: CustomStyles
-                                        .disabledGreyBorderRound7TextField(
-                                            StringUtils.checkedString(
-                                                KCastingAppData().myInfo[
-                                                    APIConstants
-                                                        .businessRegistration_number]))),
-                                Container(
-                                    margin: EdgeInsets.only(top: 15),
-                                    padding:
-                                        EdgeInsets.only(left: 18, right: 18),
-                                    child: Text('대표자명',
-                                        style: CustomStyles.bold14TextStyle())),
-                                Container(
-                                    margin: EdgeInsets.only(top: 5),
-                                    padding:
-                                        EdgeInsets.only(left: 18, right: 18),
-                                    child: CustomStyles
-                                        .disabledGreyBorderRound7TextField(
-                                            KCastingAppData().myInfo[
-                                                APIConstants
-                                                    .management_CEO_name])),
-                                Container(
-                                  margin: EdgeInsets.only(top: 30, bottom: 30),
-                                  child: Divider(
-                                    height: 0.1,
-                                    color: CustomColors.colorFontLightGrey,
-                                  ),
-                                ),
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 18, right: 18),
-                                    alignment: Alignment.centerLeft,
-                                    child: Text('홈페이지',
-                                        style:
-                                            CustomStyles.normal14TextStyle())),
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 18, right: 18),
-                                    margin: EdgeInsets.only(top: 5),
-                                    child: CustomStyles
-                                        .greyBorderRound7TextFieldWithOption(
-                                            _txtFieldHomepage,
-                                            TextInputType.url,
-                                            '')),
-                                Container(
-                                    margin: EdgeInsets.only(top: 15),
-                                    padding:
-                                        EdgeInsets.only(left: 18, right: 18),
-                                    alignment: Alignment.centerLeft,
-                                    child: RichText(
-                                        text: TextSpan(
-                                            style: CustomStyles
-                                                .normal14TextStyle(),
-                                            children: <TextSpan>[
-                                          TextSpan(text: '이메일'),
-                                          TextSpan(
-                                              style: TextStyle(
-                                                  color: CustomColors.colorRed),
-                                              text: '*'),
-                                        ]))),
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 18, right: 18),
-                                    margin: EdgeInsets.only(top: 5),
-                                    child: CustomStyles
-                                        .greyBorderRound7TextFieldWithOption(
-                                            _txtFieldEmail,
-                                            TextInputType.emailAddress,
-                                            '')),
-                                Container(
-                                    height: 50,
-                                    margin: EdgeInsets.only(top: 30.0),
-                                    padding:
-                                        EdgeInsets.only(left: 18, right: 18),
-                                    width: double.infinity,
-                                    child: CustomStyles
-                                        .greyBorderRound7ButtonStyle('수정완료',
-                                            () {
-                                      if (checkValidate(context)) {
-                                        requestComparePwdApi(context);
-                                      }
-                                    })),
+                                )),
+                                Visibility(
+                                  child: Container(
+                                      color: Colors.black38,
+                                      alignment: Alignment.center,
+                                      child: CircularProgressIndicator()),
+                                  visible: _isUpload,
+                                )
                               ],
-                            ),
-                          ),
-                        )),
-                        Visibility(
-                          child: Container(
-                              color: Colors.black38,
-                              alignment: Alignment.center,
-                              child: CircularProgressIndicator()),
-                          visible: _isUpload,
-                        )
-                      ],
-                    );
-                  },
-                ))));
+                            );
+                          },
+                        ))))));
   }
 
   /*

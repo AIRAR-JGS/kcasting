@@ -408,727 +408,771 @@ class _AuditionDetail extends State<AuditionDetail> with BaseUtilMixin {
   Widget build(BuildContext context) {
     return Theme(
         data: CustomStyles.defaultTheme(),
-        child: Scaffold(
-            key: _scaffoldKey,
-            appBar: CustomStyles.defaultAppBar('캐스팅보드', () {
-              Navigator.pop(context);
-            }),
-            body: Container(
-                child: Column(children: [
-              Expanded(
-                  flex: 1,
-                  child: SingleChildScrollView(
-                      child: Container(
-                          padding: EdgeInsets.only(top: 20, bottom: 50),
-                          child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    child: Text(
-                                        StringUtils.checkedString(
-                                            _castingBoardData[
-                                                APIConstants.project_name]),
-                                        style: CustomStyles
-                                            .darkBold12TextStyle())),
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    margin: EdgeInsets.only(top: 5.0),
-                                    child: Text(
-                                        StringUtils.checkedString(
-                                            _castingBoardData[
-                                                APIConstants.casting_name]),
-                                        style: CustomStyles.dark24TextStyle())),
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    margin: EdgeInsets.only(top: 20.0),
-                                    child: Row(children: [
-                                      Expanded(
-                                          flex: 3,
-                                          child: Container(
-                                              child: Text('제작사',
-                                                  style: CustomStyles
-                                                      .darkBold16TextStyle()))),
-                                      Expanded(
-                                          flex: 7,
-                                          child: Container(
-                                              child: Text(
-                                                  StringUtils.checkedString(
-                                                      _castingBoardData[
-                                                          APIConstants
-                                                              .production_name]),
-                                                  style: TextStyle(
-                                                      decoration: TextDecoration
-                                                          .underline,
-                                                      color: CustomColors
-                                                          .colorFontDarkGrey,
-                                                      fontSize: 16.0,
-                                                      fontWeight:
-                                                          FontWeight.normal))))
-                                    ])),
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    margin: EdgeInsets.only(top: 10.0),
-                                    child: Row(children: [
-                                      Expanded(
-                                          flex: 3,
-                                          child: Container(
-                                              child: Text('마감일',
-                                                  style: CustomStyles
-                                                      .darkBold16TextStyle()))),
-                                      Expanded(
-                                          flex: 7,
-                                          child: Container(
-                                              child: Text(_auditionEndDate,
-                                                  style: CustomStyles
-                                                      .dark16TextStyle())))
-                                    ])),
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    margin: EdgeInsets.only(top: 10.0),
-                                    child: Row(children: [
-                                      Expanded(
-                                          flex: 3,
-                                          child: Container(
-                                              child: Text('지원자',
-                                                  style: CustomStyles
-                                                      .darkBold16TextStyle()))),
-                                      Expanded(
-                                          flex: 7,
-                                          child: Container(
-                                              child: Text(
-                                                  StringUtils.checkedString(
-                                                          _castingBoardData[
-                                                              APIConstants
-                                                                  .apply_cnt]) +
-                                                      "명",
-                                                  style: CustomStyles
-                                                      .dark16TextStyle())))
-                                    ])),
-                                Visibility(
-                                    child: Container(
-                                        padding: EdgeInsets.only(
-                                            left: 15, right: 15),
-                                        margin: EdgeInsets.only(top: 10.0),
-                                        child: Text('첨부파일 또는 이미지',
-                                            style: CustomStyles
-                                                .darkBold16TextStyle())),
-                                    visible: _castingBoardData[APIConstants
-                                                .project_file_url] ==
-                                            null
-                                        ? false
-                                        : true),
-                                Visibility(
-                                    child: Container(
-                                        margin: EdgeInsets.only(
-                                            top: 15.0, left: 15, right: 15),
-                                        padding: EdgeInsets.only(
-                                            left: 15,
-                                            right: 15,
-                                            top: 12,
-                                            bottom: 12),
-                                        decoration: BoxDecoration(
-                                          color: CustomColors.colorBgGrey,
-                                        ),
-                                        child: Row(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Expanded(
-                                                  flex: 1,
-                                                  child: Text('첨부파일',
-                                                      style: CustomStyles
-                                                          .dark14TextStyle(),
-                                                      overflow:
-                                                          TextOverflow.clip)),
-                                              Expanded(
-                                                  flex: 0,
-                                                  child: CustomStyles
-                                                      .darkBold14TextButtonStyle(
-                                                          '다운로드', () async {
-                                                    String _url =
-                                                        _castingBoardData[
-                                                            APIConstants
-                                                                .project_file_url];
-                                                    await canLaunch(_url)
-                                                        ? await launch(_url)
-                                                        : throw '$_url을 열 수 없습니다.';
-                                                  }))
-                                            ])),
-                                    visible:
-                                        _castingBoardData[APIConstants.isImg] ==
-                                                null
-                                            ? false
-                                            : (_castingBoardData[
-                                                        APIConstants.isImg] ==
-                                                    0
-                                                ? true
-                                                : false)),
-                                Visibility(
-                                    child: Container(
-                                      margin: EdgeInsets.only(top: 15),
-                                      alignment: Alignment.center,
-                                      width: MediaQuery.of(context).size.width,
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                            begin: Alignment.topLeft,
-                                            end: Alignment.bottomRight,
-                                            stops: [
-                                              0.1,
-                                              1
-                                            ],
-                                            colors: [
-                                              CustomColors.colorAccent,
-                                              CustomColors.colorPrimary
-                                            ]),
-                                      ),
-                                      child: _castingBoardData[APIConstants
-                                                  .project_file_url] !=
-                                              null
-                                          ? CachedNetworkImage(
-                                              placeholder: (context, url) =>
-                                                  Container(
-                                                      alignment:
-                                                          Alignment.center,
-                                                      child:
-                                                          CircularProgressIndicator()),
-                                              imageUrl: _castingBoardData[
-                                                  APIConstants
-                                                      .project_file_url],
-                                              fit: BoxFit.fitWidth,
-                                              errorWidget:
-                                                  (context, url, error) =>
-                                                      Container())
-                                          : null,
-                                    ),
-                                    visible:
-                                        _castingBoardData[APIConstants.isImg] ==
-                                                null
-                                            ? false
-                                            : (_castingBoardData[
-                                                        APIConstants.isImg] ==
-                                                    1
-                                                ? true
-                                                : false)),
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    margin: EdgeInsets.only(top: 30.0),
-                                    child: Text('배역소개',
-                                        style: CustomStyles.dark20TextStyle())),
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    margin: EdgeInsets.only(top: 20.0),
-                                    child: Row(children: [
-                                      Expanded(
-                                          flex: 3,
-                                          child: Container(
-                                              child: Text('배역',
-                                                  style: CustomStyles
-                                                      .darkBold16TextStyle()))),
-                                      Expanded(
-                                          flex: 7,
-                                          child: Container(
-                                              child: Text(
-                                                  StringUtils.checkedString(
-                                                      _castingBoardData[
-                                                          APIConstants
-                                                              .casting_type]),
-                                                  style: CustomStyles
-                                                      .dark16TextStyle())))
-                                    ])),
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    margin: EdgeInsets.only(top: 10.0),
-                                    child: Row(children: [
-                                      Expanded(
-                                          flex: 3,
-                                          child: Container(
-                                              child: Text('배역 수',
-                                                  style: CustomStyles
-                                                      .darkBold16TextStyle()))),
-                                      Expanded(
-                                          flex: 7,
-                                          child: Container(
-                                              child: Text(
-                                                  StringUtils.checkedString(
-                                                          _castingBoardData[
-                                                              APIConstants
-                                                                  .casting_count]) +
-                                                      "명",
-                                                  style: CustomStyles
-                                                      .dark16TextStyle())))
-                                    ])),
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    margin: EdgeInsets.only(top: 10.0),
-                                    child: Row(children: [
-                                      Expanded(
-                                          flex: 3,
-                                          child: Container(
-                                              child: Text('성별',
-                                                  style: CustomStyles
-                                                      .darkBold16TextStyle()))),
-                                      Expanded(
-                                          flex: 7,
-                                          child: Container(
-                                              child: Text(
-                                                  StringUtils.checkedString(
-                                                      _castingBoardData[
-                                                          APIConstants
-                                                              .sex_type]),
-                                                  style: CustomStyles
-                                                      .dark16TextStyle())))
-                                    ])),
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    margin: EdgeInsets.only(top: 10.0),
-                                    child: Row(children: [
-                                      Expanded(
-                                          flex: 3,
-                                          child: Container(
-                                              child: Text('나이',
-                                                  style: CustomStyles
-                                                      .darkBold16TextStyle()))),
-                                      Expanded(
-                                          flex: 7,
-                                          child: Container(
-                                              child: Text(_ageStr,
-                                                  style: CustomStyles
-                                                      .dark16TextStyle())))
-                                    ])),
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    margin: EdgeInsets.only(top: 10.0),
-                                    child: Row(children: [
-                                      Expanded(
-                                          flex: 3,
-                                          child: Container(
-                                              child: Text('키',
-                                                  style: CustomStyles
-                                                      .darkBold16TextStyle()))),
-                                      Expanded(
-                                          flex: 7,
-                                          child: Container(
-                                              child: Text(_heightStr,
-                                                  style: CustomStyles
-                                                      .dark16TextStyle())))
-                                    ])),
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    margin: EdgeInsets.only(top: 10.0),
-                                    child: Row(children: [
-                                      Expanded(
-                                          flex: 3,
-                                          child: Container(
-                                              child: Text('체중',
-                                                  style: CustomStyles
-                                                      .darkBold16TextStyle()))),
-                                      Expanded(
-                                          flex: 7,
-                                          child: Container(
-                                              child: Text(_weightStr,
-                                                  style: CustomStyles
-                                                      .dark16TextStyle())))
-                                    ])),
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    margin: EdgeInsets.only(top: 10.0),
-                                    child: Row(children: [
-                                      Expanded(
-                                          flex: 3,
-                                          child: Container(
-                                              child: Text('연기전공',
-                                                  style: CustomStyles
-                                                      .darkBold16TextStyle()))),
-                                      Expanded(
-                                          flex: 7,
-                                          child: Container(
-                                              child: Text(
-                                                  StringUtils.checkedString(
-                                                      _castingBoardData[
-                                                          APIConstants
-                                                              .major_type]),
-                                                  style: CustomStyles
-                                                      .dark16TextStyle())))
-                                    ])),
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    margin: EdgeInsets.only(top: 10.0),
-                                    child: Row(children: [
-                                      Expanded(
-                                          flex: 3,
-                                          child: Container(
-                                              child: Text('언어',
-                                                  style: CustomStyles
-                                                      .darkBold16TextStyle()))),
-                                      Expanded(
-                                          flex: 7,
-                                          child: Container(
-                                              child: Text(_castingLanguageStr,
-                                                  style: CustomStyles
-                                                      .dark16TextStyle())))
-                                    ])),
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    margin: EdgeInsets.only(top: 10.0),
-                                    child: Row(children: [
-                                      Expanded(
-                                          flex: 3,
-                                          child: Container(
-                                              child: Text('특기',
-                                                  style: CustomStyles
-                                                      .darkBold16TextStyle()))),
-                                      Expanded(
-                                          flex: 7,
-                                          child: Container(
-                                              child: Text(_castingAbilityStr,
-                                                  style: CustomStyles
-                                                      .dark16TextStyle())))
-                                    ])),
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    margin: EdgeInsets.only(top: 10.0),
-                                    child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Expanded(
-                                              flex: 3,
-                                              child: Container(
-                                                  child: Text('캐릭터 소개',
-                                                      style: CustomStyles
-                                                          .darkBold16TextStyle()))),
-                                          Expanded(
-                                              flex: 7,
-                                              child: Container(
-                                                  child: Text(
-                                                      StringUtils.checkedString(
-                                                          _castingBoardData[
-                                                              APIConstants
-                                                                  .casting_Introduce]),
-                                                      style: CustomStyles
-                                                          .dark16TextStyle())))
-                                        ])),
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    margin: EdgeInsets.only(top: 10.0),
-                                    child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Expanded(
-                                              flex: 3,
-                                              child: Container(
-                                                  child: Text('특이사항',
-                                                      style: CustomStyles
-                                                          .darkBold16TextStyle()))),
-                                          Expanded(
-                                              flex: 7,
-                                              child: Container(
-                                                  child: Text(
-                                                      StringUtils.checkedString(
-                                                          _castingBoardData[
-                                                              APIConstants
-                                                                  .casting_uniqueness]),
-                                                      style: CustomStyles
-                                                          .dark16TextStyle())))
-                                        ])),
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    margin: EdgeInsets.only(top: 10.0),
-                                    child: Row(children: [
-                                      Expanded(
-                                          flex: 3,
-                                          child: Container(
-                                              child: Text('페이',
-                                                  style: CustomStyles
-                                                      .darkBold16TextStyle()))),
-                                      Expanded(
-                                          flex: 7,
-                                          child: Container(
-                                              child: Text(_payStr,
-                                                  style: CustomStyles
-                                                      .dark16TextStyle())))
-                                    ])),
-                                Container(
-                                    margin:
-                                        EdgeInsets.only(top: 30, bottom: 30),
-                                    child: Divider(
-                                        height: 0.1,
-                                        color:
-                                            CustomColors.colorFontLightGrey)),
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    child: Text('작품소개',
-                                        style: CustomStyles.dark20TextStyle())),
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    margin: EdgeInsets.only(top: 20.0),
-                                    child: Row(children: [
-                                      Expanded(
-                                          flex: 3,
-                                          child: Container(
-                                              child: Text('장르',
-                                                  style: CustomStyles
-                                                      .darkBold16TextStyle()))),
-                                      Expanded(
-                                          flex: 7,
-                                          child: Container(
-                                              child: Text(
-                                                  StringUtils.checkedString(
-                                                      _castingBoardData[
-                                                          APIConstants
-                                                              .genre_type]),
-                                                  style: CustomStyles
-                                                      .dark16TextStyle())))
-                                    ])),
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    margin: EdgeInsets.only(top: 10.0),
-                                    child: Row(children: [
-                                      Expanded(
-                                          flex: 3,
-                                          child: Container(
-                                              child: Text('제작유형',
-                                                  style: CustomStyles
-                                                      .darkBold16TextStyle()))),
-                                      Expanded(
-                                          flex: 7,
-                                          child: Container(
-                                              child: Text(
-                                                  StringUtils.checkedString(
-                                                      _castingBoardData[
-                                                          APIConstants
-                                                              .project_type]),
-                                                  style: CustomStyles
-                                                      .dark16TextStyle())))
-                                    ])),
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    margin: EdgeInsets.only(top: 10.0),
-                                    child: Row(children: [
-                                      Expanded(
-                                          flex: 3,
-                                          child: Container(
-                                              child: Text('제작사',
-                                                  style: CustomStyles
-                                                      .darkBold16TextStyle()))),
-                                      Expanded(
-                                          flex: 7,
-                                          child: Container(
-                                              child: Text(
-                                                  StringUtils.checkedString(
-                                                      _castingBoardData[
-                                                          APIConstants
-                                                              .production_name]),
-                                                  style: CustomStyles
-                                                      .dark16TextStyle())))
-                                    ])),
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    margin: EdgeInsets.only(top: 10.0),
-                                    child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Expanded(
-                                              flex: 3,
-                                              child: Container(
-                                                  child: Text('작품소개',
-                                                      style: CustomStyles
-                                                          .darkBold16TextStyle()))),
-                                          Expanded(
-                                              flex: 7,
-                                              child: Container(
-                                                  child: Text(
-                                                      StringUtils.checkedString(
-                                                          _castingBoardData[
-                                                              APIConstants
-                                                                  .project_Introduce]),
-                                                      style: CustomStyles
-                                                          .dark16TextStyle())))
-                                        ])),
-                                Container(
-                                    margin:
-                                        EdgeInsets.only(top: 30, bottom: 30),
-                                    child: Divider(
-                                        height: 0.1,
-                                        color:
-                                            CustomColors.colorFontLightGrey)),
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    child: Text('일정안내',
-                                        style: CustomStyles.dark20TextStyle())),
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    margin: EdgeInsets.only(top: 20.0),
-                                    child: Row(children: [
-                                      Expanded(
-                                          flex: 3,
-                                          child: Container(
-                                              child: Text('촬영기간',
-                                                  style: CustomStyles
-                                                      .darkBold16TextStyle()))),
-                                      Expanded(
-                                          flex: 7,
-                                          child: Container(
-                                              child: Text(_shootingDateStr,
-                                                  style: CustomStyles
-                                                      .dark16TextStyle())))
-                                    ])),
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    margin: EdgeInsets.only(top: 10.0),
-                                    child: Row(children: [
-                                      Expanded(
-                                          flex: 3,
-                                          child: Container(
-                                              child: Text('촬영지역',
-                                                  style: CustomStyles
-                                                      .darkBold16TextStyle()))),
-                                      Expanded(
-                                          flex: 7,
-                                          child: Container(
-                                              child: Text(
-                                                  StringUtils.checkedString(
-                                                      _castingBoardData[
-                                                          APIConstants
-                                                              .shooting_place]),
-                                                  style: CustomStyles
-                                                      .dark16TextStyle())))
-                                    ]))
-                              ])))),
-              Visibility(
-                  child: Container(
-                      height: 55,
-                      color: CustomColors.colorBgGrey,
-                      child: Row(children: [
-                        Expanded(
-                            flex: 1,
-                            child: Container(
-                                height: 55,
-                                child: CustomStyles.applyButtonStyle(
-                                    '지원하기 D-56', () {
-                                  if (KCastingAppData()
-                                          .myInfo[APIConstants.member_type] ==
-                                      APIConstants.member_type_actor) {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                AuditionApplyUploadImage(
-                                                  castingSeq: _castingSeq,
-                                                  projectName:
-                                                      _castingBoardData[
-                                                          APIConstants
-                                                              .project_name],
-                                                  castingName:
-                                                      _castingBoardData[
-                                                          APIConstants
-                                                              .casting_name],
-                                                )));
-                                  }
-                                  //else if(KCastingAppData().myInfo[APIConstants.member_type] == APIConstants.member_type_management) {
-                                  else {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                AgencyActorAuditionApply(
-                                                  castingSeq: _castingSeq,
-                                                  projectName:
-                                                      _castingBoardData[
-                                                          APIConstants
-                                                              .project_name],
-                                                  castingName:
-                                                      _castingBoardData[
-                                                          APIConstants
-                                                              .casting_name],
-                                                )));
-                                  }
-                                }))),
-                        GestureDetector(
-                            onTap: () {
-                              if (KCastingAppData()
-                                      .myInfo[APIConstants.member_type] ==
-                                  APIConstants.member_type_actor) {
-                                requestActorBookmarkEditApi(context);
-                              } else {
-                                requestManagementBookmarkEditApi(context);
-                              }
-                            },
-                            child: Visibility(
-                                child: Container(
-                                    height: 55,
-                                    width: 55,
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    alignment: Alignment.center,
-                                    child: ((_castingBoardData[
-                                                _isBookmarkedKey] ==
-                                            1)
-                                        ? Image.asset(
-                                            'assets/images/toggle_like_on.png',
-                                            width: 20,
-                                            color: CustomColors.colorAccent.withAlpha(200))
-                                        : Image.asset(
-                                            'assets/images/toggle_like_off.png',
-                                            width: 20))),
-                                visible: (KCastingAppData().myInfo[
-                                            APIConstants.member_type]) ==
-                                        APIConstants.member_type_product
-                                    ? false
-                                    : true))
-                      ])),
-                  visible: KCastingAppData().myInfo[APIConstants.member_type] ==
-                          APIConstants.member_type_product
-                      ? false
-                      : _castingStateStr == ""
-                          ? true
-                          : false),
-              Visibility(
-                child: Container(
-                    height: 55,
-                    color: CustomColors.colorBgGrey,
-                    child: Row(children: [
+        child: Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+                width: KCastingAppData().isWeb
+                    ? CustomStyles.appWidth
+                    : double.infinity,
+                child: Scaffold(
+                    key: _scaffoldKey,
+                    appBar: CustomStyles.defaultAppBar('캐스팅보드', () {
+                      Navigator.pop(context);
+                    }),
+                    body: Container(
+                        child: Column(children: [
                       Expanded(
                           flex: 1,
+                          child: SingleChildScrollView(
+                              child: Container(
+                                  padding: EdgeInsets.only(top: 20, bottom: 50),
+                                  child: Column(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            child: Text(
+                                                StringUtils.checkedString(
+                                                    _castingBoardData[
+                                                        APIConstants
+                                                            .project_name]),
+                                                style: CustomStyles
+                                                    .darkBold12TextStyle())),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            margin: EdgeInsets.only(top: 5.0),
+                                            child: Text(
+                                                StringUtils.checkedString(
+                                                    _castingBoardData[
+                                                        APIConstants
+                                                            .casting_name]),
+                                                style: CustomStyles
+                                                    .dark24TextStyle())),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            margin: EdgeInsets.only(top: 20.0),
+                                            child: Row(children: [
+                                              Expanded(
+                                                  flex: 3,
+                                                  child: Container(
+                                                      child: Text('제작사',
+                                                          style: CustomStyles
+                                                              .darkBold16TextStyle()))),
+                                              Expanded(
+                                                  flex: 7,
+                                                  child: Container(
+                                                      child: Text(
+                                                          StringUtils.checkedString(
+                                                              _castingBoardData[
+                                                                  APIConstants
+                                                                      .production_name]),
+                                                          style: TextStyle(
+                                                              decoration:
+                                                                  TextDecoration
+                                                                      .underline,
+                                                              color: CustomColors
+                                                                  .colorFontDarkGrey,
+                                                              fontSize: 16.0,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal))))
+                                            ])),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            margin: EdgeInsets.only(top: 10.0),
+                                            child: Row(children: [
+                                              Expanded(
+                                                  flex: 3,
+                                                  child: Container(
+                                                      child: Text('마감일',
+                                                          style: CustomStyles
+                                                              .darkBold16TextStyle()))),
+                                              Expanded(
+                                                  flex: 7,
+                                                  child: Container(
+                                                      child: Text(
+                                                          _auditionEndDate,
+                                                          style: CustomStyles
+                                                              .dark16TextStyle())))
+                                            ])),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            margin: EdgeInsets.only(top: 10.0),
+                                            child: Row(children: [
+                                              Expanded(
+                                                  flex: 3,
+                                                  child: Container(
+                                                      child: Text('지원자',
+                                                          style: CustomStyles
+                                                              .darkBold16TextStyle()))),
+                                              Expanded(
+                                                  flex: 7,
+                                                  child: Container(
+                                                      child: Text(
+                                                          StringUtils.checkedString(
+                                                                  _castingBoardData[
+                                                                      APIConstants
+                                                                          .apply_cnt]) +
+                                                              "명",
+                                                          style: CustomStyles
+                                                              .dark16TextStyle())))
+                                            ])),
+                                        Visibility(
+                                            child: Container(
+                                                padding: EdgeInsets.only(
+                                                    left: 15, right: 15),
+                                                margin:
+                                                    EdgeInsets.only(top: 10.0),
+                                                child: Text('첨부파일 또는 이미지',
+                                                    style: CustomStyles
+                                                        .darkBold16TextStyle())),
+                                            visible: _castingBoardData[
+                                                        APIConstants
+                                                            .project_file_url] ==
+                                                    null
+                                                ? false
+                                                : true),
+                                        Visibility(
+                                            child: Container(
+                                                margin: EdgeInsets.only(
+                                                    top: 15.0,
+                                                    left: 15,
+                                                    right: 15),
+                                                padding: EdgeInsets.only(
+                                                    left: 15,
+                                                    right: 15,
+                                                    top: 12,
+                                                    bottom: 12),
+                                                decoration: BoxDecoration(
+                                                  color:
+                                                      CustomColors.colorBgGrey,
+                                                ),
+                                                child: Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                          flex: 1,
+                                                          child: Text('첨부파일',
+                                                              style: CustomStyles
+                                                                  .dark14TextStyle(),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .clip)),
+                                                      Expanded(
+                                                          flex: 0,
+                                                          child: CustomStyles
+                                                              .darkBold14TextButtonStyle(
+                                                                  '다운로드',
+                                                                  () async {
+                                                            String _url =
+                                                                _castingBoardData[
+                                                                    APIConstants
+                                                                        .project_file_url];
+                                                            await canLaunch(
+                                                                    _url)
+                                                                ? await launch(
+                                                                    _url)
+                                                                : throw '$_url을 열 수 없습니다.';
+                                                          }))
+                                                    ])),
+                                            visible: _castingBoardData[
+                                                        APIConstants.isImg] ==
+                                                    null
+                                                ? false
+                                                : (_castingBoardData[
+                                                            APIConstants
+                                                                .isImg] ==
+                                                        0
+                                                    ? true
+                                                    : false)),
+                                        Visibility(
+                                            child: Container(
+                                              margin: EdgeInsets.only(top: 15),
+                                              alignment: Alignment.center,
+                                              width: (KCastingAppData().isWeb)
+                                                  ? CustomStyles.appWidth
+                                                  : MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              decoration: BoxDecoration(
+                                                gradient: LinearGradient(
+                                                    begin: Alignment.topLeft,
+                                                    end: Alignment.bottomRight,
+                                                    stops: [
+                                                      0.1,
+                                                      1
+                                                    ],
+                                                    colors: [
+                                                      CustomColors.colorAccent,
+                                                      CustomColors.colorPrimary
+                                                    ]),
+                                              ),
+                                              child: _castingBoardData[
+                                                          APIConstants
+                                                              .project_file_url] !=
+                                                      null
+                                                  ? CachedNetworkImage(
+                                                      placeholder: (context,
+                                                              url) =>
+                                                          Container(
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
+                                                              child:
+                                                                  CircularProgressIndicator()),
+                                                      imageUrl: _castingBoardData[
+                                                          APIConstants
+                                                              .project_file_url],
+                                                      fit: BoxFit.fitWidth,
+                                                      errorWidget: (context,
+                                                              url, error) =>
+                                                          Container())
+                                                  : null,
+                                            ),
+                                            visible: _castingBoardData[
+                                                        APIConstants.isImg] ==
+                                                    null
+                                                ? false
+                                                : (_castingBoardData[
+                                                            APIConstants
+                                                                .isImg] ==
+                                                        1
+                                                    ? true
+                                                    : false)),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            margin: EdgeInsets.only(top: 30.0),
+                                            child: Text('배역소개',
+                                                style: CustomStyles
+                                                    .dark20TextStyle())),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            margin: EdgeInsets.only(top: 20.0),
+                                            child: Row(children: [
+                                              Expanded(
+                                                  flex: 3,
+                                                  child: Container(
+                                                      child: Text('배역',
+                                                          style: CustomStyles
+                                                              .darkBold16TextStyle()))),
+                                              Expanded(
+                                                  flex: 7,
+                                                  child: Container(
+                                                      child: Text(
+                                                          StringUtils.checkedString(
+                                                              _castingBoardData[
+                                                                  APIConstants
+                                                                      .casting_type]),
+                                                          style: CustomStyles
+                                                              .dark16TextStyle())))
+                                            ])),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            margin: EdgeInsets.only(top: 10.0),
+                                            child: Row(children: [
+                                              Expanded(
+                                                  flex: 3,
+                                                  child: Container(
+                                                      child: Text('배역 수',
+                                                          style: CustomStyles
+                                                              .darkBold16TextStyle()))),
+                                              Expanded(
+                                                  flex: 7,
+                                                  child: Container(
+                                                      child: Text(
+                                                          StringUtils.checkedString(
+                                                                  _castingBoardData[
+                                                                      APIConstants
+                                                                          .casting_count]) +
+                                                              "명",
+                                                          style: CustomStyles
+                                                              .dark16TextStyle())))
+                                            ])),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            margin: EdgeInsets.only(top: 10.0),
+                                            child: Row(children: [
+                                              Expanded(
+                                                  flex: 3,
+                                                  child: Container(
+                                                      child: Text('성별',
+                                                          style: CustomStyles
+                                                              .darkBold16TextStyle()))),
+                                              Expanded(
+                                                  flex: 7,
+                                                  child: Container(
+                                                      child: Text(
+                                                          StringUtils.checkedString(
+                                                              _castingBoardData[
+                                                                  APIConstants
+                                                                      .sex_type]),
+                                                          style: CustomStyles
+                                                              .dark16TextStyle())))
+                                            ])),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            margin: EdgeInsets.only(top: 10.0),
+                                            child: Row(children: [
+                                              Expanded(
+                                                  flex: 3,
+                                                  child: Container(
+                                                      child: Text('나이',
+                                                          style: CustomStyles
+                                                              .darkBold16TextStyle()))),
+                                              Expanded(
+                                                  flex: 7,
+                                                  child: Container(
+                                                      child: Text(_ageStr,
+                                                          style: CustomStyles
+                                                              .dark16TextStyle())))
+                                            ])),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            margin: EdgeInsets.only(top: 10.0),
+                                            child: Row(children: [
+                                              Expanded(
+                                                  flex: 3,
+                                                  child: Container(
+                                                      child: Text('키',
+                                                          style: CustomStyles
+                                                              .darkBold16TextStyle()))),
+                                              Expanded(
+                                                  flex: 7,
+                                                  child: Container(
+                                                      child: Text(_heightStr,
+                                                          style: CustomStyles
+                                                              .dark16TextStyle())))
+                                            ])),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            margin: EdgeInsets.only(top: 10.0),
+                                            child: Row(children: [
+                                              Expanded(
+                                                  flex: 3,
+                                                  child: Container(
+                                                      child: Text('체중',
+                                                          style: CustomStyles
+                                                              .darkBold16TextStyle()))),
+                                              Expanded(
+                                                  flex: 7,
+                                                  child: Container(
+                                                      child: Text(_weightStr,
+                                                          style: CustomStyles
+                                                              .dark16TextStyle())))
+                                            ])),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            margin: EdgeInsets.only(top: 10.0),
+                                            child: Row(children: [
+                                              Expanded(
+                                                  flex: 3,
+                                                  child: Container(
+                                                      child: Text('연기전공',
+                                                          style: CustomStyles
+                                                              .darkBold16TextStyle()))),
+                                              Expanded(
+                                                  flex: 7,
+                                                  child: Container(
+                                                      child: Text(
+                                                          StringUtils.checkedString(
+                                                              _castingBoardData[
+                                                                  APIConstants
+                                                                      .major_type]),
+                                                          style: CustomStyles
+                                                              .dark16TextStyle())))
+                                            ])),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            margin: EdgeInsets.only(top: 10.0),
+                                            child: Row(children: [
+                                              Expanded(
+                                                  flex: 3,
+                                                  child: Container(
+                                                      child: Text('언어',
+                                                          style: CustomStyles
+                                                              .darkBold16TextStyle()))),
+                                              Expanded(
+                                                  flex: 7,
+                                                  child: Container(
+                                                      child: Text(
+                                                          _castingLanguageStr,
+                                                          style: CustomStyles
+                                                              .dark16TextStyle())))
+                                            ])),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            margin: EdgeInsets.only(top: 10.0),
+                                            child: Row(children: [
+                                              Expanded(
+                                                  flex: 3,
+                                                  child: Container(
+                                                      child: Text('특기',
+                                                          style: CustomStyles
+                                                              .darkBold16TextStyle()))),
+                                              Expanded(
+                                                  flex: 7,
+                                                  child: Container(
+                                                      child: Text(
+                                                          _castingAbilityStr,
+                                                          style: CustomStyles
+                                                              .dark16TextStyle())))
+                                            ])),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            margin: EdgeInsets.only(top: 10.0),
+                                            child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Expanded(
+                                                      flex: 3,
+                                                      child: Container(
+                                                          child: Text('캐릭터 소개',
+                                                              style: CustomStyles
+                                                                  .darkBold16TextStyle()))),
+                                                  Expanded(
+                                                      flex: 7,
+                                                      child: Container(
+                                                          child: Text(
+                                                              StringUtils.checkedString(
+                                                                  _castingBoardData[
+                                                                      APIConstants
+                                                                          .casting_Introduce]),
+                                                              style: CustomStyles
+                                                                  .dark16TextStyle())))
+                                                ])),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            margin: EdgeInsets.only(top: 10.0),
+                                            child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Expanded(
+                                                      flex: 3,
+                                                      child: Container(
+                                                          child: Text('특이사항',
+                                                              style: CustomStyles
+                                                                  .darkBold16TextStyle()))),
+                                                  Expanded(
+                                                      flex: 7,
+                                                      child: Container(
+                                                          child: Text(
+                                                              StringUtils.checkedString(
+                                                                  _castingBoardData[
+                                                                      APIConstants
+                                                                          .casting_uniqueness]),
+                                                              style: CustomStyles
+                                                                  .dark16TextStyle())))
+                                                ])),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            margin: EdgeInsets.only(top: 10.0),
+                                            child: Row(children: [
+                                              Expanded(
+                                                  flex: 3,
+                                                  child: Container(
+                                                      child: Text('페이',
+                                                          style: CustomStyles
+                                                              .darkBold16TextStyle()))),
+                                              Expanded(
+                                                  flex: 7,
+                                                  child: Container(
+                                                      child: Text(_payStr,
+                                                          style: CustomStyles
+                                                              .dark16TextStyle())))
+                                            ])),
+                                        Container(
+                                            margin: EdgeInsets.only(
+                                                top: 30, bottom: 30),
+                                            child: Divider(
+                                                height: 0.1,
+                                                color: CustomColors
+                                                    .colorFontLightGrey)),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            child: Text('작품소개',
+                                                style: CustomStyles
+                                                    .dark20TextStyle())),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            margin: EdgeInsets.only(top: 20.0),
+                                            child: Row(children: [
+                                              Expanded(
+                                                  flex: 3,
+                                                  child: Container(
+                                                      child: Text('장르',
+                                                          style: CustomStyles
+                                                              .darkBold16TextStyle()))),
+                                              Expanded(
+                                                  flex: 7,
+                                                  child: Container(
+                                                      child: Text(
+                                                          StringUtils.checkedString(
+                                                              _castingBoardData[
+                                                                  APIConstants
+                                                                      .genre_type]),
+                                                          style: CustomStyles
+                                                              .dark16TextStyle())))
+                                            ])),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            margin: EdgeInsets.only(top: 10.0),
+                                            child: Row(children: [
+                                              Expanded(
+                                                  flex: 3,
+                                                  child: Container(
+                                                      child: Text('제작유형',
+                                                          style: CustomStyles
+                                                              .darkBold16TextStyle()))),
+                                              Expanded(
+                                                  flex: 7,
+                                                  child: Container(
+                                                      child: Text(
+                                                          StringUtils.checkedString(
+                                                              _castingBoardData[
+                                                                  APIConstants
+                                                                      .project_type]),
+                                                          style: CustomStyles
+                                                              .dark16TextStyle())))
+                                            ])),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            margin: EdgeInsets.only(top: 10.0),
+                                            child: Row(children: [
+                                              Expanded(
+                                                  flex: 3,
+                                                  child: Container(
+                                                      child: Text('제작사',
+                                                          style: CustomStyles
+                                                              .darkBold16TextStyle()))),
+                                              Expanded(
+                                                  flex: 7,
+                                                  child: Container(
+                                                      child: Text(
+                                                          StringUtils.checkedString(
+                                                              _castingBoardData[
+                                                                  APIConstants
+                                                                      .production_name]),
+                                                          style: CustomStyles
+                                                              .dark16TextStyle())))
+                                            ])),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            margin: EdgeInsets.only(top: 10.0),
+                                            child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Expanded(
+                                                      flex: 3,
+                                                      child: Container(
+                                                          child: Text('작품소개',
+                                                              style: CustomStyles
+                                                                  .darkBold16TextStyle()))),
+                                                  Expanded(
+                                                      flex: 7,
+                                                      child: Container(
+                                                          child: Text(
+                                                              StringUtils.checkedString(
+                                                                  _castingBoardData[
+                                                                      APIConstants
+                                                                          .project_Introduce]),
+                                                              style: CustomStyles
+                                                                  .dark16TextStyle())))
+                                                ])),
+                                        Container(
+                                            margin: EdgeInsets.only(
+                                                top: 30, bottom: 30),
+                                            child: Divider(
+                                                height: 0.1,
+                                                color: CustomColors
+                                                    .colorFontLightGrey)),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            child: Text('일정안내',
+                                                style: CustomStyles
+                                                    .dark20TextStyle())),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            margin: EdgeInsets.only(top: 20.0),
+                                            child: Row(children: [
+                                              Expanded(
+                                                  flex: 3,
+                                                  child: Container(
+                                                      child: Text('촬영기간',
+                                                          style: CustomStyles
+                                                              .darkBold16TextStyle()))),
+                                              Expanded(
+                                                  flex: 7,
+                                                  child: Container(
+                                                      child: Text(
+                                                          _shootingDateStr,
+                                                          style: CustomStyles
+                                                              .dark16TextStyle())))
+                                            ])),
+                                        Container(
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            margin: EdgeInsets.only(top: 10.0),
+                                            child: Row(children: [
+                                              Expanded(
+                                                  flex: 3,
+                                                  child: Container(
+                                                      child: Text('촬영지역',
+                                                          style: CustomStyles
+                                                              .darkBold16TextStyle()))),
+                                              Expanded(
+                                                  flex: 7,
+                                                  child: Container(
+                                                      child: Text(
+                                                          StringUtils.checkedString(
+                                                              _castingBoardData[
+                                                                  APIConstants
+                                                                      .shooting_place]),
+                                                          style: CustomStyles
+                                                              .dark16TextStyle())))
+                                            ]))
+                                      ])))),
+                      Visibility(
                           child: Container(
                               height: 55,
-                              child: CustomStyles.greyBGSquareButtonStyle(
-                                  _castingStateStr, () {})))
-                    ])),
-                visible: _castingStateStr == "" ? false : true,
-              )
-            ]))));
+                              color: CustomColors.colorBgGrey,
+                              child: Row(children: [
+                                Expanded(
+                                    flex: 1,
+                                    child: Container(
+                                        height: 55,
+                                        child: CustomStyles.applyButtonStyle(
+                                            '지원하기 D-56', () {
+                                          if (KCastingAppData().myInfo[
+                                                  APIConstants.member_type] ==
+                                              APIConstants.member_type_actor) {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        AuditionApplyUploadImage(
+                                                          castingSeq:
+                                                              _castingSeq,
+                                                          projectName:
+                                                              _castingBoardData[
+                                                                  APIConstants
+                                                                      .project_name],
+                                                          castingName:
+                                                              _castingBoardData[
+                                                                  APIConstants
+                                                                      .casting_name],
+                                                        )));
+                                          }
+                                          //else if(KCastingAppData().myInfo[APIConstants.member_type] == APIConstants.member_type_management) {
+                                          else {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        AgencyActorAuditionApply(
+                                                          castingSeq:
+                                                              _castingSeq,
+                                                          projectName:
+                                                              _castingBoardData[
+                                                                  APIConstants
+                                                                      .project_name],
+                                                          castingName:
+                                                              _castingBoardData[
+                                                                  APIConstants
+                                                                      .casting_name],
+                                                        )));
+                                          }
+                                        }))),
+                                GestureDetector(
+                                    onTap: () {
+                                      if (KCastingAppData().myInfo[
+                                              APIConstants.member_type] ==
+                                          APIConstants.member_type_actor) {
+                                        requestActorBookmarkEditApi(context);
+                                      } else {
+                                        requestManagementBookmarkEditApi(
+                                            context);
+                                      }
+                                    },
+                                    child: Visibility(
+                                        child: Container(
+                                            height: 55,
+                                            width: 55,
+                                            padding: EdgeInsets.only(
+                                                left: 15, right: 15),
+                                            alignment: Alignment.center,
+                                            child: ((_castingBoardData[_isBookmarkedKey] == 1)
+                                                ? Image.asset(
+                                                    'assets/images/toggle_like_on.png',
+                                                    width: 20,
+                                                    color: CustomColors.colorAccent
+                                                        .withAlpha(200))
+                                                : Image.asset(
+                                                    'assets/images/toggle_like_off.png',
+                                                    width: 20))),
+                                        visible: (KCastingAppData().myInfo[
+                                                    APIConstants.member_type]) ==
+                                                APIConstants.member_type_product
+                                            ? false
+                                            : true))
+                              ])),
+                          visible: KCastingAppData()
+                                      .myInfo[APIConstants.member_type] ==
+                                  APIConstants.member_type_product
+                              ? false
+                              : _castingStateStr == ""
+                                  ? true
+                                  : false),
+                      Visibility(
+                        child: Container(
+                            height: 55,
+                            color: CustomColors.colorBgGrey,
+                            child: Row(children: [
+                              Expanded(
+                                  flex: 1,
+                                  child: Container(
+                                      height: 55,
+                                      child:
+                                          CustomStyles.greyBGSquareButtonStyle(
+                                              _castingStateStr, () {})))
+                            ])),
+                        visible: _castingStateStr == "" ? false : true,
+                      )
+                    ]))))));
   }
 }

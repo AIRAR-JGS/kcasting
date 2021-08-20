@@ -8,6 +8,8 @@ import 'package:casting_call/src/view/user/common/Login.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../KCastingAppData.dart';
+
 /*
 * 아이디 찾기
 * */
@@ -41,72 +43,82 @@ class _FindID extends State<FindID> with BaseUtilMixin {
         },
         child: Theme(
             data: CustomStyles.defaultTheme(),
-            child: Scaffold(
-                key: _scaffoldKey,
-                appBar: CustomStyles.defaultAppBar('아이디 찾기', () {
-                  replaceView(context, Login());
-                }),
-                body: Stack(
-                  children: [
-                    Container(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Expanded(
-                              flex: 1,
-                              child: Container(
-                                  padding: EdgeInsets.only(left: 30, right: 30),
-                                  child: Column(children: [
-                                    Container(
-                                        margin: EdgeInsets.only(top: 30),
-                                        alignment: Alignment.center,
-                                        width: double.infinity,
-                                        child: Text('아이디 찾기',
-                                            textAlign: TextAlign.center,
-                                            style: CustomStyles
-                                                .normal24TextStyle())),
-                                    Container(
-                                        margin: EdgeInsets.only(top: 30),
-                                        width: double.infinity,
-                                        child: Text(
-                                            '회원가입 시 등록한 이름과 이메일 주소를 입력해 주세요.',
-                                            textAlign: TextAlign.start,
-                                            style: CustomStyles
-                                                .normal14TextStyle())),
-                                    Container(
-                                        margin: EdgeInsets.only(top: 15),
-                                        child: CustomStyles
-                                            .greyBorderRound7TextField(
-                                                _txtFieldName, '이름')),
-                                    Container(
-                                        margin: EdgeInsets.only(top: 5),
-                                        child: CustomStyles
-                                            .greyBorderRound7TextFieldWithOption(
-                                                _txtFieldEmail,
-                                                TextInputType.emailAddress,
-                                                '이메일 주소'))
-                                  ]))),
-                          Container(
-                              height: 50,
-                              width: double.infinity,
-                              child: CustomStyles.lightGreyBGSquareButtonStyle(
-                                  '다음', () {
-                                if (checkValidate(context)) {
-                                  requestFindIDApi(context);
-                                }
-                              }))
-                        ],
-                      ),
+            child: Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                  width: KCastingAppData().isWeb
+                      ? CustomStyles.appWidth
+                      : double.infinity,
+                  child: Scaffold(
+                    key: _scaffoldKey,
+                    appBar: CustomStyles.defaultAppBar('아이디 찾기', () {
+                      replaceView(context, Login());
+                    }),
+                    body: Stack(
+                      children: [
+                        Container(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                  flex: 1,
+                                  child: Container(
+                                      padding:
+                                          EdgeInsets.only(left: 30, right: 30),
+                                      child: Column(children: [
+                                        Container(
+                                            margin: EdgeInsets.only(top: 30),
+                                            alignment: Alignment.center,
+                                            width: double.infinity,
+                                            child: Text('아이디 찾기',
+                                                textAlign: TextAlign.center,
+                                                style: CustomStyles
+                                                    .normal24TextStyle())),
+                                        Container(
+                                            margin: EdgeInsets.only(top: 30),
+                                            width: double.infinity,
+                                            child: Text(
+                                                '회원가입 시 등록한 이름과 이메일 주소를 입력해 주세요.',
+                                                textAlign: TextAlign.start,
+                                                style: CustomStyles
+                                                    .normal14TextStyle())),
+                                        Container(
+                                            margin: EdgeInsets.only(top: 15),
+                                            child: CustomStyles
+                                                .greyBorderRound7TextField(
+                                                    _txtFieldName, '이름')),
+                                        Container(
+                                            margin: EdgeInsets.only(top: 5),
+                                            child: CustomStyles
+                                                .greyBorderRound7TextFieldWithOption(
+                                                    _txtFieldEmail,
+                                                    TextInputType.emailAddress,
+                                                    '이메일 주소'))
+                                      ]))),
+                              Container(
+                                  height: 50,
+                                  width: double.infinity,
+                                  child:
+                                      CustomStyles.lightGreyBGSquareButtonStyle(
+                                          '다음', () {
+                                    if (checkValidate(context)) {
+                                      requestFindIDApi(context);
+                                    }
+                                  }))
+                            ],
+                          ),
+                        ),
+                        Visibility(
+                          child: Container(
+                              color: Colors.black38,
+                              alignment: Alignment.center,
+                              child: CircularProgressIndicator()),
+                          visible: _isUpload,
+                        )
+                      ],
                     ),
-                    Visibility(
-                      child: Container(
-                          color: Colors.black38,
-                          alignment: Alignment.center,
-                          child: CircularProgressIndicator()),
-                      visible: _isUpload,
-                    )
-                  ],
+                  ),
                 ))));
   }
 

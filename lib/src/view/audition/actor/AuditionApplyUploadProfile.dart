@@ -416,202 +416,223 @@ class _AuditionApplyUploadProfile extends State<AuditionApplyUploadProfile>
   Widget build(BuildContext context) {
     return Theme(
         data: CustomStyles.defaultTheme(),
-        child: Scaffold(
-            key: _scaffoldKey,
-            appBar: CustomStyles.defaultAppBar('프로필 업로드', () {
-              Navigator.pop(context);
-            }),
-            body: Builder(builder: (BuildContext context) {
-              return Stack(
-                children: [
-                  Container(
-                      child: Column(children: [
-                    Expanded(
-                        flex: 1,
-                        child: SingleChildScrollView(
-                            child: Container(
-                                padding: EdgeInsets.only(top: 20, bottom: 30),
-                                child: Column(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                          padding: EdgeInsets.only(
-                                              left: 15, right: 15),
-                                          child: Text(
-                                              StringUtils.checkedString(
-                                                  _projectName),
-                                              style: CustomStyles
-                                                  .darkBold12TextStyle())),
-                                      Container(
-                                          padding: EdgeInsets.only(
-                                              left: 15, right: 15),
-                                          margin: EdgeInsets.only(top: 5.0),
-                                          child: Text(
-                                              StringUtils.checkedString(
-                                                      _castingName) +
-                                                  "역",
-                                              style: CustomStyles
-                                                  .dark24TextStyle())),
-                                      Container(
-                                        margin: EdgeInsets.only(
-                                            top: 20, bottom: 10),
-                                        child: Divider(
-                                          height: 0.1,
-                                          color:
-                                              CustomColors.colorFontLightGrey,
-                                        ),
-                                      ),
-                                      Container(
-                                        padding: EdgeInsets.only(
-                                            left: 15, right: 15),
+        child: Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+                width: KCastingAppData().isWeb
+                    ? CustomStyles.appWidth
+                    : double.infinity,
+                child: Scaffold(
+                    key: _scaffoldKey,
+                    appBar: CustomStyles.defaultAppBar('프로필 업로드', () {
+                      Navigator.pop(context);
+                    }),
+                    body: Builder(builder: (BuildContext context) {
+                      return Stack(children: [
+                        Container(
+                            child: Column(children: [
+                          Expanded(
+                              flex: 1,
+                              child: SingleChildScrollView(
+                                  child: Container(
+                                      padding:
+                                          EdgeInsets.only(top: 20, bottom: 30),
+                                      child: Column(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                                padding: EdgeInsets.only(
+                                                    left: 15, right: 15),
+                                                child: Text(
+                                                    StringUtils.checkedString(
+                                                        _projectName),
+                                                    style: CustomStyles
+                                                        .darkBold12TextStyle())),
+                                            Container(
+                                                padding: EdgeInsets.only(
+                                                    left: 15, right: 15),
+                                                margin:
+                                                    EdgeInsets.only(top: 5.0),
+                                                child: Text(
+                                                    StringUtils.checkedString(
+                                                            _castingName) +
+                                                        "역",
+                                                    style: CustomStyles
+                                                        .dark24TextStyle())),
+                                            Container(
+                                              margin: EdgeInsets.only(
+                                                  top: 20, bottom: 10),
+                                              child: Divider(
+                                                height: 0.1,
+                                                color: CustomColors
+                                                    .colorFontLightGrey,
+                                              ),
+                                            ),
+                                            Container(
+                                              padding: EdgeInsets.only(
+                                                  left: 15, right: 15),
+                                              child: Container(
+                                                padding:
+                                                    const EdgeInsets.all(10.0),
+                                                decoration: new BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: CustomColors
+                                                      .colorFontTitle,
+                                                ),
+                                                child: new Text('3',
+                                                    style: new TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 20.0)),
+                                              ),
+                                            ),
+                                            Container(
+                                                margin:
+                                                    EdgeInsets.only(top: 5.0),
+                                                padding: EdgeInsets.only(
+                                                    left: 15, right: 15),
+                                                child: Text('내 프로필',
+                                                    style: CustomStyles
+                                                        .bold14TextStyle())),
+                                            Container(
+                                                margin: EdgeInsets.only(top: 5),
+                                                padding: EdgeInsets.only(
+                                                    left: 15, right: 15),
+                                                child: Text(
+                                                    '제출되는 내 프로필을 확인 후 지원하기를 눌러주세요.\n프로필수정은 내 프로필에서 할 수 있습니다.',
+                                                    style: CustomStyles
+                                                        .normal14TextStyle())),
+                                            ActorProfileWidget.profileWidget(
+                                                context,
+                                                _myKeywordTagStateKey,
+                                                _actorProfile,
+                                                _actorAgeStr,
+                                                _actorEducationStr,
+                                                _actorLanguageStr,
+                                                _actorDialectStr,
+                                                _actorAbilityStr,
+                                                _actorKwdList),
+                                            Container(
+                                                margin: EdgeInsets.only(
+                                                    top: 30.0, bottom: 5),
+                                                padding: EdgeInsets.only(
+                                                    left: 15, right: 15),
+                                                child: Text('경력사항',
+                                                    style: CustomStyles
+                                                        .bold16TextStyle())),
+                                            Wrap(children: [
+                                              ListView.builder(
+                                                  physics:
+                                                      NeverScrollableScrollPhysics(),
+                                                  shrinkWrap: true,
+                                                  padding: EdgeInsets.only(
+                                                      left: 10, right: 10),
+                                                  itemCount:
+                                                      _actorFilmorgraphy.length,
+                                                  itemBuilder:
+                                                      (context, index) {
+                                                    return Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Container(
+                                                            margin:
+                                                                EdgeInsets.only(
+                                                                    bottom: 10),
+                                                            child: Divider(
+                                                              height: 0.1,
+                                                              color: CustomColors
+                                                                  .colorFontLightGrey,
+                                                            ),
+                                                          ),
+                                                          ActorFilmoListItem(
+                                                              idx: index,
+                                                              data:
+                                                                  _actorFilmorgraphy[
+                                                                      index],
+                                                              isEditMode: false,
+                                                              onClickEvent: () {
+                                                                setState(() {
+                                                                  _actorFilmorgraphy
+                                                                      .removeAt(
+                                                                          index);
+                                                                });
+                                                              })
+                                                        ]);
+                                                  })
+                                            ])
+                                          ])))),
+                          Container(
+                              width: double.infinity,
+                              height: 50,
+                              color: Colors.grey,
+                              child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Expanded(
                                         child: Container(
-                                          padding: const EdgeInsets.all(10.0),
-                                          decoration: new BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: CustomColors.colorFontTitle,
-                                          ),
-                                          child: new Text('3',
-                                              style: new TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 20.0)),
-                                        ),
-                                      ),
-                                      Container(
-                                          margin: EdgeInsets.only(top: 5.0),
-                                          padding: EdgeInsets.only(
-                                              left: 15, right: 15),
-                                          child: Text('내 프로필',
-                                              style: CustomStyles
-                                                  .bold14TextStyle())),
-                                      Container(
-                                          margin: EdgeInsets.only(top: 5),
-                                          padding: EdgeInsets.only(
-                                              left: 15, right: 15),
-                                          child: Text(
-                                              '제출되는 내 프로필을 확인 후 지원하기를 눌러주세요.\n프로필수정은 내 프로필에서 할 수 있습니다.',
-                                              style: CustomStyles
-                                                  .normal14TextStyle())),
-                                      ActorProfileWidget.profileWidget(
-                                          context,
-                                          _myKeywordTagStateKey,
-                                          _actorProfile,
-                                          _actorAgeStr,
-                                          _actorEducationStr,
-                                          _actorLanguageStr,
-                                          _actorDialectStr,
-                                          _actorAbilityStr,
-                                          _actorKwdList),
-                                      Container(
-                                          margin: EdgeInsets.only(
-                                              top: 30.0, bottom: 5),
-                                          padding: EdgeInsets.only(
-                                              left: 15, right: 15),
-                                          child: Text('경력사항',
-                                              style: CustomStyles
-                                                  .bold16TextStyle())),
-                                      Wrap(children: [
-                                        ListView.builder(
-                                            physics:
-                                                NeverScrollableScrollPhysics(),
-                                            shrinkWrap: true,
-                                            padding: EdgeInsets.only(
-                                                left: 10, right: 10),
-                                            itemCount:
-                                                _actorFilmorgraphy.length,
-                                            itemBuilder: (context, index) {
-                                              return Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    Container(
-                                                      margin: EdgeInsets.only(
-                                                          bottom: 10),
-                                                      child: Divider(
-                                                        height: 0.1,
-                                                        color: CustomColors
-                                                            .colorFontLightGrey,
-                                                      ),
-                                                    ),
-                                                    ActorFilmoListItem(
-                                                        idx: index,
-                                                        data:
-                                                            _actorFilmorgraphy[
-                                                                index],
-                                                        isEditMode: false,
-                                                        onClickEvent: () {
-                                                          setState(() {
-                                                            _actorFilmorgraphy
-                                                                .removeAt(
-                                                                    index);
-                                                          });
-                                                        })
-                                                  ]);
-                                            })
-                                      ])
-                                    ])))),
-                    Container(
-                        width: double.infinity,
-                        height: 50,
-                        color: Colors.grey,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Expanded(
-                                child: Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    height: 55,
-                                    child: CustomStyles.greyBGSquareButtonStyle(
-                                        '이전단계', () {
-                                      replaceView(
-                                          context,
-                                          AuditionApplyUploadVideo(
-                                              castingSeq: _castingSeq,
-                                              projectName: _projectName,
-                                              castingName: _castingName,
-                                              dbImgages: _dbImgages,
-                                              newImgages: _newImgages,
-                                              actorSeq: _actorSeq,
-                                              actorProfileSeq:
-                                                  _actorProfileSeq));
-                                    }))),
-                            Expanded(
-                                child: Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    height: 55,
-                                    child: CustomStyles.blueBGSquareButtonStyle(
-                                        '지원하기', () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext _context) =>
-                                            DialogAuditionApplyConfirm(
-                                          onClickedAgree: () {
-                                            setState(() {
-                                              _isUpload = true;
-                                            });
-                                            requestAddApply(context);
-                                          },
-                                        ),
-                                      );
-                                    })))
-                          ],
-                        ))
-                  ])),
-                  Visibility(
-                    child: Container(
-                      color: Colors.black38,
-                      alignment: Alignment.center,
-                      child: CircularProgressIndicator(),
-                    ),
-                    visible: _isUpload,
-                  )
-                ],
-              );
-            })));
+                                            width: (KCastingAppData().isWeb)
+                                                ? CustomStyles.appWidth
+                                                : MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            height: 55,
+                                            child: CustomStyles
+                                                .greyBGSquareButtonStyle('이전단계',
+                                                    () {
+                                              replaceView(
+                                                  context,
+                                                  AuditionApplyUploadVideo(
+                                                      castingSeq: _castingSeq,
+                                                      projectName: _projectName,
+                                                      castingName: _castingName,
+                                                      dbImgages: _dbImgages,
+                                                      newImgages: _newImgages,
+                                                      actorSeq: _actorSeq,
+                                                      actorProfileSeq:
+                                                          _actorProfileSeq));
+                                            }))),
+                                    Expanded(
+                                        child: Container(
+                                            width: (KCastingAppData().isWeb)
+                                                ? CustomStyles.appWidth
+                                                : MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            height: 55,
+                                            child: CustomStyles
+                                                .blueBGSquareButtonStyle('지원하기',
+                                                    () {
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (BuildContext
+                                                          _context) =>
+                                                      DialogAuditionApplyConfirm(
+                                                          onClickedAgree: () {
+                                                        setState(() {
+                                                          _isUpload = true;
+                                                        });
+                                                        requestAddApply(
+                                                            context);
+                                                      }));
+                                            })))
+                                  ]))
+                        ])),
+                        Visibility(
+                            child: Container(
+                                color: Colors.black38,
+                                alignment: Alignment.center,
+                                child: CircularProgressIndicator()),
+                            visible: _isUpload)
+                      ]);
+                    })))));
   }
 
   /*

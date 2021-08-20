@@ -69,7 +69,6 @@ class _BookmarkedActorList extends State<BookmarkedActorList>
   }
 
   Future<void> _refreshPage() async {
-
     setState(() {
       _total = 0;
 
@@ -137,81 +136,97 @@ class _BookmarkedActorList extends State<BookmarkedActorList>
   Widget build(BuildContext context) {
     return Theme(
         data: CustomStyles.defaultTheme(),
-        child: Scaffold(
-            key: _scaffoldKey,
-            appBar: CustomStyles.defaultAppBar('마이 스크랩', () {
-              Navigator.pop(context);
-            }),
-            body: Stack(
-              children: [
-                Container(
-                    child: RefreshIndicator(
-                      onRefresh: _refreshPage,
-                      child: SingleChildScrollView(
-                          controller: _scrollController,
-                          physics: AlwaysScrollableScrollPhysics(),
-                          key: ObjectKey(_actorList.length > 0 ? _actorList[0] : ""),
-                          child: Column(
-                            children: [
-                              Container(
-                                  margin: EdgeInsets.only(top: 15),
-                                  padding: EdgeInsets.all(15),
-                                  alignment: Alignment.topLeft,
-                                  child: Text('마이 스크랩',
-                                      style: CustomStyles.normal24TextStyle())),
-                              Container(
-                                  padding:
-                                  EdgeInsets.only(left: 15, right: 15, bottom: 10),
-                                  alignment: Alignment.bottomRight,
-                                  child: RichText(
-                                      text: new TextSpan(
-                                          style: CustomStyles.dark16TextStyle(),
-                                          children: <TextSpan>[
+        child: Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+                width: KCastingAppData().isWeb
+                    ? CustomStyles.appWidth
+                    : double.infinity,
+                child: Scaffold(
+                    key: _scaffoldKey,
+                    appBar: CustomStyles.defaultAppBar('마이 스크랩', () {
+                      Navigator.pop(context);
+                    }),
+                    body: Stack(
+                      children: [
+                        Container(
+                            child: RefreshIndicator(
+                          onRefresh: _refreshPage,
+                          child: SingleChildScrollView(
+                              controller: _scrollController,
+                              physics: AlwaysScrollableScrollPhysics(),
+                              key: ObjectKey(
+                                  _actorList.length > 0 ? _actorList[0] : ""),
+                              child: Column(
+                                children: [
+                                  Container(
+                                      margin: EdgeInsets.only(top: 15),
+                                      padding: EdgeInsets.all(15),
+                                      alignment: Alignment.topLeft,
+                                      child: Text('마이 스크랩',
+                                          style: CustomStyles
+                                              .normal24TextStyle())),
+                                  Container(
+                                      padding: EdgeInsets.only(
+                                          left: 15, right: 15, bottom: 10),
+                                      alignment: Alignment.bottomRight,
+                                      child: RichText(
+                                          text: new TextSpan(
+                                              style: CustomStyles
+                                                  .dark16TextStyle(),
+                                              children: <TextSpan>[
                                             new TextSpan(text: '내 스크랩 '),
                                             new TextSpan(
                                                 text: _total.toString(),
-                                                style: CustomStyles.red16TextStyle()),
+                                                style: CustomStyles
+                                                    .red16TextStyle()),
                                             new TextSpan(text: '개')
                                           ]))),
-                              _actorList.length > 0
-                                  ? Wrap(children: [
-                                GridView.count(
-                                    padding: EdgeInsets.only(
-                                        left: 15, right: 15, bottom: 70),
-                                    primary: false,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    crossAxisCount: 2,
-                                    crossAxisSpacing: 10,
-                                    mainAxisSpacing: 5,
-                                    childAspectRatio: (0.64),
-                                    children:
-                                    List.generate(_actorList.length, (index) {
-                                      return ActorListItem(data: _actorList[index],
-                                          onClickedBookmark: (){
-                                            _total = 0;
-                                            _actorList = [];
+                                  _actorList.length > 0
+                                      ? Wrap(children: [
+                                          GridView.count(
+                                              padding: EdgeInsets.only(
+                                                  left: 15,
+                                                  right: 15,
+                                                  bottom: 70),
+                                              primary: false,
+                                              physics:
+                                                  NeverScrollableScrollPhysics(),
+                                              shrinkWrap: true,
+                                              crossAxisCount: 2,
+                                              crossAxisSpacing: 10,
+                                              mainAxisSpacing: 5,
+                                              childAspectRatio: (0.64),
+                                              children: List.generate(
+                                                  _actorList.length, (index) {
+                                                return ActorListItem(
+                                                    data: _actorList[index],
+                                                    onClickedBookmark: () {
+                                                      _total = 0;
+                                                      _actorList = [];
 
-                                            requestActorListApi(context);
-                                          });
-                                    }))
-                              ])
-                                  : Container(
-                                  alignment: Alignment.center,
-                                  margin: EdgeInsets.only(top: 30),
-                                  child: Text('스크랩한 배우가 없습니다.',
-                                      style: CustomStyles.normal16TextStyle()))
-                            ],
-                          )),
-                    )),
-                Visibility(
-                  child: Container(
-                      color: Colors.black38,
-                      alignment: Alignment.center,
-                      child: CircularProgressIndicator()),
-                  visible: _isUpload,
-                )
-              ],
-            )));
+                                                      requestActorListApi(
+                                                          context);
+                                                    });
+                                              }))
+                                        ])
+                                      : Container(
+                                          alignment: Alignment.center,
+                                          margin: EdgeInsets.only(top: 30),
+                                          child: Text('스크랩한 배우가 없습니다.',
+                                              style: CustomStyles
+                                                  .normal16TextStyle()))
+                                ],
+                              )),
+                        )),
+                        Visibility(
+                          child: Container(
+                              color: Colors.black38,
+                              alignment: Alignment.center,
+                              child: CircularProgressIndicator()),
+                          visible: _isUpload,
+                        )
+                      ],
+                    )))));
   }
 }

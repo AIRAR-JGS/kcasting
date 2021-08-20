@@ -391,7 +391,9 @@ class _AuditionApplyList extends State<AuditionApplyList>
                                                       margin: EdgeInsets.only(
                                                           bottom: 15),
                                                       width:
-                                                          MediaQuery.of(context)
+                                                      (KCastingAppData().isWeb)
+                                                          ? CustomStyles.appWidth
+                                                          : MediaQuery.of(context)
                                                               .size
                                                               .width,
                                                       child: Text(
@@ -427,7 +429,9 @@ class _AuditionApplyList extends State<AuditionApplyList>
                                                       margin: EdgeInsets.only(
                                                           bottom: 15),
                                                       width:
-                                                          MediaQuery.of(context)
+                                                      (KCastingAppData().isWeb)
+                                                          ? CustomStyles.appWidth
+                                                          : MediaQuery.of(context)
                                                               .size
                                                               .width,
                                                       child: Text(
@@ -466,88 +470,111 @@ class _AuditionApplyList extends State<AuditionApplyList>
   Widget build(BuildContext context) {
     return Theme(
         data: CustomStyles.defaultTheme(),
-        child: Scaffold(
-            key: _scaffoldKey,
-            appBar: CustomStyles.defaultAppBar('지원현황', () {
-              Navigator.pop(context);
-            }),
-            body: Builder(builder: (BuildContext context) {
-              return Stack(
-                children: [
-                  Container(
-                      child: RefreshIndicator(
-                    onRefresh: _refreshPage,
-                    child: SingleChildScrollView(
-                        controller: _scrollController,
-                        physics: AlwaysScrollableScrollPhysics(),
-                        key: ObjectKey(
-                            _auditionList.length > 0 ? _auditionList[0] : ""),
-                        child: Container(
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                              Container(
-                                  margin:
-                                      EdgeInsets.only(top: 30.0, bottom: 20),
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  child: Text('지원 현황',
-                                      style: CustomStyles.normal24TextStyle())),
-                              Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  child: DecoratedTabBar(
-                                      decoration: BoxDecoration(
-                                          border: Border(
-                                              bottom: BorderSide(
-                                                  color:
-                                                      CustomColors.colorBgGrey,
-                                                  width: 1.0))),
-                                      tabBar: TabBar(
-                                          controller: _tabController,
-                                          indicatorPadding: EdgeInsets.zero,
-                                          indicatorColor:
-                                              CustomColors.colorAccent.withAlpha(200),
-                                          labelStyle:
-                                              CustomStyles.bold16TextStyle(),
-                                          indicatorWeight: 3,
-                                          labelColor: CustomColors.colorFontTitle,
-                                          unselectedLabelStyle:
-                                              CustomStyles.normal16TextStyle(),
-                                          tabs: [
-                                            Tab(text: '진행중($applyIngCnt)'),
-                                            Tab(
-                                                text:
-                                                    '계약완료($applyCompleteCnt)'),
-                                            Tab(text: '불합격($applyFailCnt)')
-                                          ]))),
-                              Expanded(
-                                flex: 0,
-                                child: [
-                                  tabMyApplyStatus(),
-                                  tabMyApplyStatus(),
-                                  tabMyApplyStatus()
-                                ][_tabIndex],
-                              ),
-                              Visibility(
-                                  child: Container(
-                                      alignment: Alignment.center,
-                                      margin: EdgeInsets.only(top: 50),
-                                      child: Text('지원현황이 없습니다.',
-                                          style:
-                                              CustomStyles.normal16TextStyle(),
-                                          textAlign: TextAlign.center)),
-                                  visible:
-                                      _auditionList.length > 0 ? false : true)
-                            ]))),
-                  )),
-                  Visibility(
-                    child: Container(
-                        color: Colors.black38,
-                        alignment: Alignment.center,
-                        child: CircularProgressIndicator()),
-                    visible: _isUpload,
-                  )
-                ],
-              );
-            })));
+        child: Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+                width: KCastingAppData().isWeb
+                    ? CustomStyles.appWidth
+                    : double.infinity,
+                child: Scaffold(
+                    key: _scaffoldKey,
+                    appBar: CustomStyles.defaultAppBar('지원현황', () {
+                      Navigator.pop(context);
+                    }),
+                    body: Builder(builder: (BuildContext context) {
+                      return Stack(children: [
+                        Container(
+                            child: RefreshIndicator(
+                                onRefresh: _refreshPage,
+                                child: SingleChildScrollView(
+                                    controller: _scrollController,
+                                    physics: AlwaysScrollableScrollPhysics(),
+                                    key: ObjectKey(_auditionList.length > 0
+                                        ? _auditionList[0]
+                                        : ""),
+                                    child: Container(
+                                        child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                          Container(
+                                              margin: EdgeInsets.only(
+                                                  top: 30.0, bottom: 20),
+                                              padding: EdgeInsets.only(
+                                                  left: 15, right: 15),
+                                              child: Text('지원 현황',
+                                                  style: CustomStyles
+                                                      .normal24TextStyle())),
+                                          Container(
+                                              width: (KCastingAppData().isWeb)
+                                                  ? CustomStyles.appWidth
+                                                  : MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              child: DecoratedTabBar(
+                                                  decoration: BoxDecoration(
+                                                      border: Border(
+                                                          bottom: BorderSide(
+                                                              color: CustomColors
+                                                                  .colorBgGrey,
+                                                              width: 1.0))),
+                                                  tabBar: TabBar(
+                                                      controller:
+                                                          _tabController,
+                                                      indicatorPadding:
+                                                          EdgeInsets.zero,
+                                                      indicatorColor:
+                                                          CustomColors
+                                                              .colorAccent
+                                                              .withAlpha(200),
+                                                      labelStyle: CustomStyles
+                                                          .bold16TextStyle(),
+                                                      indicatorWeight: 3,
+                                                      labelColor: CustomColors
+                                                          .colorFontTitle,
+                                                      unselectedLabelStyle:
+                                                          CustomStyles
+                                                              .normal16TextStyle(),
+                                                      tabs: [
+                                                        Tab(
+                                                            text:
+                                                                '진행중($applyIngCnt)'),
+                                                        Tab(
+                                                            text:
+                                                                '계약완료($applyCompleteCnt)'),
+                                                        Tab(
+                                                            text:
+                                                                '불합격($applyFailCnt)')
+                                                      ]))),
+                                          Expanded(
+                                            flex: 0,
+                                            child: [
+                                              tabMyApplyStatus(),
+                                              tabMyApplyStatus(),
+                                              tabMyApplyStatus()
+                                            ][_tabIndex],
+                                          ),
+                                          Visibility(
+                                              child: Container(
+                                                  alignment: Alignment.center,
+                                                  margin:
+                                                      EdgeInsets.only(top: 50),
+                                                  child: Text('지원현황이 없습니다.',
+                                                      style: CustomStyles
+                                                          .normal16TextStyle(),
+                                                      textAlign:
+                                                          TextAlign.center)),
+                                              visible: _auditionList.length > 0
+                                                  ? false
+                                                  : true)
+                                        ]))))),
+                        Visibility(
+                            child: Container(
+                                color: Colors.black38,
+                                alignment: Alignment.center,
+                                child: CircularProgressIndicator()),
+                            visible: _isUpload)
+                      ]);
+                    })))));
   }
 }

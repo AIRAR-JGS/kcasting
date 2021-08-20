@@ -47,215 +47,251 @@ class _ActorFilmoAdd extends State<ActorFilmoAdd> with BaseUtilMixin {
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: CustomStyles.defaultTheme(),
-      child: Scaffold(
-        key: _scaffoldKey,
-        appBar: CustomStyles.defaultAppBar('필모그래피 추가', () {
-          Navigator.pop(context);
-        }),
-        body: Container(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                  flex: 1,
-                  child: SingleChildScrollView(
-                      child: Container(
-                          padding: EdgeInsets.only(top: 30, bottom: 30),
-                          child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    alignment: Alignment.centerLeft,
-                                    child: Text('작품명',
-                                        style: CustomStyles.bold14TextStyle())),
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    margin: EdgeInsets.only(top: 5),
-                                    child:
-                                        CustomStyles.greyBorderRound7TextField(
-                                            _txtFieldProjectName, '작품명 입력')),
-                                Container(
-                                    margin: EdgeInsets.only(top: 15),
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    alignment: Alignment.centerLeft,
-                                    child: Text('개봉연도',
-                                        style: CustomStyles.bold14TextStyle())),
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    margin: EdgeInsets.only(top: 5),
-                                    child: CustomStyles
-                                        .greyBorderRound7TextFieldWithOption(
-                                            _txtFieldProjectReleaseYear,
-                                            TextInputType.number,
-                                            '개봉연도 입력')),
-                                Container(
-                                    margin: EdgeInsets.only(top: 15),
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    alignment: Alignment.centerLeft,
-                                    child: Text('제작유형',
-                                        style: CustomStyles.bold14TextStyle())),
-                                Container(
-                                    margin: EdgeInsets.only(top: 5),
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    width: double.infinity,
-                                    child: DropdownButtonFormField(
-                                      value: _projectType,
-                                      onChanged: (String newValue) {
-                                        setState(() {
-                                          _projectType = newValue;
-                                        });
-                                      },
-                                      items: <String>[
-                                        APIConstants.project_type_drama,
-                                        APIConstants.project_type_movie
-                                      ].map<DropdownMenuItem<String>>(
-                                          (String value) {
-                                        return DropdownMenuItem<String>(
-                                            value: value,
-                                            child: Text(value,
-                                                style: CustomStyles
-                                                    .normal14TextStyle()));
-                                      }).toList(),
-                                      decoration: InputDecoration(
-                                        contentPadding: EdgeInsets.only(
-                                            left: 15,
-                                            right: 15,
-                                            top: 0,
-                                            bottom: 0),
-                                        border: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color:
-                                                    CustomColors.colorFontGrey,
-                                                width: 1.0),
-                                            borderRadius: CustomStyles
-                                                .circle7BorderRadius()),
-                                        focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color:
-                                                    CustomColors.colorFontGrey,
-                                                width: 1.0),
-                                            borderRadius: CustomStyles
-                                                .circle7BorderRadius()),
-                                      ),
-                                    )),
-                                Container(
-                                  margin: EdgeInsets.only(top: 20),
-                                  child: Divider(
-                                    height: 0.1,
-                                    color: CustomColors.colorFontLightGrey,
-                                  ),
-                                ),
-                                Container(
-                                    margin: EdgeInsets.only(top: 15),
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    alignment: Alignment.centerLeft,
-                                    child: Text('배역',
-                                        style: CustomStyles.bold14TextStyle())),
-                                Container(
-                                    margin: EdgeInsets.only(top: 5),
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    width: double.infinity,
-                                    child: DropdownButtonFormField(
-                                      value: _castingType,
-                                      onChanged: (String newValue) {
-                                        setState(() {
-                                          _castingType = newValue;
-                                        });
-                                      },
-                                      items: <String>[
-                                        APIConstants.casting_type_1,
-                                        APIConstants.casting_type_2,
-                                        APIConstants.casting_type_3,
-                                        APIConstants.casting_type_4,
-                                      ].map<DropdownMenuItem<String>>(
-                                          (String value) {
-                                        return DropdownMenuItem<String>(
-                                            value: value,
-                                            child: Text(value,
-                                                style: CustomStyles
-                                                    .normal14TextStyle()));
-                                      }).toList(),
-                                      decoration: InputDecoration(
-                                        contentPadding: EdgeInsets.only(
-                                            left: 15,
-                                            right: 15,
-                                            top: 0,
-                                            bottom: 0),
-                                        border: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color:
-                                                    CustomColors.colorFontGrey,
-                                                width: 1.0),
-                                            borderRadius: CustomStyles
-                                                .circle7BorderRadius()),
-                                        focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color:
-                                                    CustomColors.colorFontGrey,
-                                                width: 1.0),
-                                            borderRadius: CustomStyles
-                                                .circle7BorderRadius()),
-                                      ),
-                                    )),
-                                Container(
-                                    margin: EdgeInsets.only(top: 15),
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    alignment: Alignment.centerLeft,
-                                    child: Text('배역 이름',
-                                        style: CustomStyles.bold14TextStyle())),
-                                Container(
-                                    padding:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    margin: EdgeInsets.only(top: 5),
-                                    child:
-                                        CustomStyles.greyBorderRound7TextField(
-                                            _txtFieldCastingName, '배역 이름 입력'))
-                              ])))),
-              Container(
-                  width: double.infinity,
-                  height: 50,
-                  color: Colors.grey,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Expanded(
-                          child: Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: 55,
-                              child: CustomStyles.greyBGSquareButtonStyle('취소',
-                                  () {
-                                Navigator.pop(context);
-                              }))),
-                      Expanded(
-                          child: Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: 55,
-                              child: CustomStyles.blueBGSquareButtonStyle('추가',
-                                  () {
-                                if (checkValidate(context)) {
-                                  requestAddFilmographyApi(context);
-                                }
-                              })))
-                    ],
-                  ))
-            ],
-          ),
-        ),
-      ),
-    );
+        data: CustomStyles.defaultTheme(),
+        child: Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+                width: KCastingAppData().isWeb
+                    ? CustomStyles.appWidth
+                    : double.infinity,
+                child: Scaffold(
+                    key: _scaffoldKey,
+                    appBar: CustomStyles.defaultAppBar('필모그래피 추가', () {
+                      Navigator.pop(context);
+                    }),
+                    body: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                              flex: 1,
+                              child: SingleChildScrollView(
+                                  child: Container(
+                                      padding:
+                                          EdgeInsets.only(top: 30, bottom: 30),
+                                      child: Column(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                                padding: EdgeInsets.only(
+                                                    left: 15, right: 15),
+                                                alignment: Alignment.centerLeft,
+                                                child: Text('작품명',
+                                                    style: CustomStyles
+                                                        .bold14TextStyle())),
+                                            Container(
+                                                padding: EdgeInsets.only(
+                                                    left: 15, right: 15),
+                                                margin: EdgeInsets.only(top: 5),
+                                                child: CustomStyles
+                                                    .greyBorderRound7TextField(
+                                                        _txtFieldProjectName,
+                                                        '작품명 입력')),
+                                            Container(
+                                                margin:
+                                                    EdgeInsets.only(top: 15),
+                                                padding: EdgeInsets.only(
+                                                    left: 15, right: 15),
+                                                alignment: Alignment.centerLeft,
+                                                child: Text('개봉연도',
+                                                    style: CustomStyles
+                                                        .bold14TextStyle())),
+                                            Container(
+                                                padding: EdgeInsets.only(
+                                                    left: 15, right: 15),
+                                                margin: EdgeInsets.only(top: 5),
+                                                child: CustomStyles
+                                                    .greyBorderRound7TextFieldWithOption(
+                                                        _txtFieldProjectReleaseYear,
+                                                        TextInputType.number,
+                                                        '개봉연도 입력')),
+                                            Container(
+                                                margin:
+                                                    EdgeInsets.only(top: 15),
+                                                padding: EdgeInsets.only(
+                                                    left: 15, right: 15),
+                                                alignment: Alignment.centerLeft,
+                                                child: Text('제작유형',
+                                                    style: CustomStyles
+                                                        .bold14TextStyle())),
+                                            Container(
+                                                margin: EdgeInsets.only(top: 5),
+                                                padding: EdgeInsets.only(
+                                                    left: 15, right: 15),
+                                                width: double.infinity,
+                                                child: DropdownButtonFormField(
+                                                  value: _projectType,
+                                                  onChanged: (String newValue) {
+                                                    setState(() {
+                                                      _projectType = newValue;
+                                                    });
+                                                  },
+                                                  items: <String>[
+                                                    APIConstants
+                                                        .project_type_drama,
+                                                    APIConstants
+                                                        .project_type_movie
+                                                  ].map<
+                                                          DropdownMenuItem<
+                                                              String>>(
+                                                      (String value) {
+                                                    return DropdownMenuItem<
+                                                            String>(
+                                                        value: value,
+                                                        child: Text(value,
+                                                            style: CustomStyles
+                                                                .normal14TextStyle()));
+                                                  }).toList(),
+                                                  decoration: InputDecoration(
+                                                    contentPadding:
+                                                        EdgeInsets.only(
+                                                            left: 15,
+                                                            right: 15,
+                                                            top: 0,
+                                                            bottom: 0),
+                                                    border: OutlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                            color: CustomColors
+                                                                .colorFontGrey,
+                                                            width: 1.0),
+                                                        borderRadius: CustomStyles
+                                                            .circle7BorderRadius()),
+                                                    focusedBorder: OutlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                            color: CustomColors
+                                                                .colorFontGrey,
+                                                            width: 1.0),
+                                                        borderRadius: CustomStyles
+                                                            .circle7BorderRadius()),
+                                                  ),
+                                                )),
+                                            Container(
+                                              margin: EdgeInsets.only(top: 20),
+                                              child: Divider(
+                                                height: 0.1,
+                                                color: CustomColors
+                                                    .colorFontLightGrey,
+                                              ),
+                                            ),
+                                            Container(
+                                                margin:
+                                                    EdgeInsets.only(top: 15),
+                                                padding: EdgeInsets.only(
+                                                    left: 15, right: 15),
+                                                alignment: Alignment.centerLeft,
+                                                child: Text('배역',
+                                                    style: CustomStyles
+                                                        .bold14TextStyle())),
+                                            Container(
+                                                margin: EdgeInsets.only(top: 5),
+                                                padding: EdgeInsets.only(
+                                                    left: 15, right: 15),
+                                                width: double.infinity,
+                                                child: DropdownButtonFormField(
+                                                  value: _castingType,
+                                                  onChanged: (String newValue) {
+                                                    setState(() {
+                                                      _castingType = newValue;
+                                                    });
+                                                  },
+                                                  items: <String>[
+                                                    APIConstants.casting_type_1,
+                                                    APIConstants.casting_type_2,
+                                                    APIConstants.casting_type_3,
+                                                    APIConstants.casting_type_4,
+                                                  ].map<
+                                                          DropdownMenuItem<
+                                                              String>>(
+                                                      (String value) {
+                                                    return DropdownMenuItem<
+                                                            String>(
+                                                        value: value,
+                                                        child: Text(value,
+                                                            style: CustomStyles
+                                                                .normal14TextStyle()));
+                                                  }).toList(),
+                                                  decoration: InputDecoration(
+                                                    contentPadding:
+                                                        EdgeInsets.only(
+                                                            left: 15,
+                                                            right: 15,
+                                                            top: 0,
+                                                            bottom: 0),
+                                                    border: OutlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                            color: CustomColors
+                                                                .colorFontGrey,
+                                                            width: 1.0),
+                                                        borderRadius: CustomStyles
+                                                            .circle7BorderRadius()),
+                                                    focusedBorder: OutlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                            color: CustomColors
+                                                                .colorFontGrey,
+                                                            width: 1.0),
+                                                        borderRadius: CustomStyles
+                                                            .circle7BorderRadius()),
+                                                  ),
+                                                )),
+                                            Container(
+                                                margin:
+                                                    EdgeInsets.only(top: 15),
+                                                padding: EdgeInsets.only(
+                                                    left: 15, right: 15),
+                                                alignment: Alignment.centerLeft,
+                                                child: Text('배역 이름',
+                                                    style: CustomStyles
+                                                        .bold14TextStyle())),
+                                            Container(
+                                                padding: EdgeInsets.only(
+                                                    left: 15, right: 15),
+                                                margin: EdgeInsets.only(top: 5),
+                                                child: CustomStyles
+                                                    .greyBorderRound7TextField(
+                                                        _txtFieldCastingName,
+                                                        '배역 이름 입력'))
+                                          ])))),
+                          Container(
+                              width: double.infinity,
+                              height: 50,
+                              color: Colors.grey,
+                              child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Expanded(
+                                        child: Container(
+                                            width: (KCastingAppData().isWeb)
+                                                ? CustomStyles.appWidth
+                                                : MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            height: 55,
+                                            child: CustomStyles
+                                                .greyBGSquareButtonStyle('취소',
+                                                    () {
+                                              Navigator.pop(context);
+                                            }))),
+                                    Expanded(
+                                        child: Container(
+                                            width: (KCastingAppData().isWeb)
+                                                ? CustomStyles.appWidth
+                                                : MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            height: 55,
+                                            child: CustomStyles
+                                                .blueBGSquareButtonStyle('추가',
+                                                    () {
+                                              if (checkValidate(context)) {
+                                                requestAddFilmographyApi(
+                                                    context);
+                                              }
+                                            })))
+                                  ]))
+                        ])))));
   }
 
   /*

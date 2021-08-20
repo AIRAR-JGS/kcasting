@@ -638,524 +638,543 @@ class _ActorProfile extends State<ActorProfile>
   Widget build(BuildContext context) {
     return Theme(
         data: CustomStyles.defaultTheme(),
-        child: Scaffold(
-            key: _scaffoldKey,
-            appBar: CustomStyles.defaultAppBar('프로필 관리', () {
-              Navigator.pop(context);
-            }),
-            body: Builder(builder: (BuildContext context) {
-              return Stack(children: [
-                Container(
-                    child: SingleChildScrollView(
-                        child: Container(
-                            padding: EdgeInsets.only(bottom: 200),
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ActorProfileWidget.mainImageWidget(
-                                      context,
-                                      true,
-                                      KCastingAppData().myProfile == null
-                                          ? new Map<String, dynamic>()
-                                          : KCastingAppData().myProfile, () {
-                                    getImageFromGallery(0);
-                                  }),
-                                  ActorProfileWidget.profileWidget(
-                                      context,
-                                      _myKeywordTagStateKey,
-                                      KCastingAppData().myProfile,
-                                      _actorAgeStr,
-                                      _actorEducationStr,
-                                      _actorLanguageStr,
-                                      _actordialectStr,
-                                      _actorAbilityStr,
-                                      _actorKwdList),
-                                  Container(
-                                      height: 50,
-                                      margin: EdgeInsets.only(
-                                          left: 15, right: 15, top: 15),
-                                      width: double.infinity,
-                                      child: CustomStyles
-                                          .greyBorderRound7ButtonStyle('프로필 편집',
+        child: Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+                width: KCastingAppData().isWeb
+                    ? CustomStyles.appWidth
+                    : double.infinity,
+                child: Scaffold(
+                    key: _scaffoldKey,
+                    appBar: CustomStyles.defaultAppBar('프로필 관리', () {
+                      Navigator.pop(context);
+                    }),
+                    body: Builder(builder: (BuildContext context) {
+                      return Stack(children: [
+                        Container(
+                            child: SingleChildScrollView(
+                                child: Container(
+                                    padding: EdgeInsets.only(bottom: 200),
+                                    child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          ActorProfileWidget.mainImageWidget(
+                                              context,
+                                              true,
+                                              KCastingAppData().myProfile ==
+                                                      null
+                                                  ? new Map<String, dynamic>()
+                                                  : KCastingAppData().myProfile,
                                               () {
-                                        addView(context,
-                                            ActorProfileModifyMainInfo());
-                                      })),
-                                  Container(
-                                    margin: EdgeInsets.only(top: 30),
-                                    child: Divider(
-                                      height: 1,
-                                      color: CustomColors.colorFontLightGrey,
-                                    ),
-                                  ),
-                                  ActorProfileWidget.profileTabBarWidget(
-                                      _tabController),
-                                  Expanded(
-                                    flex: 0,
-                                    child: [
-                                      Container(
-                                          margin: EdgeInsets.only(bottom: 30),
-                                          child: Column(children: [
-                                            Visibility(
-                                              child: Container(
-                                                  padding: EdgeInsets.only(
-                                                      top: 20,
-                                                      left: 20,
-                                                      right: 20,
-                                                      bottom: 15),
-                                                  child: Row(children: [
-                                                    Expanded(
-                                                        flex: 1,
-                                                        child: Text(
-                                                            '출연 작품: ' +
-                                                                _filmorgraphyList
-                                                                    .length
-                                                                    .toString(),
-                                                            style: CustomStyles
-                                                                .normal14TextStyle())),
-                                                    Expanded(
-                                                        flex: 0,
-                                                        child: CustomStyles
-                                                            .darkBold14TextButtonStyle(
-                                                                '추가', () {
-                                                          addView(
-                                                              context,
-                                                              ActorFilmoAdd(
-                                                                  actorSeq: KCastingAppData()
-                                                                          .myInfo[
-                                                                      APIConstants
-                                                                          .seq]));
-                                                        })),
-                                                    Container(width: 20),
-                                                    Expanded(
-                                                        flex: 0,
-                                                        child: CustomStyles
-                                                            .darkBold14TextButtonStyle(
-                                                                '편집', () {
-                                                          setState(() {
-                                                            _isFlimorgraphyListEditMode =
-                                                                true;
-                                                          });
-                                                        }))
-                                                  ])),
-                                              visible:
-                                                  !_isFlimorgraphyListEditMode,
-                                            ),
-                                            Visibility(
-                                              child: Container(
-                                                  padding: EdgeInsets.only(
-                                                      top: 20,
-                                                      left: 20,
-                                                      right: 20,
-                                                      bottom: 15),
-                                                  child: Row(children: [
-                                                    Expanded(
-                                                        flex: 1,
-                                                        child: Text(
-                                                            '출연 작품: ' +
-                                                                _filmorgraphyList
-                                                                    .length
-                                                                    .toString(),
-                                                            style: CustomStyles
-                                                                .normal14TextStyle())),
-                                                    Expanded(
-                                                        flex: 0,
-                                                        child: CustomStyles
-                                                            .darkBold14TextButtonStyle(
-                                                                '취소', () {
-                                                          setState(() {
-                                                            _filmorgraphyList
-                                                                .clear();
-                                                            _filmorgraphyList
-                                                                .addAll(
-                                                                    _originalFilmorgraphyList);
-
-                                                            _deletedFilmorgraphyList =
-                                                                [];
-
-                                                            _isFlimorgraphyListEditMode =
-                                                                false;
-                                                          });
-                                                        })),
-                                                    Container(width: 20),
-                                                    Expanded(
-                                                        flex: 0,
-                                                        child: CustomStyles
-                                                            .darkBold14TextButtonStyle(
-                                                                '저장', () {
-                                                          setState(() {
-                                                            _originalFilmorgraphyList
-                                                                .clear();
-                                                            _originalFilmorgraphyList
-                                                                .addAll(
-                                                                    _filmorgraphyList);
-
-                                                            _isFlimorgraphyListEditMode =
-                                                                false;
-
-                                                            if (_deletedFilmorgraphyList
-                                                                    .length >
-                                                                0)
-                                                              requestActorFilmorgraphyDeleteApi(
-                                                                  context);
-                                                          });
-                                                        }))
-                                                  ])),
-                                              visible:
-                                                  _isFlimorgraphyListEditMode,
-                                            ),
-                                            ActorProfileWidget
-                                                .filmorgraphyListWidget(
-                                                    _isFlimorgraphyListEditMode,
-                                                    _filmorgraphyList, (index) {
-                                              setState(() {
-                                                _deletedFilmorgraphyList.add(
-                                                    _filmorgraphyList[index]
-                                                        [APIConstants.seq]);
-                                                _filmorgraphyList
-                                                    .removeAt(index);
-                                              });
-                                            })
-                                          ])),
-                                      Container(
-                                          child: Column(children: [
-                                        Visibility(
-                                          child: Container(
-                                              padding: EdgeInsets.only(
-                                                  top: 20,
-                                                  left: 20,
-                                                  right: 20,
-                                                  bottom: 15),
-                                              child: Row(children: [
-                                                Expanded(
-                                                    flex: 1,
-                                                    child: Text(
-                                                        '최대 8장(각 25MB 미만)',
-                                                        style: CustomStyles
-                                                            .normal14TextStyle())),
-                                                Expanded(
-                                                    flex: 0,
-                                                    child: CustomStyles
-                                                        .darkBold14TextButtonStyle(
-                                                            '추가', () async {
-                                                      try {
-                                                        if (Platform
-                                                                .isAndroid ||
-                                                            Platform.isIOS) {
-                                                          var status = Platform
-                                                                  .isAndroid
-                                                              ? await Permission
-                                                                  .storage
-                                                                  .request()
-                                                              : await Permission
-                                                                  .photos
-                                                                  .request();
-                                                          if (status
-                                                              .isGranted) {
-                                                            if (_myPhotos
-                                                                    .length ==
-                                                                8) {
-                                                              showSnackBar(
-                                                                  context,
-                                                                  '이미지는 최대 8장까지 등록하실 수 있습니다.');
-                                                            } else {
-                                                              getImageFromGallery(
-                                                                  1);
-                                                            }
-                                                          } else {
-                                                            showDialog(
-                                                                context:
-                                                                    context,
-                                                                builder: (BuildContext
-                                                                        context) =>
-                                                                    CupertinoAlertDialog(
-                                                                        title: Text(
-                                                                            '저장공간 접근권한'),
-                                                                        content:
-                                                                            Text(
-                                                                                '사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
-                                                                        actions: <
-                                                                            Widget>[
-                                                                          CupertinoDialogAction(
-                                                                            child:
-                                                                                Text('거부'),
-                                                                            onPressed: () =>
-                                                                                Navigator.of(context).pop(),
-                                                                          ),
-                                                                          CupertinoDialogAction(
-                                                                              child: Text('허용'),
-                                                                              onPressed: () => openAppSettings())
-                                                                        ]));
-                                                          }
-                                                          //
-                                                        }
-                                                      } catch (e) {
-                                                        getImageFromGallery(1);
-                                                      }
-                                                    })),
-                                                Container(width: 20),
-                                                Expanded(
-                                                    flex: 0,
-                                                    child: CustomStyles
-                                                        .darkBold14TextButtonStyle(
-                                                            '편집', () {
-                                                      setState(() {
-                                                        _isImageListEditMode =
-                                                            true;
-                                                      });
-                                                    }))
-                                              ])),
-                                          visible: !_isImageListEditMode,
-                                        ),
-                                        Visibility(
-                                          child: Container(
-                                              padding: EdgeInsets.only(
-                                                  top: 20,
-                                                  left: 20,
-                                                  right: 20,
-                                                  bottom: 15),
-                                              child: Row(children: [
-                                                Expanded(
-                                                    flex: 1,
-                                                    child: Text(
-                                                        '최대 8장(각 25MB 미만)',
-                                                        style: CustomStyles
-                                                            .normal14TextStyle())),
-                                                Expanded(
-                                                    flex: 0,
-                                                    child: CustomStyles
-                                                        .darkBold14TextButtonStyle(
-                                                            '취소', () {
-                                                      setState(() {
-                                                        _myPhotos.clear();
-                                                        _myPhotos.addAll(
-                                                            _originalMyPhotos);
-
-                                                        _deletedImageList = [];
-
-                                                        _isImageListEditMode =
-                                                            false;
-                                                      });
-                                                    })),
-                                                Container(width: 20),
-                                                Expanded(
-                                                    flex: 0,
-                                                    child: CustomStyles
-                                                        .darkBold14TextButtonStyle(
-                                                            '저장', () {
-                                                      setState(() {
-                                                        _originalMyPhotos
-                                                            .clear();
-                                                        _originalMyPhotos
-                                                            .addAll(_myPhotos);
-
-                                                        _isImageListEditMode =
-                                                            false;
-
-                                                        if (_deletedImageList
-                                                                .length >
-                                                            0)
-                                                          requestActorImageDeleteApi(
-                                                              context);
-                                                      });
-                                                    }))
-                                              ])),
-                                          visible: _isImageListEditMode,
-                                        ),
-                                        ActorProfileWidget.imageTabItemWidget(
-                                            _isImageListEditMode, _myPhotos,
-                                            (index) {
-                                          setState(() {
-                                            _deletedImageList.add(
-                                                _myPhotos[index]
-                                                    [APIConstants.seq]);
-
-                                            _myPhotos.removeAt(index);
-                                          });
-                                        })
-                                      ])),
-                                      Container(
-                                          margin: EdgeInsets.only(bottom: 30),
-                                          child: Column(children: [
-                                            Visibility(
-                                              child: Container(
-                                                padding: EdgeInsets.only(
-                                                    top: 20,
-                                                    left: 20,
-                                                    right: 20,
-                                                    bottom: 15),
-                                                child: Row(children: [
-                                                  Expanded(
-                                                      flex: 1,
-                                                      child: Text(
-                                                          '최대 2개(각 100MB 미만)',
-                                                          style: CustomStyles
-                                                              .normal14TextStyle())),
-                                                  Expanded(
-                                                      flex: 0,
-                                                      child: CustomStyles
-                                                          .darkBold14TextButtonStyle(
-                                                              '추가', () async {
-                                                        try {
-                                                          if (_kIsWeb) {
-                                                            var status = Platform.isAndroid
-                                                                ? await Permission
-                                                                    .storage
-                                                                    .request()
-                                                                : await Permission
-                                                                    .photos
-                                                                    .request();
-                                                            if (status
-                                                                .isGranted) {
-                                                              if (_myVideos
-                                                                      .length ==
-                                                                  2) {
-                                                                showSnackBar(
-                                                                    context,
-                                                                    "비디오는 최대 2개까지 등록하실 수 있습니다.");
-                                                              } else {
-                                                                getVideoFromGallery();
-                                                              }
-                                                            } else {
-                                                              showDialog(
-                                                                  context:
+                                            getImageFromGallery(0);
+                                          }),
+                                          ActorProfileWidget.profileWidget(
+                                              context,
+                                              _myKeywordTagStateKey,
+                                              KCastingAppData().myProfile,
+                                              _actorAgeStr,
+                                              _actorEducationStr,
+                                              _actorLanguageStr,
+                                              _actordialectStr,
+                                              _actorAbilityStr,
+                                              _actorKwdList),
+                                          Container(
+                                              height: 50,
+                                              margin: EdgeInsets.only(
+                                                  left: 15, right: 15, top: 15),
+                                              width: double.infinity,
+                                              child: CustomStyles
+                                                  .greyBorderRound7ButtonStyle(
+                                                      '프로필 편집', () {
+                                                addView(context,
+                                                    ActorProfileModifyMainInfo());
+                                              })),
+                                          Container(
+                                              margin: EdgeInsets.only(top: 30),
+                                              child: Divider(
+                                                height: 1,
+                                                color: CustomColors
+                                                    .colorFontLightGrey,
+                                              )),
+                                          ActorProfileWidget
+                                              .profileTabBarWidget(
+                                                  _tabController),
+                                          Expanded(
+                                            flex: 0,
+                                            child: [
+                                              Container(
+                                                  margin: EdgeInsets.only(
+                                                      bottom: 30),
+                                                  child: Column(children: [
+                                                    Visibility(
+                                                      child: Container(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  top: 20,
+                                                                  left: 20,
+                                                                  right: 20,
+                                                                  bottom: 15),
+                                                          child: Row(children: [
+                                                            Expanded(
+                                                                flex: 1,
+                                                                child: Text(
+                                                                    '출연 작품: ' +
+                                                                        _filmorgraphyList
+                                                                            .length
+                                                                            .toString(),
+                                                                    style: CustomStyles
+                                                                        .normal14TextStyle())),
+                                                            Expanded(
+                                                                flex: 0,
+                                                                child: CustomStyles
+                                                                    .darkBold14TextButtonStyle(
+                                                                        '추가',
+                                                                        () {
+                                                                  addView(
                                                                       context,
-                                                                  builder: (BuildContext
-                                                                          context) =>
-                                                                      CupertinoAlertDialog(
-                                                                        title: Text(
-                                                                            '저장공간 접근권한'),
-                                                                        content:
-                                                                            Text('사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
-                                                                        actions: <
-                                                                            Widget>[
-                                                                          CupertinoDialogAction(
-                                                                            child:
-                                                                                Text('거부'),
-                                                                            onPressed: () =>
-                                                                                Navigator.of(context).pop(),
-                                                                          ),
-                                                                          CupertinoDialogAction(
-                                                                            child:
-                                                                                Text('허용'),
-                                                                            onPressed: () =>
-                                                                                openAppSettings(),
-                                                                          ),
-                                                                        ],
-                                                                      ));
-                                                            }
-                                                          } else {
-                                                            getVideoFromGallery();
-                                                          }
-                                                        } catch (e) {
-                                                          getVideoFromGallery();
-                                                        }
-                                                        //
-                                                      })),
-                                                  Container(width: 20),
-                                                  Expanded(
-                                                      flex: 0,
-                                                      child: CustomStyles
-                                                          .darkBold14TextButtonStyle(
-                                                              '편집', () {
-                                                        setState(() {
-                                                          _isVideoListEditMode =
-                                                              true;
-                                                        });
-                                                      }))
-                                                ]),
-                                              ),
-                                              visible: !_isVideoListEditMode,
-                                            ),
-                                            Visibility(
-                                              child: Container(
-                                                padding: EdgeInsets.only(
-                                                    top: 20,
-                                                    left: 20,
-                                                    right: 20,
-                                                    bottom: 15),
-                                                child: Row(children: [
-                                                  Expanded(
-                                                      flex: 1,
+                                                                      ActorFilmoAdd(
+                                                                          actorSeq:
+                                                                              KCastingAppData().myInfo[APIConstants.seq]));
+                                                                })),
+                                                            Container(
+                                                                width: 20),
+                                                            Expanded(
+                                                                flex: 0,
+                                                                child: CustomStyles
+                                                                    .darkBold14TextButtonStyle(
+                                                                        '편집',
+                                                                        () {
+                                                                  setState(() {
+                                                                    _isFlimorgraphyListEditMode =
+                                                                        true;
+                                                                  });
+                                                                }))
+                                                          ])),
+                                                      visible:
+                                                          !_isFlimorgraphyListEditMode,
+                                                    ),
+                                                    Visibility(
+                                                      child: Container(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  top: 20,
+                                                                  left: 20,
+                                                                  right: 20,
+                                                                  bottom: 15),
+                                                          child: Row(children: [
+                                                            Expanded(
+                                                                flex: 1,
+                                                                child: Text(
+                                                                    '출연 작품: ' +
+                                                                        _filmorgraphyList
+                                                                            .length
+                                                                            .toString(),
+                                                                    style: CustomStyles
+                                                                        .normal14TextStyle())),
+                                                            Expanded(
+                                                                flex: 0,
+                                                                child: CustomStyles
+                                                                    .darkBold14TextButtonStyle(
+                                                                        '취소',
+                                                                        () {
+                                                                  setState(() {
+                                                                    _filmorgraphyList
+                                                                        .clear();
+                                                                    _filmorgraphyList
+                                                                        .addAll(
+                                                                            _originalFilmorgraphyList);
+
+                                                                    _deletedFilmorgraphyList =
+                                                                        [];
+
+                                                                    _isFlimorgraphyListEditMode =
+                                                                        false;
+                                                                  });
+                                                                })),
+                                                            Container(
+                                                                width: 20),
+                                                            Expanded(
+                                                                flex: 0,
+                                                                child: CustomStyles
+                                                                    .darkBold14TextButtonStyle(
+                                                                        '저장',
+                                                                        () {
+                                                                  setState(() {
+                                                                    _originalFilmorgraphyList
+                                                                        .clear();
+                                                                    _originalFilmorgraphyList
+                                                                        .addAll(
+                                                                            _filmorgraphyList);
+
+                                                                    _isFlimorgraphyListEditMode =
+                                                                        false;
+
+                                                                    if (_deletedFilmorgraphyList
+                                                                            .length >
+                                                                        0)
+                                                                      requestActorFilmorgraphyDeleteApi(
+                                                                          context);
+                                                                  });
+                                                                }))
+                                                          ])),
+                                                      visible:
+                                                          _isFlimorgraphyListEditMode,
+                                                    ),
+                                                    ActorProfileWidget
+                                                        .filmorgraphyListWidget(
+                                                            _isFlimorgraphyListEditMode,
+                                                            _filmorgraphyList,
+                                                            (index) {
+                                                      setState(() {
+                                                        _deletedFilmorgraphyList
+                                                            .add(
+                                                                _filmorgraphyList[
+                                                                        index][
+                                                                    APIConstants
+                                                                        .seq]);
+                                                        _filmorgraphyList
+                                                            .removeAt(index);
+                                                      });
+                                                    })
+                                                  ])),
+                                              Container(
+                                                  child: Column(children: [
+                                                Visibility(
+                                                  child: Container(
+                                                      padding: EdgeInsets.only(
+                                                          top: 20,
+                                                          left: 20,
+                                                          right: 20,
+                                                          bottom: 15),
+                                                      child: Row(children: [
+                                                        Expanded(
+                                                            flex: 1,
+                                                            child: Text(
+                                                                '최대 8장(각 25MB 미만)',
+                                                                style: CustomStyles
+                                                                    .normal14TextStyle())),
+                                                        Expanded(
+                                                            flex: 0,
+                                                            child: CustomStyles
+                                                                .darkBold14TextButtonStyle(
+                                                                    '추가',
+                                                                    () async {
+                                                              try {
+                                                                if (Platform
+                                                                        .isAndroid ||
+                                                                    Platform
+                                                                        .isIOS) {
+                                                                  var status = Platform.isAndroid
+                                                                      ? await Permission
+                                                                          .storage
+                                                                          .request()
+                                                                      : await Permission
+                                                                          .photos
+                                                                          .request();
+                                                                  if (status
+                                                                      .isGranted) {
+                                                                    if (_myPhotos
+                                                                            .length ==
+                                                                        8) {
+                                                                      showSnackBar(
+                                                                          context,
+                                                                          '이미지는 최대 8장까지 등록하실 수 있습니다.');
+                                                                    } else {
+                                                                      getImageFromGallery(
+                                                                          1);
+                                                                    }
+                                                                  } else {
+                                                                    showDialog(
+                                                                        context:
+                                                                            context,
+                                                                        builder: (BuildContext
+                                                                                context) =>
+                                                                            CupertinoAlertDialog(title: Text('저장공간 접근권한'), content: Text('사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'), actions: <Widget>[
+                                                                              CupertinoDialogAction(
+                                                                                child: Text('거부'),
+                                                                                onPressed: () => Navigator.of(context).pop(),
+                                                                              ),
+                                                                              CupertinoDialogAction(child: Text('허용'), onPressed: () => openAppSettings())
+                                                                            ]));
+                                                                  }
+                                                                  //
+                                                                }
+                                                              } catch (e) {
+                                                                getImageFromGallery(
+                                                                    1);
+                                                              }
+                                                            })),
+                                                        Container(width: 20),
+                                                        Expanded(
+                                                            flex: 0,
+                                                            child: CustomStyles
+                                                                .darkBold14TextButtonStyle(
+                                                                    '편집', () {
+                                                              setState(() {
+                                                                _isImageListEditMode =
+                                                                    true;
+                                                              });
+                                                            }))
+                                                      ])),
+                                                  visible:
+                                                      !_isImageListEditMode,
+                                                ),
+                                                Visibility(
+                                                  child: Container(
+                                                      padding: EdgeInsets.only(
+                                                          top: 20,
+                                                          left: 20,
+                                                          right: 20,
+                                                          bottom: 15),
+                                                      child: Row(children: [
+                                                        Expanded(
+                                                            flex: 1,
+                                                            child: Text(
+                                                                '최대 8장(각 25MB 미만)',
+                                                                style: CustomStyles
+                                                                    .normal14TextStyle())),
+                                                        Expanded(
+                                                            flex: 0,
+                                                            child: CustomStyles
+                                                                .darkBold14TextButtonStyle(
+                                                                    '취소', () {
+                                                              setState(() {
+                                                                _myPhotos
+                                                                    .clear();
+                                                                _myPhotos.addAll(
+                                                                    _originalMyPhotos);
+
+                                                                _deletedImageList =
+                                                                    [];
+
+                                                                _isImageListEditMode =
+                                                                    false;
+                                                              });
+                                                            })),
+                                                        Container(width: 20),
+                                                        Expanded(
+                                                            flex: 0,
+                                                            child: CustomStyles
+                                                                .darkBold14TextButtonStyle(
+                                                                    '저장', () {
+                                                              setState(() {
+                                                                _originalMyPhotos
+                                                                    .clear();
+                                                                _originalMyPhotos
+                                                                    .addAll(
+                                                                        _myPhotos);
+
+                                                                _isImageListEditMode =
+                                                                    false;
+
+                                                                if (_deletedImageList
+                                                                        .length >
+                                                                    0)
+                                                                  requestActorImageDeleteApi(
+                                                                      context);
+                                                              });
+                                                            }))
+                                                      ])),
+                                                  visible: _isImageListEditMode,
+                                                ),
+                                                ActorProfileWidget
+                                                    .imageTabItemWidget(
+                                                        _isImageListEditMode,
+                                                        _myPhotos, (index) {
+                                                  setState(() {
+                                                    _deletedImageList.add(
+                                                        _myPhotos[index]
+                                                            [APIConstants.seq]);
+
+                                                    _myPhotos.removeAt(index);
+                                                  });
+                                                })
+                                              ])),
+                                              Container(
+                                                  margin: EdgeInsets.only(
+                                                      bottom: 30),
+                                                  child: Column(children: [
+                                                    Visibility(
+                                                      child: Container(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                top: 20,
+                                                                left: 20,
+                                                                right: 20,
+                                                                bottom: 15),
+                                                        child: Row(children: [
+                                                          Expanded(
+                                                              flex: 1,
+                                                              child: Text(
+                                                                  '최대 2개(각 100MB 미만)',
+                                                                  style: CustomStyles
+                                                                      .normal14TextStyle())),
+                                                          Expanded(
+                                                              flex: 0,
+                                                              child: CustomStyles
+                                                                  .darkBold14TextButtonStyle(
+                                                                      '추가',
+                                                                      () async {
+                                                                try {
+                                                                  if (_kIsWeb) {
+                                                                    var status = Platform.isAndroid
+                                                                        ? await Permission
+                                                                            .storage
+                                                                            .request()
+                                                                        : await Permission
+                                                                            .photos
+                                                                            .request();
+                                                                    if (status
+                                                                        .isGranted) {
+                                                                      if (_myVideos
+                                                                              .length ==
+                                                                          2) {
+                                                                        showSnackBar(
+                                                                            context,
+                                                                            "비디오는 최대 2개까지 등록하실 수 있습니다.");
+                                                                      } else {
+                                                                        getVideoFromGallery();
+                                                                      }
+                                                                    } else {
+                                                                      showDialog(
+                                                                          context:
+                                                                              context,
+                                                                          builder: (BuildContext context) =>
+                                                                              CupertinoAlertDialog(
+                                                                                title: Text('저장공간 접근권한'),
+                                                                                content: Text('사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
+                                                                                actions: <Widget>[
+                                                                                  CupertinoDialogAction(
+                                                                                    child: Text('거부'),
+                                                                                    onPressed: () => Navigator.of(context).pop(),
+                                                                                  ),
+                                                                                  CupertinoDialogAction(
+                                                                                    child: Text('허용'),
+                                                                                    onPressed: () => openAppSettings(),
+                                                                                  ),
+                                                                                ],
+                                                                              ));
+                                                                    }
+                                                                  } else {
+                                                                    getVideoFromGallery();
+                                                                  }
+                                                                } catch (e) {
+                                                                  getVideoFromGallery();
+                                                                }
+                                                                //
+                                                              })),
+                                                          Container(width: 20),
+                                                          Expanded(
+                                                              flex: 0,
+                                                              child: CustomStyles
+                                                                  .darkBold14TextButtonStyle(
+                                                                      '편집', () {
+                                                                setState(() {
+                                                                  _isVideoListEditMode =
+                                                                      true;
+                                                                });
+                                                              }))
+                                                        ]),
+                                                      ),
+                                                      visible:
+                                                          !_isVideoListEditMode,
+                                                    ),
+                                                    Visibility(
+                                                      child: Container(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                top: 20,
+                                                                left: 20,
+                                                                right: 20,
+                                                                bottom: 15),
+                                                        child: Row(children: [
+                                                          Expanded(
+                                                              flex: 1,
+                                                              child: Text(
+                                                                  '최대 2개(각 100MB 미만)',
+                                                                  style: CustomStyles
+                                                                      .normal14TextStyle())),
+                                                          Expanded(
+                                                              flex: 0,
+                                                              child: CustomStyles
+                                                                  .darkBold14TextButtonStyle(
+                                                                      '취소', () {
+                                                                setState(() {
+                                                                  _myVideos
+                                                                      .clear();
+                                                                  _myVideos.addAll(
+                                                                      _originalMyVideos);
+
+                                                                  _deletedVideoList =
+                                                                      [];
+
+                                                                  _isVideoListEditMode =
+                                                                      false;
+                                                                });
+                                                              })),
+                                                          Container(width: 20),
+                                                          Expanded(
+                                                              flex: 0,
+                                                              child: CustomStyles
+                                                                  .darkBold14TextButtonStyle(
+                                                                      '저장', () {
+                                                                setState(() {
+                                                                  _originalMyVideos
+                                                                      .clear();
+                                                                  _originalMyVideos
+                                                                      .addAll(
+                                                                          _myVideos);
+
+                                                                  _isVideoListEditMode =
+                                                                      false;
+
+                                                                  if (_deletedVideoList
+                                                                          .length >
+                                                                      0)
+                                                                    requestActorVideoDeleteApi(
+                                                                        context);
+                                                                });
+                                                              }))
+                                                        ]),
+                                                      ),
+                                                      visible:
+                                                          _isVideoListEditMode,
+                                                    ),
+                                                    Container(
+                                                      margin: EdgeInsets.only(
+                                                          left: 20, right: 20),
                                                       child: Text(
-                                                          '최대 2개(각 100MB 미만)',
-                                                          style: CustomStyles
-                                                              .normal14TextStyle())),
-                                                  Expanded(
-                                                      flex: 0,
-                                                      child: CustomStyles
-                                                          .darkBold14TextButtonStyle(
-                                                              '취소', () {
-                                                        setState(() {
-                                                          _myVideos.clear();
-                                                          _myVideos.addAll(
-                                                              _originalMyVideos);
-
-                                                          _deletedVideoList =
-                                                              [];
-
-                                                          _isVideoListEditMode =
-                                                              false;
-                                                        });
-                                                      })),
-                                                  Container(width: 20),
-                                                  Expanded(
-                                                      flex: 0,
-                                                      child: CustomStyles
-                                                          .darkBold14TextButtonStyle(
-                                                              '저장', () {
-                                                        setState(() {
-                                                          _originalMyVideos
-                                                              .clear();
-                                                          _originalMyVideos
-                                                              .addAll(
-                                                                  _myVideos);
-
-                                                          _isVideoListEditMode =
-                                                              false;
-
-                                                          if (_deletedVideoList
-                                                                  .length >
-                                                              0)
-                                                            requestActorVideoDeleteApi(
-                                                                context);
-                                                        });
-                                                      }))
-                                                ]),
-                                              ),
-                                              visible: _isVideoListEditMode,
-                                            ),
-                                            Container(
-                                              margin: EdgeInsets.only(left: 20, right: 20),
-                                              child: Text(
-                                                '* 비디오 업로드는 시간이 소요될 수 있습니다. 업로드하신 비디오 페이지를 찾을 수 없다고 표시되는 경우에는 잠시 후에 다시 실행해 주세요.',
-                                                style: CustomStyles
-                                                    .dark12TextStyle(),
-                                              ),
-                                            ),
-                                            ActorProfileWidget
-                                                .videoTabItemWidget(
-                                                    _isVideoListEditMode,
-                                                    _myVideos, (index) {
-                                              setState(() {
-                                                _deletedVideoList.add(
-                                                    _myVideos[index]
-                                                        [APIConstants.seq]);
-                                                _myVideos.removeAt(index);
-                                              });
-                                            })
-                                          ]))
-                                    ][_tabIndex],
-                                  )
-                                ])))),
-                Visibility(
-                  child: Container(
-                      color: Colors.black38,
-                      alignment: Alignment.center,
-                      child: CircularProgressIndicator()),
-                  visible: _isUpload,
-                )
-              ]);
-            })));
+                                                        '* 비디오 업로드는 시간이 소요될 수 있습니다. 업로드하신 비디오 페이지를 찾을 수 없다고 표시되는 경우에는 잠시 후에 다시 실행해 주세요.',
+                                                        style: CustomStyles
+                                                            .dark12TextStyle(),
+                                                      ),
+                                                    ),
+                                                    ActorProfileWidget
+                                                        .videoTabItemWidget(
+                                                            _isVideoListEditMode,
+                                                            _myVideos, (index) {
+                                                      setState(() {
+                                                        _deletedVideoList.add(
+                                                            _myVideos[index][
+                                                                APIConstants
+                                                                    .seq]);
+                                                        _myVideos
+                                                            .removeAt(index);
+                                                      });
+                                                    })
+                                                  ]))
+                                            ][_tabIndex],
+                                          )
+                                        ])))),
+                        Visibility(
+                          child: Container(
+                              color: Colors.black38,
+                              alignment: Alignment.center,
+                              child: CircularProgressIndicator()),
+                          visible: _isUpload,
+                        )
+                      ]);
+                    })))));
   }
 }

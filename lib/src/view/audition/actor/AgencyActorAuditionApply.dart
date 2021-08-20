@@ -223,142 +223,160 @@ class _AgencyActorAuditionApply extends State<AgencyActorAuditionApply>
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: CustomStyles.defaultTheme(),
-      child: Scaffold(
-          key: _scaffoldKey,
-          appBar: CustomStyles.defaultAppBar('보유 배우 지원 현황', () {
-            Navigator.pop(context);
-          }),
-          body: Column(
-            children: [
-              Expanded(
-                  child: NotificationListener<ScrollNotification>(
-                child: SingleChildScrollView(
-                    controller: _scrollController,
-                    physics: AlwaysScrollableScrollPhysics(),
-                    key: ObjectKey(_actorList.length > 0 ? _actorList[0] : ""),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(top: 30.0, bottom: 10),
-                          padding: EdgeInsets.only(left: 16, right: 16),
-                          child: Text('지원할 배우',
-                              style: CustomStyles.normal24TextStyle()),
-                        ),
-                        Container(
-                            margin: EdgeInsets.only(
-                                top: 30, left: 15, right: 15, bottom: 20),
-                            padding: EdgeInsets.only(left: 10, right: 10),
-                            height: 50,
-                            decoration: BoxDecoration(
-                                borderRadius:
-                                    CustomStyles.circle7BorderRadius(),
-                                border: Border.all(
-                                    width: 1,
-                                    color: CustomColors.colorFontLightGrey)),
-                            child: Row(children: [
-                              Flexible(
-                                  child: TextField(
-                                      decoration: InputDecoration(
-                                          isDense: true,
-                                          border: InputBorder.none,
-                                          contentPadding: EdgeInsets.symmetric(
-                                              vertical: 0, horizontal: 0),
-                                          hintText: "배역을 검색해보세요",
-                                          hintStyle:
-                                              CustomStyles.normal16TextStyle()),
-                                      style: CustomStyles.dark16TextStyle())),
-                              Padding(
-                                  padding: EdgeInsets.only(left: 10),
-                                  child: GestureDetector(
-                                      onTap: () {},
-                                      child: Image.asset(
-                                          'assets/images/btn_search.png',
-                                          width: 20,
-                                          fit: BoxFit.contain)))
-                            ])),
-                        Divider(),
-                        _actorList.length > 0
-                            ? Container(
-                                child: ListView.separated(
-                                    primary: false,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    padding: EdgeInsets.only(
-                                        left: 15, right: 15, bottom: 30),
-                                    shrinkWrap: true,
-                                    itemCount: _actorList.length,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      Map<String, dynamic> _data =
-                                          _actorList[index];
-                                      return listItem(_data, index);
-                                    },
-                                    separatorBuilder: (context, index) {
-                                      return Divider();
-                                    }))
-                            : Container(
-                                alignment: Alignment.center,
-                                margin: EdgeInsets.only(top: 30),
-                                child: Text('보유배우의 지원현황이 없습니다.',
-                                    style: CustomStyles.normal16TextStyle()))
-                      ],
-                    )),
-                onNotification: (ScrollNotification scrollInfo) {
-                  if (scrollInfo is ScrollStartNotification) {
-                    if (scrollInfo.metrics.pixels ==
-                        scrollInfo.metrics.maxScrollExtent) {
-                      if (_total != 0 || _actorList.length < _total) {
-                        setState(() {
-                          _isLoading = true;
+        data: CustomStyles.defaultTheme(),
+        child: Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+                width: KCastingAppData().isWeb
+                    ? CustomStyles.appWidth
+                    : double.infinity,
+                child: Scaffold(
+                    key: _scaffoldKey,
+                    appBar: CustomStyles.defaultAppBar('보유 배우 지원 현황', () {
+                      Navigator.pop(context);
+                    }),
+                    body: Column(children: [
+                      Expanded(
+                          child: NotificationListener<ScrollNotification>(
+                        child: SingleChildScrollView(
+                            controller: _scrollController,
+                            physics: AlwaysScrollableScrollPhysics(),
+                            key: ObjectKey(
+                                _actorList.length > 0 ? _actorList[0] : ""),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  margin:
+                                      EdgeInsets.only(top: 30.0, bottom: 10),
+                                  padding: EdgeInsets.only(left: 16, right: 16),
+                                  child: Text('지원할 배우',
+                                      style: CustomStyles.normal24TextStyle()),
+                                ),
+                                Container(
+                                    margin: EdgeInsets.only(
+                                        top: 30,
+                                        left: 15,
+                                        right: 15,
+                                        bottom: 20),
+                                    padding:
+                                        EdgeInsets.only(left: 10, right: 10),
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            CustomStyles.circle7BorderRadius(),
+                                        border: Border.all(
+                                            width: 1,
+                                            color: CustomColors
+                                                .colorFontLightGrey)),
+                                    child: Row(children: [
+                                      Flexible(
+                                          child: TextField(
+                                              decoration: InputDecoration(
+                                                  isDense: true,
+                                                  border: InputBorder.none,
+                                                  contentPadding:
+                                                      EdgeInsets.symmetric(
+                                                          vertical: 0,
+                                                          horizontal: 0),
+                                                  hintText: "배역을 검색해보세요",
+                                                  hintStyle: CustomStyles
+                                                      .normal16TextStyle()),
+                                              style: CustomStyles
+                                                  .dark16TextStyle())),
+                                      Padding(
+                                          padding: EdgeInsets.only(left: 10),
+                                          child: GestureDetector(
+                                              onTap: () {},
+                                              child: Image.asset(
+                                                  'assets/images/btn_search.png',
+                                                  width: 20,
+                                                  fit: BoxFit.contain)))
+                                    ])),
+                                Divider(),
+                                _actorList.length > 0
+                                    ? Container(
+                                        child: ListView.separated(
+                                            primary: false,
+                                            physics:
+                                                NeverScrollableScrollPhysics(),
+                                            padding: EdgeInsets.only(
+                                                left: 15,
+                                                right: 15,
+                                                bottom: 30),
+                                            shrinkWrap: true,
+                                            itemCount: _actorList.length,
+                                            itemBuilder: (BuildContext context,
+                                                int index) {
+                                              Map<String, dynamic> _data =
+                                                  _actorList[index];
+                                              return listItem(_data, index);
+                                            },
+                                            separatorBuilder: (context, index) {
+                                              return Divider();
+                                            }))
+                                    : Container(
+                                        alignment: Alignment.center,
+                                        margin: EdgeInsets.only(top: 30),
+                                        child: Text('보유배우의 지원현황이 없습니다.',
+                                            style: CustomStyles
+                                                .normal16TextStyle()))
+                              ],
+                            )),
+                        onNotification: (ScrollNotification scrollInfo) {
+                          if (scrollInfo is ScrollStartNotification) {
+                            if (scrollInfo.metrics.pixels ==
+                                scrollInfo.metrics.maxScrollExtent) {
+                              if (_total != 0 || _actorList.length < _total) {
+                                setState(() {
+                                  _isLoading = true;
 
-                          if (_isLoading) {
-                            requestActorListApi(context);
+                                  if (_isLoading) {
+                                    requestActorListApi(context);
+                                  }
+                                });
+                              }
+                            }
                           }
-                        });
-                      }
-                    }
-                  }
-                  return true;
-                },
-              )),
-              Container(
-                  height: 55,
-                  color: CustomColors.colorBgGrey,
-                  child: Row(children: [
-                    Expanded(
-                        flex: 1,
-                        child: Container(
-                            height: 55,
-                            child:
-                                CustomStyles.greyBGSquareButtonStyle('취소', () {
-                              Navigator.pop(context);
-                            }))),
-                    Expanded(
-                        flex: 1,
-                        child: Container(
-                            height: 55,
-                            child: CustomStyles.blueBGSquareButtonStyle('지원하기',
-                                () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          AuditionApplyUploadImage(
-                                              castingSeq: _castingSeq,
-                                              projectName: _projectName,
-                                              castingName: _castingName,
-                                              actorSeq:
-                                                  _actorList[_selectActorIdx]
-                                                      [APIConstants.actor_seq],
-                                              actorProfileSeq:
-                                                  _actorList[_selectActorIdx][
-                                                      APIConstants
-                                                          .actorProfile_seq])));
-                            }))),
-                  ]))
-            ],
-          )),
-    );
+                          return true;
+                        },
+                      )),
+                      Container(
+                          height: 55,
+                          color: CustomColors.colorBgGrey,
+                          child: Row(children: [
+                            Expanded(
+                                flex: 1,
+                                child: Container(
+                                    height: 55,
+                                    child: CustomStyles.greyBGSquareButtonStyle(
+                                        '취소', () {
+                                      Navigator.pop(context);
+                                    }))),
+                            Expanded(
+                                flex: 1,
+                                child: Container(
+                                    height: 55,
+                                    child: CustomStyles.blueBGSquareButtonStyle(
+                                        '지원하기', () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  AuditionApplyUploadImage(
+                                                      castingSeq: _castingSeq,
+                                                      projectName: _projectName,
+                                                      castingName: _castingName,
+                                                      actorSeq: _actorList[
+                                                              _selectActorIdx][
+                                                          APIConstants
+                                                              .actor_seq],
+                                                      actorProfileSeq: _actorList[
+                                                              _selectActorIdx][
+                                                          APIConstants
+                                                              .actorProfile_seq])));
+                                    })))
+                          ]))
+                    ])))));
   }
 }

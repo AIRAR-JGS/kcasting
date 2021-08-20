@@ -92,37 +92,6 @@ class _AgencyMemberPage extends State<AgencyMemberPage> with BaseUtilMixin {
   Widget _headerView() {
     return Container(
         child: Column(children: [
-      /*Container(
-              margin: EdgeInsets.only(top: 30, bottom: 15),
-              child: KCastingAppData().myInfo == null
-                  ? Icon(
-                      Icons.account_circle,
-                      color: CustomColors.colorFontLightGrey,
-                      size: 100,
-                    )
-                  : (KCastingAppData()
-                              .myInfo[APIConstants.management_logo_img_url] !=
-                          null
-                      ? ClipOval(
-                          child: CachedNetworkImage(
-                              placeholder: (context, url) => Container(
-                                  alignment: Alignment.center,
-                                  child: CircularProgressIndicator()),
-                              imageUrl: KCastingAppData()
-                                  .myInfo[APIConstants.management_logo_img_url],
-                              fit: BoxFit.cover,
-                              width: 100.0,
-                              height: 100.0,
-                              errorWidget: (context, url, error) => Icon(
-                                    Icons.account_circle,
-                                    color: CustomColors.colorFontLightGrey,
-                                    size: 100,
-                                  )))
-                      : Icon(
-                          Icons.account_circle,
-                          color: CustomColors.colorFontLightGrey,
-                          size: 100,
-                        ))),*/
       Container(
           decoration: new BoxDecoration(
               shape: BoxShape.circle,
@@ -265,105 +234,116 @@ class _AgencyMemberPage extends State<AgencyMemberPage> with BaseUtilMixin {
   * */
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Stack(
-      children: [
-        Container(
-          alignment: Alignment.center,
-          child: ListView.separated(
-            scrollDirection: Axis.vertical,
-            itemCount: 8,
-            itemBuilder: (context, index) {
-              return (index == 0)
-                  ? _headerView()
-                  : GestureDetector(
-                      onTap: () {
-                        switch (index) {
-                          // 프로필 관리
-                          case 1:
-                            // 프로필 관리 페이지 이동
-                            Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => AgencyProfile()))
-                                .then((value) => {initData()});
+    return Align(
+        alignment: Alignment.topCenter,
+        child: Container(
+            width: KCastingAppData().isWeb
+                ? CustomStyles.appWidth
+                : double.infinity,
+            child: Scaffold(
+                body: Stack(
+              children: [
+                Container(
+                  alignment: Alignment.center,
+                  child: ListView.separated(
+                    scrollDirection: Axis.vertical,
+                    itemCount: 8,
+                    itemBuilder: (context, index) {
+                      return (index == 0)
+                          ? _headerView()
+                          : GestureDetector(
+                              onTap: () {
+                                switch (index) {
+                                  // 프로필 관리
+                                  case 1:
+                                    // 프로필 관리 페이지 이동
+                                    Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    AgencyProfile()))
+                                        .then((value) => {initData()});
 
-                            //addView(context, AgencyProfile());
-                            break;
+                                    //addView(context, AgencyProfile());
+                                    break;
 
-                          // 보유 배우
-                          case 2:
-                            // 보유 배우 페이지 이동
-                            addView(context, AgencyActorList());
-                            break;
+                                  // 보유 배우
+                                  case 2:
+                                    // 보유 배우 페이지 이동
+                                    addView(context, AgencyActorList());
+                                    break;
 
-                          // 지원 현황
-                          case 3:
-                            // 지원 현황 페이지 이동
-                            addView(context, AgencyActorAuditionApplyList());
-                            break;
+                                  // 지원 현황
+                                  case 3:
+                                    // 지원 현황 페이지 이동
+                                    addView(context,
+                                        AgencyActorAuditionApplyList());
+                                    break;
 
-                          // 받은 제안
-                          case 4:
-                            // 받은 제안 페이지 이동
-                            addView(context, AgencyActorOfferedAuditionList());
-                            break;
+                                  // 받은 제안
+                                  case 4:
+                                    // 받은 제안 페이지 이동
+                                    addView(context,
+                                        AgencyActorOfferedAuditionList());
+                                    break;
 
-                          // 마이스크랩
-                          case 5:
-                            // 마이스크랩 페이지 이동
-                            addView(context, BookmarkedAgencyAuditionList());
-                            break;
+                                  // 마이스크랩
+                                  case 5:
+                                    // 마이스크랩 페이지 이동
+                                    addView(context,
+                                        BookmarkedAgencyAuditionList());
+                                    break;
 
-                          // 개인정보 관리
-                          case 6:
-                            // 개인정보 관리 페이지 이동
-                            addView(context, AgencyMemberInfo());
-                            break;
+                                  // 개인정보 관리
+                                  case 6:
+                                    // 개인정보 관리 페이지 이동
+                                    addView(context, AgencyMemberInfo());
+                                    break;
 
-                          // 로그아웃
-                          case 7:
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) =>
-                                  DialogMemberLogoutConfirm(
-                                onClickedAgree: () async {
-                                  KCastingAppData().clearData();
+                                  // 로그아웃
+                                  case 7:
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) =>
+                                          DialogMemberLogoutConfirm(
+                                        onClickedAgree: () async {
+                                          KCastingAppData().clearData();
 
-                                  final SharedPreferences prefs =
-                                      await SharedPreferences.getInstance();
-                                  prefs.remove(APIConstants.autoLogin);
-                                  prefs.remove(APIConstants.id);
-                                  prefs.remove(APIConstants.pwd);
+                                          final SharedPreferences prefs =
+                                              await SharedPreferences
+                                                  .getInstance();
+                                          prefs.remove(APIConstants.autoLogin);
+                                          prefs.remove(APIConstants.id);
+                                          prefs.remove(APIConstants.pwd);
 
-                                  // 로그인 페이지 이동
-                                  replaceView(context, Login());
-                                },
-                              ),
+                                          // 로그인 페이지 이동
+                                          replaceView(context, Login());
+                                        },
+                                      ),
+                                    );
+
+                                    break;
+
+                                  default:
+                                    break;
+                                }
+                              },
+                              child: _listItemView(index),
                             );
-
-                            break;
-
-                          default:
-                            break;
-                        }
-                      },
-                      child: _listItemView(index),
-                    );
-            },
-            separatorBuilder: (context, index) {
-              return Divider();
-            },
-          ),
-        ),
-        Visibility(
-          child: Container(
-              color: Colors.black38,
-              alignment: Alignment.center,
-              child: CircularProgressIndicator()),
-          visible: _isUpload,
-        )
-      ],
-    ));
+                    },
+                    separatorBuilder: (context, index) {
+                      return Divider();
+                    },
+                  ),
+                ),
+                Visibility(
+                  child: Container(
+                      color: Colors.black38,
+                      alignment: Alignment.center,
+                      child: CircularProgressIndicator()),
+                  visible: _isUpload,
+                )
+              ],
+            ))));
   }
 }

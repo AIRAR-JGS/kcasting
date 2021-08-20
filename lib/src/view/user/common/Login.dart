@@ -67,129 +67,149 @@ class _Login extends State<Login> with BaseUtilMixin {
         },
         child: Theme(
             data: CustomStyles.defaultTheme(),
-            child: Scaffold(
-                key: _scaffoldKey,
-                appBar: CustomStyles.appBarWithoutBtn(),
-                body: Builder(builder: (BuildContext context) {
-                  return Stack(children: [
-                    SingleChildScrollView(
-                      child: Container(
-                          padding: EdgeInsets.only(left: 30, right: 30),
-                          alignment: Alignment.centerLeft,
-                          child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                // 앱 로고 영역
-                                Container(
-                                    margin: EdgeInsets.only(top: 100),
-                                    alignment: Alignment.center,
-                                    child: Image.asset(
-                                        'assets/images/logo_blue_big.png',
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.4)),
-                                // 아이디 입력 필드
-                                Container(
-                                    margin: EdgeInsets.only(top: 50),
-                                    child:
-                                        CustomStyles.greyBorderRound7TextField(
-                                            _txtFieldID, '아이디 입력')),
-                                // 비밀번호 입력 필드
-                                Container(
-                                    margin: EdgeInsets.only(top: 10),
-                                    child: CustomStyles
-                                        .greyBorderRound7PWDTextField(
-                                            _txtFieldPW, '비밀번호 입력')),
-                                // 자동로그인 체크박스 영역
-                                Container(
-                                    margin: EdgeInsets.only(top: 5),
-                                    child: Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Radio<int>(
-                                            value: _isAutoLogin,
-                                            visualDensity:
-                                                VisualDensity.compact,
-                                            groupValue: 1,
-                                            toggleable: true,
-                                            onChanged: (_) {
-                                              setState(() {
-                                                if (_isAutoLogin == 0) {
-                                                  _isAutoLogin = 1;
-                                                } else {
-                                                  _isAutoLogin = 0;
-                                                }
-                                              });
-                                            },
-                                            materialTapTargetSize:
-                                                MaterialTapTargetSize
-                                                    .shrinkWrap,
-                                          ),
-                                          Text('자동 로그인',
-                                              style: CustomStyles
-                                                  .normal14TextStyle())
-                                        ])),
-                                // 로그인 버튼
-                                Container(
-                                    width: double.infinity,
-                                    height: 50,
-                                    margin: EdgeInsets.only(top: 15),
-                                    child: CustomStyles.greyBGRound7ButtonStyle(
-                                        '로그인', () {
-                                      // 로그인 버튼 클릭
-                                      if (checkValidate(context)) {
-                                        requestLoginApi(context);
-                                      }
-                                    })),
-                                // 회원가입 버튼
-                                Container(
-                                    margin: EdgeInsets.only(top: 30),
-                                    child: CustomStyles.normal16TextButtonStyle(
-                                        '회원가입', () {
-                                      replaceView(context, JoinSelectType());
-                                    })),
-                                Container(
-                                    margin:
-                                        EdgeInsets.only(top: 30, bottom: 50),
-                                    child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          // 아이디 찾기 버튼
-                                          CustomStyles.normal16TextButtonStyle(
-                                              '아이디 찾기', () {
-                                            replaceView(context, FindID());
-                                          }),
-                                          Container(
-                                              margin: EdgeInsets.only(
-                                                  left: 5, right: 5),
-                                              height: 10,
-                                              child: VerticalDivider(
-                                                width: 0.5,
-                                                thickness: 1,
-                                                color:
-                                                    CustomColors.colorFontGrey,
-                                              )),
-                                          // 비밀번호 찾기 버튼
-                                          CustomStyles.normal16TextButtonStyle(
-                                              '비밀번호 찾기', () {
-                                            replaceView(context, FindPW());
-                                          })
-                                        ]))
-                              ])),
-                    ),
-                    Visibility(
-                      child: Container(
-                          color: Colors.black38,
-                          alignment: Alignment.center,
-                          child: CircularProgressIndicator()),
-                      visible: _isUpload,
-                    )
-                  ]);
-                }))));
+            child: Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                    width: KCastingAppData().isWeb
+                        ? CustomStyles.appWidth
+                        : double.infinity,
+                    child: Scaffold(
+                        key: _scaffoldKey,
+                        extendBody: false,
+                        appBar: CustomStyles.appBarWithoutBtn(),
+                        body: Builder(builder: (BuildContext context) {
+                          return Stack(children: [
+                            SingleChildScrollView(
+                              child: Container(
+                                  padding: EdgeInsets.only(left: 30, right: 30),
+                                  alignment: Alignment.centerLeft,
+                                  child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        // 앱 로고 영역
+                                        Container(
+                                            margin: EdgeInsets.only(top: 100),
+                                            alignment: Alignment.center,
+                                            child: Image.asset(
+                                                'assets/images/logo_blue_big.png',
+                                                width: (KCastingAppData().isWeb)
+                                                    ? CustomStyles.appWidth *
+                                                        0.4
+                                                    : MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        0.4)),
+                                        // 아이디 입력 필드
+                                        Container(
+                                            margin: EdgeInsets.only(top: 50),
+                                            child: CustomStyles
+                                                .greyBorderRound7TextField(
+                                                    _txtFieldID, '아이디 입력')),
+                                        // 비밀번호 입력 필드
+                                        Container(
+                                            margin: EdgeInsets.only(top: 10),
+                                            child: CustomStyles
+                                                .greyBorderRound7PWDTextField(
+                                                    _txtFieldPW, '비밀번호 입력')),
+                                        // 자동로그인 체크박스 영역
+                                        Container(
+                                            margin: EdgeInsets.only(top: 5),
+                                            child: Row(
+                                                mainAxisSize: MainAxisSize.max,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  Radio<int>(
+                                                    value: _isAutoLogin,
+                                                    visualDensity:
+                                                        VisualDensity.compact,
+                                                    groupValue: 1,
+                                                    toggleable: true,
+                                                    onChanged: (_) {
+                                                      setState(() {
+                                                        if (_isAutoLogin == 0) {
+                                                          _isAutoLogin = 1;
+                                                        } else {
+                                                          _isAutoLogin = 0;
+                                                        }
+                                                      });
+                                                    },
+                                                    materialTapTargetSize:
+                                                        MaterialTapTargetSize
+                                                            .shrinkWrap,
+                                                  ),
+                                                  Text('자동 로그인',
+                                                      style: CustomStyles
+                                                          .normal14TextStyle())
+                                                ])),
+                                        // 로그인 버튼
+                                        Container(
+                                            width: double.infinity,
+                                            height: 50,
+                                            margin: EdgeInsets.only(top: 15),
+                                            child: CustomStyles
+                                                .greyBGRound7ButtonStyle('로그인',
+                                                    () {
+                                              // 로그인 버튼 클릭
+                                              if (checkValidate(context)) {
+                                                requestLoginApi(context);
+                                              }
+                                            })),
+                                        // 회원가입 버튼
+                                        Container(
+                                            margin: EdgeInsets.only(top: 30),
+                                            child: CustomStyles
+                                                .normal16TextButtonStyle('회원가입',
+                                                    () {
+                                              replaceView(
+                                                  context, JoinSelectType());
+                                            })),
+                                        Container(
+                                            margin: EdgeInsets.only(
+                                                top: 30, bottom: 50),
+                                            child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  // 아이디 찾기 버튼
+                                                  CustomStyles
+                                                      .normal16TextButtonStyle(
+                                                          '아이디 찾기', () {
+                                                    replaceView(
+                                                        context, FindID());
+                                                  }),
+                                                  Container(
+                                                      margin: EdgeInsets.only(
+                                                          left: 5, right: 5),
+                                                      height: 10,
+                                                      child: VerticalDivider(
+                                                        width: 0.5,
+                                                        thickness: 1,
+                                                        color: CustomColors
+                                                            .colorFontGrey,
+                                                      )),
+                                                  // 비밀번호 찾기 버튼
+                                                  CustomStyles
+                                                      .normal16TextButtonStyle(
+                                                          '비밀번호 찾기', () {
+                                                    replaceView(
+                                                        context, FindPW());
+                                                  })
+                                                ]))
+                                      ])),
+                            ),
+                            Visibility(
+                              child: Container(
+                                  color: Colors.black38,
+                                  alignment: Alignment.center,
+                                  child: CircularProgressIndicator()),
+                              visible: _isUpload,
+                            )
+                          ]);
+                        }))))));
   }
 
   /*

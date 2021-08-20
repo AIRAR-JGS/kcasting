@@ -4,6 +4,8 @@ import 'package:casting_call/res/CustomStyles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../KCastingAppData.dart';
+
 class DialogAuditionRefuse extends StatelessWidget {
   final Function(String) onClickedAgree;
 
@@ -16,6 +18,12 @@ class DialogAuditionRefuse extends StatelessWidget {
   dialogContent(BuildContext context) {
     return Theme(
       data: ThemeData(fontFamily: Constants.appFont),
+      child: Align(
+      alignment: Alignment.center,
+      child: Container(
+      width: KCastingAppData().isWeb
+      ? CustomStyles.appWidth * 0.8
+          : double.infinity,
       child: Stack(
         children: <Widget>[
           Container(
@@ -113,7 +121,7 @@ class DialogAuditionRefuse extends StatelessWidget {
           ),
         ],
       ),
-    );
+    )));
   }
 
   @override

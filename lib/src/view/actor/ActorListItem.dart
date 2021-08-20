@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:casting_call/BaseWidget.dart';
+import 'package:casting_call/KCastingAppData.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
@@ -48,7 +49,9 @@ class _ActorListItem extends State<ActorListItem> with BaseUtilMixin {
                   {if (_onClickedBookmark != null) _onClickedBookmark()});
             },
             child: Container(
-                width: MediaQuery.of(context).size.width,
+                width: (KCastingAppData().isWeb)
+                    ? CustomStyles.appWidth
+                    : MediaQuery.of(context).size.width,
                 child: Column(children: <Widget>[
                   Container(
                       decoration: BoxDecoration(
@@ -62,8 +65,12 @@ class _ActorListItem extends State<ActorListItem> with BaseUtilMixin {
                               offset: Offset(2, 1),
                             )
                           ]),
-                      width: (MediaQuery.of(context).size.width / 2),
-                      height: (MediaQuery.of(context).size.width / 2)*1.2,
+                      width: (KCastingAppData().isWeb)
+                          ? (CustomStyles.appWidth / 2)
+                          : (MediaQuery.of(context).size.width / 2),
+                      height: (KCastingAppData().isWeb)
+                          ? ((CustomStyles.appWidth / 2) * 1.2)
+                          : ((MediaQuery.of(context).size.width / 2) * 1.2),
                       child: _data[APIConstants.main_img_url] != null
                           ? ClipRRect(
                               borderRadius: CustomStyles.circle7BorderRadius(),

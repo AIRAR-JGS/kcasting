@@ -8,6 +8,8 @@ import 'package:casting_call/src/view/board/UsageGuideDetail.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
+import '../../../KCastingAppData.dart';
+
 /*
 * 이용안내 목록
 * */
@@ -218,78 +220,96 @@ class _UsageGuide extends State<UsageGuide>
   Widget build(BuildContext context) {
     return Theme(
         data: CustomStyles.defaultTheme(),
-        child: Scaffold(
-            key: _scaffoldKey,
-            appBar: CustomStyles.defaultAppBar('', () {
-              Navigator.pop(context);
-            }),
-            body: Builder(builder: (BuildContext context) {
-              return Stack(children: [
-                Container(
-                    child: SingleChildScrollView(
-                        controller: _scrollController,
-                        physics: AlwaysScrollableScrollPhysics(),
-                        child: Container(
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                              Container(
-                                margin: EdgeInsets.only(top: 30.0, bottom: 10),
-                                padding: EdgeInsets.only(left: 16, right: 16),
-                                child: Text('이용안내',
-                                    style: CustomStyles.normal24TextStyle()),
-                              ),
-                              Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  child: DecoratedTabBar(
-                                      decoration: BoxDecoration(
-                                          border: Border(
-                                              bottom: BorderSide(
-                                                  color:
-                                                      CustomColors.colorBgGrey,
-                                                  width: 1.0))),
-                                      tabBar: TabBar(
-                                          controller: _tabController,
-                                          indicatorPadding: EdgeInsets.zero,
-                                          indicatorColor: CustomColors
-                                              .colorAccent
-                                              .withAlpha(200),
-                                          labelStyle:
-                                              CustomStyles.bold14TextStyle(),
-                                          indicatorWeight: 3,
-                                          labelColor: CustomColors.colorFontTitle,
-                                          unselectedLabelStyle:
-                                              CustomStyles.normal14TextStyle(),
-                                          tabs: [
-                                            Tab(text: '배우회원'),
-                                            Tab(text: '제작사회원'),
-                                            Tab(text: '매니지먼트회원')
-                                          ]))),
-                              Expanded(
-                                  flex: 0,
-                                  child: [
-                                    tabInfo(),
-                                    tabInfo(),
-                                    tabInfo()
-                                  ][_tabIndex]),
-                              Visibility(
-                                  child: Container(
-                                      alignment: Alignment.center,
-                                      margin: EdgeInsets.only(top: 50),
-                                      child: Text('이용안내가 없습니다.',
-                                          style:
-                                              CustomStyles.normal16TextStyle(),
-                                          textAlign: TextAlign.center)),
-                                  visible: _infoList.length > 0 ? false : true)
-                            ])))),
-                Visibility(
-                  child: Container(
-                      color: Colors.black38,
-                      alignment: Alignment.center,
-                      child: CircularProgressIndicator()),
-                  visible: _isUpload,
-                )
-              ]);
-            })));
+        child: Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+                width: KCastingAppData().isWeb
+                    ? CustomStyles.appWidth
+                    : double.infinity,
+                child: Scaffold(
+                    key: _scaffoldKey,
+                    appBar: CustomStyles.defaultAppBar('', () {
+                      Navigator.pop(context);
+                    }),
+                    body: Builder(builder: (BuildContext context) {
+                      return Stack(children: [
+                        Container(
+                            child: SingleChildScrollView(
+                                controller: _scrollController,
+                                physics: AlwaysScrollableScrollPhysics(),
+                                child: Container(
+                                    child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                            top: 30.0, bottom: 10),
+                                        padding: EdgeInsets.only(
+                                            left: 16, right: 16),
+                                        child: Text('이용안내',
+                                            style: CustomStyles
+                                                .normal24TextStyle()),
+                                      ),
+                                      Container(
+                                          width:
+                                          (KCastingAppData().isWeb)
+                                              ? CustomStyles.appWidth
+                                              : MediaQuery.of(context).size.width,
+                                          child: DecoratedTabBar(
+                                              decoration: BoxDecoration(
+                                                  border: Border(
+                                                      bottom: BorderSide(
+                                                          color: CustomColors
+                                                              .colorBgGrey,
+                                                          width: 1.0))),
+                                              tabBar: TabBar(
+                                                  controller: _tabController,
+                                                  indicatorPadding:
+                                                      EdgeInsets.zero,
+                                                  indicatorColor: CustomColors
+                                                      .colorAccent
+                                                      .withAlpha(200),
+                                                  labelStyle: CustomStyles
+                                                      .bold14TextStyle(),
+                                                  indicatorWeight: 3,
+                                                  labelColor: CustomColors
+                                                      .colorFontTitle,
+                                                  unselectedLabelStyle:
+                                                      CustomStyles
+                                                          .normal14TextStyle(),
+                                                  tabs: [
+                                                    Tab(text: '배우회원'),
+                                                    Tab(text: '제작사회원'),
+                                                    Tab(text: '매니지먼트회원')
+                                                  ]))),
+                                      Expanded(
+                                          flex: 0,
+                                          child: [
+                                            tabInfo(),
+                                            tabInfo(),
+                                            tabInfo()
+                                          ][_tabIndex]),
+                                      Visibility(
+                                          child: Container(
+                                              alignment: Alignment.center,
+                                              margin: EdgeInsets.only(top: 50),
+                                              child: Text('이용안내가 없습니다.',
+                                                  style: CustomStyles
+                                                      .normal16TextStyle(),
+                                                  textAlign: TextAlign.center)),
+                                          visible: _infoList.length > 0
+                                              ? false
+                                              : true)
+                                    ])))),
+                        Visibility(
+                          child: Container(
+                              color: Colors.black38,
+                              alignment: Alignment.center,
+                              child: CircularProgressIndicator()),
+                          visible: _isUpload,
+                        )
+                      ]);
+                    })))));
   }
 }

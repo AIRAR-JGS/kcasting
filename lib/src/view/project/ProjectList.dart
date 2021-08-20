@@ -231,7 +231,8 @@ class _ProjectList extends State<ProjectList>
                                             borderRadius: BorderRadius.only(
                                                 bottomLeft: Radius.circular(7),
                                                 topLeft: Radius.circular(7)),
-                                            color: CustomColors.colorGreyPurple.withAlpha(100)),
+                                            color: CustomColors.colorGreyPurple
+                                                .withAlpha(100)),
                                         margin: EdgeInsets.only(right: 10),
                                         child: Column(children: [
                                           Text('오디션',
@@ -279,139 +280,159 @@ class _ProjectList extends State<ProjectList>
   Widget build(BuildContext context) {
     return Theme(
         data: CustomStyles.defaultTheme(),
-        child: Scaffold(
-            key: _scaffoldKey,
-            appBar: CustomStyles.defaultAppBar('오디션 관리', () {
-              Navigator.pop(context);
-            }),
-            body: Stack(
-              children: [
-                Container(
-                    child: RefreshIndicator(
-                  onRefresh: _refreshPage,
-                  child: SingleChildScrollView(
-                      controller: _scrollController,
-                      physics: AlwaysScrollableScrollPhysics(),
-                      key: (_tabIndex == 0
-                          ? ObjectKey(_projectMovieList.length > 0
-                              ? _projectMovieList[0]
-                              : "")
-                          : ObjectKey(_projectDramaList.length > 0
-                              ? _projectDramaList[0]
-                              : "")),
-                      child: Container(
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                            Container(
-                              margin: EdgeInsets.only(top: 30.0, bottom: 10),
-                              padding: EdgeInsets.only(left: 16, right: 16),
-                              child: Text('오디션 관리',
-                                  style: CustomStyles.normal24TextStyle()),
-                            ),
-                            GestureDetector(
-                                onTap: () {
-                                  replaceView(context, ProjectAdd());
-                                },
-                                child: Container(
-                                    margin:
-                                        EdgeInsets.only(left: 15, right: 15),
-                                    alignment: Alignment.centerRight,
-                                    child: Text('+ 프로젝트 추가',
-                                        style:
-                                            CustomStyles.blue16TextStyle()))),
-                            Container(
-                                margin: EdgeInsets.only(
-                                    top: 10, left: 15, right: 15),
-                                padding: EdgeInsets.only(left: 10, right: 10),
-                                height: 50,
-                                decoration: BoxDecoration(
-                                  borderRadius:
-                                      CustomStyles.circle7BorderRadius(),
-                                  border: Border.all(
-                                      width: 1,
-                                      color: CustomColors.colorFontLightGrey),
+        child: Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+              width: KCastingAppData().isWeb
+                  ? CustomStyles.appWidth
+                  : double.infinity,
+              child: Scaffold(
+                key: _scaffoldKey,
+                appBar: CustomStyles.defaultAppBar('오디션 관리', () {
+                  Navigator.pop(context);
+                }),
+                body: Stack(
+                  children: [
+                    Container(
+                        child: RefreshIndicator(
+                      onRefresh: _refreshPage,
+                      child: SingleChildScrollView(
+                          controller: _scrollController,
+                          physics: AlwaysScrollableScrollPhysics(),
+                          key: (_tabIndex == 0
+                              ? ObjectKey(_projectMovieList.length > 0
+                                  ? _projectMovieList[0]
+                                  : "")
+                              : ObjectKey(_projectDramaList.length > 0
+                                  ? _projectDramaList[0]
+                                  : "")),
+                          child: Container(
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                Container(
+                                  margin:
+                                      EdgeInsets.only(top: 30.0, bottom: 10),
+                                  padding: EdgeInsets.only(left: 16, right: 16),
+                                  child: Text('오디션 관리',
+                                      style: CustomStyles.normal24TextStyle()),
                                 ),
-                                child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Flexible(
-                                        child: TextField(
-                                          controller: _txtFieldSearch,
-                                          decoration: InputDecoration(
-                                            isDense: true,
-                                            border: InputBorder.none,
-                                            contentPadding:
-                                                EdgeInsets.symmetric(
-                                                    vertical: 0, horizontal: 0),
-                                            hintText: "오디션을 검색해보세요",
-                                            hintStyle: CustomStyles
-                                                .normal16TextStyle(),
-                                          ),
-                                          style: CustomStyles.dark16TextStyle(),
-                                        ),
-                                      ),
-                                      Padding(
-                                          padding: EdgeInsets.only(left: 10),
-                                          child: GestureDetector(
-                                              onTap: () {
-                                                _projectDramaList.clear();
-                                                _projectMovieList.clear();
-
-                                                projectName =
-                                                    _txtFieldSearch.text;
-                                                requestProjectListApi(context);
-                                              },
-                                              child: Image.asset(
-                                                  'assets/images/btn_search.png',
-                                                  width: 20,
-                                                  fit: BoxFit.contain)))
-                                    ])),
-                            Container(
-                                padding: EdgeInsets.only(top: 5),
-                                width: MediaQuery.of(context).size.width,
-                                child: DecoratedTabBar(
+                                GestureDetector(
+                                    onTap: () {
+                                      replaceView(context, ProjectAdd());
+                                    },
+                                    child: Container(
+                                        margin: EdgeInsets.only(
+                                            left: 15, right: 15),
+                                        alignment: Alignment.centerRight,
+                                        child: Text('+ 프로젝트 추가',
+                                            style: CustomStyles
+                                                .blue16TextStyle()))),
+                                Container(
+                                    margin: EdgeInsets.only(
+                                        top: 10, left: 15, right: 15),
+                                    padding:
+                                        EdgeInsets.only(left: 10, right: 10),
+                                    height: 50,
                                     decoration: BoxDecoration(
-                                        border: Border(
-                                            bottom: BorderSide(
-                                                color: CustomColors.colorBgGrey,
-                                                width: 1.0))),
-                                    tabBar: TabBar(
-                                        controller: _tabController,
-                                        indicatorPadding: EdgeInsets.zero,
-                                        indicatorColor: CustomColors.colorAccent
-                                            .withAlpha(200),
-                                        labelStyle:
-                                            CustomStyles.bold16TextStyle(),
-                                        indicatorWeight: 3,
-                                        labelColor: CustomColors.colorFontTitle,
-                                        unselectedLabelStyle:
-                                            CustomStyles.normal16TextStyle(),
-                                        tabs: [
-                                          Tab(text: '영화'),
-                                          Tab(text: '드라마')
-                                        ]))),
-                            Expanded(
-                              flex: 0,
-                              child: [
-                                tabProjectList(),
-                                tabProjectList()
-                              ][_tabIndex],
-                            )
-                          ]))),
-                )),
-                Visibility(
-                  child: Container(
-                      color: Colors.black38,
-                      alignment: Alignment.center,
-                      child: CircularProgressIndicator()),
-                  visible: _isUpload,
-                )
-              ],
+                                      borderRadius:
+                                          CustomStyles.circle7BorderRadius(),
+                                      border: Border.all(
+                                          width: 1,
+                                          color:
+                                              CustomColors.colorFontLightGrey),
+                                    ),
+                                    child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Flexible(
+                                            child: TextField(
+                                              controller: _txtFieldSearch,
+                                              decoration: InputDecoration(
+                                                isDense: true,
+                                                border: InputBorder.none,
+                                                contentPadding:
+                                                    EdgeInsets.symmetric(
+                                                        vertical: 0,
+                                                        horizontal: 0),
+                                                hintText: "오디션을 검색해보세요",
+                                                hintStyle: CustomStyles
+                                                    .normal16TextStyle(),
+                                              ),
+                                              style: CustomStyles
+                                                  .dark16TextStyle(),
+                                            ),
+                                          ),
+                                          Padding(
+                                              padding:
+                                                  EdgeInsets.only(left: 10),
+                                              child: GestureDetector(
+                                                  onTap: () {
+                                                    _projectDramaList.clear();
+                                                    _projectMovieList.clear();
+
+                                                    projectName =
+                                                        _txtFieldSearch.text;
+                                                    requestProjectListApi(
+                                                        context);
+                                                  },
+                                                  child: Image.asset(
+                                                      'assets/images/btn_search.png',
+                                                      width: 20,
+                                                      fit: BoxFit.contain)))
+                                        ])),
+                                Container(
+                                    padding: EdgeInsets.only(top: 5),
+                                    width: (KCastingAppData().isWeb)
+                                        ? CustomStyles.appWidth
+                                        : MediaQuery.of(context).size.width,
+                                    child: DecoratedTabBar(
+                                        decoration: BoxDecoration(
+                                            border: Border(
+                                                bottom: BorderSide(
+                                                    color: CustomColors
+                                                        .colorBgGrey,
+                                                    width: 1.0))),
+                                        tabBar: TabBar(
+                                            controller: _tabController,
+                                            indicatorPadding: EdgeInsets.zero,
+                                            indicatorColor: CustomColors
+                                                .colorAccent
+                                                .withAlpha(200),
+                                            labelStyle:
+                                                CustomStyles.bold16TextStyle(),
+                                            indicatorWeight: 3,
+                                            labelColor:
+                                                CustomColors.colorFontTitle,
+                                            unselectedLabelStyle: CustomStyles
+                                                .normal16TextStyle(),
+                                            tabs: [
+                                              Tab(text: '영화'),
+                                              Tab(text: '드라마')
+                                            ]))),
+                                Expanded(
+                                  flex: 0,
+                                  child: [
+                                    tabProjectList(),
+                                    tabProjectList()
+                                  ][_tabIndex],
+                                )
+                              ]))),
+                    )),
+                    Visibility(
+                      child: Container(
+                          color: Colors.black38,
+                          alignment: Alignment.center,
+                          child: CircularProgressIndicator()),
+                      visible: _isUpload,
+                    )
+                  ],
+                ),
+              ),
             )));
   }
 }

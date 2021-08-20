@@ -8,6 +8,8 @@ import 'package:casting_call/src/view/user/common/Login.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../KCastingAppData.dart';
+
 /*
 * 비밀번호 찾기
 * */
@@ -35,24 +37,30 @@ class _FindPW extends State<FindPW> with BaseUtilMixin {
         },
         child: Theme(
             data: CustomStyles.defaultTheme(),
-            child: Scaffold(
-                key: _scaffoldKey,
-                appBar: CustomStyles.defaultAppBar('비밀번호 찾기', () {
-                  replaceView(context, Login());
-                  return Future.value(false);
-                }),
-                body: Stack(
-                  children: [
-                    Container(
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
+            child: Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                  width: KCastingAppData().isWeb
+                      ? CustomStyles.appWidth
+                      : double.infinity,
+                  child: Scaffold(
+                    key: _scaffoldKey,
+                    appBar: CustomStyles.defaultAppBar('비밀번호 찾기', () {
+                      replaceView(context, Login());
+                      return Future.value(false);
+                    }),
+                    body: Stack(
+                      children: [
+                        Container(
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
                               Expanded(
                                   flex: 1,
                                   child: Container(
-                                      padding: EdgeInsets.only(
-                                          left: 30, right: 30),
+                                      padding:
+                                          EdgeInsets.only(left: 30, right: 30),
                                       child: Column(children: [
                                         Container(
                                             margin: EdgeInsets.only(top: 30),
@@ -68,34 +76,36 @@ class _FindPW extends State<FindPW> with BaseUtilMixin {
                                           child: Text(
                                               '가입 시 등록한 이메일 주소로 임시 비밀번호가 발송됩니다.',
                                               textAlign: TextAlign.start,
-                                              style:
-                                              CustomStyles.normal14TextStyle()),
+                                              style: CustomStyles
+                                                  .normal14TextStyle()),
                                         ),
                                         Container(
                                             margin: EdgeInsets.only(top: 10),
                                             child: CustomStyles
                                                 .greyBorderRound7TextField(
-                                                _txtFieldID, '아이디'))
+                                                    _txtFieldID, '아이디'))
                                       ]))),
                               Container(
                                   height: 50,
                                   width: double.infinity,
-                                  child: CustomStyles
-                                      .lightGreyBGSquareButtonStyle(
-                                      '다음', () {
+                                  child:
+                                      CustomStyles.lightGreyBGSquareButtonStyle(
+                                          '다음', () {
                                     if (checkValidate(context)) {
                                       requestFindPWApi(context);
                                     }
                                   }))
                             ])),
-                    Visibility(
-                      child: Container(
-                          color: Colors.black38,
-                          alignment: Alignment.center,
-                          child: CircularProgressIndicator()),
-                      visible: _isUpload,
-                    )
-                  ],
+                        Visibility(
+                          child: Container(
+                              color: Colors.black38,
+                              alignment: Alignment.center,
+                              child: CircularProgressIndicator()),
+                          visible: _isUpload,
+                        )
+                      ],
+                    ),
+                  ),
                 ))));
   }
 
@@ -128,9 +138,7 @@ class _FindPW extends State<FindPW> with BaseUtilMixin {
     params[APIConstants.target] = targetDatas;
 
     // 임시비밀번호 이메일 발송 api 호출
-    RestClient(Dio())
-        .postRequestMainControl(params)
-        .then((value) async {
+    RestClient(Dio()).postRequestMainControl(params).then((value) async {
       try {
         if (value == null) {
           // 에러 - 데이터 널
@@ -152,6 +160,6 @@ class _FindPW extends State<FindPW> with BaseUtilMixin {
           _isUpload = false;
         });
       }
-    }
-  );
-}}
+    });
+  }
+}

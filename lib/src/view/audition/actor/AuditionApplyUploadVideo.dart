@@ -39,7 +39,8 @@ class AuditionApplyUploadVideo extends StatefulWidget {
       this.castingName,
       this.dbImgages,
       this.newImgages,
-      this.actorSeq, this.actorProfileSeq})
+      this.actorSeq,
+      this.actorProfileSeq})
       : super(key: key);
 
   @override
@@ -190,347 +191,366 @@ class _AuditionApplyUploadVideo extends State<AuditionApplyUploadVideo>
   Widget build(BuildContext context) {
     return Theme(
         data: CustomStyles.defaultTheme(),
-        child: Scaffold(
-            key: _scaffoldKey,
-            appBar: CustomStyles.defaultAppBar('비디오 업로드', () {
-              Navigator.pop(context);
-            }),
-            body: Builder(
-              builder: (BuildContext context) {
-                return Stack(
-                  children: [
-                    Container(
-                        child: Column(
-                      children: [
-                        Expanded(
-                            flex: 1,
-                            child: SingleChildScrollView(
-                                child: Container(
-                                    padding:
-                                        EdgeInsets.only(top: 20, bottom: 30),
-                                    child: Column(
-                                        mainAxisSize: MainAxisSize.max,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                              padding: EdgeInsets.only(
-                                                  left: 15, right: 15),
-                                              child: Text(
-                                                  StringUtils.checkedString(
-                                                      _projectName),
-                                                  style: CustomStyles
-                                                      .darkBold12TextStyle())),
-                                          Container(
-                                              padding: EdgeInsets.only(
-                                                  left: 15, right: 15),
-                                              margin: EdgeInsets.only(top: 5.0),
-                                              child: Text(
-                                                  StringUtils.checkedString(
-                                                          _castingName) +
-                                                      "역",
-                                                  style: CustomStyles
-                                                      .dark24TextStyle())),
-                                          Container(
-                                            margin: EdgeInsets.only(
-                                                top: 20, bottom: 10),
-                                            child: Divider(
-                                              height: 0.1,
-                                              color: CustomColors
-                                                  .colorFontLightGrey,
-                                            ),
-                                          ),
-                                          Container(
-                                            padding: EdgeInsets.only(
-                                                left: 15, right: 15),
-                                            child: Container(
-                                              padding:
-                                                  const EdgeInsets.all(10.0),
-                                              decoration: new BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color:
-                                                    CustomColors.colorFontTitle,
-                                              ),
-                                              child: new Text('2',
-                                                  style: new TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize:
-                                                          20.0)), // You can add a Icon instead of text also, like below.
-                                              //child: new Icon(Icons.arrow_forward, size: 50.0, color: Colors.black38)),
-                                            ),
-                                          ),
-                                          Container(
-                                              margin: EdgeInsets.only(top: 5.0),
-                                              padding: EdgeInsets.only(
-                                                  left: 15, right: 15),
-                                              child: Text('비디오 업로드',
-                                                  style: CustomStyles
-                                                      .bold14TextStyle())),
-                                          Container(
-                                              margin: EdgeInsets.only(top: 5),
-                                              padding: EdgeInsets.only(
-                                                  left: 15, right: 15),
-                                              child: Text(
-                                                  '나를 잘 나타내는 비디오 2개을 선택 또는 업로드 해주세요.',
-                                                  style: CustomStyles
-                                                      .normal14TextStyle())),
-                                          Container(
-                                            margin: EdgeInsets.only(
-                                                top: 15, bottom: 20),
-                                            padding: EdgeInsets.only(
-                                                left: 15, right: 15),
-                                            child: ElevatedButton.icon(
-                                                icon: Icon(Icons.camera_alt,
-                                                    color: CustomColors
-                                                        .colorFontTitle),
-                                                style: ElevatedButton.styleFrom(
-                                                  primary: Colors.white,
-                                                  padding: EdgeInsets.only(
-                                                      left: 15,
-                                                      right: 20,
-                                                      top: 10,
-                                                      bottom: 10),
-                                                  shape: RoundedRectangleBorder(
-                                                      borderRadius: CustomStyles
-                                                          .circle7BorderRadius(),
-                                                      side: BorderSide(
-                                                        color: CustomColors
-                                                            .colorFontGrey,
-                                                      )),
-                                                  elevation: 0.0,
-                                                ),
-                                                onPressed: () async {
-                                                  if (_kIsWeb) {
-                                                    showSnackBar(
-                                                        context,
-                                                        APIConstants
-                                                            .use_mobile_app);
-                                                  } else {
-                                                    var status =
-                                                        Platform.isAndroid
-                                                            ? await Permission
-                                                                .storage
-                                                                .request()
-                                                            : await Permission
-                                                                .photos
-                                                                .request();
-                                                    if (status.isGranted) {
-                                                      getVideoFromGallery();
-                                                    } else {
-                                                      showDialog(
-                                                          context: context,
-                                                          builder: (BuildContext
-                                                                  context) =>
-                                                              CupertinoAlertDialog(
-                                                                title: Text(
-                                                                    '저장공간 접근권한'),
-                                                                content: Text(
-                                                                    '사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
-                                                                actions: <
-                                                                    Widget>[
-                                                                  CupertinoDialogAction(
-                                                                    child: Text(
-                                                                        '거부'),
-                                                                    onPressed: () =>
-                                                                        Navigator.of(context)
-                                                                            .pop(),
-                                                                  ),
-                                                                  CupertinoDialogAction(
-                                                                    child: Text(
-                                                                        '허용'),
-                                                                    onPressed: () =>
-                                                                        openAppSettings(),
-                                                                  ),
-                                                                ],
-                                                              ));
-                                                    }
-                                                  }
-                                                },
-                                                label: Text("업로드",
+        child: Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+                width: KCastingAppData().isWeb
+                    ? CustomStyles.appWidth
+                    : double.infinity,
+                child: Scaffold(
+                    key: _scaffoldKey,
+                    appBar: CustomStyles.defaultAppBar('비디오 업로드', () {
+                      Navigator.pop(context);
+                    }),
+                    body: Builder(builder: (BuildContext context) {
+                      return Stack(children: [
+                        Container(
+                            child: Column(children: [
+                          Expanded(
+                              flex: 1,
+                              child: SingleChildScrollView(
+                                  child: Container(
+                                      padding:
+                                          EdgeInsets.only(top: 20, bottom: 30),
+                                      child: Column(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                                padding: EdgeInsets.only(
+                                                    left: 15, right: 15),
+                                                child: Text(
+                                                    StringUtils.checkedString(
+                                                        _projectName),
                                                     style: CustomStyles
-                                                        .normal16TextStyle())),
-                                          ),
-                                          ListView.separated(
-                                              shrinkWrap: true,
+                                                        .darkBold12TextStyle())),
+                                            Container(
+                                                padding: EdgeInsets.only(
+                                                    left: 15, right: 15),
+                                                margin:
+                                                    EdgeInsets.only(top: 5.0),
+                                                child: Text(
+                                                    StringUtils.checkedString(
+                                                            _castingName) +
+                                                        "역",
+                                                    style: CustomStyles
+                                                        .dark24TextStyle())),
+                                            Container(
+                                              margin: EdgeInsets.only(
+                                                  top: 20, bottom: 10),
+                                              child: Divider(
+                                                height: 0.1,
+                                                color: CustomColors
+                                                    .colorFontLightGrey,
+                                              ),
+                                            ),
+                                            Container(
                                               padding: EdgeInsets.only(
-                                                  left: 15,
-                                                  right: 15,
-                                                  bottom: 10),
-                                              physics:
-                                                  NeverScrollableScrollPhysics(),
-                                              itemCount: _myVideos.length,
-                                              itemBuilder: (context, index) {
-                                                return Stack(
-                                                  alignment: Alignment.center,
-                                                  children: <Widget>[
-                                                    Container(
-                                                        width: MediaQuery.of(context)
-                                                            .size
-                                                            .width,
-                                                        margin: EdgeInsets.only(
-                                                            bottom: 10),
-                                                        height: 200,
-                                                        decoration: BoxDecoration(
-                                                            borderRadius: CustomStyles
-                                                                .circle7BorderRadius(),
-                                                            border: Border.all(
-                                                                width: 5,
-                                                                color: (_myVideos[index].isSelected
-                                                                    ? CustomColors
-                                                                        .colorAccent
-                                                                    : CustomColors
-                                                                        .colorFontLightGrey))),
-                                                        child: _myVideos[index]
-                                                                .isFile
-                                                            ? Image.file(
-                                                                _myVideos[index]
-                                                                    .thumbnailFile,
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                              )
-                                                            : CachedNetworkImage(
-                                                            placeholder: (context, url) => Container(
-                                                                alignment: Alignment.center,
-                                                                child: CircularProgressIndicator()),
-                                                                imageUrl: _myVideos[index].videoData[APIConstants
-                                                                    .actor_video_url_thumb],
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                                errorWidget: (context,
-                                                                        url,
-                                                                        error) =>
-                                                                    Container())),
-                                                    Container(
-                                                        width: MediaQuery.of(
-                                                                context)
-                                                            .size
-                                                            .width,
-                                                        height: 200,
-                                                        margin:
-                                                            EdgeInsets.all(10),
-                                                        alignment:
-                                                            Alignment.topRight,
-                                                        child: InkWell(
-                                                          onTap: () {
-                                                            setState(() {
-                                                              _myVideos[index]
-                                                                      .isSelected =
-                                                                  !_myVideos[
+                                                  left: 15, right: 15),
+                                              child: Container(
+                                                padding:
+                                                    const EdgeInsets.all(10.0),
+                                                decoration: new BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: CustomColors
+                                                      .colorFontTitle,
+                                                ),
+                                                child: new Text('2',
+                                                    style: new TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize:
+                                                            20.0)), // You can add a Icon instead of text also, like below.
+                                                //child: new Icon(Icons.arrow_forward, size: 50.0, color: Colors.black38)),
+                                              ),
+                                            ),
+                                            Container(
+                                                margin:
+                                                    EdgeInsets.only(top: 5.0),
+                                                padding: EdgeInsets.only(
+                                                    left: 15, right: 15),
+                                                child: Text('비디오 업로드',
+                                                    style: CustomStyles
+                                                        .bold14TextStyle())),
+                                            Container(
+                                                margin: EdgeInsets.only(top: 5),
+                                                padding: EdgeInsets.only(
+                                                    left: 15, right: 15),
+                                                child: Text(
+                                                    '나를 잘 나타내는 비디오 2개을 선택 또는 업로드 해주세요.',
+                                                    style: CustomStyles
+                                                        .normal14TextStyle())),
+                                            Container(
+                                              margin: EdgeInsets.only(
+                                                  top: 15, bottom: 20),
+                                              padding: EdgeInsets.only(
+                                                  left: 15, right: 15),
+                                              child: ElevatedButton.icon(
+                                                  icon: Icon(Icons.camera_alt,
+                                                      color: CustomColors
+                                                          .colorFontTitle),
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    primary: Colors.white,
+                                                    padding: EdgeInsets.only(
+                                                        left: 15,
+                                                        right: 20,
+                                                        top: 10,
+                                                        bottom: 10),
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                CustomStyles
+                                                                    .circle7BorderRadius(),
+                                                            side: BorderSide(
+                                                              color: CustomColors
+                                                                  .colorFontGrey,
+                                                            )),
+                                                    elevation: 0.0,
+                                                  ),
+                                                  onPressed: () async {
+                                                    if (_kIsWeb) {
+                                                      showSnackBar(
+                                                          context,
+                                                          APIConstants
+                                                              .use_mobile_app);
+                                                    } else {
+                                                      var status = Platform
+                                                              .isAndroid
+                                                          ? await Permission
+                                                              .storage
+                                                              .request()
+                                                          : await Permission
+                                                              .photos
+                                                              .request();
+                                                      if (status.isGranted) {
+                                                        getVideoFromGallery();
+                                                      } else {
+                                                        showDialog(
+                                                            context: context,
+                                                            builder: (BuildContext
+                                                                    context) =>
+                                                                CupertinoAlertDialog(
+                                                                  title: Text(
+                                                                      '저장공간 접근권한'),
+                                                                  content: Text(
+                                                                      '사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
+                                                                  actions: <
+                                                                      Widget>[
+                                                                    CupertinoDialogAction(
+                                                                      child: Text(
+                                                                          '거부'),
+                                                                      onPressed:
+                                                                          () =>
+                                                                              Navigator.of(context).pop(),
+                                                                    ),
+                                                                    CupertinoDialogAction(
+                                                                      child: Text(
+                                                                          '허용'),
+                                                                      onPressed:
+                                                                          () =>
+                                                                              openAppSettings(),
+                                                                    ),
+                                                                  ],
+                                                                ));
+                                                      }
+                                                    }
+                                                  },
+                                                  label: Text("업로드",
+                                                      style: CustomStyles
+                                                          .normal16TextStyle())),
+                                            ),
+                                            ListView.separated(
+                                                shrinkWrap: true,
+                                                padding: EdgeInsets.only(
+                                                    left: 15,
+                                                    right: 15,
+                                                    bottom: 10),
+                                                physics:
+                                                    NeverScrollableScrollPhysics(),
+                                                itemCount: _myVideos.length,
+                                                itemBuilder: (context, index) {
+                                                  return Stack(
+                                                    alignment: Alignment.center,
+                                                    children: <Widget>[
+                                                      Container(
+                                                          width: (KCastingAppData().isWeb)
+                                                              ? CustomStyles.appWidth
+                                                              : MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  bottom: 10),
+                                                          height: 200,
+                                                          decoration: BoxDecoration(
+                                                              borderRadius:
+                                                                  CustomStyles
+                                                                      .circle7BorderRadius(),
+                                                              border: Border.all(
+                                                                  width: 5,
+                                                                  color: (_myVideos[index]
+                                                                          .isSelected
+                                                                      ? CustomColors
+                                                                          .colorAccent
+                                                                      : CustomColors
+                                                                          .colorFontLightGrey))),
+                                                          child: _myVideos[index]
+                                                                  .isFile
+                                                              ? Image.file(
+                                                                  _myVideos[
                                                                           index]
-                                                                      .isSelected;
-                                                            });
-                                                          },
-                                                          child: Container(
-                                                            decoration: BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                color: (_myVideos[
+                                                                      .thumbnailFile,
+                                                                  fit: BoxFit
+                                                                      .cover,
+                                                                )
+                                                              : CachedNetworkImage(
+                                                                  placeholder: (context, url) => Container(
+                                                                      alignment:
+                                                                          Alignment.center,
+                                                                      child: CircularProgressIndicator()),
+                                                                  imageUrl: _myVideos[index].videoData[APIConstants.actor_video_url_thumb],
+                                                                  fit: BoxFit.cover,
+                                                                  errorWidget: (context, url, error) => Container())),
+                                                      Container(
+                                                          width: (KCastingAppData().isWeb)
+                                                              ? CustomStyles.appWidth
+                                                              : MediaQuery.of(
+                                                                  context)
+                                                              .size
+                                                              .width,
+                                                          height: 200,
+                                                          margin:
+                                                              EdgeInsets.all(
+                                                                  10),
+                                                          alignment: Alignment
+                                                              .topRight,
+                                                          child: InkWell(
+                                                            onTap: () {
+                                                              setState(() {
+                                                                _myVideos[index]
+                                                                        .isSelected =
+                                                                    !_myVideos[
+                                                                            index]
+                                                                        .isSelected;
+                                                              });
+                                                            },
+                                                            child: Container(
+                                                              decoration: BoxDecoration(
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                  color: (_myVideos[
+                                                                              index]
+                                                                          .isSelected
+                                                                      ? CustomColors
+                                                                          .colorAccent
+                                                                      : CustomColors
+                                                                          .colorFontLightGrey)),
+                                                              child: Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                            .all(
+                                                                        5.0),
+                                                                child: _myVideos[
                                                                             index]
                                                                         .isSelected
-                                                                    ? CustomColors
-                                                                        .colorAccent
-                                                                    : CustomColors
-                                                                        .colorFontLightGrey)),
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(5.0),
-                                                              child: _myVideos[
-                                                                          index]
-                                                                      .isSelected
-                                                                  ? Icon(
-                                                                      Icons
-                                                                          .check,
-                                                                      size:
-                                                                          15.0,
-                                                                      color: CustomColors
-                                                                          .colorWhite,
-                                                                    )
-                                                                  : Icon(
-                                                                      Icons
-                                                                          .check_box_outline_blank,
-                                                                      size:
-                                                                          15.0,
-                                                                      color: CustomColors
-                                                                          .colorFontLightGrey,
-                                                                    ),
+                                                                    ? Icon(
+                                                                        Icons
+                                                                            .check,
+                                                                        size:
+                                                                            15.0,
+                                                                        color: CustomColors
+                                                                            .colorWhite,
+                                                                      )
+                                                                    : Icon(
+                                                                        Icons
+                                                                            .check_box_outline_blank,
+                                                                        size:
+                                                                            15.0,
+                                                                        color: CustomColors
+                                                                            .colorFontLightGrey,
+                                                                      ),
+                                                              ),
                                                             ),
-                                                          ),
-                                                        )),
-                                                    GestureDetector(
-                                                        onTap: () {},
-                                                        child: Container(
-                                                            alignment: Alignment
-                                                                .center,
-                                                            width: 50,
-                                                            height: 50,
-                                                            child: Image.asset(
-                                                                'assets/images/btn_play.png',
-                                                                width: 50))),
-                                                  ],
-                                                );
-                                              },
-                                              separatorBuilder:
-                                                  (context, index) {
-                                                return VerticalDivider();
-                                              })
-                                        ])))),
-                        Container(
-                            width: double.infinity,
-                            height: 50,
-                            color: Colors.grey,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                Expanded(
-                                    child: Container(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        height: 55,
-                                        child: CustomStyles
-                                            .greyBGSquareButtonStyle('이전단계',
-                                                () {
-                                          Navigator.pushReplacement(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    AuditionApplyUploadImage(
-                                                        castingSeq: _castingSeq,
-                                                        projectName:
-                                                            _projectName,
-                                                        castingName:
-                                                            _castingName,
-                                                        actorSeq: _actorSeq, actorProfileSeq: _actorProfileSeq)),
-                                          );
-                                        }))),
-                                Expanded(
-                                    child: Container(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        height: 55,
-                                        child: CustomStyles
-                                            .blueBGSquareButtonStyle('다음단계',
-                                                () {
-                                          saveImageDataAndGoNextPage(context);
-                                        })))
-                              ],
-                            ))
-                      ],
-                    )),
-                    Visibility(
-                      child: Container(
-                        color: Colors.black38,
-                        alignment: Alignment.center,
-                        child: CircularProgressIndicator(),
-                      ),
-                      visible: _isUpload,
-                    )
-                  ],
-                );
-              },
-            )));
+                                                          )),
+                                                      GestureDetector(
+                                                          onTap: () {},
+                                                          child: Container(
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
+                                                              width: 50,
+                                                              height: 50,
+                                                              child: Image.asset(
+                                                                  'assets/images/btn_play.png',
+                                                                  width: 50))),
+                                                    ],
+                                                  );
+                                                },
+                                                separatorBuilder:
+                                                    (context, index) {
+                                                  return VerticalDivider();
+                                                })
+                                          ])))),
+                          Container(
+                              width: double.infinity,
+                              height: 50,
+                              color: Colors.grey,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Expanded(
+                                      child: Container(
+                                          width:
+                                          (KCastingAppData().isWeb)
+                                              ? CustomStyles.appWidth
+                                              : MediaQuery.of(context).size.width,
+                                          height: 55,
+                                          child: CustomStyles
+                                              .greyBGSquareButtonStyle('이전단계',
+                                                  () {
+                                            Navigator.pushReplacement(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AuditionApplyUploadImage(
+                                                          castingSeq:
+                                                              _castingSeq,
+                                                          projectName:
+                                                              _projectName,
+                                                          castingName:
+                                                              _castingName,
+                                                          actorSeq: _actorSeq,
+                                                          actorProfileSeq:
+                                                              _actorProfileSeq)),
+                                            );
+                                          }))),
+                                  Expanded(
+                                      child: Container(
+                                          width:
+                                          (KCastingAppData().isWeb)
+                                              ? CustomStyles.appWidth
+                                              : MediaQuery.of(context).size.width,
+                                          height: 55,
+                                          child: CustomStyles
+                                              .blueBGSquareButtonStyle('다음단계',
+                                                  () {
+                                            saveImageDataAndGoNextPage(context);
+                                          })))
+                                ],
+                              ))
+                        ])),
+                        Visibility(
+                            child: Container(
+                              color: Colors.black38,
+                              alignment: Alignment.center,
+                              child: CircularProgressIndicator(),
+                            ),
+                            visible: _isUpload)
+                      ]);
+                    })))));
   }
 
   void saveImageDataAndGoNextPage(BuildContext context) {

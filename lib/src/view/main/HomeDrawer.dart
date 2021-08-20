@@ -2,6 +2,8 @@ import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:flutter/material.dart';
 
+import '../../../KCastingAppData.dart';
+
 /*
  *  메인 드로어 메뉴 클래스
  */
@@ -23,7 +25,9 @@ class HomeDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new Container(
-        width: MediaQuery.of(context).size.width * 0.9,
+        width: (KCastingAppData().isWeb)
+            ? CustomStyles.appWidth * 0.9
+            : MediaQuery.of(context).size.width * 0.9,
         child: Drawer(
             child: Column(children: [
           Container(
@@ -80,7 +84,9 @@ class HomeDrawer extends StatelessWidget {
                 Navigator.pop(context);
               },
               child: Container(
-                  width: MediaQuery.of(context).size.width,
+                  width: (KCastingAppData().isWeb)
+                      ? CustomStyles.appWidth
+                      : MediaQuery.of(context).size.width,
                   alignment: Alignment.centerLeft,
                   padding: EdgeInsets.only(left: 15, right: 15),
                   child: Text('홈', style: CustomStyles.normal16TextStyle()))),
@@ -94,7 +100,9 @@ class HomeDrawer extends StatelessWidget {
                 Navigator.pop(context);
               },
               child: Container(
-                  width: MediaQuery.of(context).size.width,
+                  width: (KCastingAppData().isWeb)
+                      ? CustomStyles.appWidth
+                      : MediaQuery.of(context).size.width,
                   alignment: Alignment.centerLeft,
                   padding: EdgeInsets.only(left: 15, right: 15),
                   child:
@@ -109,7 +117,9 @@ class HomeDrawer extends StatelessWidget {
                 Navigator.pop(context);
               },
               child: Container(
-                  width: MediaQuery.of(context).size.width,
+                  width: (KCastingAppData().isWeb)
+                      ? CustomStyles.appWidth
+                      : MediaQuery.of(context).size.width,
                   alignment: Alignment.centerLeft,
                   padding: EdgeInsets.only(left: 15, right: 15),
                   child:

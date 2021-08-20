@@ -67,37 +67,52 @@ class _JoinComplete extends State<JoinComplete> with BaseUtilMixin {
         },
         child: Theme(
             data: CustomStyles.defaultTheme(),
-            child: Scaffold(
-                key: _scaffoldKey,
-                appBar: CustomStyles.defaultAppBar('가입완료', () {
-                  Navigator.pop(context);
-                }),
-                body: Container(
-                    padding: EdgeInsets.only(left: 30, right: 30),
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                              alignment: Alignment.center,
-                              width: double.infinity,
-                              child: Text(_userName + ' 님,\n회원가입이 완료되었습니다.',
-                                  textAlign: TextAlign.center,
-                                  style: CustomStyles.normal24TextStyle())),
-                          Container(
-                              margin: EdgeInsets.only(top: 30, bottom: 50),
-                              alignment: Alignment.center,
-                              width: double.infinity,
-                              child: Text(_msg,
-                                  textAlign: TextAlign.center,
-                                  style: CustomStyles.normal14TextStyle())),
-                          Container(
-                              height: 50,
-                              width: MediaQuery.of(context).size.width * 0.4,
-                              child: CustomStyles.greyBorderRound7ButtonStyle(
-                                  _btnName, () {
-                                replaceView(context, _nextWidget);
-                              }))
-                        ])))));
+            child: Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                    width: KCastingAppData().isWeb
+                        ? CustomStyles.appWidth
+                        : double.infinity,
+                    child: Scaffold(
+                      key: _scaffoldKey,
+                      appBar: CustomStyles.defaultAppBar('가입완료', () {
+                        Navigator.pop(context);
+                      }),
+                      body: Container(
+                          padding: EdgeInsets.only(left: 30, right: 30),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                    alignment: Alignment.center,
+                                    width: double.infinity,
+                                    child: Text(
+                                        _userName + ' 님,\n회원가입이 완료되었습니다.',
+                                        textAlign: TextAlign.center,
+                                        style:
+                                            CustomStyles.normal24TextStyle())),
+                                Container(
+                                    margin:
+                                        EdgeInsets.only(top: 30, bottom: 50),
+                                    alignment: Alignment.center,
+                                    width: double.infinity,
+                                    child: Text(_msg,
+                                        textAlign: TextAlign.center,
+                                        style:
+                                            CustomStyles.normal14TextStyle())),
+                                Container(
+                                    height: 50,
+                                    width:
+                                    (KCastingAppData().isWeb)
+                                        ? CustomStyles.appWidth * 0.4
+                                        : MediaQuery.of(context).size.width * 0.4,
+                                    child: CustomStyles
+                                        .greyBorderRound7ButtonStyle(_btnName,
+                                            () {
+                                      replaceView(context, _nextWidget);
+                                    }))
+                              ])),
+                    )))));
   }
 }

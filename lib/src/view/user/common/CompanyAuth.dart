@@ -10,6 +10,8 @@ import 'package:casting_call/src/view/user/production/JoinProduction.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../KCastingAppData.dart';
+
 /*
 *  법인 조회
 * */
@@ -52,93 +54,107 @@ class _CompanyAuth extends State<CompanyAuth> with BaseUtilMixin {
         },
         child: Theme(
             data: CustomStyles.defaultTheme(),
-            child: Scaffold(
-                key: _scaffoldKey,
-                appBar: CustomStyles.defaultAppBar('법인 조회', () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => JoinSelectType()),
-                  );
-                }),
-                body: Builder(
-                  builder: (BuildContext context) {
-                    return Stack(
-                      children: [
-                        Container(
-                            child: Column(
-                          children: [
-                            Expanded(
-                                flex: 1,
-                                child: SingleChildScrollView(
-                                    child: Container(
-                                        padding: EdgeInsets.only(
-                                            top: 30, bottom: 50),
-                                        child: Column(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                  margin: EdgeInsets.only(
-                                                      bottom: 30),
-                                                  alignment: Alignment.center,
-                                                  child: Text('법인 조회',
-                                                      style: CustomStyles
-                                                          .normal24TextStyle())),
-                                              Container(
-                                                  padding: EdgeInsets.only(
-                                                      left: 30, right: 30),
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  child: RichText(
-                                                      text: TextSpan(
-                                                          style: CustomStyles
-                                                              .normal14TextStyle(),
-                                                          children: <TextSpan>[
-                                                        TextSpan(
-                                                            text: '사업자등록번호'),
-                                                        TextSpan(
-                                                            style: TextStyle(
-                                                                color: CustomColors
-                                                                    .colorRed),
-                                                            text: '*'),
-                                                      ]))),
-                                              Container(
-                                                  padding: EdgeInsets.only(
-                                                      left: 30, right: 30),
-                                                  margin:
-                                                      EdgeInsets.only(top: 5),
-                                                  child: CustomStyles
-                                                      .greyBorderRound7TextFieldWithOption(
-                                                          _txtFieldCompanyNum,
-                                                          TextInputType.number,
-                                                          '사업자등록번호 입력(숫자만)')),
-                                            ])))),
-                            Container(
-                                height: 50,
-                                width: double.infinity,
-                                child:
-                                    CustomStyles.lightGreyBGSquareButtonStyle(
-                                        '법인 조회하기', () {
-                                  if (checkValidate(context)) {
-                                    requestCompanyAuthApi(context);
-                                  }
-                                }))
-                          ],
-                        )),
-                        Visibility(
-                          child: Container(
-                              color: Colors.black38,
-                              alignment: Alignment.center,
-                              child: CircularProgressIndicator()),
-                          visible: _isUpload,
-                        )
-                      ],
-                    );
-                  },
-                ))));
+            child: Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                    width: KCastingAppData().isWeb
+                        ? CustomStyles.appWidth
+                        : double.infinity,
+                    child: Scaffold(
+                        key: _scaffoldKey,
+                        appBar: CustomStyles.defaultAppBar('법인 조회', () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => JoinSelectType()),
+                          );
+                        }),
+                        body: Builder(builder: (BuildContext context) {
+                          return Stack(
+                            children: [
+                              Container(
+                                  child: Column(
+                                children: [
+                                  Expanded(
+                                      flex: 1,
+                                      child: SingleChildScrollView(
+                                          child: Container(
+                                              padding: EdgeInsets.only(
+                                                  top: 30, bottom: 50),
+                                              child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Container(
+                                                        margin: EdgeInsets.only(
+                                                            bottom: 30),
+                                                        alignment:
+                                                            Alignment.center,
+                                                        child: Text('법인 조회',
+                                                            style: CustomStyles
+                                                                .normal24TextStyle())),
+                                                    Container(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 30,
+                                                                right: 30),
+                                                        alignment: Alignment
+                                                            .centerLeft,
+                                                        child: RichText(
+                                                            text: TextSpan(
+                                                                style: CustomStyles
+                                                                    .normal14TextStyle(),
+                                                                children: <
+                                                                    TextSpan>[
+                                                              TextSpan(
+                                                                  text:
+                                                                      '사업자등록번호'),
+                                                              TextSpan(
+                                                                  style: TextStyle(
+                                                                      color: CustomColors
+                                                                          .colorRed),
+                                                                  text: '*'),
+                                                            ]))),
+                                                    Container(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 30,
+                                                                right: 30),
+                                                        margin: EdgeInsets.only(
+                                                            top: 5),
+                                                        child: CustomStyles
+                                                            .greyBorderRound7TextFieldWithOption(
+                                                                _txtFieldCompanyNum,
+                                                                TextInputType
+                                                                    .number,
+                                                                '사업자등록번호 입력(숫자만)')),
+                                                  ])))),
+                                  Container(
+                                      height: 50,
+                                      width: double.infinity,
+                                      child: CustomStyles
+                                          .lightGreyBGSquareButtonStyle(
+                                              '법인 조회하기', () {
+                                        if (checkValidate(context)) {
+                                          requestCompanyAuthApi(context);
+                                        }
+                                      }))
+                                ],
+                              )),
+                              Visibility(
+                                child: Container(
+                                    color: Colors.black38,
+                                    alignment: Alignment.center,
+                                    child: CircularProgressIndicator()),
+                                visible: _isUpload,
+                              )
+                            ],
+                          );
+                        }))))));
   }
 
   /*

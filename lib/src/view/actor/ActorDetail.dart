@@ -366,130 +366,148 @@ class _ActorDetail extends State<ActorDetail>
   Widget build(BuildContext context) {
     return Theme(
         data: CustomStyles.defaultTheme(),
-        child: Scaffold(
-            appBar: CustomStyles.defaultAppBar('프로필 관리', () {
-              Navigator.pop(context);
-            }),
-            body: Container(
-                child: Column(children: [
-              Expanded(
-                  flex: 1,
-                  child: SingleChildScrollView(
-                      child: Container(
-                          padding: EdgeInsets.only(bottom: 200),
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ActorProfileWidget.mainImageWidget(
-                                    context, false, _actorProfile, null),
-                                ActorProfileWidget.profileWidget(
-                                    context,
-                                    _myKeywordTagStateKey,
-                                    _actorProfile,
-                                    _actorAgeStr,
-                                    _actorEducationStr,
-                                    _actordialectStr,
-                                    _actorLanguageStr,
-                                    _actorAbilityStr,
-                                    _actorKwdList),
-                                Container(
-                                    margin: EdgeInsets.only(top: 20),
-                                    child: Divider(
-                                      height: 1,
-                                      color: CustomColors.colorFontLightGrey,
-                                    )),
-                                ActorProfileWidget.profileTabBarWidget(
-                                    _tabController),
-                                Expanded(
-                                  flex: 0,
-                                  child: [
-                                    Container(
-                                        margin: EdgeInsets.only(bottom: 30),
-                                        child: Column(children: [
-                                          Container(
-                                              padding: EdgeInsets.only(
-                                                  top: 20,
-                                                  left: 20,
-                                                  right: 20,
-                                                  bottom: 15),
-                                              child: Row(children: [
-                                                Expanded(
-                                                    flex: 1,
-                                                    child: Text(
-                                                        '출연 작품: ' +
-                                                            _actorFilmorgraphy
-                                                                .length
-                                                                .toString(),
-                                                        style: CustomStyles
-                                                            .normal14TextStyle()))
-                                              ])),
-                                          ActorProfileWidget
-                                              .filmorgraphyListWidget(
-                                                  false,
-                                                  _actorFilmorgraphy,
-                                                  (index) {})
-                                        ])),
-                                    ActorProfileWidget.imageTabItemWidget(
-                                        false, _actorImage, null),
-                                    ActorProfileWidget.videoTabItemWidget(
-                                        false, _actorVideo, null)
-                                  ][_tabIndex],
-                                )
-                              ])))),
-              Visibility(
-                child: Container(
-                    height: 55,
-                    color: CustomColors.colorBgGrey,
-                    child: Row(children: [
+        child: Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+                width: KCastingAppData().isWeb
+                    ? CustomStyles.appWidth
+                    : double.infinity,
+                child: Scaffold(
+                    appBar: CustomStyles.defaultAppBar('프로필 관리', () {
+                      Navigator.pop(context);
+                    }),
+                    body: Container(
+                        child: Column(children: [
                       Expanded(
                           flex: 1,
-                          child: Container(
-                              height: 55,
-                              child:
-                                  CustomStyles.applyButtonStyle('오디션 제안', () {
-                                addView(
-                                    context,
-                                    ProposeAudition(
-                                        actorSeq:
-                                            _actorProfile[APIConstants.seq],
-                                        actorName: _actorProfile[
-                                            APIConstants.actor_name],
-                                        actorImgUrl: _actorProfile[
-                                            APIConstants.main_img_url]));
-                              }))),
-                      GestureDetector(
-                          onTap: () {
-                            requestActorBookmarkEditApi(context);
-                          },
-                          child: Visibility(
+                          child: SingleChildScrollView(
                               child: Container(
-                                  height: 55,
-                                  width: 55,
-                                  padding: EdgeInsets.only(left: 15, right: 15),
-                                  alignment: Alignment.center,
-                                  child: _actorProfile[APIConstants
-                                              .isProductionActorScrap] ==
-                                          1
-                                      ? Image.asset(
-                                          'assets/images/toggle_like_on.png',
-                                          width: 20,
-                                          color: CustomColors.colorAccent
-                                              .withAlpha(200))
-                                      : Image.asset(
-                                          'assets/images/toggle_like_off.png',
-                                          width: 20,
-                                        )),
-                              visible: KCastingAppData()
-                                          .myInfo[APIConstants.member_type] ==
-                                      APIConstants.member_type_product
-                                  ? true
-                                  : false))
-                    ])),
-                visible: KCastingAppData().myInfo[APIConstants.member_type] ==
-                        APIConstants.member_type_product
-                    ? true
-                    : false,
-              )
-            ]))));
+                                  padding: EdgeInsets.only(bottom: 200),
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        ActorProfileWidget.mainImageWidget(
+                                            context,
+                                            false,
+                                            _actorProfile,
+                                            null),
+                                        ActorProfileWidget.profileWidget(
+                                            context,
+                                            _myKeywordTagStateKey,
+                                            _actorProfile,
+                                            _actorAgeStr,
+                                            _actorEducationStr,
+                                            _actordialectStr,
+                                            _actorLanguageStr,
+                                            _actorAbilityStr,
+                                            _actorKwdList),
+                                        Container(
+                                            margin: EdgeInsets.only(top: 20),
+                                            child: Divider(
+                                              height: 1,
+                                              color: CustomColors
+                                                  .colorFontLightGrey,
+                                            )),
+                                        ActorProfileWidget.profileTabBarWidget(
+                                            _tabController),
+                                        Expanded(
+                                          flex: 0,
+                                          child: [
+                                            Container(
+                                                margin:
+                                                    EdgeInsets.only(bottom: 30),
+                                                child: Column(children: [
+                                                  Container(
+                                                      padding: EdgeInsets.only(
+                                                          top: 20,
+                                                          left: 20,
+                                                          right: 20,
+                                                          bottom: 15),
+                                                      child: Row(children: [
+                                                        Expanded(
+                                                            flex: 1,
+                                                            child: Text(
+                                                                '출연 작품: ' +
+                                                                    _actorFilmorgraphy
+                                                                        .length
+                                                                        .toString(),
+                                                                style: CustomStyles
+                                                                    .normal14TextStyle()))
+                                                      ])),
+                                                  ActorProfileWidget
+                                                      .filmorgraphyListWidget(
+                                                          false,
+                                                          _actorFilmorgraphy,
+                                                          (index) {})
+                                                ])),
+                                            ActorProfileWidget
+                                                .imageTabItemWidget(
+                                                    false, _actorImage, null),
+                                            ActorProfileWidget
+                                                .videoTabItemWidget(
+                                                    false, _actorVideo, null)
+                                          ][_tabIndex],
+                                        )
+                                      ])))),
+                      Visibility(
+                        child: Container(
+                            height: 55,
+                            color: CustomColors.colorBgGrey,
+                            child: Row(children: [
+                              Expanded(
+                                  flex: 1,
+                                  child: Container(
+                                      height: 55,
+                                      child: CustomStyles.applyButtonStyle(
+                                          '오디션 제안', () {
+                                        addView(
+                                            context,
+                                            ProposeAudition(
+                                                actorSeq: _actorProfile[
+                                                    APIConstants.seq],
+                                                actorName: _actorProfile[
+                                                    APIConstants.actor_name],
+                                                actorImgUrl: _actorProfile[
+                                                    APIConstants
+                                                        .main_img_url]));
+                                      }))),
+                              GestureDetector(
+                                  onTap: () {
+                                    requestActorBookmarkEditApi(context);
+                                  },
+                                  child: Visibility(
+                                      child: Container(
+                                          height: 55,
+                                          width: 55,
+                                          padding: EdgeInsets.only(
+                                              left: 15, right: 15),
+                                          alignment: Alignment.center,
+                                          child: _actorProfile[APIConstants
+                                                      .isProductionActorScrap] ==
+                                                  1
+                                              ? Image.asset(
+                                                  'assets/images/toggle_like_on.png',
+                                                  width: 20,
+                                                  color: CustomColors
+                                                      .colorAccent
+                                                      .withAlpha(200))
+                                              : Image.asset(
+                                                  'assets/images/toggle_like_off.png',
+                                                  width: 20,
+                                                )),
+                                      visible: KCastingAppData().myInfo[
+                                                  APIConstants.member_type] ==
+                                              APIConstants.member_type_product
+                                          ? true
+                                          : false))
+                            ])),
+                        visible: KCastingAppData()
+                                    .myInfo[APIConstants.member_type] ==
+                                APIConstants.member_type_product
+                            ? true
+                            : false,
+                      )
+                    ]))))));
   }
 }

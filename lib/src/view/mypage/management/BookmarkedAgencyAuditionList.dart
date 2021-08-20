@@ -64,7 +64,6 @@ class _BookmarkedAgencyAuditionList extends State<BookmarkedAgencyAuditionList>
   }
 
   Future<void> _refreshPage() async {
-
     setState(() {
       _total = 0;
 
@@ -133,81 +132,97 @@ class _BookmarkedAgencyAuditionList extends State<BookmarkedAgencyAuditionList>
   Widget build(BuildContext context) {
     return Theme(
         data: CustomStyles.defaultTheme(),
-        child: Scaffold(
-            appBar: CustomStyles.defaultAppBar('마이 스크랩', () {
-              Navigator.pop(context);
-            }),
-            body: Stack(children: [
-              Container(
-                  child: RefreshIndicator(
-                    onRefresh: _refreshPage,
-                    child: SingleChildScrollView(
-                        controller: _scrollController,
-                        physics: AlwaysScrollableScrollPhysics(),
-                        key: ObjectKey(_castingBoardList.length > 0 ? _castingBoardList[0] : ""),
-                        child: Column(
-                          children: [
-                            Container(
-                                margin: EdgeInsets.only(top: 15),
-                                padding: EdgeInsets.all(15),
-                                alignment: Alignment.topLeft,
-                                child: Text('마이 스크랩',
-                                    style: CustomStyles.normal24TextStyle())),
-                            Container(
-                              padding:
-                              EdgeInsets.only(left: 15, right: 15, bottom: 10),
-                              alignment: Alignment.bottomRight,
-                              child: RichText(
-                                  text: new TextSpan(
+        child: Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+                width: KCastingAppData().isWeb
+                    ? CustomStyles.appWidth
+                    : double.infinity,
+                child: Scaffold(
+                    appBar: CustomStyles.defaultAppBar('마이 스크랩', () {
+                      Navigator.pop(context);
+                    }),
+                    body: Stack(children: [
+                      Container(
+                          child: RefreshIndicator(
+                        onRefresh: _refreshPage,
+                        child: SingleChildScrollView(
+                            controller: _scrollController,
+                            physics: AlwaysScrollableScrollPhysics(),
+                            key: ObjectKey(_castingBoardList.length > 0
+                                ? _castingBoardList[0]
+                                : ""),
+                            child: Column(
+                              children: [
+                                Container(
+                                    margin: EdgeInsets.only(top: 15),
+                                    padding: EdgeInsets.all(15),
+                                    alignment: Alignment.topLeft,
+                                    child: Text('마이 스크랩',
+                                        style:
+                                            CustomStyles.normal24TextStyle())),
+                                Container(
+                                  padding: EdgeInsets.only(
+                                      left: 15, right: 15, bottom: 10),
+                                  alignment: Alignment.bottomRight,
+                                  child: RichText(
+                                      text: new TextSpan(
                                     style: CustomStyles.dark16TextStyle(),
                                     children: <TextSpan>[
                                       new TextSpan(text: '내 스크랩 '),
                                       new TextSpan(
-                                          text: _castingBoardList.length.toString(),
+                                          text: _castingBoardList.length
+                                              .toString(),
                                           style: CustomStyles.red16TextStyle()),
                                       new TextSpan(text: '개'),
                                     ],
                                   )),
-                            ),
-                            _castingBoardList.length > 0
-                                ? (Wrap(children: [
-                              ListView.builder(
-                                  padding: EdgeInsets.only(bottom: 50),
-                                  primary: false,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemCount: _castingBoardList.length,
-                                  itemBuilder: (BuildContext context, int index) {
-                                    return Container(
-                                        margin: EdgeInsets.only(bottom: 15),
-                                        alignment: Alignment.center,
-                                        child: AuditionListItem(
-                                          castingItem: _castingBoardList[index],
-                                          isMyScrapList: true,
-                                          onClickedBookmark: () {
-                                            requestManagementBookmarkEditApi(
-                                                context, index);
-                                          },
-                                        ));
-                                  })
-                            ]))
-                                : Container()
-                          ],
-                        )),
-                  )),
-              Visibility(
-                  child: Container(
-                      alignment: Alignment.center,
-                      child: Text('스크랩한 캐스팅이 없습니다.',
-                          style: CustomStyles.normal16TextStyle())),
-                  visible: _castingBoardList.length > 0 ? false : true),
-              Visibility(
-                  child: Container(
-                      color: Colors.black38,
-                      alignment: Alignment.center,
-                      child: CircularProgressIndicator()),
-                  visible: _isUpload)
-            ])));
+                                ),
+                                _castingBoardList.length > 0
+                                    ? (Wrap(children: [
+                                        ListView.builder(
+                                            padding:
+                                                EdgeInsets.only(bottom: 50),
+                                            primary: false,
+                                            physics:
+                                                NeverScrollableScrollPhysics(),
+                                            shrinkWrap: true,
+                                            itemCount: _castingBoardList.length,
+                                            itemBuilder: (BuildContext context,
+                                                int index) {
+                                              return Container(
+                                                  margin: EdgeInsets.only(
+                                                      bottom: 15),
+                                                  alignment: Alignment.center,
+                                                  child: AuditionListItem(
+                                                    castingItem:
+                                                        _castingBoardList[
+                                                            index],
+                                                    isMyScrapList: true,
+                                                    onClickedBookmark: () {
+                                                      requestManagementBookmarkEditApi(
+                                                          context, index);
+                                                    },
+                                                  ));
+                                            })
+                                      ]))
+                                    : Container()
+                              ],
+                            )),
+                      )),
+                      Visibility(
+                          child: Container(
+                              alignment: Alignment.center,
+                              child: Text('스크랩한 캐스팅이 없습니다.',
+                                  style: CustomStyles.normal16TextStyle())),
+                          visible: _castingBoardList.length > 0 ? false : true),
+                      Visibility(
+                          child: Container(
+                              color: Colors.black38,
+                              alignment: Alignment.center,
+                              child: CircularProgressIndicator()),
+                          visible: _isUpload)
+                    ])))));
   }
 
   /*

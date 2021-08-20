@@ -4,6 +4,8 @@ import 'package:casting_call/res/CustomStyles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../KCastingAppData.dart';
+
 class DialogRegisterAuditionRole extends StatelessWidget {
   final VoidCallback onClickedAddCertainRole;
   final VoidCallback onClickedAddLargeRole;
@@ -13,6 +15,12 @@ class DialogRegisterAuditionRole extends StatelessWidget {
   dialogContent(BuildContext context) {
     return Theme(
       data: ThemeData(fontFamily: Constants.appFont),
+      child: Align(
+      alignment: Alignment.center,
+      child: Container(
+      width: KCastingAppData().isWeb
+      ? CustomStyles.appWidth * 0.8
+          : double.infinity,
       child: Stack(
         children: <Widget>[
           Container(
@@ -83,7 +91,7 @@ class DialogRegisterAuditionRole extends StatelessWidget {
           ),
         ],
       ),
-    );
+    )));
   }
 
   @override

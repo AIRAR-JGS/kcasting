@@ -9,6 +9,7 @@ import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/net/RestClientInterface.dart';
+import 'package:casting_call/src/ui/ThumbnailImage.dart';
 import 'package:casting_call/src/view/actor/ActorProfileWidget.dart';
 import 'package:casting_call/src/view/mypage/actor/ActorFilmoAdd.dart';
 import 'package:casting_call/src/view/mypage/actor/ActorProfileModifyMainInfo.dart';
@@ -469,14 +470,12 @@ class _ActorProfile extends State<ActorProfile>
     });
 
     try {
-      print('path: ' + fileName);
-
       var uri = Uri.parse(APIConstants.getURL(APIConstants.URL_MAIN_CONTROL));
 
       http.MultipartRequest request = new http.MultipartRequest('POST', uri);
       request.fields['key'] = 'INS_AIM_LIST_FormData';
       request.fields['target[actor_seq]'] =
-      KCastingAppData().myInfo[APIConstants.seq].toString();
+          KCastingAppData().myInfo[APIConstants.seq].toString();
 
       //요청에 이미지 파일 추가
       List<String> mimeTypeArr = mimeType.split('/');
@@ -607,7 +606,7 @@ class _ActorProfile extends State<ActorProfile>
     // 배우 비디오 추가 api 호출 시 보낼 파라미터
     Map<String, dynamic> targetData = new Map();
     targetData[APIConstants.actor_seq] =
-        KCastingAppData().myInfo[APIConstants.seq];
+        KCastingAppData().myInfo[APIConstants.seq].toString();
 
     var files = [];
     var temp = videoFile.path.split('/');
@@ -664,6 +663,82 @@ class _ActorProfile extends State<ActorProfile>
         });
       }
     });
+  }
+
+  void requestAddActorVideoWeb(BuildContext context, Uint8List profileFile,
+      String mimeType, String fileName, Uint8List thumbnailFile) async {
+    setState(() {
+      _isUpload = true;
+    });
+
+    try {
+      var uri = Uri.parse(APIConstants.getURL(APIConstants.URL_MAIN_CONTROL));
+
+      http.MultipartRequest request = new http.MultipartRequest('POST', uri);
+      request.fields['key'] = 'INS_AVD_LIST_FormData';
+      request.fields['target[actor_seq]'] = KCastingAppData().myInfo[APIConstants.seq];
+
+      //요청에 비디오 파일 추가
+      List<String> mimeTypeArr = mimeType.split('/');
+      List<int> _selectedFile = profileFile;
+      request.files.add(http.MultipartFile.fromBytes(
+          APIConstants.target_files_array, _selectedFile,
+          contentType: new MediaType(mimeTypeArr[0], mimeTypeArr[1]),
+          filename: fileName));
+
+      //요청에 비디오 썸네일 파일 추가
+      List<int> _selectedThumbFile = thumbnailFile;
+      request.files.add(http.MultipartFile.fromBytes(
+          APIConstants.target_files_thumb_array, _selectedThumbFile,
+          contentType: new MediaType('images', 'jpeg'),
+          filename: 'thumbnail.jpg'));
+
+      request.send().then((response) {
+        if (response.statusCode == 200) {
+          print("Uploaded!");
+          response.stream.transform(utf8.decoder).listen((value) {
+            print(value);
+
+            Map<String, dynamic> responseMap = jsonDecode(value);
+            if (responseMap == null) {
+              // 에러 - 데이터 널
+              showSnackBar(context, APIConstants.error_msg_server_not_response);
+            } else {
+              if (responseMap[APIConstants.resultVal]) {
+                // 제작사 로고 이미지 수정 성공
+                var _responseData = responseMap[APIConstants.data];
+                var _responseList = _responseData[APIConstants.list] as List;
+
+                setState(() {
+                  // 수정된 회원정보 전역변수에 저장
+                  if (_responseList.length > 0) {
+                    var newProfileData = _responseList[0];
+
+                    if (newProfileData[APIConstants.main_img_url] != null) {
+                      KCastingAppData().myProfile[APIConstants.main_img_url] =
+                      newProfileData[APIConstants.main_img_url];
+                    }
+                  }
+                });
+              } else {
+                // 제작사 로고 이미지 수정 실패
+                showSnackBar(context, APIConstants.error_msg_try_again);
+              }
+            }
+          });
+        } else {
+          // 제작사 로고 이미지 수정 실패
+          showSnackBar(context, APIConstants.error_msg_try_again);
+        }
+      });
+    } catch (e) {
+      // 제작사 로고 이미지 수정 실패
+      showSnackBar(context, APIConstants.error_msg_try_again);
+    } finally {
+      setState(() {
+        _isUpload = false;
+      });
+    }
   }
 
   /*
@@ -725,37 +800,25 @@ class _ActorProfile extends State<ActorProfile>
       final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
       if (pickedFile != null) {
-        if (type == 0) {
-          pickedFile.readAsBytes().then((value) {
-            final size = value.lengthInBytes;
-            final kb = size / 1024;
-            final mb = kb / 1024;
+        pickedFile.readAsBytes().then((value) {
+          final size = value.lengthInBytes;
+          final kb = size / 1024;
+          final mb = kb / 1024;
 
-            if (mb > 100) {
-              showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
-            } else {
-              _profileImgBytes = value;
+          if (mb > 100) {
+            showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
+          } else {
+            _profileImgBytes = value;
 
+            if (type == 0) {
               requestUpdateActorProfileWeb(context, _profileImgBytes,
                   pickedFile.mimeType, pickedFile.name);
-            }
-          });
-        } else {
-          pickedFile.readAsBytes().then((value) {
-            final size = value.lengthInBytes;
-            final kb = size / 1024;
-            final mb = kb / 1024;
-
-            if (mb > 100) {
-              showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
             } else {
-              _profileImgBytes = value;
-
               requestAddActorImageWeb(context, _profileImgBytes,
                   pickedFile.mimeType, pickedFile.name);
             }
-          });
-        }
+          }
+        });
       } else {
         showSnackBar(context, "선택된 이미지가 없습니다.");
       }
@@ -788,34 +851,51 @@ class _ActorProfile extends State<ActorProfile>
   }
 
   Future getVideoFromGallery() async {
-    if (KCastingAppData().isWeb) {
-      showSnackBar(context, APIConstants.use_mobile_app);
-    } else {
-      final pickedFile = await picker.pickVideo(source: ImageSource.gallery);
+    final pickedFile = await picker.pickVideo(source: ImageSource.gallery);
 
-      if (pickedFile != null) {
-        getVideoThumbnail(pickedFile.path);
-      } else {
-        showSnackBar(context, "선택된 이미지가 없습니다.");
-      }
+    if (pickedFile != null) {
+      getVideoThumbnail(pickedFile);
+    } else {
+      showSnackBar(context, "선택된 비디오가 없습니다.");
     }
   }
 
-  getVideoThumbnail(String filePath) async {
-    final fileName = await VideoThumbnail.thumbnailFile(
-        video: filePath,
-        thumbnailPath: (await getTemporaryDirectory()).path,
-        imageFormat: ImageFormat.JPEG);
+  getVideoThumbnail(XFile pickedFile) async {
+    if (KCastingAppData().isWeb) {
+      /*final thumbnailBytes = await ThumbnailImage(
+        videoUrl: pickedFile.path,
+      );
 
-    var _videoFile = File(filePath);
-    final size = _videoFile.readAsBytesSync().lengthInBytes;
-    final kb = size / 1024;
-    final mb = kb / 1024;
+      pickedFile.readAsBytes().then((value) {
+        final size = value.lengthInBytes;
+        final kb = size / 1024;
+        final mb = kb / 1024;
 
-    if (mb > 100) {
-      showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
+        if (mb > 100) {
+          showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
+        } else {
+          _profileImgBytes = value;
+
+          requestAddActorVideoWeb(context, _profileImgBytes,
+              pickedFile.mimeType, pickedFile.name, thumbnailBytes);
+        }
+      });*/
     } else {
-      requestAddActorVideo(context, _videoFile, fileName);
+      final thumbnailFileName = await VideoThumbnail.thumbnailFile(
+          video: pickedFile.path,
+          thumbnailPath: (await getTemporaryDirectory()).path,
+          imageFormat: ImageFormat.JPEG);
+
+      var _videoFile = File(pickedFile.path);
+      final size = _videoFile.readAsBytesSync().lengthInBytes;
+      final kb = size / 1024;
+      final mb = kb / 1024;
+
+      if (mb > 100) {
+        showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
+      } else {
+        requestAddActorVideo(context, _videoFile, thumbnailFileName);
+      }
     }
   }
 
@@ -1048,47 +1128,46 @@ class _ActorProfile extends State<ActorProfile>
                                                                 .darkBold14TextButtonStyle(
                                                                     '추가',
                                                                     () async {
-                                                              try {
-                                                                if (Platform
-                                                                        .isAndroid ||
-                                                                    Platform
-                                                                        .isIOS) {
-                                                                  var status = Platform.isAndroid
-                                                                      ? await Permission
-                                                                          .storage
-                                                                          .request()
-                                                                      : await Permission
-                                                                          .photos
-                                                                          .request();
-                                                                  if (status
-                                                                      .isGranted) {
-                                                                    if (_myPhotos
-                                                                            .length ==
-                                                                        8) {
-                                                                      showSnackBar(
-                                                                          context,
-                                                                          '이미지는 최대 8장까지 등록하실 수 있습니다.');
-                                                                    } else {
-                                                                      getImageFromGallery(
-                                                                          1);
-                                                                    }
+                                                              if (!KCastingAppData()
+                                                                  .isWeb) {
+                                                                var status = Platform.isAndroid
+                                                                    ? await Permission
+                                                                        .storage
+                                                                        .request()
+                                                                    : await Permission
+                                                                        .photos
+                                                                        .request();
+                                                                if (status
+                                                                    .isGranted) {
+                                                                  if (_myPhotos
+                                                                          .length ==
+                                                                      8) {
+                                                                    showSnackBar(
+                                                                        context,
+                                                                        '이미지는 최대 8장까지 등록하실 수 있습니다.');
                                                                   } else {
-                                                                    showDialog(
-                                                                        context:
-                                                                            context,
-                                                                        builder: (BuildContext
-                                                                                context) =>
-                                                                            CupertinoAlertDialog(title: Text('저장공간 접근권한'), content: Text('사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'), actions: <Widget>[
-                                                                              CupertinoDialogAction(
-                                                                                child: Text('거부'),
-                                                                                onPressed: () => Navigator.of(context).pop(),
-                                                                              ),
-                                                                              CupertinoDialogAction(child: Text('허용'), onPressed: () => openAppSettings())
-                                                                            ]));
+                                                                    getImageFromGallery(
+                                                                        1);
                                                                   }
-                                                                  //
+                                                                } else {
+                                                                  showDialog(
+                                                                      context:
+                                                                          context,
+                                                                      builder: (BuildContext
+                                                                              context) =>
+                                                                          CupertinoAlertDialog(
+                                                                              title: Text('저장공간 접근권한'),
+                                                                              content: Text('사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
+                                                                              actions: <Widget>[
+                                                                                CupertinoDialogAction(
+                                                                                  child: Text('거부'),
+                                                                                  onPressed: () => Navigator.of(context).pop(),
+                                                                                ),
+                                                                                CupertinoDialogAction(child: Text('허용'), onPressed: () => openAppSettings())
+                                                                              ]));
                                                                 }
-                                                              } catch (e) {
+                                                                //
+                                                              } else {
                                                                 getImageFromGallery(
                                                                     1);
                                                               }
@@ -1204,54 +1283,40 @@ class _ActorProfile extends State<ActorProfile>
                                                                   .darkBold14TextButtonStyle(
                                                                       '추가',
                                                                       () async {
-                                                                try {
-                                                                  if (KCastingAppData()
-                                                                      .isWeb) {
-                                                                    var status = Platform.isAndroid
-                                                                        ? await Permission
-                                                                            .storage
-                                                                            .request()
-                                                                        : await Permission
-                                                                            .photos
-                                                                            .request();
-                                                                    if (status
-                                                                        .isGranted) {
-                                                                      if (_myVideos
-                                                                              .length ==
-                                                                          2) {
-                                                                        showSnackBar(
-                                                                            context,
-                                                                            "비디오는 최대 2개까지 등록하실 수 있습니다.");
-                                                                      } else {
-                                                                        getVideoFromGallery();
-                                                                      }
+                                                                if (!KCastingAppData()
+                                                                    .isWeb) {
+                                                                  var status = Platform.isAndroid
+                                                                      ? await Permission
+                                                                          .storage
+                                                                          .request()
+                                                                      : await Permission
+                                                                          .photos
+                                                                          .request();
+                                                                  if (status
+                                                                      .isGranted) {
+                                                                    if (_myVideos
+                                                                            .length ==
+                                                                        2) {
+                                                                      showSnackBar(
+                                                                          context,
+                                                                          "비디오는 최대 2개까지 등록하실 수 있습니다.");
                                                                     } else {
-                                                                      showDialog(
-                                                                          context:
-                                                                              context,
-                                                                          builder: (BuildContext context) =>
-                                                                              CupertinoAlertDialog(
-                                                                                title: Text('저장공간 접근권한'),
-                                                                                content: Text('사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
-                                                                                actions: <Widget>[
-                                                                                  CupertinoDialogAction(
-                                                                                    child: Text('거부'),
-                                                                                    onPressed: () => Navigator.of(context).pop(),
-                                                                                  ),
-                                                                                  CupertinoDialogAction(
-                                                                                    child: Text('허용'),
-                                                                                    onPressed: () => openAppSettings(),
-                                                                                  ),
-                                                                                ],
-                                                                              ));
+                                                                      getVideoFromGallery();
                                                                     }
                                                                   } else {
-                                                                    getVideoFromGallery();
+                                                                    showDialog(
+                                                                        context:
+                                                                            context,
+                                                                        builder: (BuildContext
+                                                                                context) =>
+                                                                            CupertinoAlertDialog(title: Text('저장공간 접근권한'), content: Text('사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'), actions: <Widget>[
+                                                                              CupertinoDialogAction(child: Text('거부'), onPressed: () => Navigator.of(context).pop()),
+                                                                              CupertinoDialogAction(child: Text('허용'), onPressed: () => openAppSettings())
+                                                                            ]));
                                                                   }
-                                                                } catch (e) {
+                                                                } else {
                                                                   getVideoFromGallery();
                                                                 }
-                                                                //
                                                               })),
                                                           Container(width: 20),
                                                           Expanded(

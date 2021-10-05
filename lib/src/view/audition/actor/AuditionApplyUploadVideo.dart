@@ -11,6 +11,7 @@ import 'package:casting_call/src/util/StringUtils.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -29,6 +30,7 @@ class AuditionApplyUploadVideo extends StatefulWidget {
   final String castingName;
   final List<Map<String, dynamic>> dbImgages;
   final List<File> newImgages;
+  final List<MultipartFile> newImageMultipartFiles;
   final int actorSeq;
   final int actorProfileSeq;
 
@@ -39,6 +41,7 @@ class AuditionApplyUploadVideo extends StatefulWidget {
       this.castingName,
       this.dbImgages,
       this.newImgages,
+      this.newImageMultipartFiles,
       this.actorSeq,
       this.actorProfileSeq})
       : super(key: key);
@@ -60,6 +63,7 @@ class _AuditionApplyUploadVideo extends State<AuditionApplyUploadVideo>
   String _castingName;
   List<Map<String, dynamic>> _dbImgages;
   List<File> _newImgages;
+  List<MultipartFile> _newImageMultipartFiles;
   int _actorSeq;
   int _actorProfileSeq;
 
@@ -88,6 +92,7 @@ class _AuditionApplyUploadVideo extends State<AuditionApplyUploadVideo>
     _castingName = widget.castingName;
     _dbImgages = widget.dbImgages;
     _newImgages = widget.newImgages;
+    _newImageMultipartFiles = widget.newImageMultipartFiles;
     _actorSeq = widget.actorSeq;
     _actorProfileSeq = widget.actorProfileSeq;
 
@@ -98,7 +103,7 @@ class _AuditionApplyUploadVideo extends State<AuditionApplyUploadVideo>
       // 배우 비디오
       for (int i = 0; i < actorVideo.length; i++) {
         _myVideos
-            .add(new VideoListModel(false, false, null, null, actorVideo[i]));
+            .add(new VideoListModel(false, false, null, null, actorVideo[i], null, null));
       }
     } else {
       // 매니지먼트 보유 배우 비디오 목록 api 호출
@@ -133,7 +138,7 @@ class _AuditionApplyUploadVideo extends State<AuditionApplyUploadVideo>
 
                 for (int i = 0; i < actorVideo.length; i++) {
                   _myVideos.add(new VideoListModel(
-                      false, false, null, null, actorVideo[i]));
+                      false, false, null, null, actorVideo[i], null, null));
                 }
               }
             });
@@ -145,15 +150,99 @@ class _AuditionApplyUploadVideo extends State<AuditionApplyUploadVideo>
 
   // 갤러리에서 비디오 가져오기
   Future getVideoFromGallery() async {
-    final pickedFile = await picker.pickVideo(source: ImageSource.gallery);
+    if(KCastingAppData().isWeb){
+      final pickedFile = await picker.pickVideo(source: ImageSource.gallery);
+      if (pickedFile != null) {
 
-    if (pickedFile != null) {
-      //print(pickedFile.path);
+        pickedFile.readAsBytes().then((value){
+          List<String> mimeTypeArr = pickedFile.mimeType.split('/');
+          List<int> _selectedFile = value;
 
-      getVideoThumbnail(pickedFile.path);
-    } else {
-      showSnackBar(context, "선택된 이미지가 없습니다.");
+          MultipartFile _multipartFileThumb =  MultipartFile.fromBytes(
+              _selectedFile,
+              contentType: new MediaType(mimeTypeArr[0], mimeTypeArr[1]),
+              filename: pickedFile.name);
+
+          MultipartFile _multipartFileVideo =  MultipartFile.fromBytes(
+              _selectedFile,
+              contentType: new MediaType(mimeTypeArr[0], mimeTypeArr[1]),
+              filename: pickedFile.name);
+
+          final size = value.lengthInBytes;
+          final kb = size / 1024;
+          final mb = kb / 1024;
+
+          if (mb > 100) {
+            showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
+          } else {
+            getVideoThumbnailWeb(context, _multipartFileThumb, _multipartFileVideo);
+          }
+        });
+      } else {
+        showSnackBar(context, "선택된 비디오가 없습니다.");
+      }
+    }else{
+      final pickedFile = await picker.pickVideo(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        //print(pickedFile.path);
+
+        getVideoThumbnail(pickedFile.path);
+      } else {
+        showSnackBar(context, "선택된 비디오가 없습니다.");
+      }
     }
+  }
+
+  getVideoThumbnailWeb(BuildContext context, MultipartFile thumbMultipartFile, MultipartFile videoMultipartFile){
+    setState(() {
+      _isUpload = true;
+    });
+
+    // 배우 비디오 추가 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetData = new Map();
+    targetData[APIConstants.actor_seq] =
+        KCastingAppData().myInfo[APIConstants.seq].toString();
+
+    var files = [];
+    files.add(thumbMultipartFile);
+
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.SEL_TOT_VIDEOTHUMBNAIL;
+    params[APIConstants.target] = targetData;
+    params[APIConstants.target_video] = files;
+
+    // 배우 비디오 추가 api 호출
+    RestClient(Dio())
+        .postRequestMainControlFormData(params)
+        .then((value) async {
+      try {
+        if (value == null) {
+          // 에러 - 데이터 널
+          showSnackBar(context, APIConstants.error_msg_server_not_response);
+        } else {
+          if (value[APIConstants.resultVal]) {
+            // 배우 비디오 추가 성공
+            var _responseData = value[APIConstants.data];
+            print("_responseData : $_responseData}");
+
+            setState(() {
+              _isUpload = false;
+                  _myVideos.add(
+                      new VideoListModel(true, false, null, null, null, videoMultipartFile, _responseData['url_thumbnail']));
+            });
+          } else {
+            // 배우 비디오 추가 실패
+            showSnackBar(context, APIConstants.error_msg_try_again);
+          }
+        }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
+      }
+    });
   }
 
   getVideoThumbnail(String filePath) async {
@@ -179,7 +268,7 @@ class _AuditionApplyUploadVideo extends State<AuditionApplyUploadVideo>
         showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
       } else {
         _myVideos.add(
-            new VideoListModel(true, false, _videoFile, _videoThumbFile, null));
+            new VideoListModel(true, false, _videoFile, _videoThumbFile, null, null, null));
       }
     });
   }
@@ -312,10 +401,7 @@ class _AuditionApplyUploadVideo extends State<AuditionApplyUploadVideo>
                                                   ),
                                                   onPressed: () async {
                                                     if (_kIsWeb) {
-                                                      showSnackBar(
-                                                          context,
-                                                          APIConstants
-                                                              .use_mobile_app);
+                                                      getVideoFromGallery();
                                                     } else {
                                                       var status = Platform
                                                               .isAndroid
@@ -372,122 +458,242 @@ class _AuditionApplyUploadVideo extends State<AuditionApplyUploadVideo>
                                                     NeverScrollableScrollPhysics(),
                                                 itemCount: _myVideos.length,
                                                 itemBuilder: (context, index) {
-                                                  return Stack(
-                                                    alignment: Alignment.center,
-                                                    children: <Widget>[
-                                                      Container(
-                                                          width: (KCastingAppData().isWeb)
-                                                              ? CustomStyles.appWidth
-                                                              : MediaQuery.of(context)
-                                                              .size
-                                                              .width,
-                                                          margin:
-                                                              EdgeInsets.only(
-                                                                  bottom: 10),
-                                                          height: 200,
-                                                          decoration: BoxDecoration(
-                                                              borderRadius:
-                                                                  CustomStyles
-                                                                      .circle7BorderRadius(),
-                                                              border: Border.all(
-                                                                  width: 5,
-                                                                  color: (_myVideos[index]
-                                                                          .isSelected
-                                                                      ? CustomColors
-                                                                          .colorAccent
-                                                                      : CustomColors
-                                                                          .colorFontLightGrey))),
-                                                          child: _myVideos[index]
-                                                                  .isFile
-                                                              ? Image.file(
-                                                                  _myVideos[
-                                                                          index]
-                                                                      .thumbnailFile,
-                                                                  fit: BoxFit
-                                                                      .cover,
-                                                                )
-                                                              : CachedNetworkImage(
-                                                                  placeholder: (context, url) => Container(
-                                                                      alignment:
-                                                                          Alignment.center,
-                                                                      child: CircularProgressIndicator()),
-                                                                  imageUrl: _myVideos[index].videoData[APIConstants.actor_video_url_thumb],
-                                                                  fit: BoxFit.cover,
-                                                                  errorWidget: (context, url, error) => Container())),
-                                                      Container(
-                                                          width: (KCastingAppData().isWeb)
-                                                              ? CustomStyles.appWidth
-                                                              : MediaQuery.of(
-                                                                  context)
-                                                              .size
-                                                              .width,
-                                                          height: 200,
-                                                          margin:
-                                                              EdgeInsets.all(
-                                                                  10),
-                                                          alignment: Alignment
-                                                              .topRight,
-                                                          child: InkWell(
-                                                            onTap: () {
-                                                              setState(() {
-                                                                _myVideos[index]
-                                                                        .isSelected =
-                                                                    !_myVideos[
-                                                                            index]
-                                                                        .isSelected;
-                                                              });
-                                                            },
-                                                            child: Container(
-                                                              decoration: BoxDecoration(
-                                                                  shape: BoxShape
-                                                                      .circle,
-                                                                  color: (_myVideos[
-                                                                              index]
-                                                                          .isSelected
-                                                                      ? CustomColors
-                                                                          .colorAccent
-                                                                      : CustomColors
-                                                                          .colorFontLightGrey)),
-                                                              child: Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                            .all(
-                                                                        5.0),
-                                                                child: _myVideos[
-                                                                            index]
+                                                  if(KCastingAppData().isWeb){
+                                                    return Stack(
+                                                      alignment: Alignment.center,
+                                                      children: <Widget>[
+                                                        Container(
+                                                            width: (KCastingAppData().isWeb)
+                                                                ? CustomStyles.appWidth
+                                                                : MediaQuery.of(context)
+                                                                .size
+                                                                .width,
+                                                            margin:
+                                                            EdgeInsets.only(
+                                                                bottom: 10),
+                                                            height: 200,
+                                                            decoration: BoxDecoration(
+                                                                borderRadius:
+                                                                CustomStyles
+                                                                    .circle7BorderRadius(),
+                                                                border: Border.all(
+                                                                    width: 5,
+                                                                    color: (_myVideos[index]
                                                                         .isSelected
-                                                                    ? Icon(
-                                                                        Icons
-                                                                            .check,
-                                                                        size:
-                                                                            15.0,
-                                                                        color: CustomColors
-                                                                            .colorWhite,
-                                                                      )
-                                                                    : Icon(
-                                                                        Icons
-                                                                            .check_box_outline_blank,
-                                                                        size:
-                                                                            15.0,
-                                                                        color: CustomColors
-                                                                            .colorFontLightGrey,
-                                                                      ),
+                                                                        ? CustomColors
+                                                                        .colorAccent
+                                                                        : CustomColors
+                                                                        .colorFontLightGrey))),
+                                                            child: _myVideos[index]
+                                                                .isFile
+                                                                ? CachedNetworkImage(
+                                                                placeholder: (context, url) => Container(
+                                                                    alignment:
+                                                                    Alignment.center,
+                                                                    child: CircularProgressIndicator()),
+                                                                imageUrl: _myVideos[index].thumbnailUrl,
+                                                                fit: BoxFit.cover,
+                                                                errorWidget: (context, url, error) => Container())
+                                                                : CachedNetworkImage(
+                                                                placeholder: (context, url) => Container(
+                                                                    alignment:
+                                                                    Alignment.center,
+                                                                    child: CircularProgressIndicator()),
+                                                                imageUrl: _myVideos[index].videoData[APIConstants.actor_video_url_thumb],
+                                                                fit: BoxFit.cover,
+                                                                errorWidget: (context, url, error) => Container())),
+                                                        Container(
+                                                            width: (KCastingAppData().isWeb)
+                                                                ? CustomStyles.appWidth
+                                                                : MediaQuery.of(
+                                                                context)
+                                                                .size
+                                                                .width,
+                                                            height: 200,
+                                                            margin:
+                                                            EdgeInsets.all(
+                                                                10),
+                                                            alignment: Alignment
+                                                                .topRight,
+                                                            child: InkWell(
+                                                              onTap: () {
+                                                                setState(() {
+                                                                  _myVideos[index]
+                                                                      .isSelected =
+                                                                  !_myVideos[
+                                                                  index]
+                                                                      .isSelected;
+                                                                });
+                                                              },
+                                                              child: Container(
+                                                                decoration: BoxDecoration(
+                                                                    shape: BoxShape
+                                                                        .circle,
+                                                                    color: (_myVideos[
+                                                                    index]
+                                                                        .isSelected
+                                                                        ? CustomColors
+                                                                        .colorAccent
+                                                                        : CustomColors
+                                                                        .colorFontLightGrey)),
+                                                                child: Padding(
+                                                                  padding:
+                                                                  const EdgeInsets
+                                                                      .all(
+                                                                      5.0),
+                                                                  child: _myVideos[
+                                                                  index]
+                                                                      .isSelected
+                                                                      ? Icon(
+                                                                    Icons
+                                                                        .check,
+                                                                    size:
+                                                                    15.0,
+                                                                    color: CustomColors
+                                                                        .colorWhite,
+                                                                  )
+                                                                      : Icon(
+                                                                    Icons
+                                                                        .check_box_outline_blank,
+                                                                    size:
+                                                                    15.0,
+                                                                    color: CustomColors
+                                                                        .colorFontLightGrey,
+                                                                  ),
+                                                                ),
                                                               ),
-                                                            ),
-                                                          )),
-                                                      GestureDetector(
-                                                          onTap: () {},
-                                                          child: Container(
-                                                              alignment:
-                                                                  Alignment
-                                                                      .center,
-                                                              width: 50,
-                                                              height: 50,
-                                                              child: Image.asset(
-                                                                  'assets/images/btn_play.png',
-                                                                  width: 50))),
-                                                    ],
-                                                  );
+                                                            )),
+                                                        GestureDetector(
+                                                            onTap: () {},
+                                                            child: Container(
+                                                                alignment:
+                                                                Alignment
+                                                                    .center,
+                                                                width: 50,
+                                                                height: 50,
+                                                                child: Image.asset(
+                                                                    'assets/images/btn_play.png',
+                                                                    width: 50))),
+                                                      ],
+                                                    );
+                                                  }else{
+                                                    return Stack(
+                                                      alignment: Alignment.center,
+                                                      children: <Widget>[
+                                                        Container(
+                                                            width: (KCastingAppData().isWeb)
+                                                                ? CustomStyles.appWidth
+                                                                : MediaQuery.of(context)
+                                                                .size
+                                                                .width,
+                                                            margin:
+                                                            EdgeInsets.only(
+                                                                bottom: 10),
+                                                            height: 200,
+                                                            decoration: BoxDecoration(
+                                                                borderRadius:
+                                                                CustomStyles
+                                                                    .circle7BorderRadius(),
+                                                                border: Border.all(
+                                                                    width: 5,
+                                                                    color: (_myVideos[index]
+                                                                        .isSelected
+                                                                        ? CustomColors
+                                                                        .colorAccent
+                                                                        : CustomColors
+                                                                        .colorFontLightGrey))),
+                                                            child: _myVideos[index]
+                                                                .isFile
+                                                                ? Image.file(
+                                                              _myVideos[
+                                                              index]
+                                                                  .thumbnailFile,
+                                                              fit: BoxFit
+                                                                  .cover,
+                                                            )
+                                                                : CachedNetworkImage(
+                                                                placeholder: (context, url) => Container(
+                                                                    alignment:
+                                                                    Alignment.center,
+                                                                    child: CircularProgressIndicator()),
+                                                                imageUrl: _myVideos[index].videoData[APIConstants.actor_video_url_thumb],
+                                                                fit: BoxFit.cover,
+                                                                errorWidget: (context, url, error) => Container())),
+                                                        Container(
+                                                            width: (KCastingAppData().isWeb)
+                                                                ? CustomStyles.appWidth
+                                                                : MediaQuery.of(
+                                                                context)
+                                                                .size
+                                                                .width,
+                                                            height: 200,
+                                                            margin:
+                                                            EdgeInsets.all(
+                                                                10),
+                                                            alignment: Alignment
+                                                                .topRight,
+                                                            child: InkWell(
+                                                              onTap: () {
+                                                                setState(() {
+                                                                  _myVideos[index]
+                                                                      .isSelected =
+                                                                  !_myVideos[
+                                                                  index]
+                                                                      .isSelected;
+                                                                });
+                                                              },
+                                                              child: Container(
+                                                                decoration: BoxDecoration(
+                                                                    shape: BoxShape
+                                                                        .circle,
+                                                                    color: (_myVideos[
+                                                                    index]
+                                                                        .isSelected
+                                                                        ? CustomColors
+                                                                        .colorAccent
+                                                                        : CustomColors
+                                                                        .colorFontLightGrey)),
+                                                                child: Padding(
+                                                                  padding:
+                                                                  const EdgeInsets
+                                                                      .all(
+                                                                      5.0),
+                                                                  child: _myVideos[
+                                                                  index]
+                                                                      .isSelected
+                                                                      ? Icon(
+                                                                    Icons
+                                                                        .check,
+                                                                    size:
+                                                                    15.0,
+                                                                    color: CustomColors
+                                                                        .colorWhite,
+                                                                  )
+                                                                      : Icon(
+                                                                    Icons
+                                                                        .check_box_outline_blank,
+                                                                    size:
+                                                                    15.0,
+                                                                    color: CustomColors
+                                                                        .colorFontLightGrey,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            )),
+                                                        GestureDetector(
+                                                            onTap: () {},
+                                                            child: Container(
+                                                                alignment:
+                                                                Alignment
+                                                                    .center,
+                                                                width: 50,
+                                                                height: 50,
+                                                                child: Image.asset(
+                                                                    'assets/images/btn_play.png',
+                                                                    width: 50))),
+                                                      ],
+                                                    );
+                                                  }
                                                 },
                                                 separatorBuilder:
                                                     (context, index) {
@@ -576,6 +782,7 @@ class _AuditionApplyUploadVideo extends State<AuditionApplyUploadVideo>
     List<Map<String, dynamic>> dbVideoFiles = [];
     List<File> newVideoFiles = [];
     List<File> newVideoThumbFiles = [];
+    List<MultipartFile> newVideoMultipartFiles = [];
 
     for (int i = 0; i < _myVideos.length; i++) {
       if (_myVideos[i].isSelected) {
@@ -595,6 +802,7 @@ class _AuditionApplyUploadVideo extends State<AuditionApplyUploadVideo>
 
           newVideoFiles.add(_myVideos[i].videoFile);
           newVideoThumbFiles.add(_myVideos[i].thumbnailFile);
+          newVideoMultipartFiles.add((_myVideos[i].multipartFile));
         } else {
           // url 비디오 업로드
           Map<String, dynamic> fileData = new Map();
@@ -616,6 +824,8 @@ class _AuditionApplyUploadVideo extends State<AuditionApplyUploadVideo>
           castingName: _castingName,
           dbImgages: _dbImgages,
           newImgages: _newImgages,
+          newImageMultipartFiles: _newImageMultipartFiles,
+          newVideoMultipartFiles: newVideoMultipartFiles,
           dbVideos: dbVideoFiles,
           newVideos: newVideoFiles,
           newVideoThumbs: newVideoThumbFiles,

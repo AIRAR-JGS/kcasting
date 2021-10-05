@@ -9,7 +9,6 @@ import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/net/RestClientInterface.dart';
-import 'package:casting_call/src/ui/ThumbnailImage.dart';
 import 'package:casting_call/src/view/actor/ActorProfileWidget.dart';
 import 'package:casting_call/src/view/mypage/actor/ActorFilmoAdd.dart';
 import 'package:casting_call/src/view/mypage/actor/ActorProfileModifyMainInfo.dart';
@@ -665,80 +664,62 @@ class _ActorProfile extends State<ActorProfile>
     });
   }
 
-  void requestAddActorVideoWeb(BuildContext context, Uint8List profileFile,
-      String mimeType, String fileName, Uint8List thumbnailFile) async {
+  void requestAddActorVideoWeb(BuildContext context, MultipartFile multipartFile) async {
     setState(() {
       _isUpload = true;
     });
 
-    try {
-      var uri = Uri.parse(APIConstants.getURL(APIConstants.URL_MAIN_CONTROL));
+    // 배우 비디오 추가 api 호출 시 보낼 파라미터
+    Map<String, dynamic> targetData = new Map();
+    targetData[APIConstants.actor_seq] =
+        KCastingAppData().myInfo[APIConstants.seq].toString();
 
-      http.MultipartRequest request = new http.MultipartRequest('POST', uri);
-      request.fields['key'] = 'INS_AVD_LIST_FormData';
-      request.fields['target[actor_seq]'] = KCastingAppData().myInfo[APIConstants.seq];
+    var files = [];
+    files.add(multipartFile);
 
-      //요청에 비디오 파일 추가
-      List<String> mimeTypeArr = mimeType.split('/');
-      List<int> _selectedFile = profileFile;
-      request.files.add(http.MultipartFile.fromBytes(
-          APIConstants.target_files_array, _selectedFile,
-          contentType: new MediaType(mimeTypeArr[0], mimeTypeArr[1]),
-          filename: fileName));
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.INS_AVD_LIST_FORMDATA;
+    params[APIConstants.target] = targetData;
+    params[APIConstants.target_files_array] = files;
+    params[APIConstants.target_files_thumb_array] = null;
 
-      //요청에 비디오 썸네일 파일 추가
-      List<int> _selectedThumbFile = thumbnailFile;
-      request.files.add(http.MultipartFile.fromBytes(
-          APIConstants.target_files_thumb_array, _selectedThumbFile,
-          contentType: new MediaType('images', 'jpeg'),
-          filename: 'thumbnail.jpg'));
-
-      request.send().then((response) {
-        if (response.statusCode == 200) {
-          print("Uploaded!");
-          response.stream.transform(utf8.decoder).listen((value) {
-            print(value);
-
-            Map<String, dynamic> responseMap = jsonDecode(value);
-            if (responseMap == null) {
-              // 에러 - 데이터 널
-              showSnackBar(context, APIConstants.error_msg_server_not_response);
-            } else {
-              if (responseMap[APIConstants.resultVal]) {
-                // 제작사 로고 이미지 수정 성공
-                var _responseData = responseMap[APIConstants.data];
-                var _responseList = _responseData[APIConstants.list] as List;
-
-                setState(() {
-                  // 수정된 회원정보 전역변수에 저장
-                  if (_responseList.length > 0) {
-                    var newProfileData = _responseList[0];
-
-                    if (newProfileData[APIConstants.main_img_url] != null) {
-                      KCastingAppData().myProfile[APIConstants.main_img_url] =
-                      newProfileData[APIConstants.main_img_url];
-                    }
-                  }
-                });
-              } else {
-                // 제작사 로고 이미지 수정 실패
-                showSnackBar(context, APIConstants.error_msg_try_again);
-              }
-            }
-          });
+    // 배우 비디오 추가 api 호출
+    RestClient(Dio())
+        .postRequestMainControlFormData(params)
+        .then((value) async {
+      try {
+        if (value == null) {
+          // 에러 - 데이터 널
+          showSnackBar(context, APIConstants.error_msg_server_not_response);
         } else {
-          // 제작사 로고 이미지 수정 실패
-          showSnackBar(context, APIConstants.error_msg_try_again);
+          if (value[APIConstants.resultVal]) {
+            // 배우 비디오 추가 성공
+            var _responseData = value[APIConstants.data];
+            var _responseList = _responseData[APIConstants.list];
+
+            setState(() {
+              _isUpload = false;
+              // 수정된 회원정보 전역변수에 저장
+              if (_responseList.length > 0) {
+                KCastingAppData().myVideo = _responseList;
+
+                _myVideos = _responseList;
+                _originalMyVideos = _responseList;
+              }
+            });
+          } else {
+            // 배우 비디오 추가 실패
+            showSnackBar(context, APIConstants.error_msg_try_again);
+          }
         }
-      });
-    } catch (e) {
-      // 제작사 로고 이미지 수정 실패
-      showSnackBar(context, APIConstants.error_msg_try_again);
-    } finally {
-      setState(() {
-        _isUpload = false;
-      });
-    }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
+      }
+    });
   }
 
   /*
@@ -851,36 +832,43 @@ class _ActorProfile extends State<ActorProfile>
   }
 
   Future getVideoFromGallery() async {
-    final pickedFile = await picker.pickVideo(source: ImageSource.gallery);
+    if(KCastingAppData().isWeb){
+      final pickedFile = await picker.pickVideo(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        pickedFile.readAsBytes().then((value){
+          List<String> mimeTypeArr = pickedFile.mimeType.split('/');
+          List<int> _selectedFile = value;
 
-    if (pickedFile != null) {
-      getVideoThumbnail(pickedFile);
-    } else {
-      showSnackBar(context, "선택된 비디오가 없습니다.");
+          MultipartFile _multipartFile =  MultipartFile.fromBytes(
+              _selectedFile,
+              contentType: new MediaType(mimeTypeArr[0], mimeTypeArr[1]),
+              filename: pickedFile.name);
+
+          final size = value.lengthInBytes;
+          final kb = size / 1024;
+          final mb = kb / 1024;
+
+          if (mb > 100) {
+            showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
+          } else {
+            requestAddActorVideoWeb(context, _multipartFile);
+          }
+        });
+      } else {
+        showSnackBar(context, "선택된 비디오가 없습니다.");
+      }
+    }else{
+      final pickedFile = await picker.pickVideo(source: ImageSource.gallery);
+
+      if (pickedFile != null) {
+        getVideoThumbnail(pickedFile);
+      } else {
+        showSnackBar(context, "선택된 비디오가 없습니다.");
+      }
     }
   }
 
   getVideoThumbnail(XFile pickedFile) async {
-    if (KCastingAppData().isWeb) {
-      /*final thumbnailBytes = await ThumbnailImage(
-        videoUrl: pickedFile.path,
-      );
-
-      pickedFile.readAsBytes().then((value) {
-        final size = value.lengthInBytes;
-        final kb = size / 1024;
-        final mb = kb / 1024;
-
-        if (mb > 100) {
-          showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
-        } else {
-          _profileImgBytes = value;
-
-          requestAddActorVideoWeb(context, _profileImgBytes,
-              pickedFile.mimeType, pickedFile.name, thumbnailBytes);
-        }
-      });*/
-    } else {
       final thumbnailFileName = await VideoThumbnail.thumbnailFile(
           video: pickedFile.path,
           thumbnailPath: (await getTemporaryDirectory()).path,
@@ -896,7 +884,6 @@ class _ActorProfile extends State<ActorProfile>
       } else {
         requestAddActorVideo(context, _videoFile, thumbnailFileName);
       }
-    }
   }
 
   /*

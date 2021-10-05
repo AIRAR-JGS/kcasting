@@ -13,6 +13,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -85,7 +86,7 @@ class _AuditionApplyUploadImage extends State<AuditionApplyUploadImage>
 
       // 배우 이미지
       for (int i = 0; i < actorImage.length; i++) {
-        _myPhotos.add(new ImageListModel(false, false, null, actorImage[i]));
+        _myPhotos.add(new ImageListModel(false, false, null, actorImage[i], null, null));
       }
     } else if (KCastingAppData().myInfo[APIConstants.member_type] ==
         APIConstants.member_type_management) {
@@ -126,7 +127,7 @@ class _AuditionApplyUploadImage extends State<AuditionApplyUploadImage>
 
                 for (int i = 0; i < actorImage.length; i++) {
                   _myPhotos.add(
-                      new ImageListModel(false, false, null, actorImage[i]));
+                      new ImageListModel(false, false, null, actorImage[i], null, null));
                 }
               }
             });
@@ -137,25 +138,57 @@ class _AuditionApplyUploadImage extends State<AuditionApplyUploadImage>
   }
 
   Future getImageFromGallery() async {
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if(KCastingAppData().isWeb){
+      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
-    if (pickedFile != null) {
-      //print(pickedFile.path);
-      _imageFile = File(pickedFile.path);
+      if (pickedFile != null) {
+        pickedFile.readAsBytes().then((value) {
+          final size = value.lengthInBytes;
+          final kb = size / 1024;
+          final mb = kb / 1024;
 
-      final size = _imageFile.readAsBytesSync().lengthInBytes;
-      final kb = size / 1024;
-      final mb = kb / 1024;
+          if (mb > 100) {
+            showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
+          } else {
+            var _uploadImgBytes = value;
 
-      if (mb > 100) {
-        showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
-      } else {
-        setState(() {
-          _myPhotos.add(new ImageListModel(true, false, _imageFile, null));
+            List<String> mimeTypeArr = pickedFile.mimeType.split('/');
+            List<int> _selectedFile = _uploadImgBytes;
+
+            MultipartFile _multipartFile =  MultipartFile.fromBytes(
+                _selectedFile,
+                contentType: new MediaType(mimeTypeArr[0], mimeTypeArr[1]),
+                filename: pickedFile.name);
+
+            setState(() {
+              _myPhotos.add(new ImageListModel(true, false, _imageFile, null, _uploadImgBytes, _multipartFile));
+            });
+          }
         });
+      } else {
+        showSnackBar(context, "선택된 이미지가 없습니다.");
       }
-    } else {
-      showSnackBar(context, "선택된 이미지가 없습니다.");
+    }else{
+      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+      if (pickedFile != null) {
+        //print(pickedFile.path);
+        _imageFile = File(pickedFile.path);
+
+        final size = _imageFile.readAsBytesSync().lengthInBytes;
+        final kb = size / 1024;
+        final mb = kb / 1024;
+
+        if (mb > 100) {
+          showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
+        } else {
+          setState(() {
+            _myPhotos.add(new ImageListModel(true, false, _imageFile, null, null, null));
+          });
+        }
+      } else {
+        showSnackBar(context, "선택된 이미지가 없습니다.");
+      }
     }
   }
 
@@ -281,10 +314,7 @@ class _AuditionApplyUploadImage extends State<AuditionApplyUploadImage>
                                                 ),
                                                 onPressed: () async {
                                                   if (_kIsWeb) {
-                                                    showSnackBar(
-                                                        context,
-                                                        APIConstants
-                                                            .use_mobile_app);
+                                                    getImageFromGallery();
                                                   } else {
                                                     var status =
                                                         Platform.isAndroid
@@ -341,87 +371,171 @@ class _AuditionApplyUploadImage extends State<AuditionApplyUploadImage>
                                               itemBuilder:
                                                   (BuildContext context,
                                                       int index) {
-                                                return GestureDetector(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        _myPhotos[index]
-                                                                .isSelected =
-                                                            !_myPhotos[index]
-                                                                .isSelected;
-                                                      });
-                                                    },
-                                                    child: Stack(children: [
-                                                      Container(
-                                                        decoration: BoxDecoration(
-                                                            borderRadius:
-                                                                CustomStyles
-                                                                    .circle7BorderRadius(),
-                                                            border: Border.all(
-                                                                width: 3,
-                                                                color: (_myPhotos[
-                                                                            index]
-                                                                        .isSelected
-                                                                    ? CustomColors
-                                                                        .colorPrimary
-                                                                    : CustomColors
-                                                                        .colorFontLightGrey))),
-                                                        child: (_myPhotos !=
-                                                                    null &&
-                                                                _myPhotos.length >
-                                                                    0)
-                                                            ? ClipRRect(
-                                                                borderRadius:
-                                                                    CustomStyles
-                                                                        .circle4BorderRadius(),
-                                                                child: _myPhotos[index]
-                                                                        .isFile
-                                                                    ? Image.file(
-                                                                        _myPhotos[index]
-                                                                            .photoFile)
-                                                                    : CachedNetworkImage(
-                                                                        placeholder: (context, url) => Container(
-                                                                            alignment:
-                                                                                Alignment.center,
-                                                                            child: CircularProgressIndicator()),
-                                                                        imageUrl: _myPhotos[index].photoData[APIConstants.actor_img_url],
-                                                                        errorWidget: (context, url, error) => ClipRRect(borderRadius: CustomStyles.circle4BorderRadius())))
-                                                            : ClipRRect(borderRadius: CustomStyles.circle4BorderRadius()),
-                                                      ),
-                                                      Container(
-                                                          margin:
-                                                              EdgeInsets.all(
-                                                                  10),
-                                                          alignment: Alignment
-                                                              .topRight,
-                                                          child: InkWell(
-                                                              onTap: () {
-                                                                setState(() {
-                                                                  _myPhotos[
-                                                                          index]
-                                                                      .isSelected = !_myPhotos[
-                                                                          index]
-                                                                      .isSelected;
-                                                                });
-                                                              },
-                                                              child: Container(
-                                                                  decoration: BoxDecoration(
-                                                                      shape: BoxShape
-                                                                          .circle,
-                                                                      color: (_myPhotos[index].isSelected
+                                                    if(KCastingAppData().isWeb){
+                                                      return GestureDetector(
+                                                          onTap: () {
+                                                            setState(() {
+                                                              _myPhotos[index]
+                                                                  .isSelected =
+                                                              !_myPhotos[index]
+                                                                  .isSelected;
+                                                            });
+                                                          },
+                                                          child: Stack(children: [
+                                                            Container(
+                                                              decoration: BoxDecoration(
+                                                                  borderRadius:
+                                                                  CustomStyles
+                                                                      .circle7BorderRadius(),
+                                                                  border: Border.all(
+                                                                      width: 3,
+                                                                      color: (_myPhotos[
+                                                                      index]
+                                                                          .isSelected
                                                                           ? CustomColors
-                                                                              .colorPrimary
+                                                                          .colorPrimary
                                                                           : CustomColors
-                                                                              .colorFontLightGrey)),
-                                                                  child: Padding(
-                                                                      padding: const EdgeInsets.all(5.0),
-                                                                      child: _myPhotos[index].isSelected
-                                                                          ? Icon(
+                                                                          .colorFontLightGrey))),
+                                                              child: (_myPhotos !=
+                                                                  null &&
+                                                                  _myPhotos.length >
+                                                                      0)
+                                                                  ? ClipRRect(
+                                                                  borderRadius:
+                                                                  CustomStyles
+                                                                      .circle4BorderRadius(),
+                                                                  child: _myPhotos[index]
+                                                                      .isFile
+                                                                      ? Image.memory(
+                                                                      _myPhotos[index]
+                                                                          .bytesData)
+                                                                      : CachedNetworkImage(
+                                                                      placeholder: (context, url) => Container(
+                                                                          alignment:
+                                                                          Alignment.center,
+                                                                          child: CircularProgressIndicator()),
+                                                                      imageUrl: _myPhotos[index].photoData[APIConstants.actor_img_url],
+                                                                      errorWidget: (context, url, error) => ClipRRect(borderRadius: CustomStyles.circle4BorderRadius())))
+                                                                  : ClipRRect(borderRadius: CustomStyles.circle4BorderRadius()),
+                                                            ),
+                                                            Container(
+                                                                margin:
+                                                                EdgeInsets.all(
+                                                                    10),
+                                                                alignment: Alignment
+                                                                    .topRight,
+                                                                child: InkWell(
+                                                                    onTap: () {
+                                                                      setState(() {
+                                                                        _myPhotos[
+                                                                        index]
+                                                                            .isSelected = !_myPhotos[
+                                                                        index]
+                                                                            .isSelected;
+                                                                      });
+                                                                    },
+                                                                    child: Container(
+                                                                        decoration: BoxDecoration(
+                                                                            shape: BoxShape
+                                                                                .circle,
+                                                                            color: (_myPhotos[index].isSelected
+                                                                                ? CustomColors
+                                                                                .colorPrimary
+                                                                                : CustomColors
+                                                                                .colorFontLightGrey)),
+                                                                        child: Padding(
+                                                                            padding: const EdgeInsets.all(5.0),
+                                                                            child: _myPhotos[index].isSelected
+                                                                                ? Icon(
                                                                               Icons.check,
                                                                               size: 15.0,
                                                                               color: CustomColors.colorWhite,
                                                                             )
-                                                                          : Icon(Icons.check_box_outline_blank, size: 15.0, color: CustomColors.colorFontLightGrey)))))
-                                                    ]));
+                                                                                : Icon(Icons.check_box_outline_blank, size: 15.0, color: CustomColors.colorFontLightGrey)))))
+                                                          ]));
+
+                                                    }else{
+                                                      return GestureDetector(
+                                                          onTap: () {
+                                                            setState(() {
+                                                              _myPhotos[index]
+                                                                  .isSelected =
+                                                              !_myPhotos[index]
+                                                                  .isSelected;
+                                                            });
+                                                          },
+                                                          child: Stack(children: [
+                                                            Container(
+                                                              decoration: BoxDecoration(
+                                                                  borderRadius:
+                                                                  CustomStyles
+                                                                      .circle7BorderRadius(),
+                                                                  border: Border.all(
+                                                                      width: 3,
+                                                                      color: (_myPhotos[
+                                                                      index]
+                                                                          .isSelected
+                                                                          ? CustomColors
+                                                                          .colorPrimary
+                                                                          : CustomColors
+                                                                          .colorFontLightGrey))),
+                                                              child: (_myPhotos !=
+                                                                  null &&
+                                                                  _myPhotos.length >
+                                                                      0)
+                                                                  ? ClipRRect(
+                                                                  borderRadius:
+                                                                  CustomStyles
+                                                                      .circle4BorderRadius(),
+                                                                  child: _myPhotos[index]
+                                                                      .isFile
+                                                                      ? Image.file(
+                                                                      _myPhotos[index]
+                                                                          .photoFile)
+                                                                      : CachedNetworkImage(
+                                                                      placeholder: (context, url) => Container(
+                                                                          alignment:
+                                                                          Alignment.center,
+                                                                          child: CircularProgressIndicator()),
+                                                                      imageUrl: _myPhotos[index].photoData[APIConstants.actor_img_url],
+                                                                      errorWidget: (context, url, error) => ClipRRect(borderRadius: CustomStyles.circle4BorderRadius())))
+                                                                  : ClipRRect(borderRadius: CustomStyles.circle4BorderRadius()),
+                                                            ),
+                                                            Container(
+                                                                margin:
+                                                                EdgeInsets.all(
+                                                                    10),
+                                                                alignment: Alignment
+                                                                    .topRight,
+                                                                child: InkWell(
+                                                                    onTap: () {
+                                                                      setState(() {
+                                                                        _myPhotos[
+                                                                        index]
+                                                                            .isSelected = !_myPhotos[
+                                                                        index]
+                                                                            .isSelected;
+                                                                      });
+                                                                    },
+                                                                    child: Container(
+                                                                        decoration: BoxDecoration(
+                                                                            shape: BoxShape
+                                                                                .circle,
+                                                                            color: (_myPhotos[index].isSelected
+                                                                                ? CustomColors
+                                                                                .colorPrimary
+                                                                                : CustomColors
+                                                                                .colorFontLightGrey)),
+                                                                        child: Padding(
+                                                                            padding: const EdgeInsets.all(5.0),
+                                                                            child: _myPhotos[index].isSelected
+                                                                                ? Icon(
+                                                                              Icons.check,
+                                                                              size: 15.0,
+                                                                              color: CustomColors.colorWhite,
+                                                                            )
+                                                                                : Icon(Icons.check_box_outline_blank, size: 15.0, color: CustomColors.colorFontLightGrey)))))
+                                                          ]));}
                                               },
                                               staggeredTileBuilder:
                                                   (int index) =>
@@ -464,6 +578,7 @@ class _AuditionApplyUploadImage extends State<AuditionApplyUploadImage>
     //List<Map<String, dynamic>> imageFiles = [];
     List<Map<String, dynamic>> dbImageFiles = [];
     List<File> newImgageFiles = [];
+    List<MultipartFile> newMultipartFiles = [];
 
     for (int i = 0; i < _myPhotos.length; i++) {
       if (_myPhotos[i].isSelected) {
@@ -477,6 +592,7 @@ class _AuditionApplyUploadImage extends State<AuditionApplyUploadImage>
           imageFiles.add(fileData);*/
 
           newImgageFiles.add(_myPhotos[i].photoFile);
+          newMultipartFiles.add(_myPhotos[i].multipartFile);
         } else {
           // url 이미지 업로드
           Map<String, dynamic> fileData = new Map();
@@ -494,6 +610,7 @@ class _AuditionApplyUploadImage extends State<AuditionApplyUploadImage>
             castingSeq: _casting_seq,
             dbImgages: dbImageFiles,
             newImgages: newImgageFiles,
+            newImageMultipartFiles: newMultipartFiles,
             projectName: _projectName,
             castingName: _castingName,
             actorSeq: _actor_seq,

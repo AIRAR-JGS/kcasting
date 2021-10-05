@@ -27,6 +27,8 @@ class AuditionApplyUploadProfile extends StatefulWidget {
   final String castingName;
   final List<Map<String, dynamic>> dbImgages;
   final List<File> newImgages;
+  final List<MultipartFile> newImageMultipartFiles;
+  final List<MultipartFile> newVideoMultipartFiles;
   final List<Map<String, dynamic>> dbVideos;
   final List<File> newVideos;
   final List<File> newVideoThumbs;
@@ -40,6 +42,8 @@ class AuditionApplyUploadProfile extends StatefulWidget {
       this.castingName,
       this.dbImgages,
       this.newImgages,
+      this.newImageMultipartFiles,
+      this.newVideoMultipartFiles,
       this.dbVideos,
       this.newVideos,
       this.newVideoThumbs,
@@ -60,6 +64,8 @@ class _AuditionApplyUploadProfile extends State<AuditionApplyUploadProfile>
   String _castingName;
   List<Map<String, dynamic>> _dbImgages;
   List<File> _newImgages;
+  List<MultipartFile> _newImageMultipartFiles;
+  List<MultipartFile> _newVideoMultipartFiles;
   List<Map<String, dynamic>> _dbVideos;
   List<File> _newVideos;
   List<File> _newVideoThumbs;
@@ -95,6 +101,8 @@ class _AuditionApplyUploadProfile extends State<AuditionApplyUploadProfile>
     _castingName = widget.castingName;
     _dbImgages = widget.dbImgages;
     _newImgages = widget.newImgages;
+    _newImageMultipartFiles = widget.newImageMultipartFiles;
+    _newVideoMultipartFiles = widget.newVideoMultipartFiles;
     _dbVideos = widget.dbVideos;
     _newVideos = widget.newVideos;
     _newVideoThumbs = widget.newVideoThumbs;
@@ -595,6 +603,7 @@ class _AuditionApplyUploadProfile extends State<AuditionApplyUploadProfile>
                                                       castingName: _castingName,
                                                       dbImgages: _dbImgages,
                                                       newImgages: _newImgages,
+                                                      newImageMultipartFiles: _newImageMultipartFiles,
                                                       actorSeq: _actorSeq,
                                                       actorProfileSeq:
                                                           _actorProfileSeq));
@@ -639,102 +648,188 @@ class _AuditionApplyUploadProfile extends State<AuditionApplyUploadProfile>
   * 지원하기
   * */
   Future<void> requestAddApply(BuildContext context) async {
-    try {
-      final dio = Dio();
+    if(KCastingAppData().isWeb){
+      try {
+        final dio = Dio();
 
-      Map<String, dynamic> targetData = new Map();
+        Map<String, dynamic> targetData = new Map();
 
-      if (KCastingAppData().myInfo[APIConstants.member_type] ==
-          APIConstants.member_type_actor) {
-        targetData[APIConstants.actor_seq] =
-            KCastingAppData().myInfo[APIConstants.seq];
-      } else if (KCastingAppData().myInfo[APIConstants.member_type] ==
-          APIConstants.member_type_management) {
-        targetData[APIConstants.actor_seq] = _actorSeq;
-      }
+        if (KCastingAppData().myInfo[APIConstants.member_type] ==
+            APIConstants.member_type_actor) {
+          targetData[APIConstants.actor_seq] =
+          KCastingAppData().myInfo[APIConstants.seq];
+        } else if (KCastingAppData().myInfo[APIConstants.member_type] ==
+            APIConstants.member_type_management) {
+          targetData[APIConstants.actor_seq] = _actorSeq;
+        }
 
-      targetData[APIConstants.casting_seq] = _castingSeq;
+        targetData[APIConstants.casting_seq] = _castingSeq;
 
-      if (_dbImgages.length > 0) {
-        targetData[APIConstants.db_imgages] = _dbImgages;
-      }
+        if (_dbImgages.length > 0) {
+          targetData[APIConstants.db_imgages] = _dbImgages;
+        }
 
-      if (_dbVideos.length > 0) {
-        targetData[APIConstants.db_videos] = _dbVideos;
-      }
+        if (_dbVideos.length > 0) {
+          targetData[APIConstants.db_videos] = _dbVideos;
+        }
 
-      Map<String, dynamic> params = new Map();
-      params[APIConstants.key] = APIConstants.INS_AAA_INFO_FORMDATA;
-      params[APIConstants.target] = targetData;
+        Map<String, dynamic> params = new Map();
+        params[APIConstants.key] = APIConstants.INS_AAA_INFO_FORMDATA;
+        params[APIConstants.target] = targetData;
 
-      // 새로 등록한 이미지 추가
-      var newImageFiles = [];
-      for (int i = 0; i < _newImgages.length; i++) {
-        var temp = _newImgages[i].path.split('/');
-        String fileName = temp[temp.length - 1];
-        newImageFiles.add(await MultipartFile.fromFile(_newImgages[i].path,
-            filename: fileName));
-      }
+        // 새로 등록한 이미지 추가
+        print('_newImageMultipartFiles.length : ${_newImageMultipartFiles.length}');
+        var newImageFiles = _newImageMultipartFiles;
 
-      if (newImageFiles.length > 0) {
-        params[APIConstants.new_images] = newImageFiles;
-      }
+        print('_newImageFiles.length : ${newImageFiles.length}');
+        if (newImageFiles.length > 0) {
+          params[APIConstants.new_images] = newImageFiles;
+        }
 
-      // 새로 등록한 비디오 및 썸네일 추가
-      var newVideoFiles = [];
-      var newVideoThumbFiles = [];
-      for (int i = 0; i < _newVideos.length; i++) {
-        var temp = _newVideos[i].path.split('/');
-        String fileName = temp[temp.length - 1];
-        newVideoFiles.add(await MultipartFile.fromFile(_newVideos[i].path,
-            filename: fileName));
+        // 새로 등록한 비디오 및 썸네일 추가
+        var newVideoFiles = _newVideoMultipartFiles;
+        print("newVideoFiles : ${newVideoFiles.length}");
 
-        var tempImg = _newVideoThumbs[i].path.split('/');
-        String thumbFileName = tempImg[tempImg.length - 1];
-        newVideoThumbFiles.add(await MultipartFile.fromFile(
-            _newVideoThumbs[i].path,
-            filename: thumbFileName));
-      }
+        if (newVideoFiles.length > 0) {
+          params[APIConstants.new_videos] = newVideoFiles;
+          params[APIConstants.new_videos_thumb] = null;
+        }
 
-      if (newVideoFiles.length > 0) {
-        params[APIConstants.new_videos] = newVideoFiles;
-        params[APIConstants.new_videos_thumb] = newVideoThumbFiles;
-      }
+        print('params : $params');
 
-      // 지원하기 api 호출
-      RestClient(dio)
-          .postRequestMainControlFormData(params)
-          .then((value) async {
-        if (value == null) {
-          // 에러 - 데이터 널
-          showSnackBar(context, APIConstants.error_msg_server_not_response);
-        } else {
-          if (value[APIConstants.resultVal]) {
-            try {
-              // 지원하기 성공
-              setState(() {
-                _isUpload = false;
-              });
+        // 지원하기 api 호출
+        RestClient(dio)
+            .postRequestMainControlFormData(params)
+            .then((value) async {
+          if (value == null) {
+            // 에러 - 데이터 널
+            showSnackBar(context, APIConstants.error_msg_server_not_response);
+          } else {
+            if (value[APIConstants.resultVal]) {
+              try {
+                // 지원하기 성공
+                setState(() {
+                  _isUpload = false;
+                });
 
-              if (KCastingAppData().myInfo[APIConstants.member_type] ==
-                  APIConstants.member_type_actor) {
-                replaceView(context, AuditionApplyComplete());
-              } else if (KCastingAppData().myInfo[APIConstants.member_type] ==
-                  APIConstants.member_type_management) {
-                replaceView(
-                    context, AuditionApplyComplete(actorSeq: _actorSeq));
+                if (KCastingAppData().myInfo[APIConstants.member_type] ==
+                    APIConstants.member_type_actor) {
+                  replaceView(context, AuditionApplyComplete());
+                } else if (KCastingAppData().myInfo[APIConstants.member_type] ==
+                    APIConstants.member_type_management) {
+                  replaceView(
+                      context, AuditionApplyComplete(actorSeq: _actorSeq));
+                }
+              } catch (e) {
+                showSnackBar(context, APIConstants.error_msg_try_again);
               }
-            } catch (e) {
+            } else {
+              // 지원하기 실패
               showSnackBar(context, APIConstants.error_msg_try_again);
             }
-          } else {
-            // 지원하기 실패
-            showSnackBar(context, APIConstants.error_msg_try_again);
           }
+        });
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {}
+    }else{
+      try {
+        final dio = Dio();
+
+        Map<String, dynamic> targetData = new Map();
+
+        if (KCastingAppData().myInfo[APIConstants.member_type] ==
+            APIConstants.member_type_actor) {
+          targetData[APIConstants.actor_seq] =
+          KCastingAppData().myInfo[APIConstants.seq];
+        } else if (KCastingAppData().myInfo[APIConstants.member_type] ==
+            APIConstants.member_type_management) {
+          targetData[APIConstants.actor_seq] = _actorSeq;
         }
-      });
-    } catch (e) {
-      showSnackBar(context, APIConstants.error_msg_try_again);
-    } finally {}
+
+        targetData[APIConstants.casting_seq] = _castingSeq;
+
+        if (_dbImgages.length > 0) {
+          targetData[APIConstants.db_imgages] = _dbImgages;
+        }
+
+        if (_dbVideos.length > 0) {
+          targetData[APIConstants.db_videos] = _dbVideos;
+        }
+
+        Map<String, dynamic> params = new Map();
+        params[APIConstants.key] = APIConstants.INS_AAA_INFO_FORMDATA;
+        params[APIConstants.target] = targetData;
+
+        // 새로 등록한 이미지 추가
+        var newImageFiles = [];
+        for (int i = 0; i < _newImgages.length; i++) {
+          var temp = _newImgages[i].path.split('/');
+          String fileName = temp[temp.length - 1];
+          newImageFiles.add(await MultipartFile.fromFile(_newImgages[i].path,
+              filename: fileName));
+        }
+
+        if (newImageFiles.length > 0) {
+          params[APIConstants.new_images] = newImageFiles;
+        }
+
+        // 새로 등록한 비디오 및 썸네일 추가
+        var newVideoFiles = [];
+        var newVideoThumbFiles = [];
+        for (int i = 0; i < _newVideos.length; i++) {
+          var temp = _newVideos[i].path.split('/');
+          String fileName = temp[temp.length - 1];
+          newVideoFiles.add(await MultipartFile.fromFile(_newVideos[i].path,
+              filename: fileName));
+
+          var tempImg = _newVideoThumbs[i].path.split('/');
+          String thumbFileName = tempImg[tempImg.length - 1];
+          newVideoThumbFiles.add(await MultipartFile.fromFile(
+              _newVideoThumbs[i].path,
+              filename: thumbFileName));
+        }
+
+        if (newVideoFiles.length > 0) {
+          params[APIConstants.new_videos] = newVideoFiles;
+          params[APIConstants.new_videos_thumb] = newVideoThumbFiles;
+        }
+
+        // 지원하기 api 호출
+        RestClient(dio)
+            .postRequestMainControlFormData(params)
+            .then((value) async {
+          if (value == null) {
+            // 에러 - 데이터 널
+            showSnackBar(context, APIConstants.error_msg_server_not_response);
+          } else {
+            if (value[APIConstants.resultVal]) {
+              try {
+                // 지원하기 성공
+                setState(() {
+                  _isUpload = false;
+                });
+
+                if (KCastingAppData().myInfo[APIConstants.member_type] ==
+                    APIConstants.member_type_actor) {
+                  replaceView(context, AuditionApplyComplete());
+                } else if (KCastingAppData().myInfo[APIConstants.member_type] ==
+                    APIConstants.member_type_management) {
+                  replaceView(
+                      context, AuditionApplyComplete(actorSeq: _actorSeq));
+                }
+              } catch (e) {
+                showSnackBar(context, APIConstants.error_msg_try_again);
+              }
+            } else {
+              // 지원하기 실패
+              showSnackBar(context, APIConstants.error_msg_try_again);
+            }
+          }
+        });
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {}
+    }
   }
 }

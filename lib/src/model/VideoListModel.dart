@@ -2,15 +2,19 @@ import 'dart:io';
 
 import 'dart:typed_data';
 
+import 'package:dio/dio.dart';
+
 class VideoListModel {
   bool _isFile;
   bool _isSelected = false;
   File _videoFile;
   File _thumbnailFile;
   Map<String, dynamic> _videoData;
+  MultipartFile _multipartFile;
+  String _thumbnailUrl;
 
   VideoListModel(this._isFile, this._isSelected, this._videoFile,
-      this._thumbnailFile, this._videoData);
+      this._thumbnailFile, this._videoData,this._multipartFile, this._thumbnailUrl);
 
   Map<String, dynamic> get videoData => _videoData;
 
@@ -40,5 +44,17 @@ class VideoListModel {
 
   set isFile(bool value) {
     _isFile = value;
+  }
+
+  String get thumbnailUrl => _thumbnailUrl;
+
+  set thumbnailUrl(String value) {
+    _thumbnailUrl = value;
+  }
+
+  MultipartFile get multipartFile => _multipartFile;
+
+  set multipartFile(MultipartFile value) {
+    _multipartFile = value;
   }
 }

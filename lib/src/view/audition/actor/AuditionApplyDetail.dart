@@ -13,6 +13,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/widgets.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -175,14 +176,40 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
 
   // 갤러리에서 비디오 가져오기
   Future getVideoFromGallery() async {
-    final pickedFile = await picker.pickVideo(source: ImageSource.gallery);
+    if(KCastingAppData().isWeb){
+      Navigator.pop(context);
+      final pickedFile = await picker.pickVideo(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        pickedFile.readAsBytes().then((value){
+          List<String> mimeTypeArr = pickedFile.mimeType.split('/');
+          List<int> _selectedFile = value;
 
-    if (pickedFile != null) {
-      //print(pickedFile.path);
+          MultipartFile _multipartFile =  MultipartFile.fromBytes(
+              _selectedFile,
+              contentType: new MediaType(mimeTypeArr[0], mimeTypeArr[1]),
+              filename: pickedFile.name);
 
-      getVideoThumbnail(pickedFile.path);
-    } else {
-      showSnackBar(context, "선택된 이미지가 없습니다.");
+          final size = value.lengthInBytes;
+          final kb = size / 1024;
+          final mb = kb / 1024;
+
+          if (mb > 100) {
+            showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
+          } else {
+            requestAddActorVideoWeb(context, _multipartFile);
+          }
+        });
+      } else {
+        showSnackBar(context, "선택된 비디오가 없습니다.");
+      }
+    }else{
+      final pickedFile = await picker.pickVideo(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        //print(pickedFile.path);
+        getVideoThumbnail(pickedFile.path);
+      } else {
+        showSnackBar(context, "선택된 비디오가 없습니다.");
+      }
     }
   }
 
@@ -207,6 +234,58 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
   /*
   * 배우 비디오 추가
   * */
+
+  Future<void> requestAddActorVideoWeb(
+      BuildContext context, MultipartFile multipartFile) async {
+    setState(() {
+      _isUpload = true;
+    });
+
+    try {
+      // 배우 비디오 추가 api 호출 시 보낼 파라미터
+      Map<String, dynamic> targetData = new Map();
+      targetData[APIConstants.secondAuditionTarget_seq] =
+      _auditionState[APIConstants.secondAuditionTarget_seq];
+
+      Map<String, dynamic> params = new Map();
+      params[APIConstants.key] = APIConstants.UPD_FAT_SUBMITVIDEO;
+      params[APIConstants.target] = targetData;
+
+      var files = [];
+      files.add(multipartFile);
+
+      params[APIConstants.target_video] = files;
+
+      // 배우 비디오 추가 api 호출
+      RestClient(Dio())
+          .postRequestMainControlFormData(params)
+          .then((value) async {
+        if (value == null) {
+          // 에러 - 데이터 널
+          showSnackBar(context, '다시 시도해 주세요.');
+        } else {
+          if (value[APIConstants.resultVal]) {
+            // 배우 비디오 추가 성공
+            setState(() {
+              _isUpload = false;
+              showSnackBar(context, "비디오 제출 완료!");
+
+              requestMyApplyDetailApi(context);
+            });
+          } else {
+            // 배우 비디오 추가 실패
+            showSnackBar(context, value[APIConstants.resultMsg]);
+          }
+        }
+      });
+    } catch (e) {
+      showSnackBar(context, APIConstants.error_msg_try_again);
+      setState(() {
+        _isUpload = false;
+      });
+    }
+  }
+
   Future<void> requestAddActorVideo(
       BuildContext context, File videoFile, String thumbFilePath) async {
     setState(() {
@@ -826,31 +905,35 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
                             textAlign: TextAlign.center,
                           ),
                           onTap: () async {
-                            var status = Platform.isAndroid
-                                ? await Permission.storage.request()
-                                : await Permission.photos.request();
-                            if (status.isGranted) {
+                            if(KCastingAppData().isWeb){
                               getVideoFromGallery();
-                              Navigator.pop(context);
-                            } else {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) =>
-                                      CupertinoAlertDialog(
-                                          title: Text('저장공간 접근권한'),
-                                          content: Text(
-                                              '사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
-                                          actions: <Widget>[
-                                            CupertinoDialogAction(
-                                              child: Text('거부'),
-                                              onPressed: () =>
-                                                  Navigator.of(context).pop(),
-                                            ),
-                                            CupertinoDialogAction(
-                                                child: Text('허용'),
+                            }else{
+                              var status = Platform.isAndroid
+                                  ? await Permission.storage.request()
+                                  : await Permission.photos.request();
+                              if (status.isGranted) {
+                                getVideoFromGallery();
+                                Navigator.pop(context);
+                              } else {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        CupertinoAlertDialog(
+                                            title: Text('저장공간 접근권한'),
+                                            content: Text(
+                                                '사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
+                                            actions: <Widget>[
+                                              CupertinoDialogAction(
+                                                child: Text('거부'),
                                                 onPressed: () =>
-                                                    openAppSettings())
-                                          ]));
+                                                    Navigator.of(context).pop(),
+                                              ),
+                                              CupertinoDialogAction(
+                                                  child: Text('허용'),
+                                                  onPressed: () =>
+                                                      openAppSettings())
+                                            ]));
+                              }
                             }
                           }),
                       Divider(),

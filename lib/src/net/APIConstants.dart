@@ -51,8 +51,9 @@ class APIConstants {
   static const String SAR_APR_INFO = "SAR_APR_INFO";                              // 배우 이미지 등록
   static const String INS_AIM_LIST_FORMDATA = "INS_AIM_LIST_FormData";            // 배우 이미지 등록
   static const String DEA_AIM_LIST = "DEA_AIM_LIST";                              // 배우 이미지 일괄 삭제
-  static const String INS_AVD_LIST_FORMDATA = "INS_AVD_LIST_FormData";            // 배우 비디오 등록
   static const String DEA_AVD_LIST = "DEA_AVD_LIST";                              // 배우 비디오 일괄 삭제
+  static const String INS_AVD_LIST_FORMDATA = "INS_AVD_LIST_FormData";            // 배우 비디오 등록
+  static const String SEL_TOT_VIDEOTHUMBNAIL = "SEL_TOT_VIDEOTHUMBNAIL";          // 배우 오디션 비디오 등록 썸네일
   static const String INS_AAA_INFO_FORMDATA = "INS_AAA_INFO_FormData";            // 배우 오디션 지원
   static const String DEL_AAA_INFO = "DEL_AAA_INFO";                              // 배우 오디션 지원 취소
   static const String SAR_AAP_INFO = "SAR_AAP_INFO";                              // 배우 오디션 제출 프로필 조회

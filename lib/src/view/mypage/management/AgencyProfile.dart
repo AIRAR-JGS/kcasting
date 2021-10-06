@@ -12,6 +12,7 @@ import 'package:casting_call/src/util/StringUtils.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -56,24 +57,21 @@ class _AgencyProfile extends State<AgencyProfile>
   /*
   * 매니지먼트 로고 이미지 수정
   * */
-  void requestUpdateAgencyProfile(
-      BuildContext context, File profileFile) async {
+  void requestUpdateAgencyProfileWeb(
+      BuildContext context, MultipartFile multipartFile) async {
     setState(() {
       _isUpload = true;
     });
 
     Map<String, dynamic> targetDatas = new Map();
     targetDatas[APIConstants.seq] =
-        KCastingAppData().myInfo[APIConstants.management_seq];
+    KCastingAppData().myInfo[APIConstants.management_seq];
 
     Map<String, dynamic> params = new Map();
     params[APIConstants.key] = APIConstants.UDF_MGM_LOGO_FORMDATA;
     params[APIConstants.target] = targetDatas;
 
-    var temp = profileFile.path.split('/');
-    String fileName = temp[temp.length - 1];
-    params[APIConstants.target_files_array] =
-        await MultipartFile.fromFile(profileFile.path, filename: fileName);
+    params[APIConstants.target_files_array] = multipartFile;
 
     // 매니지먼트 로고 이미지 수정 api 호출
     RestClient(Dio())
@@ -97,8 +95,69 @@ class _AgencyProfile extends State<AgencyProfile>
                 if (newProfileData[APIConstants.management_logo_img_url] !=
                     null) {
                   KCastingAppData()
-                          .myInfo[APIConstants.management_logo_img_url] =
-                      newProfileData[APIConstants.management_logo_img_url];
+                      .myInfo[APIConstants.management_logo_img_url] =
+                  newProfileData[APIConstants.management_logo_img_url];
+                }
+              }
+            });
+          } else {
+            // 매니지먼트 로고 이미지 수정 실패
+            showSnackBar(context, APIConstants.error_msg_try_again);
+          }
+        }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {
+        setState(() {
+          _isUpload = false;
+        });
+      }
+    });
+  }
+
+  void requestUpdateAgencyProfile(
+      BuildContext context, File profileFile) async {
+    setState(() {
+      _isUpload = true;
+    });
+
+    Map<String, dynamic> targetDatas = new Map();
+    targetDatas[APIConstants.seq] =
+    KCastingAppData().myInfo[APIConstants.management_seq];
+
+    Map<String, dynamic> params = new Map();
+    params[APIConstants.key] = APIConstants.UDF_MGM_LOGO_FORMDATA;
+    params[APIConstants.target] = targetDatas;
+
+    var temp = profileFile.path.split('/');
+    String fileName = temp[temp.length - 1];
+    params[APIConstants.target_files_array] =
+    await MultipartFile.fromFile(profileFile.path, filename: fileName);
+
+    // 매니지먼트 로고 이미지 수정 api 호출
+    RestClient(Dio())
+        .postRequestMainControlFormData(params)
+        .then((value) async {
+      try {
+        if (value == null) {
+          // 에러 - 데이터 널
+          showSnackBar(context, APIConstants.error_msg_server_not_response);
+        } else {
+          if (value[APIConstants.resultVal]) {
+            // 매니지먼트 로고 이미지 수정 성공
+            var _responseData = value[APIConstants.data];
+            var _responseList = _responseData[APIConstants.list] as List;
+
+            setState(() {
+              // 수정된 회원정보 전역변수에 저장
+              if (_responseList.length > 0) {
+                var newProfileData = _responseList[0];
+
+                if (newProfileData[APIConstants.management_logo_img_url] !=
+                    null) {
+                  KCastingAppData()
+                      .myInfo[APIConstants.management_logo_img_url] =
+                  newProfileData[APIConstants.management_logo_img_url];
                 }
               }
             });
@@ -119,8 +178,32 @@ class _AgencyProfile extends State<AgencyProfile>
 
   // 갤러리에서 이미지 가져오기
   Future getImageFromGallery() async {
-    if (_kIsWeb) {
-      showSnackBar(context, APIConstants.use_mobile_app);
+    if (KCastingAppData().isWeb) {
+      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+      if(pickedFile != null){
+        pickedFile.readAsBytes().then((value) {
+          final size = value.lengthInBytes;
+          final kb = size / 1024;
+          final mb = kb / 1024;
+
+          List<String> mimeTypeArr = pickedFile.mimeType.split('/');
+          List<int> _selectedFile = value;
+
+          MultipartFile _multipartFile =  MultipartFile.fromBytes(
+              _selectedFile,
+              contentType: new MediaType(mimeTypeArr[0], mimeTypeArr[1]),
+              filename: pickedFile.name);
+
+          if (mb > 100) {
+            showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
+          } else {
+            requestUpdateAgencyProfileWeb(context, _multipartFile);
+          }
+        });
+      }else{
+        showSnackBar(context, "선택된 이미지가 없습니다.");
+      }
+
     } else {
       final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
@@ -190,9 +273,8 @@ class _AgencyProfile extends State<AgencyProfile>
                                   margin: EdgeInsets.only(top: 30, bottom: 15),
                                   child: GestureDetector(
                                       onTap: () async {
-                                        if (_kIsWeb) {
-                                          showSnackBar(context,
-                                              APIConstants.use_mobile_app);
+                                        if (KCastingAppData().isWeb) {
+                                          getImageFromGallery();
                                         } else {
                                           var status = Platform.isAndroid
                                               ? await Permission.storage

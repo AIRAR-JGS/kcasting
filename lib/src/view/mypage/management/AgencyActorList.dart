@@ -614,19 +614,12 @@ class _AgencyActorList extends State<AgencyActorList>
                                                                                                 1),
                                                                                           )
                                                                                         ]),
-                                                                                    width: (MediaQuery
-                                                                                        .of(
-                                                                                        context)
-                                                                                        .size
-                                                                                        .width /
-                                                                                        2),
-                                                                                    height: (MediaQuery
-                                                                                        .of(
-                                                                                        context)
-                                                                                        .size
-                                                                                        .width /
-                                                                                        2) *
-                                                                                        1.2,
+                                                                                    width: (KCastingAppData().isWeb)
+                                                                                        ? (CustomStyles.appWidth / 2)
+                                                                                        : (MediaQuery.of(context).size.width / 2),
+                                                                                    height: (KCastingAppData().isWeb)
+                                                                                        ? ((CustomStyles.appWidth / 2) * 1.2)
+                                                                                        : ((MediaQuery.of(context).size.width / 2) * 1.2),
                                                                                     child: _data[APIConstants
                                                                                         .main_img_url] !=
                                                                                         null
@@ -764,19 +757,12 @@ class _AgencyActorList extends State<AgencyActorList>
                                                                                           1),
                                                                                     )
                                                                                   ]),
-                                                                              width: (MediaQuery
-                                                                                  .of(
-                                                                                  context)
-                                                                                  .size
-                                                                                  .width /
-                                                                                  2),
-                                                                              height: (MediaQuery
-                                                                                  .of(
-                                                                                  context)
-                                                                                  .size
-                                                                                  .width /
-                                                                                  2) *
-                                                                                  1.2,
+                                                                              width: (KCastingAppData().isWeb)
+                                                                                  ? (CustomStyles.appWidth / 2)
+                                                                                  : (MediaQuery.of(context).size.width / 2),
+                                                                              height: (KCastingAppData().isWeb)
+                                                                                  ? ((CustomStyles.appWidth / 2) * 1.2)
+                                                                                  : ((MediaQuery.of(context).size.width / 2) * 1.2),
                                                                               child: _data[APIConstants
                                                                                   .main_img_url] !=
                                                                                   null

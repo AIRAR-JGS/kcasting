@@ -1200,7 +1200,16 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
                                                                         '추가',
                                                                         () async {
                                                                           if(KCastingAppData().isWeb){
-                                                                            getImageFromGallery(1);
+                                                                            if (_actorImage
+                                                                                .length ==
+                                                                                8) {
+                                                                              showSnackBar(
+                                                                                  context,
+                                                                                  '이미지는 최대 8장까지 등록하실 수 있습니다.');
+                                                                            } else {
+                                                                              getImageFromGallery(
+                                                                                  1);
+                                                                            }
                                                                           }else{
                                                                             var status = Platform.isAndroid
                                                                                 ? await Permission
@@ -1358,7 +1367,13 @@ class _AgencyActorProfile extends State<AgencyActorProfile>
                                                                           '추가',
                                                                           () async {
                                                                             if(KCastingAppData().isWeb){
-                                                                              getVideoFromGallery();
+                                                                              if (_actorVideo.length ==
+                                                                                  2) {
+                                                                                showSnackBar(context,
+                                                                                    "비디오는 최대 2개까지 등록하실 수 있습니다.");
+                                                                              } else {
+                                                                                getVideoFromGallery();
+                                                                              }
                                                                             }else{
                                                                               var status = Platform.isAndroid
                                                                                   ? await Permission.storage.request()

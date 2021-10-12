@@ -1155,8 +1155,16 @@ class _ActorProfile extends State<ActorProfile>
                                                                 }
                                                                 //
                                                               } else {
-                                                                getImageFromGallery(
-                                                                    1);
+                                                                if (_myPhotos
+                                                                    .length ==
+                                                                    8) {
+                                                                  showSnackBar(
+                                                                      context,
+                                                                      '이미지는 최대 8장까지 등록하실 수 있습니다.');
+                                                                } else {
+                                                                  getImageFromGallery(
+                                                                      1);
+                                                                }
                                                               }
                                                             })),
                                                         Container(width: 20),
@@ -1302,7 +1310,15 @@ class _ActorProfile extends State<ActorProfile>
                                                                             ]));
                                                                   }
                                                                 } else {
-                                                                  getVideoFromGallery();
+                                                                  if (_myVideos
+                                                                      .length ==
+                                                                      2) {
+                                                                    showSnackBar(
+                                                                        context,
+                                                                        "비디오는 최대 2개까지 등록하실 수 있습니다.");
+                                                                  } else {
+                                                                    getVideoFromGallery();
+                                                                  }
                                                                 }
                                                               })),
                                                           Container(width: 20),

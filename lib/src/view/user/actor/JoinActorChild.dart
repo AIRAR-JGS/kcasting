@@ -16,6 +16,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:pointycastle/asymmetric/api.dart';
 
 import '../../../../KCastingAppData.dart';
+import 'JoinActorChildParentAgree.dart';
 
 /*
 * 14세 미만 배우 회원가입
@@ -23,8 +24,14 @@ import '../../../../KCastingAppData.dart';
 class JoinActorChild extends StatefulWidget {
   final Map<String, dynamic> targetData;
   final File scriptFile;
+  final MultipartFile multipartFile;
 
-  const JoinActorChild({Key key, this.targetData, this.scriptFile})
+  final String authName;
+  final String authPhone;
+  final String authBirth;
+  final String authGender;
+
+  const JoinActorChild({Key key, this.targetData, this.scriptFile, this.multipartFile, this.authName, this.authPhone, this.authGender, this.authBirth})
       : super(key: key);
 
   @override
@@ -38,6 +45,7 @@ class _JoinActorChild extends State<JoinActorChild> with BaseUtilMixin {
 
   Map<String, dynamic> _targetData;
   File _scriptFile;
+  MultipartFile _multipartFile;
 
   final _txtFieldID = TextEditingController();
   final _txtFieldPW = TextEditingController();
@@ -51,12 +59,23 @@ class _JoinActorChild extends State<JoinActorChild> with BaseUtilMixin {
   int _agreePrivacyPolicy = 0;
   String _birthDate = '2000-01-01';
 
+  String _authName;
+  String _authPhone;
+  String _authBirth;
+  String _authGender;
+
   @override
   void initState() {
     super.initState();
 
     _targetData = widget.targetData;
     _scriptFile = widget.scriptFile;
+    _multipartFile = widget.multipartFile;
+
+    _authName = widget.authName;
+    _authPhone = widget.authPhone;
+    _authBirth = widget.authBirth;
+    _authGender = widget.authGender;
   }
 
   /*
@@ -681,10 +700,14 @@ class _JoinActorChild extends State<JoinActorChild> with BaseUtilMixin {
     params[APIConstants.key] = APIConstants.INS_ACT_CHILDJOIN;
     params[APIConstants.target] = _targetData;
 
-    var temp = _scriptFile.path.split('/');
-    String fileName = temp[temp.length - 1];
-    params[APIConstants.guardian_file] =
-        await MultipartFile.fromFile(_scriptFile.path, filename: fileName);
+    if(KCastingAppData().isWeb){
+      params[APIConstants.guardian_file] = _multipartFile;
+    }else{
+      var temp = _scriptFile.path.split('/');
+      String fileName = temp[temp.length - 1];
+      params[APIConstants.guardian_file] =
+      await MultipartFile.fromFile(_scriptFile.path, filename: fileName);
+    }
 
     // 회원가입 api 호출
     RestClient(Dio())
@@ -716,6 +739,16 @@ class _JoinActorChild extends State<JoinActorChild> with BaseUtilMixin {
               default:
                 showSnackBar(context, APIConstants.error_msg_join_fail);
                 break;
+            }
+
+            if(KCastingAppData().isWeb){
+              replaceView(
+                  context,
+                  JoinActorChildParentAgree(
+                      authName: _authName,
+                      authPhone: _authPhone,
+                      authBirth: _authBirth,
+                      authGender: _authGender));
             }
           }
         }

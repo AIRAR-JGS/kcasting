@@ -1,6 +1,6 @@
-# casting_call
+# K-Casting
 
-엔터로뱅 캐스팅콜 배우, 제작사 앱
+비대면 시대의 배우 캐스팅, K-CASTING이 만들어갑니다!
 
 ## Getting Started
 

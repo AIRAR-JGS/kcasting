@@ -8,6 +8,7 @@ import 'package:casting_call/src/view/user/actor/JoinActorChildParentAgree.dart'
 import 'package:casting_call/src/view/user/common/AuthWebView.dart';
 import 'package:casting_call/src/view/user/common/JoinSelectType.dart';
 import 'package:flutter/material.dart';
+import 'package:webviewx/webviewx.dart' as webViewX;
 
 import '../../../../KCastingAppData.dart';
 
@@ -51,6 +52,14 @@ class _SelfAuth extends State<SelfAuth> with BaseUtilMixin {
 
   String _title = '';
   String _msg = '';
+  String _retVal = '';
+
+  webViewX.WebViewXController webViewController;
+
+  void dispose() {
+    webViewController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -204,8 +213,35 @@ class _SelfAuth extends State<SelfAuth> with BaseUtilMixin {
                                         }
 
                                         if (isWeb) {
-                                          showSnackBar(context,
-                                              APIConstants.use_mobile_app);
+                                          showDialog(context: context,
+                                              barrierDismissible: false,
+                                              builder: (BuildContext _context){
+                                            return AlertDialog(
+
+                                              title: Text('본인인증'),
+                                              content: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Container(
+                                                    margin : EdgeInsets.only( bottom: 20),
+                                                    child: Icon(Icons.lock, color: Colors.grey,size: 90,),
+                                                  ),
+                                                  Container(
+                                                    alignment: Alignment.center,
+                                                    width: 400,
+                                                    margin : EdgeInsets.only(bottom: 20),
+                                                    child: Text('휴대폰 본인 인증을 마치고 완료 버튼을 눌러주세요.'),
+                                                  ),
+                                                  _buildWebViewX(),
+                                                  CustomStyles
+                                                      .lightGreyBGSquareButtonStyle('본인인증 완료', () {
+                                                    _callPlatformIndependentJsMethod();
+                                                    returnToJoinPageWeb(_retVal, _context);
+                                                  })
+                                                ],
+                                              ),
+                                            );
+                                          });
                                         } else {
                                           replaceView(
                                               context,
@@ -249,5 +285,103 @@ class _SelfAuth extends State<SelfAuth> with BaseUtilMixin {
                                 visible: _isUpload)
                           ]);
                         }))))));
+  }
+
+  Future<void> _callPlatformIndependentJsMethod() async {
+    try {
+      await webViewController.callJsMethod('platformSpecificMethod', []);
+    } catch (e) {
+        print(e);
+    }
+  }
+
+  Future<void> _callPlatformIndependentJsMethodCloseWindow() async {
+    try {
+      await webViewController.callJsMethod('closeWin', []);
+    } catch (e) {
+        print(e);
+    }
+  }
+
+  Widget _buildWebViewX() {
+    final initialContent =
+        '<html>'
+        '<script>'
+        'var openWin;'
+        'openWin = window.open("https://k-casting.com/nice/checkplusSafe/checkplus_main.php", "popupChk", "width=500, height=550, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, scrollbar=no, left = 200, top = 200");'
+
+        'var dataaa = "null";'
+        'function resultSuccess(data){ console.log(data); dataaa = data; }'
+        '</script>'
+        '</html>';
+
+    return webViewX.WebViewX(
+      key: const ValueKey('webviewx'),
+      initialContent: initialContent,
+      initialSourceType: webViewX.SourceType.html,
+      height: 10,
+      width: 10,
+      onWebViewCreated: (controller) => webViewController = controller,
+      jsContent: const {
+        webViewX.EmbeddedJsContent(
+            js: "function platformSpecificMethod() { dartCallback(dataaa) }"
+        ),
+        webViewX.EmbeddedJsContent(
+            js: "function closeWin() { openWin.close(); }"
+        ),
+      },
+      dartCallBacks: {
+        webViewX.DartCallback(
+          name: 'dartCallback',
+          callBack: (msg){
+            _retVal = msg;
+          },
+        )
+      },
+      webSpecificParams: const webViewX.WebSpecificParams(
+        printDebugInfo: true,
+      ),
+      mobileSpecificParams: const webViewX.MobileSpecificParams(
+        androidEnableHybridComposition: true,
+      ),
+      navigationDelegate: (navigation) {
+        debugPrint(navigation.content.sourceType.toString());
+        return webViewX.NavigationDecision.navigate;
+      },
+    );
+  }
+
+  void returnToJoinPageWeb(String result, BuildContext _context) {
+    if(result != 'null'){
+      List<String> resArr = result.split('|');
+      // print('In returnToJoinPage, result is $resArr');
+
+      String authRes = resArr[0];
+      String authName = resArr[1];
+      String authPhone = resArr[2];
+      String authBirth = resArr[3];
+      String authGender = resArr[4];
+
+      if(resArr[0] == 'TRUE'){
+        replaceView(
+            context,
+            SelfAuth(
+                authRes: authRes,
+                authName: authName,
+                authPhone: authPhone,
+                authBirth: authBirth,
+                authGender: authGender,
+                memberType: _memberType));
+      }else{
+        showSnackBar(context, '본인 인증을 다시 시도해주세요');
+        _callPlatformIndependentJsMethodCloseWindow();
+        Navigator.pop(_context);
+
+      }
+    }else{
+      showSnackBar(context, '본인 인증을 다시 시도해주세요');
+      _callPlatformIndependentJsMethodCloseWindow();
+      Navigator.pop(_context);
+    }
   }
 }

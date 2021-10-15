@@ -2177,6 +2177,8 @@ class _RegisteredAuditionDetail extends State<RegisteredAuditionDetail>
     targetData[APIConstants.final_pay] =
         StringUtils.trimmedString(_txtFieldPay.text);
 
+    print('requestSavePay ################## ${StringUtils.trimmedString(_txtFieldPay.text)}');
+
     Map<String, dynamic> params = new Map();
     params[APIConstants.key] = APIConstants.UPD_TAT_PAY;
     params[APIConstants.target] = targetData;

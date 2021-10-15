@@ -1,11 +1,11 @@
 {
-    "name": "casting_call",
-    "short_name": "casting_call",
+    "name": "k-casting",
+    "short_name": "k-casting",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "엔터로뱅 캐스팅콜 배우, 제작사 앱",
+    "description": "비대면 시대의 배우 캐스팅, K-CASTING이 만들어갑니다!",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

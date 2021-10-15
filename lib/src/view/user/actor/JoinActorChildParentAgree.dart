@@ -1,14 +1,18 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:casting_call/BaseWidget.dart';
 import 'package:casting_call/res/CustomColors.dart';
 import 'package:casting_call/res/CustomStyles.dart';
 import 'package:casting_call/src/net/APIConstants.dart';
 import 'package:casting_call/src/view/user/actor/JoinActorSelectType.dart';
+import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_document_picker/flutter_document_picker.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -48,6 +52,8 @@ class _JoinActorChildParentAgree extends State<JoinActorChildParentAgree>
   int _agreePrivacyPolicy = 0;
 
   File _scriptFile;
+  MultipartFile _pickedMultipartFile;
+
   final picker = ImagePicker();
 
   @override
@@ -74,49 +80,44 @@ class _JoinActorChildParentAgree extends State<JoinActorChildParentAgree>
 
   // 갤러리에서 이미지 가져오기
   Future getImageFromGallery() async {
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if(KCastingAppData().isWeb){
+      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
-    if (pickedFile != null) {
-      File file = File(pickedFile.path);
+      if (pickedFile != null) {
+        pickedFile.readAsBytes().then((value) {
+          final size = value.lengthInBytes;
+          final kb = size / 1024;
+          final mb = kb / 1024;
 
-      final size = file.readAsBytesSync().lengthInBytes;
-      final kb = size / 1024;
-      final mb = kb / 1024;
+          if (mb > 100) {
+            showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
+          } else {
+            var _uploadImgBytes = value;
 
-      if (mb > 100) {
-        showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
-      } else {
-        setState(() {
-          _scriptFile = file;
+            List<String> mimeTypeArr = pickedFile.mimeType.split('/');
+            List<int> _selectedFile = _uploadImgBytes;
+
+            print('mimeTypeArr[0], [1] : ${mimeTypeArr[0]}, ${mimeTypeArr[1]}');
+            MultipartFile _multipartFile =  MultipartFile.fromBytes(
+                _selectedFile,
+                contentType: new MediaType(mimeTypeArr[0], mimeTypeArr[1]),
+                filename: pickedFile.name);
+
+            print("_multipartFile : ${_multipartFile.filename}");
+
+            setState(() {
+              _pickedMultipartFile = _multipartFile;
+            });
+          }
         });
+      } else {
+        showSnackBar(context, "선택된 이미지가 없습니다.");
       }
-    } else {
-      showSnackBar(context, "선택된 이미지가 없습니다.");
-    }
-  }
+    }else{
+      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
-  _pickDocument() async {
-    String result;
-    try {
-      FlutterDocumentPickerParams params = FlutterDocumentPickerParams(
-        allowedFileExtensions: ['doc', 'pdf', 'docx'],
-        allowedUtiTypes: [
-          'com.adobe.pdf',
-          'com.microsoft.word.doc',
-          'org.openxmlformats.wordprocessingml.document'
-        ],
-        allowedMimeTypes: [
-          'application/pdf',
-          'application/msword',
-          'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-        ],
-        invalidFileNameSymbols: ['/'],
-      );
-
-      result = await FlutterDocumentPicker.openDocument(params: params);
-
-      if (result != null) {
-        File file = File(result);
+      if (pickedFile != null) {
+        File file = File(pickedFile.path);
 
         final size = file.readAsBytesSync().lengthInBytes;
         final kb = size / 1024;
@@ -130,11 +131,83 @@ class _JoinActorChildParentAgree extends State<JoinActorChildParentAgree>
           });
         }
       } else {
-        showSnackBar(context, "선택된 파일이 없습니다.");
+        showSnackBar(context, "선택된 이미지가 없습니다.");
       }
-    } catch (e) {
-      showSnackBar(context, APIConstants.error_msg_try_again);
-    } finally {}
+    }
+  }
+
+  _pickDocument() async {
+    if(KCastingAppData().isWeb){
+      try {
+        // final pickedFile = await FilePickerWeb.platform.pickFiles(
+        final pickedFile = await FilePicker.platform.pickFiles(
+            type: FileType.custom,
+            allowedExtensions: [
+              'doc',
+              'pdf',
+              'docx'
+            ]
+        );
+        if(pickedFile != null){
+          print('pickFile.names : ${pickedFile.names}');
+          Uint8List bytes = pickedFile.files.single.bytes;
+
+          MultipartFile _multipartFile =  MultipartFile.fromBytes(
+              bytes,
+              filename: pickedFile.files.first.name);
+
+          print('multipartFile : ${_multipartFile.filename}');
+
+          setState(() {
+            _pickedMultipartFile = _multipartFile;
+          });
+        }else{
+          showSnackBar(context, "선택된 파일이 없습니다.");
+        }
+      }catch(e){
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      }finally{}
+    }else{
+      String result;
+      try {
+        FlutterDocumentPickerParams params = FlutterDocumentPickerParams(
+          allowedFileExtensions: ['doc', 'pdf', 'docx'],
+          allowedUtiTypes: [
+            'com.adobe.pdf',
+            'com.microsoft.word.doc',
+            'org.openxmlformats.wordprocessingml.document'
+          ],
+          allowedMimeTypes: [
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+          ],
+          invalidFileNameSymbols: ['/'],
+        );
+
+        result = await FlutterDocumentPicker.openDocument(params: params);
+
+        if (result != null) {
+          File file = File(result);
+
+          final size = file.readAsBytesSync().lengthInBytes;
+          final kb = size / 1024;
+          final mb = kb / 1024;
+
+          if (mb > 100) {
+            showSnackBar(context, "100MB 미만의 파일만 업로드 가능합니다.");
+          } else {
+            setState(() {
+              _scriptFile = file;
+            });
+          }
+        } else {
+          showSnackBar(context, "선택된 파일이 없습니다.");
+        }
+      } catch (e) {
+        showSnackBar(context, APIConstants.error_msg_try_again);
+      } finally {}
+    }
   }
 
   /*
@@ -251,22 +324,27 @@ class _JoinActorChildParentAgree extends State<JoinActorChildParentAgree>
                                                                           ),
                                                                           onTap:
                                                                               () async {
-                                                                            var status = Platform.isAndroid
-                                                                                ? await Permission.storage.request()
-                                                                                : await Permission.photos.request();
-                                                                            if (status.isGranted) {
+                                                                            if(KCastingAppData().isWeb){
                                                                               getImageFromGallery();
                                                                               Navigator.pop(context);
-                                                                            } else {
-                                                                              showDialog(
-                                                                                  context: context,
-                                                                                  builder: (BuildContext context) => CupertinoAlertDialog(title: Text('저장공간 접근권한'), content: Text('사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'), actions: <Widget>[
-                                                                                        CupertinoDialogAction(
-                                                                                          child: Text('거부'),
-                                                                                          onPressed: () => Navigator.of(context).pop(),
-                                                                                        ),
-                                                                                        CupertinoDialogAction(child: Text('허용'), onPressed: () => openAppSettings())
-                                                                                      ]));
+                                                                            }else{
+                                                                              var status = Platform.isAndroid
+                                                                                  ? await Permission.storage.request()
+                                                                                  : await Permission.photos.request();
+                                                                              if (status.isGranted) {
+                                                                                getImageFromGallery();
+                                                                                Navigator.pop(context);
+                                                                              } else {
+                                                                                showDialog(
+                                                                                    context: context,
+                                                                                    builder: (BuildContext context) => CupertinoAlertDialog(title: Text('저장공간 접근권한'), content: Text('사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'), actions: <Widget>[
+                                                                                      CupertinoDialogAction(
+                                                                                        child: Text('거부'),
+                                                                                        onPressed: () => Navigator.of(context).pop(),
+                                                                                      ),
+                                                                                      CupertinoDialogAction(child: Text('허용'), onPressed: () => openAppSettings())
+                                                                                    ]));
+                                                                              }
                                                                             }
                                                                           }),
                                                                       Divider(),
@@ -279,29 +357,34 @@ class _JoinActorChildParentAgree extends State<JoinActorChildParentAgree>
                                                                           ),
                                                                           onTap:
                                                                               () async {
-                                                                            var status = Platform.isAndroid
-                                                                                ? await Permission.storage.request()
-                                                                                : await Permission.photos.request();
-                                                                            if (status.isGranted) {
+                                                                            if(KCastingAppData().isWeb){
                                                                               _pickDocument();
                                                                               Navigator.pop(context);
-                                                                            } else {
-                                                                              showDialog(
-                                                                                  context: context,
-                                                                                  builder: (BuildContext context) => CupertinoAlertDialog(
-                                                                                        title: Text('저장공간 접근권한'),
-                                                                                        content: Text('사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
-                                                                                        actions: <Widget>[
-                                                                                          CupertinoDialogAction(
-                                                                                            child: Text('거부'),
-                                                                                            onPressed: () => Navigator.of(context).pop(),
-                                                                                          ),
-                                                                                          CupertinoDialogAction(
-                                                                                            child: Text('허용'),
-                                                                                            onPressed: () => openAppSettings(),
-                                                                                          ),
-                                                                                        ],
-                                                                                      ));
+                                                                            }else{
+                                                                              var status = Platform.isAndroid
+                                                                                  ? await Permission.storage.request()
+                                                                                  : await Permission.photos.request();
+                                                                              if (status.isGranted) {
+                                                                                _pickDocument();
+                                                                                Navigator.pop(context);
+                                                                              } else {
+                                                                                showDialog(
+                                                                                    context: context,
+                                                                                    builder: (BuildContext context) => CupertinoAlertDialog(
+                                                                                      title: Text('저장공간 접근권한'),
+                                                                                      content: Text('사진 또는 비디오를 업로드하려면, 기기 사진, 미디어, 파일 접근 권한이 필요합니다.'),
+                                                                                      actions: <Widget>[
+                                                                                        CupertinoDialogAction(
+                                                                                          child: Text('거부'),
+                                                                                          onPressed: () => Navigator.of(context).pop(),
+                                                                                        ),
+                                                                                        CupertinoDialogAction(
+                                                                                          child: Text('허용'),
+                                                                                          onPressed: () => openAppSettings(),
+                                                                                        ),
+                                                                                      ],
+                                                                                    ));
+                                                                              }
                                                                             }
                                                                           }),
                                                                       Divider(),
@@ -323,12 +406,32 @@ class _JoinActorChildParentAgree extends State<JoinActorChildParentAgree>
                                                             style: CustomStyles
                                                                 .blue16TextStyle()))
                                                   ])),
-                                          Visibility(
+                                          KCastingAppData().isWeb ? Visibility(
                                               child: Container(
                                                   padding: EdgeInsets.only(
                                                       left: 30, right: 30),
                                                   margin:
-                                                      EdgeInsets.only(top: 15),
+                                                  EdgeInsets.only(top: 15),
+                                                  width: (KCastingAppData().isWeb)
+                                                      ? CustomStyles.appWidth
+                                                      : MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  decoration: BoxDecoration(
+                                                      color: CustomColors
+                                                          .colorWhite),
+                                                  child: (_pickedMultipartFile == null
+                                                      ? null
+                                                      : Text(
+                                                      _pickedMultipartFile.filename))),
+                                              visible: _pickedMultipartFile == null
+                                                  ? false
+                                                  : true) : Visibility(
+                                              child: Container(
+                                                  padding: EdgeInsets.only(
+                                                      left: 30, right: 30),
+                                                  margin:
+                                                  EdgeInsets.only(top: 15),
                                                   width: (KCastingAppData().isWeb)
                                                       ? CustomStyles.appWidth
                                                       : MediaQuery.of(context)
@@ -340,7 +443,7 @@ class _JoinActorChildParentAgree extends State<JoinActorChildParentAgree>
                                                   child: (_scriptFile == null
                                                       ? null
                                                       : Text(
-                                                          _scriptFile.path))),
+                                                      _scriptFile.path))),
                                               visible: _scriptFile == null
                                                   ? false
                                                   : true),
@@ -532,9 +635,16 @@ class _JoinActorChildParentAgree extends State<JoinActorChildParentAgree>
                             child: CustomStyles.lightGreyBGSquareButtonStyle(
                                 '자녀 회원가입', () async {
                               // 서류 첨부
-                              if (_scriptFile == null) {
-                                showSnackBar(context, '보호자 인증서류를 첨부해 주세요.');
-                                return false;
+                              if(KCastingAppData().isWeb){
+                                if (_pickedMultipartFile == null) {
+                                  showSnackBar(context, '보호자 인증서류를 첨부해 주세요.');
+                                  return false;
+                                }
+                              }else{
+                                if (_scriptFile == null) {
+                                  showSnackBar(context, '보호자 인증서류를 첨부해 주세요.');
+                                  return false;
+                                }
                               }
 
                               if (_agreeTerms == 0) {
@@ -557,7 +667,13 @@ class _JoinActorChildParentAgree extends State<JoinActorChildParentAgree>
                                   context,
                                   JoinActorChild(
                                       targetData: targetData,
-                                      scriptFile: _scriptFile));
+                                      scriptFile: _scriptFile,
+                                      multipartFile: _pickedMultipartFile,
+                                      authName: _authName,
+                                      authPhone: _authPhone,
+                                      authBirth: _authBirth,
+                                      authGender: _authGender
+                                  ));
                             }))
                       ])),
                 ))));

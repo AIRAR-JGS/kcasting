@@ -1,5 +1,5 @@
 name: casting_call
-description: 엔터로뱅 캐스팅콜 배우, 제작사 앱
+description: 비대면 시대의 배우 캐스팅, K-CASTING이 만들어갑니다!
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
@@ -60,6 +60,7 @@ dependencies:
   pointycastle: ^3.2.0-rc0
   webview_flutter_plus: ^0.2.2
   file_picker: ^4.1.3
+  webviewx: ^0.2.1
 
 dev_dependencies:
   flutter_test:

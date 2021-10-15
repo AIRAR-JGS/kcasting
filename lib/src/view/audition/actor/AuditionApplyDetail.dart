@@ -551,7 +551,7 @@ class _AuditionApplyDetail extends State<AuditionApplyDetail>
     targetData[APIConstants.casting_name] =
         _auditionState[APIConstants.casting_name];
     targetData[APIConstants.casting_pay] =
-        _auditionState[APIConstants.casting_pay];
+        _auditionState[APIConstants.final_pay];
     targetData[APIConstants.actor_account] = encryptedAccountNum.base64;
     targetData[APIConstants.actor_account_bank] =
         _bankVal[APIConstants.child_name];
